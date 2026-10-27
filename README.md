@@ -1,53 +1,62 @@
 # Apna Ghar
 
-Premium Indian real-estate buy/sell marketplace.
+Premium Indian real-estate buy/sell/rent marketplace.
 
 ## Confirmed stack
-- Mobile: React Native Community CLI (native Android/iOS project)
+
+- Mobile: React Native Community CLI (not Expo)
 - Backend: NestJS + TypeScript modular monolith
-- Authentication: Clerk; non-OTP sign-in method to be confirmed before auth implementation
+- Identity: Clerk; non-OTP sign-in method to be confirmed before auth implementation
 - Database: MongoDB
 - Public SEO website and dedicated admin area: Next.js
-- UI: ShadCN Studio / compatible React components for web/admin; native-compatible components for mobile
-- Branding: blue #2563EB + green #10B981, system light/dark themes
-- Subscriptions: dynamic plans/features/entitlements designed from MVP; all users Free and payments disabled at launch
+- Branding: blue #2563EB, green #10B981, navy #0F172A; system light/dark themes
+- Launch: all users Free; payment collection disabled
 
-## Current scaffold status
-- A design-finalization branch (`design/finalize-web`) now contains a responsive Next.js UI pass for home discovery, search empty state, property details, sign-in/sign-up/recovery, listing creation, theme switching, public information drafts and admin workspace screens. See `docs/17-web-design-implementation-status.md` for what is visual-only versus production-gated.
-- The approved logo asset is not present in this repository; the UI intentionally displays the required asset placeholder rather than inventing a replacement.
+## M1 foundation status
 
-## Current scaffold status
-- NestJS API starter and liveness endpoint are committed.
-- Next.js public homepage starter and an admin placeholder route are committed.
-- Shared design tokens, transport types and feature-key types are committed.
-- **The native React Native Community CLI project has not yet been generated.** See apps/mobile/README.md. Do not treat this repository as a fully runnable three-app monorepo yet.
-- Clerk, MongoDB, listings, search, media upload and admin authorization are not wired up yet. Admin route is not protected; do not use it for real administration.
-- Code has been committed to GitHub, but dependency installation/build/tests have not been executed in this environment. Verify locally before treating it as working.
+- npm workspaces and shared developer scripts are configured.
+- NestJS API has liveness and MongoDB-aware readiness routes plus baseline unit tests.
+- Shared design tokens, transport contracts, API client and entitlement keys are present.
+- Next.js web app and admin design shell exist; admin authorization is not implemented and the admin screens are not safe for real operations.
+- Mobile package and branded starter screen are present, but native `android/` and `ios/` project directories are still missing. This is an M1 acceptance blocker.
+- Check GitHub Actions on the M1 branch for actual build/test status; do not assume success until CI is green.
 
 ## Requirements
+
 - Node.js >= 20.11 and npm
-- Android mobile: Android Studio, JDK and Android SDK
+- MongoDB for API development (local default URI is in `.env.example`)
+- Android development: Android Studio, compatible JDK and Android SDK
 - Local iOS builds: macOS and Xcode
 
-## Start API
-```bash
-npm install
-npm run dev:api
-```
-Health endpoint: http://localhost:4000/api/v1/health
+## Setup
 
-## Start website
-In another terminal:
-```bash
-npm run dev:web
-```
+1. Copy `.env.example` to `.env` and adjust local values. Never commit credentials.
+2. Install dependencies from the repository root:
+   ```bash
+   npm install
+   ```
+3. Start the API:
+   ```bash
+   npm run dev:api
+   ```
+4. Start the web app in a second terminal:
+   ```bash
+   npm run dev:web
+   ```
+
+API liveness: http://localhost:4000/api/v1/health
+API readiness: http://localhost:4000/api/v1/health/ready (503 until MongoDB is connected)
 Website: http://localhost:3000
 
-## Environment
-Copy .env.example to .env and configure local values. Never commit real credentials. The health endpoint reports liveness only and does not claim MongoDB readiness.
+## Useful commands
+
+- `npm run build` — API and web production builds
+- `npm run typecheck` — API, web and mobile TypeScript checks
+- `npm run test` — API unit tests
 
 ## Docs
-- docs/01-product-requirements.md — product requirements
-- docs/09-technical-decisions.md — confirmed technology decisions
-- docs/12-m1-implementation-checklist.md — M1 acceptance criteria
-- prompts/04-m1-foundation-implementation.md — coding-agent instructions
+
+- `docs/01-product-requirements.md` — product requirements
+- `docs/09-technical-decisions.md` — confirmed technology decisions
+- `docs/12-m1-implementation-checklist.md` — M1 acceptance criteria
+- `docs/17-web-design-implementation-status.md` — what is UI-only versus production-gated
