@@ -365,3 +365,91 @@ input:focus, select:focus, textarea:focus { border-color: var(--color-focus); bo
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+
+/* Authentication surfaces must inherit the active Apna Ghar theme, including Clerk internals. */
+.clerk-auth-card,
+.clerk-auth-card .cl-rootBox,
+.clerk-auth-card .cl-cardBox,
+.clerk-auth-card .cl-card,
+.clerk-auth-card .cl-footer,
+.clerk-auth-card .cl-footerPages,
+.clerk-auth-card .cl-footerPagesLink,
+.clerk-auth-card .cl-socialButtonsBlockButton,
+.clerk-auth-card .cl-formFieldAction,
+.clerk-auth-card .cl-dividerRow,
+.clerk-auth-card .cl-dividerLine {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+.clerk-auth-card .cl-card { box-shadow: none !important; }
+.clerk-auth-card .cl-socialButtonsBlockButtonText,
+.clerk-auth-card .cl-formFieldLabel,
+.clerk-auth-card .cl-headerTitle,
+.clerk-auth-card .cl-footerActionText,
+.clerk-auth-card .cl-dividerText,
+.clerk-auth-card .cl-identityPreviewText,
+.clerk-auth-card .cl-formFieldAction,
+.clerk-auth-card .cl-footerPagesLink { color: var(--color-text) !important; }
+.clerk-auth-card .cl-headerSubtitle,
+.clerk-auth-card .cl-formFieldHintText,
+.clerk-auth-card .cl-formFieldSuccessText { color: var(--color-text-secondary) !important; }
+.clerk-auth-card .cl-formFieldInput,
+.clerk-auth-card input,
+.clerk-auth-card .cl-otpCodeFieldInput {
+  background: var(--color-input) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+.clerk-auth-card .cl-formFieldInput::placeholder { color: var(--color-muted) !important; }
+.clerk-auth-card .cl-formButtonPrimary {
+  background: var(--color-primary) !important;
+  color: var(--color-on-primary, #fff) !important;
+  border-color: var(--color-primary) !important;
+}
+.clerk-auth-card .cl-formButtonPrimary:hover { background: var(--color-primary-hover) !important; }
+.clerk-auth-card .cl-footer,
+.clerk-auth-card .cl-footerPages,
+.clerk-auth-card .cl-footerAction { background: var(--color-surface) !important; }
+.clerk-auth-card .cl-internal-b3fm6y,
+.clerk-auth-card .cl-internal-1dauvpw { color: var(--color-text) !important; }
+.clerk-auth-card .cl-poweredByClerk,
+.clerk-auth-card .cl-footer p { color: var(--color-muted) !important; }
+
+.premium-auth-navbar { gap: 20px; }
+.premium-auth-navbar .brand { flex: 0 0 185px; min-width: 165px; }
+.auth-nav-search {
+  display: flex; align-items: center; gap: 10px; flex: 1; max-width: 440px; min-width: 190px;
+  min-height: 46px; padding: 4px 5px 4px 14px; border: 1px solid var(--color-border);
+  border-radius: 14px; background: var(--color-surface); color: var(--color-text);
+}
+.auth-nav-search>span { color: var(--color-muted); font-size: 23px; line-height: 1; }
+.auth-nav-search input { min-width: 0; flex: 1; width: 100%; border: 0; outline: 0; box-shadow: none; background: transparent; color: var(--color-text); font-size: 12px; }
+.auth-nav-search input:focus { outline: 0; box-shadow: none; }
+.auth-nav-search input::placeholder { color: var(--color-muted); }
+.auth-nav-search button { align-self: stretch; padding: 0 13px; border: 0; border-radius: 10px; background: var(--color-primary); color: var(--color-on-primary, #fff); font-size: 11px; font-weight: 750; white-space: nowrap; cursor: pointer; }
+.auth-nav-search button:hover { background: var(--color-primary-hover); }
+.auth-nav-links { display: flex; align-items: center; gap: 17px; white-space: nowrap; }
+.auth-nav-links a, .auth-nav-actions>a { color: var(--color-text); font-size: 12px; font-weight: 700; text-decoration: none; }
+.auth-nav-links a:hover, .auth-nav-actions>a:hover { color: var(--color-primary); }
+.auth-nav-actions { display: flex; align-items: center; gap: 15px; }
+@media (max-width: 1050px) {
+ .premium-auth-navbar { gap: 12px; }
+ .premium-auth-navbar .brand { flex-basis: 145px; min-width: 145px; }
+ .auth-nav-links { gap: 10px; }
+ .auth-nav-search { max-width: 350px; }
+ .auth-nav-search button { padding: 0 9px; }
+}
+@media (max-width: 760px) {
+ .premium-auth-navbar { height: auto; min-height: 78px; padding-top: 12px; padding-bottom: 12px; flex-wrap: wrap; }
+ .premium-auth-navbar .brand { flex: 1 1 45%; min-width: 0; }
+ .auth-nav-actions { gap: 10px; }
+ .auth-nav-search { order: 3; flex: 1 0 100%; max-width: none; }
+ .auth-nav-links { order: 4; flex: 1; justify-content: space-around; padding: 5px 0; }
+ .auth-nav-actions>a { font-size: 11px; }
+}
+@media (max-width: 390px) {
+ .auth-nav-search button { font-size: 0; }
+ .auth-nav-search button span { font-size: 14px; }
+}
