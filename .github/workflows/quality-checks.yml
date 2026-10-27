@@ -1,0 +1,30 @@
+name: Quality Checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "feat/**"
+      - "fix/**"
+
+jobs:
+  build-web-and-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build NestJS API
+        run: npm run build:api
+
+      - name: Build Next.js website and admin UI
+        run: npm run build:web

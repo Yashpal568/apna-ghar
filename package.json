@@ -2,13 +2,21 @@
   "name": "apna-ghar",
   "version": "0.1.0",
   "private": true,
-  "workspaces": ["apps/api", "apps/web", "packages/*"],
+  "workspaces": [
+    "apps/api",
+    "apps/web",
+    "packages/*"
+  ],
   "scripts": {
     "dev:api": "npm run start:dev -w @apna-ghar/api",
     "dev:web": "npm run dev -w @apna-ghar/web",
     "build:api": "npm run build -w @apna-ghar/api",
     "build:web": "npm run build -w @apna-ghar/web",
-    "test:api": "npm run test -w @apna-ghar/api"
+    "build": "npm run build:api && npm run build:web",
+    "test:api": "npm run test -w @apna-ghar/api",
+    "lint:web": "npm run lint -w @apna-ghar/web"
   },
-  "engines": { "node": ">=20.11.0" }
+  "engines": {
+    "node": ">=20.11.0"
+  }
 }
