@@ -64,6 +64,7 @@ export class PropertiesService {
     if (query.locality) filter['location.locality'] = new RegExp(this.escapeRegex(query.locality), 'i');
     if (query.categoryId) filter.categoryId = query.categoryId;
     if (query.listingType) filter.listingType = query.listingType;
+    if (query.minBedrooms !== undefined) filter.bedrooms = { $gte: query.minBedrooms };
     if (query.minPrice !== undefined || query.maxPrice !== undefined) {
       filter.priceAmount = {};
       if (query.minPrice !== undefined) filter.priceAmount.$gte = query.minPrice;
