@@ -105,5 +105,10 @@ export default function PropertySearchResults({ location, transaction, category,
         </article>;
       })}
     </div>
+    {result.pagination.pages > 1 && <nav className="results-pagination" aria-label="Property result pages">
+      <button className="button button-outline" type="button" disabled={page <= 1} onClick={() => { setPage((current) => Math.max(1, current - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}>← Previous</button>
+      <span aria-live="polite">Page <strong>{result.pagination.page}</strong> of <strong>{result.pagination.pages}</strong></span>
+      <button className="button button-outline" type="button" disabled={page >= result.pagination.pages} onClick={() => { setPage((current) => Math.min(result.pagination.pages, current + 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Next →</button>
+    </nav>}
   </section>;
 }
