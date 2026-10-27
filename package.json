@@ -1,0 +1,14 @@
+{
+  "name": "apna-ghar",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["apps/api", "apps/web", "packages/*"],
+  "scripts": {
+    "dev:api": "npm run start:dev -w @apna-ghar/api",
+    "dev:web": "npm run dev -w @apna-ghar/web",
+    "build:api": "npm run build -w @apna-ghar/api",
+    "build:web": "npm run build -w @apna-ghar/web",
+    "test:api": "npm run test -w @apna-ghar/api"
+  },
+  "engines": { "node": ">=20.11.0" }
+}
