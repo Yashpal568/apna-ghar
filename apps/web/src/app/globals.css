@@ -453,3 +453,18 @@ input:focus, select:focus, textarea:focus { border-color: var(--color-focus); bo
  .auth-nav-search button { font-size: 0; }
  .auth-nav-search button span { font-size: 14px; }
 }
+
+
+/* Property detail journey — clear actions, responsive layout, and loading feedback. */
+.detail-quick-actions { display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap; }
+.detail-quick-actions .button { white-space:nowrap; }
+.detail-quick-actions button[aria-pressed="true"] { color:var(--color-primary); border-color:var(--color-primary); background:color-mix(in srgb,var(--color-primary) 9%,var(--color-surface)); }
+.detail-skeleton { display:grid; gap:18px; max-width:1100px; margin:48px auto; }
+.detail-skeleton .skeleton-image { height:340px; border-radius:var(--radius-card,16px); }
+.detail-skeleton .skeleton-heading { height:34px; width:min(500px,75%); }
+.detail-skeleton .skeleton-copy { height:16px; width:min(620px,88%); }
+@media (max-width:700px) {
+ .detail-topline { align-items:flex-start; flex-direction:column; gap:16px; }
+ .detail-quick-actions { justify-content:flex-start; width:100%; }
+ .detail-skeleton .skeleton-image { height:220px; }
+}
