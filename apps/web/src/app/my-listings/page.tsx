@@ -20,6 +20,7 @@ type Listing = {
   imageUrls?: string[];
   location?: { locality?: string; city?: string; state?: string };
   publishedAt?: string;
+  viewsCount?: number;
 };
 
 const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
@@ -59,7 +60,7 @@ function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getTo
       <h3>{listing.title}</h3>
       <p>{[listing.location?.locality, listing.location?.city, listing.location?.state].filter(Boolean).join(", ") || "Location not provided"}</p>
       <strong>{money(listing.priceAmount)}{listing.listingType === "rent" ? " / month" : ""}</strong>
-      <p className="owner-listing-facts">{listing.bedrooms ? `${listing.bedrooms} beds · ` : ""}{listing.bathrooms ? `${listing.bathrooms} baths · ` : ""}{listing.areaValue} {listing.areaUnit}</p>
+      <p className="owner-listing-facts">{listing.bedrooms ? `${listing.bedrooms} beds · ` : ""}{listing.bathrooms ? `${listing.bathrooms} baths · ` : ""}{listing.areaValue} {listing.areaUnit}</p><div className="owner-listing-analytics"><span><strong>{(listing.viewsCount ?? 0).toLocaleString("en-IN")}</strong> listing views</span><span><strong>—</strong> enquiries <small>(tracking coming soon)</small></span></div>
       <div className="owner-listing-actions">
         <a className="button button-outline" href={`/property/${encodeURIComponent(listing.slug || listing._id)}`}>View listing</a>
         <button className="button button-outline" type="button" disabled={busy} onClick={() => void mutate("visibility")}>{busy ? "Please wait…" : listing.status === "active" ? "Hide listing" : "Publish listing"}</button>
@@ -106,7 +107,7 @@ function ConnectedListings() {
 
   return <section className="owner-dashboard-panel">
     <div className="owner-dashboard-heading"><div><p className="eyebrow">PROPERTY MANAGEMENT</p><h2>My listings</h2></div><a className="button button-primary" href="/list-property">Post a property <span aria-hidden="true">↗</span></a></div>
-    <div className="owner-listing-stats"><div><span>Total listings</span><strong>{loading ? "—" : listings.length}</strong></div><div><span>Published</span><strong>{loading ? "—" : active}</strong></div><div><span>Hidden / other</span><strong>{loading ? "—" : hidden}</strong></div></div>
+    <div className="owner-listing-stats"><div><span>Total listings</span><strong>{loading ? "—" : listings.length}</strong></div><div><span>Published</span><strong>{loading ? "—" : active}</strong></div><div><span>Total views</span><strong>{loading ? "—" : listings.reduce((sum, item) => sum + (item.viewsCount ?? 0), 0).toLocaleString("en-IN")}</strong></div><div><span>Hidden / other</span><strong>{loading ? "—" : hidden}</strong></div></div>
     {loading && <div className="search-empty" role="status"><h3>Loading your properties…</h3><p>Fetching your listings securely.</p></div>}
     {!loading && error && <div className="search-empty" role="alert"><h3>Could not load listings</h3><p>{error}</p><button className="button button-outline" type="button" onClick={() => setRefreshKey((key) => key + 1)}>Try again</button><a className="text-link" href="/sign-in">Sign in</a></div>}
     {!loading && !error && listings.length === 0 && <div className="owner-empty-state"><div className="owner-empty-icon" aria-hidden="true">⌂</div><h3>Your first listing starts here</h3><p>Share property details and photos. Once the server validates your listing, it can publish immediately.</p><div className="owner-empty-actions"><a className="button button-primary" href="/list-property">Post a property</a><a className="button button-outline" href="/search">Explore homes</a></div></div>}
