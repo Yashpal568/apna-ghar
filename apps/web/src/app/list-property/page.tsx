@@ -46,7 +46,6 @@ function ListingForm() {
  <footer className="simple-footer">Apna Ghar · Listing creation</footer></main>;
 }
 
-
 export default function ListPropertyPage() {
  const configured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
  if (!configured) return <main className="page-shell interior-page"><section className="search-empty"><h1>Sign in required</h1><p>Connect Clerk authentication before publishing a property. Drafts can still be saved on this device.</p><a className="button button-primary" href="/sign-in">Sign in</a><a className="text-link" href="/">Back home</a></section></main>;
