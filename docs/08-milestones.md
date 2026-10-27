@@ -1,42 +1,44 @@
 # Milestones
 
 ## M0 — Product and technology decisions — COMPLETE
-- React Native Community CLI selected for mobile.
-- NestJS selected for the backend.
-- Clerk, MongoDB, Next.js SEO web and dedicated protected admin confirmed.
+- React Native Community CLI selected for the eventual mobile app.
+- NestJS + TypeScript selected for the backend modular monolith.
+- Next.js selected for public SEO website and dedicated admin area.
+- Clerk selected as identity provider; non-OTP sign-in method must be confirmed before implementation.
+- MongoDB selected for persistence; integration intentionally deferred until the domain/API workflows are ready.
+- Cloudinary selected as the intended listing-image provider; credentials and production integration are deferred.
 - Blue/green branding and system light/dark themes confirmed.
-- Free launch with payments disabled; dynamic subscription entitlements remain part of the backend design.
-- Still to confirm before implementation: Clerk non-OTP sign-in method, media/object-storage provider and map provider.
+- Free launch with payment collection disabled; subscription entitlements remain part of the backend design.
 
-## M1 — Implementation foundation — NEXT
-- Establish npm workspaces/monorepo scripts and shared TypeScript/lint/format conventions.
-- Scaffold React Native Community CLI mobile app, NestJS API and Next.js web/admin app.
-- Add shared design tokens and API/contracts packages without importing web-only UI into native.
-- Add environment validation and safe .env.example files.
-- Add health/readiness endpoint, baseline API tests, web/mobile smoke checks and CI.
-- Document Android Studio/JDK/Android SDK requirements and local run commands.
-- Verify builds or clearly report environment limitations; no secrets and no fake success claims.
+## M1 — Foundation and CI — IN PROGRESS
+- Stabilize npm workspaces, shared packages, environment validation, API health/readiness, tests and CI.
+- Prioritize API and Next.js web developer experience.
+- Mobile workspace may remain parked; native Android/iOS projects are not an acceptance blocker for the current web-first phase.
+- Verify builds and report actual CI outcomes; never claim success without green checks.
 
-## M2 — Identity and backend
-Clerk token verification, user profile sync, roles, MongoDB connection/indexes, seed strategy and audit logging.
+## M2 — Web experience
+Responsive marketing/home page, property search/filter/sort, property detail pages, city/category landing pages, customer accounts, favorites, seller/broker dashboards and listing management.
 
-## M3 — Listings and media
-Category/config API, property CRUD, secure uploads, instant active publishing, own-listing management.
+## M3 — Backend domain and identity
+Clerk server-side token verification, profile sync, roles/permissions, versioned API, property/category/user/favorite/contact/report domains, validation, consistent errors and test coverage. Design repository interfaces before database integration.
 
-## M4 — Mobile discovery
-Home, search, filters, property detail, favorites, seller contact and map.
+## M4 — Dedicated admin and moderation
+Server-protected admin access, dashboard metrics, users, listings, categories, reports, moderation, configuration and audit log. Every privileged API operation must enforce server-side permissions.
 
-## M5 — SEO web
-Next.js public listing pages, canonical metadata, sitemap, robots and responsive listing management.
+## M5 — Marketing SEO and growth foundations
+Unique metadata, canonical URLs, sitemap, robots, accurate structured data, internal linking, indexable local landing pages, private-route indexing controls, performance and analytics readiness.
 
-## M6 — Admin panel
-Metrics, users, properties, categories, reports, app config and audit log.
+## M6 — Security and reliability
+Threat model, validation, secure headers, CORS, rate limiting, auth/authorization tests, upload controls, secrets hygiene, redacted logs, dependency scanning, privacy/legal content, monitoring and backup/restore plan.
 
-## M7 — Subscription-ready backend
-Features, plans, entitlements, Free assignment, admin plan editor and server-side limits; no payments.
+## M7 — SaaS-ready entitlements
+Plan catalog, Free assignment, stable feature keys, usage limits, admin plan editor and server-side enforcement. Billing/payment collection remains disabled unless explicitly approved.
 
-## M8 — QA and launch
-E2E/security/accessibility/performance checks, backups, monitoring, privacy/legal pages and store readiness.
+## M8 — MongoDB and Cloudinary integration
+Database schemas/indexes/seeds, repository integration, image upload authorization, file limits, Cloudinary transformations/cleanup, integration tests and failure handling.
 
-## M9 — Ads and growth
-AdMob test integration then production review; apply for AdSense for eligible web pages; measure impact on retention and contact conversion.
+## M9 — Release QA
+End-to-end buyer/seller/admin flows, accessibility, SEO, performance, security, staging smoke tests, monitoring and rollback checks.
+
+## M10 — Mobile application (LAST)
+Only after web, backend, admin, SEO, security, SaaS and MongoDB/Cloudinary integrations are accepted, finish the React Native Community CLI Android/iOS application against stable shared API contracts.
