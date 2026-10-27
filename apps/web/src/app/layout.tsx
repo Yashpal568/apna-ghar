@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   },
   description: 'Discover homes, flats, villas and plots for sale on Apna Ghar.',
   applicationName: 'Apna Ghar',
+  icons: { icon: '/icon.svg', shortcut: '/icon.svg', apple: '/icon.svg' },
 };
 
 export default function RootLayout({
