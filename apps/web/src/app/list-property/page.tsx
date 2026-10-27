@@ -1,3 +1,4 @@
+import BrandLogo from "../components/BrandLogo";
 "use client";
 
 import { useState } from "react";
@@ -21,7 +22,7 @@ function ListingForm() {
  const save=()=>{try{localStorage.setItem("apna-ghar-listing-draft",JSON.stringify({...d,updatedAt:new Date().toISOString()}));setSaved(true);setNotice("Draft saved on this device only; account sync is not connected.");}catch{setNotice("Could not save draft in this browser.");}};
  const preview=()=>{if(!basics||!contact){setNotice("Complete required property and contact fields first.");return;}try{const item={...d,id:"preview-"+Date.now(),status:"draft-preview",createdAt:new Date().toISOString()};const old=JSON.parse(localStorage.getItem("apna-ghar-listing-previews")||"[]");localStorage.setItem("apna-ghar-listing-previews",JSON.stringify([item,...old].slice(0,20)));setNotice("Preview saved locally. It is not public and has not been sent to the server.");setSaved(true);}catch{setNotice("Could not create preview in browser storage.");}};
  return <main className="page-shell interior-page">
- <header className="site-header interior-header"><a className="brand" href="/"><span className="brand-mark">⌂</span><span className="brand-name">Apna <b>Ghar</b></span></a><nav className="desktop-nav"><a href="/search">Explore</a><a href="/my-listings">My listings</a></nav><div className="header-actions"><ThemePicker compact/><a className="button button-quiet" href="/sign-in">Sign in</a></div></header>
+ <header className="site-header interior-header"><a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a><nav className="desktop-nav"><a href="/search">Explore</a><a href="/my-listings">My listings</a></nav><div className="header-actions"><ThemePicker compact/><a className="button button-quiet" href="/sign-in">Sign in</a></div></header>
  <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>List your property</span></div>
  <section className="listing-intro"><p className="eyebrow">OWNER EXPERIENCE</p><h1>Let the right people<br/>find <em>your place.</em></h1><p>Create a clear listing and review it before publishing.</p><div className="listing-steps">{["Property basics","Details & photos","Preview"].map((x,i)=><span key={x} className={step===i+1?"step-active":""}><b>{i+1}</b>{x}</span>)}</div></section>
  <section className="listing-layout"><form className="listing-form" onSubmit={e=>{e.preventDefault();setNotice("");if(step===1){if(!basics){setNotice("Complete property type, title, state, city, locality, area and a price greater than zero.");return;}setStep(2);}else if(step===2){if(!contact){setNotice("Enter a contact name and valid phone number.");return;}setStep(3);}else preview();}}>
