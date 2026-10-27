@@ -1,5 +1,6 @@
 "use client";
-import BrandLogo from "../components/BrandLogo";
+import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
 
 
 import { useAuth } from "@clerk/nextjs";
@@ -121,14 +122,10 @@ function SignInRequired() {
 export default function MyListingsPage() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   return <main className="page-shell interior-page">
-    <header className="site-header interior-header">
-      <a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a>
-      <nav className="desktop-nav" aria-label="Main navigation"><a href="/search">Explore homes</a><a href="/saved">Saved homes</a><a href="/list-property">List property</a></nav>
-      <div className="header-actions"><a className="button button-outline" href="/profile">Profile</a></div>
-    </header>
+    <SiteHeader active="account" />
     <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>My listings</span></div>
     <section className="listing-intro"><p className="eyebrow">OWNER WORKSPACE</p><h1>Your properties,<br /><em>all in one place.</em></h1><p>Manage the homes and spaces you advertise on Apna Ghar.</p></section>
     {clerkConfigured ? <ConnectedListings /> : <SignInRequired />}
-    <footer className="simple-footer">Apna Ghar · Owner workspace</footer>
+    <SiteFooter />
   </main>;
 }
