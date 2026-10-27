@@ -5,6 +5,8 @@ import ThemePicker from "../components/ThemePicker";
 export const metadata: Metadata = { title: "Sign in" };
 
 export default function SignInPage() {
+  const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+
   return (
     <main className="auth-page page-shell">
       <header className="site-header auth-header">
@@ -21,7 +23,11 @@ export default function SignInPage() {
           <p>Sign in to save places you love, plan visits and keep your property search in one place.</p>
         </div>
         <div className="auth-card clerk-auth-card">
-          <SignIn routing="hash" signUpUrl="/sign-up" />
+          {clerkConfigured ? (
+            <SignIn routing="hash" signUpUrl="/sign-up" />
+          ) : (
+            <p role="status">Sign-in is not configured yet. Add the Clerk publishable key to the web app environment to enable authentication.</p>
+          )}
         </div>
       </section>
       <footer className="simple-footer auth-footer">
