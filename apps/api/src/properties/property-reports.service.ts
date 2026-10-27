@@ -11,7 +11,19 @@ export class PropertyReportsService {
     @InjectModel(Property.name) private readonly properties: Model<PropertyDocument>,
   ) {}
 
-  async listForModeration(status?: string) {\n    const filter: Record<string, unknown> = {};\n    if (status && ['open', 'reviewing', 'resolved', 'dismissed'].includes(status)) filter.status = status;\n    return this.reports.find(filter).sort({ createdAt: -1 }).limit(200).lean().exec();\n  }\n\n  async moderate(reportId: string, status: string) {\n    const mongoose = await import('mongoose');\n    if (!mongoose.isValidObjectId(reportId) || !['reviewing', 'resolved', 'dismissed', 'open'].includes(status)) return null;\n    return this.reports.findByIdAndUpdate(reportId, { $set: { status } }, { new: true, runValidators: true }).lean().exec();\n  }\n\n  async listMine(reporterId: string) {
+  async listForModeration(status?: string) {
+    const filter: Record<string, unknown> = {};
+    if (status && ['open', 'reviewing', 'resolved', 'dismissed'].includes(status)) filter.status = status;
+    return this.reports.find(filter).sort({ createdAt: -1 }).limit(200).lean().exec();
+  }
+
+  async moderate(reportId: string, status: string) {
+    const mongoose = await import('mongoose');
+    if (!mongoose.isValidObjectId(reportId) || !['reviewing', 'resolved', 'dismissed', 'open'].includes(status)) return null;
+    return this.reports.findByIdAndUpdate(reportId, { $set: { status } }, { new: true, runValidators: true }).lean().exec();
+  }
+
+  async listMine(reporterId: string) {
     return this.reports.find({ reporterId }).sort({ createdAt: -1 }).lean().exec();
   }
 
