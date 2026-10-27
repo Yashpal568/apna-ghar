@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
 export type PropertyDocument = HydratedDocument<Property>;
 
@@ -14,7 +14,7 @@ export const PropertyLocationSchema = SchemaFactory.createForClass(PropertyLocat
 
 @Schema({ timestamps: true, collection: 'properties' })
 export class Property {
-  @Prop({ type: Types.ObjectId, required: true, index: true }) ownerId!: Types.ObjectId;
+  @Prop({ type: String, required: true, index: true }) ownerId!: string;
   @Prop({ required: true, trim: true, maxlength: 140 }) title!: string;
   @Prop({ required: true, unique: true, trim: true, lowercase: true, index: true }) slug!: string;
   @Prop({ required: true, trim: true, maxlength: 5000 }) description!: string;
