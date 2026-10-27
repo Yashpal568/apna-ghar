@@ -20,7 +20,25 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {publishableKey ? (
-          <ClerkProvider publishableKey={publishableKey}>{children}</ClerkProvider>
+          <ClerkProvider
+            publishableKey={publishableKey}
+            localization={{
+              signIn: {
+                start: {
+                  title: 'Sign in to Apna Ghar',
+                  subtitle: 'Welcome back! Please sign in to continue',
+                },
+              },
+              signUp: {
+                start: {
+                  title: 'Create your Apna Ghar account',
+                  subtitle: 'Find a place to call home',
+                },
+              },
+            }}
+          >
+            {children}
+          </ClerkProvider>
         ) : (
           children
         )}
