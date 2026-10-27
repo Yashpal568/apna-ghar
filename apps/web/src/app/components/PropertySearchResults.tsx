@@ -40,7 +40,9 @@ export default function PropertySearchResults({ location, transaction, category 
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [savedIds, setSavedIds] = useState<string[]>([]);\n  const [page, setPage] = useState(1);\n  const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc">("newest");
+  const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [page, setPage] = useState(1);
+  const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc">("newest");
 
   useEffect(() => {
     const refreshSaved = () => {
