@@ -65,6 +65,8 @@ export class PropertiesService {
     if (query.categoryId) filter.categoryId = query.categoryId;
     if (query.listingType) filter.listingType = query.listingType;
     if (query.minBedrooms !== undefined) filter.bedrooms = { $gte: query.minBedrooms };
+    if (query.minBathrooms !== undefined) filter.bathrooms = { $gte: query.minBathrooms };
+    if (query.furnishing) filter.furnishing = query.furnishing;
     if (query.minPrice !== undefined || query.maxPrice !== undefined) {
       filter.priceAmount = {};
       if (query.minPrice !== undefined) filter.priceAmount.$gte = query.minPrice;
