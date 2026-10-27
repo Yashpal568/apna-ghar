@@ -1,3 +1,10 @@
-# Framework Decision Prompt
+# Framework Decision Record
 
-Evaluate Expo vs React Native Community CLI for Apna Ghar: Clerk, photos/video uploads, maps/geolocation, AdMob, deep links and reliable Android builds. Compare current compatibility, native dependencies, development speed, build complexity, maintenance and Android Studio requirements. Prefer Expo unless a concrete requirement justifies Community CLI. Explain Expo Go vs development builds. Do not scaffold either until approved.
+Decision approved:
+- Mobile: React Native Community CLI.
+- Backend: NestJS + TypeScript modular monolith.
+- Public web and dedicated admin: Next.js.
+- Authentication: Clerk, with OTP excluded unless explicitly requested.
+- Database: MongoDB.
+
+Do not run another framework comparison or scaffold Expo. Use docs/12-m1-implementation-checklist.md. Native libraries for maps, media and ads must be checked for current React Native Community CLI compatibility before adding them. ShadCN Studio remains a web/admin design resource; implement mobile UI with native-compatible components and shared tokens.
