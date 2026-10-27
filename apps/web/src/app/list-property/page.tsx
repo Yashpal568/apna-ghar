@@ -16,7 +16,7 @@ function ListingForm() {
  const [saved,setSaved]=useState(false);
  const change=(key:keyof Draft,value:string)=>{setD(old=>({...old,[key]:value}));setSaved(false);};
  const basics=Boolean(d.type&&d.title.trim()&&d.state.trim()&&d.city.trim()&&d.locality.trim()&&Number(d.price)>0&&Number(d.area)>0);
- const contact=Boolean(d.name.trim()&&/^\\+?[0-9 ()-]{8,18}$/.test(d.phone.trim()));
+ const contact=Boolean(d.name.trim() && d.phone.replace(/[^0-9]/g, "").length >= 8 && d.phone.replace(/[^0-9+]/g, "").length <= 18);
  const photos=d.photos.split("\n").map(x=>x.trim()).filter(x=>/^https?:\/\//i.test(x));
  const save=()=>{try{localStorage.setItem("apna-ghar-listing-draft",JSON.stringify({...d,updatedAt:new Date().toISOString()}));setSaved(true);setNotice("Draft saved on this device only; account sync is not connected.");}catch{setNotice("Could not save draft in this browser.");}};
  const preview=()=>{if(!basics||!contact){setNotice("Complete required property and contact fields first.");return;}try{const item={...d,id:"preview-"+Date.now(),status:"draft-preview",createdAt:new Date().toISOString()};const old=JSON.parse(localStorage.getItem("apna-ghar-listing-previews")||"[]");localStorage.setItem("apna-ghar-listing-previews",JSON.stringify([item,...old].slice(0,20)));setNotice("Preview saved locally. It is not public and has not been sent to the server.");setSaved(true);}catch{setNotice("Could not create preview in browser storage.");}};
