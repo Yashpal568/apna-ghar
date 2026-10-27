@@ -799,3 +799,29 @@ select option { color: var(--color-text); background: var(--color-surface); }
 .ag-header-actions .ag-signup-link:hover{background:color-mix(in srgb,var(--color-primary) 12%,var(--color-surface));border-color:color-mix(in srgb,var(--color-primary) 32%,var(--color-border));transform:translateY(-1px)}
 .ag-header-actions .ag-account-link{display:inline-flex;align-items:center;min-height:40px;padding:0 4px;font-size:12px}
 @media(max-width:760px){.ag-mobile-menu{padding-top:4px}.ag-mobile-menu>a:not(.button){padding:11px 8px}}
+
+
+/* Premium profile page layout */
+.profile-page-shell{max-width:1240px;margin:0 auto;padding:0 36px}
+.profile-page-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;padding:36px 0 28px}
+.profile-page-hero .listing-intro{margin:0;max-width:560px}
+.profile-page-hero .listing-intro h1{font-size:clamp(42px,5vw,62px);line-height:.98;letter-spacing:-3px;margin:16px 0}
+.profile-page-hero .listing-intro>p:last-child{max-width:470px;color:var(--color-text-secondary);font-size:14px;line-height:1.75}
+.profile-page-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);align-items:start;gap:22px;margin:8px auto 48px;max-width:1000px}
+.profile-page-layout .auth-single,.profile-page-layout .profile-account-settings{max-width:none!important;margin:0!important;width:100%}
+.profile-page-layout .auth-card{padding:30px;border:1px solid var(--color-border);border-radius:22px;background:var(--color-surface);box-shadow:0 16px 44px rgba(15,23,42,.045)}
+.profile-page-layout .profile-avatar{width:58px;height:58px;display:grid;place-items:center;border-radius:18px;background:color-mix(in srgb,var(--color-primary) 12%,var(--color-surface));color:var(--color-primary);font-size:18px;font-weight:850;letter-spacing:-.5px}
+.profile-page-layout .auth-form h2{font-size:23px;letter-spacing:-.8px;margin:16px 0 8px}
+.profile-page-layout .auth-muted{font-size:12px;line-height:1.75;margin:0 0 24px}
+.profile-page-layout .auth-form label{display:block;margin:17px 0 8px;color:var(--color-text-secondary);font-size:12px;font-weight:750}
+.profile-page-layout .auth-form input,.profile-page-layout .auth-form textarea{width:100%;min-height:46px;padding:12px 14px;border:1px solid var(--color-border);border-radius:12px;background:var(--color-input,var(--color-surface));color:var(--color-text);font-size:13px;transition:border-color .18s ease,box-shadow .18s ease}
+.profile-page-layout .auth-form textarea{min-height:112px;resize:vertical}
+.profile-page-layout .auth-form input:focus,.profile-page-layout .auth-form textarea:focus{border-color:var(--color-primary);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--color-primary) 12%,transparent)}
+.profile-page-layout .auth-form .button-full{width:100%;margin-top:20px;min-height:48px;border-radius:12px;font-size:13px}
+.profile-page-layout .profile-links{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:20px}
+.profile-page-layout .profile-links a{color:var(--color-primary);font-size:12px;font-weight:750;text-decoration:none}
+.profile-page-layout .profile-account-settings .account-settings-panel{padding:26px;border-radius:22px;box-shadow:0 16px 44px rgba(15,23,42,.045)}
+.profile-page-layout .profile-account-settings h2{font-size:20px;letter-spacing:-.6px}
+.profile-page-layout .profile-account-settings p{font-size:12px;line-height:1.8}
+@media(max-width:800px){.profile-page-shell{padding:0 20px}.profile-page-hero{padding:24px 0 20px}.profile-page-layout{grid-template-columns:1fr;max-width:620px}.profile-page-layout .auth-card{padding:23px}}
+@media(max-width:520px){.profile-page-shell{padding:0 16px}.profile-page-hero .listing-intro h1{font-size:42px;letter-spacing:-2.2px}.profile-page-layout .profile-links{flex-direction:column}}
