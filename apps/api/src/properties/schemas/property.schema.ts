@@ -33,6 +33,7 @@ export class Property {
   @Prop({ default: false }) isNegotiable!: boolean;
   @Prop({ type: [String], default: [] }) imageUrls!: string[];
   @Prop({ required: true, enum: ['active', 'hidden_by_owner', 'removed_by_admin', 'deleted'], default: 'active', index: true }) status!: string;
+  @Prop({ default: 0, min: 0 }) viewsCount!: number;
   @Prop({ default: Date.now, index: true }) publishedAt!: Date;
   @Prop({ default: null }) deletedAt!: Date | null;
 }
