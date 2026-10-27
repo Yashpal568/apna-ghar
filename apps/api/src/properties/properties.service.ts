@@ -2,11 +2,28 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, SortOrder } from 'mongoose';
 import { ListPropertiesQueryDto } from './dto/list-properties-query.dto';
+import { CreatePropertyDto } from './dto/create-property.dto';
 import { Property, PropertyDocument } from './schemas/property.schema';
 
 @Injectable()
 export class PropertiesService {
   constructor(@InjectModel(Property.name) private readonly properties: Model<PropertyDocument>) {}
+
+  async create(ownerId: string, input: CreatePropertyDto) {
+    const base = input.title.toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 90) || 'property';
+    const slug = `${base}-${Date.now().toString(36)}`;
+    const property = await this.properties.create({
+      ...input,
+      ownerId,
+      slug,
+      status: 'active',
+      publishedAt: new Date(),
+      deletedAt: null,
+    });
+    const result = property.toObject();
+    delete (result as Record<string, unknown>).__v;
+    return result;
+  }
 
   async list(query: ListPropertiesQueryDto) {
     const filter: FilterQuery<PropertyDocument> = { status: 'active', deletedAt: null };
