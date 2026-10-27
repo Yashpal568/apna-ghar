@@ -16,10 +16,11 @@ Premium Indian real-estate buy/sell/rent marketplace.
 
 - npm workspaces and shared developer scripts are configured.
 - NestJS API has liveness and MongoDB-aware readiness routes plus baseline unit tests.
+- API validates the port and MongoDB URI during configuration.
 - Shared design tokens, transport contracts, API client and entitlement keys are present.
-- Next.js web app and admin design shell exist; admin authorization is not implemented and the admin screens are not safe for real operations.
-- Mobile package and branded starter screen are present, but native `android/` and `ios/` project directories are still missing. This is an M1 acceptance blocker.
-- Check GitHub Actions on the M1 branch for actual build/test status; do not assume success until CI is green.
+- Next.js web app and admin design shell exist; admin authorization is not implemented and admin screens are not safe for real operations.
+- Mobile package and branded starter screen are present, but native `android/` and `ios/` project directories are still missing. This remains an M1 acceptance blocker.
+- Check GitHub Actions on the M1 pull request for actual build/test status; do not assume success until CI is green.
 
 ## Requirements
 
@@ -58,5 +59,5 @@ Website: http://localhost:3000
 
 - `docs/01-product-requirements.md` — product requirements
 - `docs/09-technical-decisions.md` — confirmed technology decisions
-- `docs/12-m1-implementation-checklist.md` — M1 acceptance criteria
+- `docs/12-m1-implementation-checklist.md` — M1 acceptance criteria and progress
 - `docs/17-web-design-implementation-status.md` — what is UI-only versus production-gated
