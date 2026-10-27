@@ -1,4 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { randomUUID } from 'crypto';
+import { CreatePropertyDto } from './dto/create-property.dto';
+import { UpdatePropertyDto } from './dto/update-property.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, SortOrder } from 'mongoose';
 import { ListPropertiesQueryDto } from './dto/list-properties-query.dto';
@@ -35,6 +38,61 @@ export class PropertiesService {
       this.properties.countDocuments(filter).exec(),
     ]);
     return { items, pagination: { page, limit, total, pages: Math.ceil(total / limit) } };
+  }
+
+  async create(ownerId: string, dto: CreatePropertyDto) {
+    const baseSlug = dto.title.toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 90) || 'property';
+    const slug = `${baseSlug}-${randomUUID().slice(0, 8)}`;
+    const created = await this.properties.create({
+      ...dto,
+      ownerId,
+      slug,
+      status: 'active',
+      publishedAt: new Date(),
+      deletedAt: null,
+    });
+    return created.toObject();
+  }
+
+  async listMine(ownerId: string, page = 1, limit = 20) {
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.min(50, Math.max(1, limit));
+    const filter: FilterQuery<PropertyDocument> = { ownerId, deletedAt: null, status: { $ne: 'deleted' } };
+    const [items, total] = await Promise.all([
+      this.properties.find(filter).sort({ updatedAt: -1 }).skip((safePage - 1) * safeLimit).limit(safeLimit).select('-__v').lean().exec(),
+      this.properties.countDocuments(filter).exec(),
+    ]);
+    return { items, pagination: { page: safePage, limit: safeLimit, total, pages: Math.ceil(total / safeLimit) } };
+  }
+
+  async updateMine(ownerId: string, id: string, dto: UpdatePropertyDto) {
+    const updated = await this.properties.findOneAndUpdate(
+      { _id: id, ownerId, deletedAt: null, status: { $ne: 'deleted' } },
+      { $set: dto },
+      { new: true, runValidators: true },
+    ).select('-__v').lean().exec();
+    if (!updated) throw new NotFoundException('Property not found');
+    return updated;
+  }
+
+  async hideMine(ownerId: string, id: string) {
+    const updated = await this.properties.findOneAndUpdate(
+      { _id: id, ownerId, deletedAt: null, status: { $ne: 'deleted' } },
+      { $set: { status: 'hidden_by_owner' } },
+      { new: true },
+    ).select('-__v').lean().exec();
+    if (!updated) throw new NotFoundException('Property not found');
+    return updated;
+  }
+
+  async deleteMine(ownerId: string, id: string) {
+    const updated = await this.properties.findOneAndUpdate(
+      { _id: id, ownerId, deletedAt: null, status: { $ne: 'deleted' } },
+      { $set: { status: 'deleted', deletedAt: new Date() } },
+      { new: true },
+    ).select('_id status deletedAt').lean().exec();
+    if (!updated) throw new NotFoundException('Property not found');
+    return { success: true, property: updated };
   }
 
   async findPublicBySlugOrId(identifier: string) {
