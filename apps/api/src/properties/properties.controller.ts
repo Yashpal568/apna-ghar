@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Patch, Query, Req, UseGuards } from '@nestjs/common';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { PropertyAuthGuard } from './property-auth.guard';
 import { ListPropertiesQueryDto } from './dto/list-properties-query.dto';
@@ -22,6 +22,25 @@ export class PropertiesController {
   listMine(@Req() request: AuthenticatedRequest) {
     if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
     return this.propertiesService.listMine(request.authUserId);
+  }
+
+  @Put(':id')
+  @UseGuards(PropertyAuthGuard)
+  async updateMine(@Req() request: AuthenticatedRequest, @Param('id') id: string, @Body() body: CreatePropertyDto) {
+    if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
+    const property = await this.propertiesService.updateMine(request.authUserId, id, body);
+    if (!property) throw new NotFoundException('Property not found or not owned by this account');
+    return property;
+  }
+
+  @Patch(':id/visibility')
+  @UseGuards(PropertyAuthGuard)
+  async setVisibilityMine(@Req() request: AuthenticatedRequest, @Param('id') id: string, @Body() body: { visible?: boolean }) {
+    if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
+    if (typeof body.visible !== 'boolean') throw new BadRequestException('visible must be a boolean');
+    const property = await this.propertiesService.setVisibilityMine(request.authUserId, id, body.visible);
+    if (!property) throw new NotFoundException('Property not found or not owned by this account');
+    return property;
   }
 
   @Delete(':id')
