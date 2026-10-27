@@ -19,9 +19,10 @@
     "lint:web": "npm run lint -w @apna-ghar/web",
     "typecheck:api": "npx tsc --noEmit -p apps/api/tsconfig.json",
     "typecheck:web": "npx tsc --noEmit -p apps/web/tsconfig.json",
-    "typecheck": "npm run typecheck:api && npm run typecheck:web",
+    "typecheck": "npm run typecheck:api && npm run typecheck:web && npm run typecheck:mobile",
     "test": "npm run test:api",
-    "ci": "npm run typecheck && npm run test && npm run build"
+    "ci": "npm run typecheck && npm run test && npm run build",
+    "typecheck:mobile": "npx tsc --noEmit -p apps/mobile/tsconfig.json"
   },
   "engines": {
     "node": ">=20.11.0"
