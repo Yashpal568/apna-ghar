@@ -1,53 +1,253 @@
 "use client";
-import BrandLogo from "../components/BrandLogo";
-
 
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
+import BrandLogo from "../components/BrandLogo";
 import ThemePicker from "../components/ThemePicker";
 
-type Draft = { purpose:string; type:string; title:string; state:string; city:string; locality:string; price:string; area:string; beds:string; baths:string; description:string; name:string; phone:string; email:string; photos:string };
-const initial:Draft = {purpose:"sale",type:"",title:"",state:"",city:"",locality:"",price:"",area:"",beds:"",baths:"",description:"",name:"",phone:"",email:"",photos:""};
+type Draft = {
+  purpose: "sale" | "rent";
+  type: string;
+  title: string;
+  state: string;
+  city: string;
+  locality: string;
+  price: string;
+  area: string;
+  beds: string;
+  baths: string;
+  description: string;
+  name: string;
+  phone: string;
+  email: string;
+  photos: string;
+};
+
+const initialDraft: Draft = {
+  purpose: "sale",
+  type: "",
+  title: "",
+  state: "",
+  city: "",
+  locality: "",
+  price: "",
+  area: "",
+  beds: "",
+  baths: "",
+  description: "",
+  name: "",
+  phone: "",
+  email: "",
+  photos: "",
+};
+
+const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
 
 function ListingForm() {
- const { getToken } = useAuth();
- const [publishing,setPublishing]=useState(false);
- const [step,setStep]=useState(1);
- const [d,setD]=useState<Draft>(initial);
- const [notice,setNotice]=useState("");
- const [saved,setSaved]=useState(false);
- const change=(key:keyof Draft,value:string)=>{setD(old=>({...old,[key]:value}));setSaved(false);};
- const basics=Boolean(d.type&&d.title.trim()&&d.state.trim()&&d.city.trim()&&d.locality.trim()&&Number(d.price)>0&&Number(d.area)>0);
- const contact=Boolean(d.name.trim() && d.phone.replace(/[^0-9]/g, "").length >= 8 && d.phone.replace(/[^0-9+]/g, "").length <= 18);
- const photos=d.photos.split("\n").map(x=>x.trim()).filter(x=>/^https?:\/\//i.test(x));
- const save=()=>{try{localStorage.setItem("apna-ghar-listing-draft",JSON.stringify({...d,updatedAt:new Date().toISOString()}));setSaved(true);setNotice("Draft saved on this device only; account sync is not connected.");}catch{setNotice("Could not save draft in this browser.");}};
- const preview=()=>{if(!basics||!contact){setNotice("Complete required property and contact fields first.");return;}try{const item={...d,id:"preview-"+Date.now(),status:"draft-preview",createdAt:new Date().toISOString()};const old=JSON.parse(localStorage.getItem("apna-ghar-listing-previews")||"[]");localStorage.setItem("apna-ghar-listing-previews",JSON.stringify([item,...old].slice(0,20)));setNotice("Preview saved locally. It is not public and has not been sent to the server.");setSaved(true);}catch{setNotice("Could not create preview in browser storage.");}};
- return <main className="page-shell interior-page">
- <header className="site-header interior-header"><a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a><nav className="desktop-nav"><a href="/search">Explore</a><a href="/my-listings">My listings</a></nav><div className="header-actions"><ThemePicker compact/><a className="button button-quiet" href="/sign-in">Sign in</a></div></header>
- <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>List your property</span></div>
- <section className="listing-intro"><p className="eyebrow">OWNER EXPERIENCE</p><h1>Let the right people<br/>find <em>your place.</em></h1><p>Create a clear listing and review it before publishing.</p><div className="listing-steps">{["Property basics","Details & photos","Preview"].map((x,i)=><span key={x} className={step===i+1?"step-active":""}><b>{i+1}</b>{x}</span>)}</div></section>
- <section className="listing-layout"><form className="listing-form" onSubmit={e=>{e.preventDefault();setNotice("");if(step===1){if(!basics){setNotice("Complete property type, title, state, city, locality, area and a price greater than zero.");return;}setStep(2);}else if(step===2){if(!contact){setNotice("Enter a contact name and valid phone number.");return;}setStep(3);}else preview();}}>
- {step===1&&<div className="form-section"><p className="eyebrow">STEP 1 OF 3</p><h2>Tell us about the property</h2><p className="form-help">Required fields are marked with *.</p><div className="form-grid">
- <label>Listing purpose *<select value={d.purpose} onChange={e=>change("purpose",e.target.value)}><option value="sale">Sell a property</option><option value="rent">Rent out a property</option></select></label>
- <label>Property type *<select required value={d.type} onChange={e=>change("type",e.target.value)}><option value="">Select a type</option><option value="apartment">Apartment / flat</option><option value="house">Independent house</option><option value="villa">Villa</option><option value="plot">Plot / land</option><option value="commercial">Commercial property</option></select></label>
- <label className="form-span">Listing title *<input required maxLength={100} value={d.title} onChange={e=>change("title",e.target.value)} placeholder="Spacious 3 BHK near the metro"/></label>
- <label>State *<input required value={d.state} onChange={e=>change("state",e.target.value)} placeholder="State"/></label><label>City *<input required value={d.city} onChange={e=>change("city",e.target.value)} placeholder="Enter city"/></label><label>Locality *<input required value={d.locality} onChange={e=>change("locality",e.target.value)} placeholder="Neighbourhood"/></label>
- <label>Expected price (₹) *<input required type="number" min="1" value={d.price} onChange={e=>change("price",e.target.value)} placeholder="Enter amount"/></label><label>Area (sq ft)<input type="number" min="0" value={d.area} onChange={e=>change("area",e.target.value)}/></label></div></div>}
- {step===2&&<div className="form-section"><p className="eyebrow">STEP 2 OF 3</p><h2>Property details & contact</h2><p className="form-help">Add direct image links, one per line. Upload storage is not connected yet.</p><div className="form-grid">
- <label>Bedrooms<input type="number" min="0" value={d.beds} onChange={e=>change("beds",e.target.value)}/></label><label>Bathrooms<input type="number" min="0" value={d.baths} onChange={e=>change("baths",e.target.value)}/></label>
- <label className="form-span">Description<textarea rows={4} maxLength={3000} value={d.description} onChange={e=>change("description",e.target.value)} placeholder="Amenities, property condition, nearby transport..."/></label>
- <label className="form-span">Photo URLs<textarea rows={3} value={d.photos} onChange={e=>change("photos",e.target.value)} placeholder="https://example.com/photo.jpg"/></label><p className="form-help form-span">{photos.length} valid HTTP(S) image links detected.</p>
- <label>Contact name *<input required value={d.name} onChange={e=>change("name",e.target.value)} placeholder="Owner / authorised contact"/></label><label>Phone *<input required type="tel" value={d.phone} onChange={e=>change("phone",e.target.value)} placeholder="+91 98765 43210"/></label><label className="form-span">Email<input type="email" value={d.email} onChange={e=>change("email",e.target.value)} placeholder="you@example.com"/></label>
- </div></div>}
- {step===3&&<div className="form-section"><p className="eyebrow">STEP 3 OF 3</p><h2>Review listing preview</h2><p className="form-help">Review these details before publishing to the marketplace.</p>{photos[0]&&<img src={photos[0]} alt="Property preview" style={{width:"100%",maxHeight:260,objectFit:"cover",borderRadius:12}}/>}<p className="eyebrow">{d.purpose==="rent"?"FOR RENT":"FOR SALE"} · {d.type}</p><h2>{d.title||"Untitled property"}</h2><p>{[d.locality,d.city,d.state].filter(Boolean).join(", ")}</p><strong>{Number(d.price)>0?new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(Number(d.price)):"Price not entered"}</strong><p>{d.area?d.area+" sq ft · ":""}{d.beds?d.beds+" bedrooms · ":""}{d.baths?d.baths+" bathrooms":""}</p><p>{d.description}</p><p className="form-help">Contact: {d.name} · {d.phone}</p><p className="form-help">Valid listings publish immediately after the server accepts the details. Only use image links you are authorised to share.</p></div>}
- {notice&&<p role="status" className="form-notice">{notice}</p>}
- <div className="listing-actions"><button className="button button-quiet" type="button" onClick={()=>step>1?setStep(step-1):window.location.assign("/")}>{step>1?"← Back":"Cancel"}</button><button className="button button-outline" type="button" onClick={save}>{saved?"Saved locally":"Save draft"}</button>{step<3?<button className="button button-primary" type="submit">Continue ↗</button>:<button className="button button-primary" type="button" disabled={publishing} onClick={async()=>{setNotice("");if(!basics||!contact){setNotice("Complete required property and contact fields first.");return;}setPublishing(true);try{const token=await getToken();if(!token)throw new Error("Sign in before publishing your property.");const response=await fetch((process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:4000/api/v1").replace(/\\/$/,"")+"/properties",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,Accept:"application/json"},body:JSON.stringify({title:d.title,description:d.description||"No description provided.",categoryId:d.type,listingType:d.purpose,priceAmount:Number(d.price),location:{state:d.state,city:d.city,locality:d.locality},areaValue:Number(d.area),areaUnit:"sqft",bedrooms:d.beds?Number(d.beds):undefined,bathrooms:d.baths?Number(d.baths):undefined,imageUrls:photos})});if(!response.ok){const body=await response.json().catch(()=>null);throw new Error(body?.message?.toString?.()|| (response.status===401?"Your session expired. Please sign in again.":"Could not publish listing. Check the fields and retry."));}const created=await response.json();try{localStorage.removeItem("apna-ghar-listing-draft");localStorage.setItem("apna-ghar-last-published",JSON.stringify({id:created._id,slug:created.slug,title:created.title,createdAt:new Date().toISOString()}));}catch{}window.location.assign("/my-listings?published=1");}catch(e){setNotice(e instanceof Error?e.message:"Could not publish listing.");}finally{setPublishing(false);}}}>{publishing?"Publishing…":"Publish listing ↗"}</button>}</div>
- </form><aside className="listing-sidebar"><div className="sidebar-icon">⌂</div><h3>Good listings build trust</h3><ul><li>Use an accurate title and current price.</li><li>Describe the property honestly.</li><li>Only use photos you have permission to share.</li><li>Never share OTPs or payment details.</li></ul><a href="/safety" className="text-link">Read listing safety tips ↗</a><div className="sidebar-progress"><span>Listing checklist</span><strong>{step} of 3 steps</strong><div><i style={{width:(step/3*100)+"%"}}/></div><small>Drafts stay on this device until API sync is implemented.</small></div></aside></section>
- <footer className="simple-footer">Apna Ghar · Listing creation</footer></main>;
+  const { getToken } = useAuth();
+  const [draft, setDraft] = useState<Draft>(initialDraft);
+  const [step, setStep] = useState(1);
+  const [notice, setNotice] = useState("");
+  const [publishing, setPublishing] = useState(false);
+
+  const update = (key: keyof Draft, value: string) => {
+    setDraft((current) => ({ ...current, [key]: value }));
+    setNotice("");
+  };
+
+  const photos = draft.photos.split("\n").map((url) => url.trim()).filter((url) => /^https?:\/\//i.test(url));
+  const basicsValid = Boolean(
+    draft.type && draft.title.trim() && draft.state.trim() && draft.city.trim() &&
+    draft.locality.trim() && Number(draft.price) > 0 && Number(draft.area) > 0
+  );
+  const contactValid = Boolean(
+    draft.name.trim() && draft.phone.replace(/[^0-9]/g, "").length >= 8 &&
+    draft.phone.replace(/[^0-9+]/g, "").length <= 18
+  );
+
+  const saveDraft = () => {
+    try {
+      localStorage.setItem("apna-ghar-listing-draft", JSON.stringify({ ...draft, updatedAt: new Date().toISOString() }));
+      setNotice("Draft saved on this device.");
+    } catch {
+      setNotice("Could not save draft in this browser.");
+    }
+  };
+
+  const publish = async () => {
+    if (!basicsValid || !contactValid) {
+      setNotice("Complete the required property and contact fields first.");
+      return;
+    }
+
+    setPublishing(true);
+    setNotice("");
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("Sign in before publishing your property.");
+
+      const response = await fetch(apiBase + "/properties", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          title: draft.title,
+          description: draft.description || "No description provided.",
+          categoryId: draft.type,
+          listingType: draft.purpose,
+          priceAmount: Number(draft.price),
+          location: { state: draft.state, city: draft.city, locality: draft.locality },
+          areaValue: Number(draft.area),
+          areaUnit: "sqft",
+          bedrooms: draft.beds ? Number(draft.beds) : undefined,
+          bathrooms: draft.baths ? Number(draft.baths) : undefined,
+          imageUrls: photos,
+        }),
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        const message = Array.isArray(body?.message) ? body.message.join(", ") : body?.message;
+        throw new Error(message || "Could not publish listing. Check the fields and retry.");
+      }
+
+      const created = await response.json();
+      localStorage.removeItem("apna-ghar-listing-draft");
+      localStorage.setItem("apna-ghar-last-published", JSON.stringify({
+        id: created._id,
+        slug: created.slug,
+        title: created.title,
+        createdAt: new Date().toISOString(),
+      }));
+      window.location.assign("/my-listings?published=1");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Could not publish listing.");
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+  return (
+    <main className="page-shell interior-page">
+      <header className="site-header interior-header">
+        <a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a>
+        <nav className="desktop-nav"><a href="/search">Explore</a><a href="/my-listings">My listings</a></nav>
+        <div className="header-actions"><ThemePicker compact /><a className="button button-quiet" href="/sign-in">Sign in</a></div>
+      </header>
+
+      <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>List your property</span></div>
+      <section className="listing-intro">
+        <p className="eyebrow">OWNER EXPERIENCE</p>
+        <h1>Let the right people<br />find <em>your place.</em></h1>
+        <p>Create a clear listing and review it before publishing.</p>
+        <div className="listing-steps">
+          {["Property basics", "Details & photos", "Preview"].map((label, index) => (
+            <span key={label} className={step === index + 1 ? "step-active" : ""}><b>{index + 1}</b>{label}</span>
+          ))}
+        </div>
+      </section>
+
+      <section className="listing-layout">
+        <form className="listing-form" onSubmit={(event) => {
+          event.preventDefault();
+          setNotice("");
+          if (step === 1) {
+            if (!basicsValid) {
+              setNotice("Complete property type, title, state, city, locality, area and price first.");
+              return;
+            }
+            setStep(2);
+          } else if (step === 2) {
+            if (!contactValid) {
+              setNotice("Enter a contact name and valid phone number.");
+              return;
+            }
+            setStep(3);
+          }
+        }}>
+          {step === 1 && (
+            <div className="form-section">
+              <p className="eyebrow">STEP 1 OF 3</p><h2>Tell us about the property</h2>
+              <div className="form-grid">
+                <label>Listing purpose *
+                  <select value={draft.purpose} onChange={(event) => update("purpose", event.target.value as Draft["purpose"])}>
+                    <option value="sale">Sell a property</option><option value="rent">Rent out a property</option>
+                  </select>
+                </label>
+                <label>Property type *
+                  <select required value={draft.type} onChange={(event) => update("type", event.target.value)}>
+                    <option value="">Select a type</option><option value="apartment">Apartment / flat</option><option value="house">Independent house</option><option value="villa">Villa</option><option value="plot">Plot / land</option><option value="commercial">Commercial property</option>
+                  </select>
+                </label>
+                <label className="form-span">Listing title *
+                  <input required maxLength={100} value={draft.title} onChange={(event) => update("title", event.target.value)} placeholder="Spacious 3 BHK near the metro" />
+                </label>
+                <label>State *<input required value={draft.state} onChange={(event) => update("state", event.target.value)} /></label>
+                <label>City *<input required value={draft.city} onChange={(event) => update("city", event.target.value)} /></label>
+                <label>Locality *<input required value={draft.locality} onChange={(event) => update("locality", event.target.value)} /></label>
+                <label>Expected price (₹) *<input required type="number" min="1" value={draft.price} onChange={(event) => update("price", event.target.value)} /></label>
+                <label>Area (sq ft) *<input required type="number" min="1" value={draft.area} onChange={(event) => update("area", event.target.value)} /></label>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="form-section">
+              <p className="eyebrow">STEP 2 OF 3</p><h2>Property details & contact</h2>
+              <div className="form-grid">
+                <label>Bedrooms<input type="number" min="0" value={draft.beds} onChange={(event) => update("beds", event.target.value)} /></label>
+                <label>Bathrooms<input type="number" min="0" value={draft.baths} onChange={(event) => update("baths", event.target.value)} /></label>
+                <label className="form-span">Description<textarea rows={4} maxLength={3000} value={draft.description} onChange={(event) => update("description", event.target.value)} /></label>
+                <label className="form-span">Photo URLs<textarea rows={3} value={draft.photos} onChange={(event) => update("photos", event.target.value)} placeholder="One authorised image URL per line" /></label>
+                <p className="form-help form-span">{photos.length} valid image URLs detected.</p>
+                <label>Contact name *<input required value={draft.name} onChange={(event) => update("name", event.target.value)} /></label>
+                <label>Phone *<input required type="tel" value={draft.phone} onChange={(event) => update("phone", event.target.value)} placeholder="+91 98765 43210" /></label>
+                <label className="form-span">Email<input type="email" value={draft.email} onChange={(event) => update("email", event.target.value)} /></label>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="form-section">
+              <p className="eyebrow">STEP 3 OF 3</p><h2>Review your listing</h2>
+              {photos[0] && <img src={photos[0]} alt="Property preview" style={{ width: "100%", maxHeight: 260, objectFit: "cover", borderRadius: 12 }} />}
+              <p className="eyebrow">{draft.purpose === "rent" ? "FOR RENT" : "FOR SALE"} · {draft.type}</p>
+              <h2>{draft.title}</h2><p>{[draft.locality, draft.city, draft.state].filter(Boolean).join(", ")}</p>
+              <strong>{new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(Number(draft.price))}</strong>
+              <p>{draft.area} sq ft · {draft.beds || "—"} bedrooms · {draft.baths || "—"} bathrooms</p>
+              <p>{draft.description}</p><p className="form-help">Contact: {draft.name} · {draft.phone}</p>
+            </div>
+          )}
+
+          {notice && <p role="status" className="form-notice">{notice}</p>}
+          <div className="listing-actions">
+            <button className="button button-quiet" type="button" onClick={() => step > 1 ? setStep(step - 1) : window.location.assign("/")}>{step > 1 ? "← Back" : "Cancel"}</button>
+            <button className="button button-outline" type="button" onClick={saveDraft}>Save draft</button>
+            {step < 3
+              ? <button className="button button-primary" type="submit">Continue ↗</button>
+              : <button className="button button-primary" type="button" disabled={publishing} onClick={publish}>{publishing ? "Publishing…" : "Publish listing ↗"}</button>}
+          </div>
+        </form>
+
+        <aside className="listing-sidebar">
+          <div className="sidebar-icon">⌂</div><h3>Good listings build trust</h3>
+          <ul><li>Use an accurate title and current price.</li><li>Describe the property honestly.</li><li>Only use photos you have permission to share.</li><li>Never share OTPs or payment details.</li></ul>
+          <a href="/safety" className="text-link">Read listing safety tips ↗</a>
+          <div className="sidebar-progress"><span>Listing checklist</span><strong>{step} of 3 steps</strong><div><i style={{ width: (step / 3 * 100) + "%" }} /></div><small>Drafts stay on this device until published.</small></div>
+        </aside>
+      </section>
+      <footer className="simple-footer">Apna Ghar · Listing creation</footer>
+    </main>
+  );
 }
 
 export default function ListPropertyPage() {
- const configured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
- if (!configured) return <main className="page-shell interior-page"><section className="search-empty"><h1>Sign in required</h1><p>Connect Clerk authentication before publishing a property. Drafts can still be saved on this device.</p><a className="button button-primary" href="/sign-in">Sign in</a><a className="text-link" href="/">Back home</a></section></main>;
- return <ListingForm />;
+  const configured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+  if (!configured) {
+    return <main className="page-shell interior-page"><section className="search-empty"><h1>Sign in required</h1><p>Configure Clerk authentication before publishing a property.</p><a className="button button-primary" href="/sign-in">Sign in</a><a className="text-link" href="/">Back home</a></section></main>;
+  }
+  return <ListingForm />;
 }
