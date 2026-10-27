@@ -1,0 +1,3 @@
+# Admin and Subscription Engine Prompt
+
+Build a dedicated protected admin panel on the shared backend. Include dashboard metrics, users, listings, reports, categories, homepage sections, filters, feature catalog, plan editor, entitlement matrix, ad configuration and audit logs. Implement plans/features/entitlements now, but keep all users on Free and payment collection disabled. Admin can assign implemented feature keys and limits to plans. API resolves and enforces entitlements; UI lock states are presentation only. Audit plan changes, moderation and exports. Do not implement checkout until requested.

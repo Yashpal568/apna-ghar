@@ -1,0 +1,6 @@
+/* Apna Ghar architecture documentation tokens */
+:root { --ag-blue:#2563EB; --ag-green:#10B981; --ag-navy:#0F172A; --ag-bg:#F3F4F6; --ag-surface:#FFFFFF; --ag-border:#E5E7EB; --ag-radius:16px; --ag-shadow:0 8px 24px rgba(15,23,42,.08); }
+.architecture-canvas { background:var(--ag-bg); color:var(--ag-navy); padding:2rem; font-family:Inter,system-ui,sans-serif; }
+.architecture-node { border:1px solid var(--ag-border); border-radius:var(--ag-radius); background:var(--ag-surface); padding:1rem; box-shadow:var(--ag-shadow); }
+.architecture-node--primary { border-color:var(--ag-blue); }
+.architecture-node--auth { border-color:var(--ag-green); }

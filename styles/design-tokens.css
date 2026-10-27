@@ -1,0 +1,2 @@
+/* Web/admin tokens; mirror values in native theme implementation. */
+:root { --color-primary:#2563EB; --color-primary-hover:#1D4ED8; --color-green:#10B981; --color-navy:#0F172A; --color-text:#111827; --color-muted:#6B7280; --color-bg:#F3F4F6; --color-surface:#FFFFFF; --color-border:#E5E7EB; --radius-card:16px; --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-6:24px; --space-8:32px; }
