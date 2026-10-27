@@ -468,3 +468,150 @@ input:focus, select:focus, textarea:focus { border-color: var(--color-focus); bo
  .detail-quick-actions { justify-content:flex-start; width:100%; }
  .detail-skeleton .skeleton-image { height:220px; }
 }
+
+
+/* Theme-complete component overrides: remove fixed light/dark text and CTA colours. */
+:root {
+  --color-cta-secondary: #00E6A0;
+  --color-on-cta-secondary: #06251E;
+  --color-card-tag-bg: #E8F0FF;
+  --color-card-tag-text: #123B85;
+  --color-art-sky: #EAF2FF;
+  --color-art-hill: #B9D6C6;
+  --color-art-house: #FFF9EF;
+  --color-art-roof: #255D63;
+  --color-art-door: #D4A778;
+}
+[data-theme="midnight"] {
+  --color-cta-secondary: #34D399;
+  --color-on-cta-secondary: #052E25;
+  --color-card-tag-bg: #17344A;
+  --color-card-tag-text: #BAE6FD;
+  --color-art-sky: #142B42;
+  --color-art-hill: #1C4B43;
+  --color-art-house: #DCE8E7;
+  --color-art-roof: #38BDF8;
+  --color-art-door: #A7C8D8;
+}
+[data-theme="graphite"] {
+  --color-cta-secondary: #9CA3AF;
+  --color-on-cta-secondary: #17191D;
+  --color-card-tag-bg: #383C43;
+  --color-card-tag-text: #F3F4F6;
+  --color-art-sky: #30343A;
+  --color-art-hill: #4B5158;
+  --color-art-house: #E5E7EB;
+  --color-art-roof: #6B7280;
+  --color-art-door: #9CA3AF;
+}
+[data-theme="forest"] {
+  --color-cta-secondary: #34D399;
+  --color-on-cta-secondary: #06251E;
+  --color-card-tag-bg: #153A30;
+  --color-card-tag-text: #A7F3D0;
+  --color-art-sky: #16352D;
+  --color-art-hill: #245548;
+  --color-art-house: #E3F1E8;
+  --color-art-roof: #34D399;
+  --color-art-door: #9AC7A9;
+}
+[data-theme="amoled"] {
+  --color-cta-secondary: #10B981;
+  --color-on-cta-secondary: #000000;
+  --color-card-tag-bg: #202020;
+  --color-card-tag-text: #FFFFFF;
+  --color-art-sky: #111111;
+  --color-art-hill: #242424;
+  --color-art-house: #E5E5E5;
+  --color-art-roof: #FFFFFF;
+  --color-art-door: #737373;
+}
+
+/* Every shared CTA, form control, chip and property card follows the active theme. */
+.button-light {
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.button-light:hover:not(:disabled) {
+  color: var(--color-on-primary);
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+.button-secondary, .property-result-card .property-save-button[aria-pressed="true"] {
+  color: var(--color-on-cta-secondary);
+  background: var(--color-cta-secondary);
+  border-color: var(--color-cta-secondary);
+}
+input, select, textarea {
+  color: var(--color-text);
+  background-color: var(--color-input);
+  border-color: var(--color-border);
+}
+input::placeholder, textarea::placeholder { color: var(--color-muted); }
+select option { color: var(--color-text); background: var(--color-surface); }
+.property-tag {
+  color: var(--color-card-tag-text);
+  background: var(--color-card-tag-bg);
+  border: 1px solid var(--color-border);
+}
+.owner-banner {
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+}
+.owner-mark { color: var(--color-primary); background: var(--color-surface-subtle); }
+.owner-banner .eyebrow { color: var(--color-green); }
+.owner-banner p:not(.eyebrow) { color: var(--color-text-secondary); }
+.hero-art {
+  background: linear-gradient(155deg, var(--color-art-sky), var(--color-surface-subtle) 55%, var(--color-art-hill));
+}
+.art-hill-back { background: var(--color-art-hill); }
+.art-hill-front { background: color-mix(in srgb, var(--color-art-hill) 76%, var(--color-green)); }
+.art-roof { background: var(--color-art-roof); }
+.art-house-body { background: var(--color-art-house); }
+.art-door { background: var(--color-art-door); }
+.art-plant { background: var(--color-green); }
+.art-caption {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+.caption-dot { background: var(--color-green); }
+.property-result-card, .contact-card, .facts-grid > div, .category-card, .property-card {
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}
+.property-result-image { background: var(--color-surface-subtle); color: var(--color-primary); }
+.property-result-badge {
+  color: var(--color-card-tag-text);
+  background: var(--color-card-tag-bg);
+  border: 1px solid var(--color-border);
+}
+.property-result-price, .property-result-card h3 { color: var(--color-text); }
+.property-result-facts, .property-result-location { color: var(--color-muted); }
+.property-result-card .property-save-button { color: var(--color-text); background: var(--color-surface); border-color: var(--color-border); }
+.property-result-card .property-save-button[aria-pressed="true"] { color: var(--color-on-cta-secondary); }
+.sample-pill { color: var(--color-text); background: var(--color-surface-subtle); border: 1px solid var(--color-border); }
+.gallery-main, .gallery-side > div {
+  color: var(--color-text-secondary);
+  background: linear-gradient(135deg, var(--color-surface-subtle), var(--color-surface-raised));
+}
+.gallery-side > div:first-child, .gallery-side > div:last-child {
+  background: linear-gradient(135deg, var(--color-surface-raised), var(--color-surface-subtle));
+}
+.proof-icon { color: var(--color-on-cta-secondary); background: var(--color-cta-secondary); }
+.site-footer, .simple-footer { color: var(--color-muted); border-color: var(--color-border); }
+.site-footer a:hover, .simple-footer a:hover { color: var(--color-primary); }
+.clerk-auth-card .cl-formButtonPrimary { color: var(--color-on-primary); background: var(--color-primary); }
+.clerk-auth-card .cl-socialButtonsBlockButton, .clerk-auth-card .cl-formFieldInput {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .property-result-card, .property-card, .category-card, .button {
+    transition: color var(--motion-normal) ease, background-color var(--motion-normal) ease, border-color var(--motion-normal) ease, transform var(--motion-fast) ease, box-shadow var(--motion-normal) ease;
+  }
+}
