@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import BrandLogo from "../components/BrandLogo";
-import ThemePicker from "../components/ThemePicker";
+import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
 
 type Draft = {
   purpose: "sale" | "rent";
@@ -132,11 +132,7 @@ function ListingForm() {
 
   return (
     <main className="page-shell interior-page">
-      <header className="site-header interior-header">
-        <a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a>
-        <nav className="desktop-nav"><a href="/search">Explore</a><a href="/my-listings">My listings</a></nav>
-        <div className="header-actions"><ThemePicker compact /><a className="button button-quiet" href="/sign-in">Sign in</a></div>
-      </header>
+      <SiteHeader active="account" />
 
       <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>List your property</span></div>
       <section className="listing-intro">
@@ -239,7 +235,7 @@ function ListingForm() {
           <div className="sidebar-progress"><span>Listing checklist</span><strong>{step} of 3 steps</strong><div><i style={{ width: (step / 3 * 100) + "%" }} /></div><small>Drafts stay on this device until published.</small></div>
         </aside>
       </section>
-      <footer className="simple-footer">Apna Ghar · Listing creation</footer>
+      <SiteFooter />
     </main>
   );
 }
