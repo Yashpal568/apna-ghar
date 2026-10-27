@@ -28,6 +28,26 @@ export class PropertiesService {
       .sort({ publishedAt: -1 }).select('-__v').lean().exec();
   }
 
+  async updateMine(ownerId: string, identifier: string, input: CreatePropertyDto) {
+    const mongoose = await import('mongoose');
+    if (!mongoose.isValidObjectId(identifier)) return null;
+    return this.properties.findOneAndUpdate(
+      { _id: identifier, ownerId, deletedAt: null },
+      { $set: input },
+      { new: true, runValidators: true },
+    ).select('-__v').lean().exec();
+  }
+
+  async setVisibilityMine(ownerId: string, identifier: string, visible: boolean) {
+    const mongoose = await import('mongoose');
+    if (!mongoose.isValidObjectId(identifier)) return null;
+    return this.properties.findOneAndUpdate(
+      { _id: identifier, ownerId, deletedAt: null },
+      { $set: { status: visible ? 'active' : 'hidden_by_owner' } },
+      { new: true, runValidators: true },
+    ).select('-__v').lean().exec();
+  }
+
   async removeMine(ownerId: string, identifier: string) {
     const mongoose = await import('mongoose');
     if (!mongoose.isValidObjectId(identifier)) return null;
