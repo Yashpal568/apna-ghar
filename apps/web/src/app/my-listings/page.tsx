@@ -22,7 +22,7 @@ type Listing = {
 const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
 const money = (amount: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 
-function ListingCard({ listing, token, onChanged }: { listing: Listing; token: string; onChanged: () => void }) {
+function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getToken: () => Promise<string | null>; onChanged: () => void }) {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   async function mutate(action: "visibility" | "delete") {
@@ -33,6 +33,8 @@ function ListingCard({ listing, token, onChanged }: { listing: Listing; token: s
     setBusy(true);
     setNotice("");
     try {
+      const token = await getToken();
+      if (!token) throw new Error("Your session expired. Sign in again.");
       const response = await fetch(`${apiBase}/properties/${encodeURIComponent(listing._id)}${action === "visibility" ? "/visibility" : ""}`, {
         method: action === "delete" ? "DELETE" : "PATCH",
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json", ...(action === "visibility" ? { "Content-Type": "application/json" } : {}) },
@@ -105,7 +107,7 @@ function ConnectedListings() {
     {loading && <div className="search-empty" role="status"><h3>Loading your properties…</h3><p>Fetching your listings securely.</p></div>}
     {!loading && error && <div className="search-empty" role="alert"><h3>Could not load listings</h3><p>{error}</p><button className="button button-outline" type="button" onClick={() => setRefreshKey((key) => key + 1)}>Try again</button><a className="text-link" href="/sign-in">Sign in</a></div>}
     {!loading && !error && listings.length === 0 && <div className="owner-empty-state"><div className="owner-empty-icon" aria-hidden="true">⌂</div><h3>Your first listing starts here</h3><p>Share property details and photos. Once the server validates your listing, it can publish immediately.</p><div className="owner-empty-actions"><a className="button button-primary" href="/list-property">Post a property</a><a className="button button-outline" href="/search">Explore homes</a></div></div>}
-    {!loading && !error && listings.length > 0 && <div className="owner-listings-list">{listings.map((listing) => <ListingCard key={listing._id} listing={listing} token="" onChanged={() => setRefreshKey((key) => key + 1)} />)}</div>}
+    {!loading && !error && listings.length > 0 && <div className="owner-listings-list">{listings.map((listing) => <ListingCard key={listing._id} listing={listing} getToken={getToken} onChanged={() => setRefreshKey((key) => key + 1)} />)}</div>}
     <p className="form-help">Listing changes are sent to the protected API. Only the listing owner can manage these records.</p>
   </section>;
 }
