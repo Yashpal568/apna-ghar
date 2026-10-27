@@ -40,7 +40,7 @@ export default function PropertySearchResults({ location, transaction, category 
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [savedIds, setSavedIds] = useState<string[]>([]);
+  const [savedIds, setSavedIds] = useState<string[]>([]);\n  const [page, setPage] = useState(1);\n  const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc">("newest");
 
   useEffect(() => {
     const refreshSaved = () => {
@@ -64,7 +64,7 @@ export default function PropertySearchResults({ location, transaction, category 
     async function load() {
       setLoading(true);
       setError("");
-      const params = new URLSearchParams({ page: "1", limit: "12", sort: "newest" });
+      const params = new URLSearchParams({ page: String(page), limit: "12", sort });
       if (location) params.set("city", location);
       if (transaction === "rent" || transaction === "sale" || transaction === "buy") params.set("listingType", transaction === "buy" ? "sale" : transaction);
       if (category && category !== "all property types") params.set("categoryId", category);
@@ -81,14 +81,14 @@ export default function PropertySearchResults({ location, transaction, category 
     }
     void load();
     return () => controller.abort();
-  }, [location, transaction, category]);
+  }, [location, transaction, category, page, sort]);
 
   if (loading) return <section className="results-loading" role="status" aria-label="Loading properties"><div className="results-toolbar"><div><div className="skeleton skeleton-heading" /><div className="skeleton skeleton-copy" /></div><div className="skeleton skeleton-action" /></div><div className="property-results-grid">{Array.from({ length: 6 }, (_, index) => <article className="property-result-card skeleton-card" key={index} aria-hidden="true"><div className="skeleton skeleton-image" /><div className="property-result-body"><div className="skeleton skeleton-copy" /><div className="skeleton skeleton-heading" /><div className="skeleton skeleton-price" /><div className="skeleton skeleton-copy skeleton-short" /></div><div className="skeleton skeleton-action skeleton-save" /></article>)}</div><span className="sr-only">Finding properties…</span></section>;
   if (error) return <div className="search-empty" role="alert"><h2>Listings temporarily unavailable</h2><p>{error}</p><button className="button button-outline" onClick={() => window.location.reload()} type="button">Retry</button></div>;
   if (!result?.items.length) return <div className="search-empty"><div className="empty-illustration"><span>⌂</span><span>⌕</span></div><h2>No matching properties yet</h2><p>There are no published listings matching these filters. Try another city or list your property to get started.</p><a className="button button-primary" href="/list-property">List a property</a><a className="text-link" href="/">Back to home</a></div>;
 
   return <section aria-live="polite">
-    <div className="results-toolbar"><div><h2>Available properties</h2><p>{result.pagination.total} listing{result.pagination.total === 1 ? "" : "s"} · live marketplace data</p></div><a className="text-link" href="/saved">Saved homes ({savedIds.length})</a></div>
+    <div className="results-toolbar"><div><h2>Available properties</h2><p>{result.pagination.total} listing{result.pagination.total === 1 ? "" : "s"} · live marketplace data</p></div><div className="results-toolbar-actions"><label className="sort-control">Sort by <select aria-label="Sort properties" value={sort} onChange={(event) => { setSort(event.target.value as typeof sort); setPage(1); }}><option value="newest">Newest</option><option value="price_asc">Price: low to high</option><option value="price_desc">Price: high to low</option></select></label><a className="text-link" href="/saved">Saved homes ({savedIds.length})</a></div></div>
     <div className="property-results-grid">
       {result.items.map((property) => {
         const isSaved = savedIds.includes(property._id);
