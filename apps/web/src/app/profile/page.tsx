@@ -4,6 +4,7 @@ import BrandLogo from "../components/BrandLogo";
 
 import { useEffect, useState } from "react";
 import ThemePicker from "../components/ThemePicker";
+import AccountSettingsPanel from "../components/AccountSettingsPanel";
 
 type Profile={name:string;email:string;phone:string;city:string;about:string};
 const blank:Profile={name:"",email:"",phone:"",city:"",about:""};
@@ -23,5 +24,5 @@ export default function ProfilePage(){
  <label htmlFor="profile-city">City</label><input id="profile-city" value={profile.city} onChange={e=>set("city",e.target.value)} placeholder="Your city"/>
  <label htmlFor="profile-about">About (optional)</label><textarea id="profile-about" rows={4} value={profile.about} maxLength={500} onChange={e=>set("about",e.target.value)} placeholder="A short introduction"/>
  {message&&<p role="status" className="form-notice">{message}</p>}<button className="button button-primary button-full" type="submit">Save profile</button>
- <div className="profile-links"><a href="/saved">View saved homes ↗</a><a href="/my-listings">Manage my listings ↗</a></div></form></section><footer className="simple-footer">Apna Ghar · Profile</footer></main>;
+ <div className="profile-links"><a href="/saved">View saved homes ↗</a><a href="/my-listings">Manage my listings ↗</a></div></form></section><section className="profile-account-settings" style={{maxWidth:680,margin:"28px auto 0"}}><AccountSettingsPanel /></section><footer className="simple-footer">Apna Ghar · Profile</footer></main>;
 }
