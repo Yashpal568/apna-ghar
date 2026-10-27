@@ -221,3 +221,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .owner-listing-actions .button{min-height:38px;padding:8px 12px;font-size:13px}
 .owner-delete-action{color:#b91c1c!important}
 @media(max-width:640px){.owner-listing-stats{gap:8px}.owner-listing-stats>div{padding:13px 12px}.owner-listing-stats strong{font-size:22px}.owner-listing-stats span{font-size:11px}.owner-listing-card{grid-template-columns:1fr;gap:12px}.owner-listing-image{min-height:190px}.owner-listing-image img{min-height:190px}.owner-listing-actions .button{flex:1}}
+
+/* Finalized Apna Ghar logo: blue roof and green/blue flowing waves */
+.brand{display:inline-flex;align-items:center;gap:9px;text-decoration:none;min-width:max-content}
+.brand .brand-symbol{display:block;width:46px;height:38px;flex:0 0 auto;overflow:visible}
+.brand .brand-wordmark{display:inline-flex;align-items:baseline;gap:5px;font-size:25px;letter-spacing:-1.1px;font-weight:750;line-height:1;color:var(--text-primary,#15243c)}
+.brand .brand-wordmark b{font-weight:800;background:linear-gradient(100deg,#1768df,#0644a8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand-compact .brand-symbol{width:38px;height:32px}
+@media(max-width:480px){.brand .brand-symbol{width:39px;height:33px}.brand .brand-wordmark{font-size:22px}}
