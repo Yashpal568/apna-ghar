@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ThemePicker from "../components/ThemePicker";
+import PropertySearchResults from "../components/PropertySearchResults";
 
 export const metadata: Metadata = { title: "Explore properties", description: "Explore property types and locations on Apna Ghar." };
 
@@ -12,8 +13,7 @@ export default function SearchPage({ searchParams }: { searchParams: { location?
     <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>Explore properties</span></div>
     <section className="search-page-heading"><p className="eyebrow">YOUR SEARCH, YOUR PACE</p><h1>Find the place<br/>that feels <em>right.</em></h1><p>Browse with a clear head. Compare the details that matter to you.</p></section>
     <form action="/search" className="search-card search-page-form"><div className="search-field"><label htmlFor="location">Location</label><input id="location" name="location" defaultValue={location} placeholder="City, area or PIN code"/></div><div className="search-field"><label htmlFor="transaction">Looking to</label><select id="transaction" name="transaction" defaultValue={transaction}><option value="buy">Buy</option><option value="rent">Rent</option></select></div><div className="search-field"><label htmlFor="type">Property type</label><select id="type" name="type" defaultValue={type}><option value="all property types">All types</option><option value="house">Independent house</option><option value="apartment">Apartment</option><option value="villa">Villa</option><option value="plot">Plot / land</option></select></div><button className="button button-primary" type="submit">Update search ↗</button></form>
-    <div className="results-toolbar"><div><h2>Explore homes</h2><p>{location ? `Showing sample matches for “${location}”` : "A curated starting point for your search"} · {type}</p></div><button className="filter-button" type="button" disabled title="Filters connect when live listing search is implemented">☷ Filters <span>Coming soon</span></button></div>
-    <div className="search-empty"><div className="empty-illustration"><span>⌂</span><span>⌕</span></div><h2>Live listings are coming next.</h2><p>This design is ready for the search API, filters, sorting, saved homes and pagination. The current repository does not yet have a connected listing database, so we’re not showing made-up search results as real inventory.</p><a className="button button-primary" href="/list-property">List a property</a><a className="text-link" href="/">Back to home</a></div>
-    <footer className="simple-footer">Apna Ghar · Sample search experience</footer>
+    <PropertySearchResults location={location} transaction={transaction} category={type} />
+    <footer className="simple-footer">Apna Ghar · Live property search</footer>
   </main>;
 }
