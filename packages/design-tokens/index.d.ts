@@ -1,0 +1,2 @@
+export const color: {primary:string;secondary:string;navy:string;lightSurface:string;white:string};
+export const theme: {light:{background:string;surface:string;text:string;muted:string};dark:{background:string;surface:string;text:string;muted:string}};
