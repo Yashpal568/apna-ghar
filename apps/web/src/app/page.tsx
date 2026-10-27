@@ -1,6 +1,8 @@
 import BrandLogo from "./components/BrandLogo";
 import ThemePicker from "./components/ThemePicker";
 import FeaturedProperties from "./components/FeaturedProperties";
+import SiteHeader from "./components/SiteHeader";
+import SiteFooter from "./components/SiteFooter";
 
 const categories = [
   { icon: "⌂", title: "Independent homes", copy: "Space to grow, room to belong", type: "house" },
@@ -13,11 +15,7 @@ const categories = [
 
 export default function HomePage() {
   return <main>
-    <header className="site-header page-shell">
-      <a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a>
-      <nav className="desktop-nav" aria-label="Main navigation"><a href="/search">Buy a home</a><a href="/search?transaction=rent">Rent</a><a href="/list-property">List property</a></nav>
-      <div className="header-actions"><ThemePicker compact /><a className="button button-quiet sign-in" href="/sign-in">Sign in</a><a className="button button-primary" href="/list-property">Post a property <span aria-hidden="true">↗</span></a></div>
-    </header>
+    <SiteHeader active="home" />
 
     <section className="hero-wrap page-shell">
       <div className="hero-copy">
@@ -52,6 +50,6 @@ export default function HomePage() {
     </section>
 
     <section className="owner-banner page-shell"><div className="owner-mark">↗</div><div><p className="eyebrow">YOUR PROPERTY, YOUR WAY</p><h2>Have a place to share?</h2><p>Reach people looking for a place just like yours.</p></div><a className="button button-light" href="/list-property">List your property <span>↗</span></a></section>
-    <footer className="site-footer page-shell"><a className="footer-brand" href="/">Apna <b>Ghar</b></a><span>Thoughtful search. Better decisions.</span><div><a href="/about">About</a><a href="/safety">Trust & safety</a><a href="/privacy">Privacy</a></div><small>© {new Date().getFullYear()} Apna Ghar.</small></footer>
+    <SiteFooter />
   </main>;
 }
