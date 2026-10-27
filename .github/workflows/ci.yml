@@ -1,26 +1,26 @@
 name: CI
 on:
   push:
-    branches: [main]
+    branches: [main, "feat/**", "fix/**"]
   pull_request:
 
 jobs:
-  api:
+  verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
-      - run: npm run build:api
-      - run: npm run test:api
-  web:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm install
-      - run: npm run build:web
+          cache: npm
+      - name: Install workspace dependencies
+        run: npm install
+      - name: Typecheck API, web and mobile
+        run: npm run typecheck
+      - name: Test API
+        run: npm run test:api
+      - name: Build API
+        run: npm run build:api
+      - name: Build web
+        run: npm run build:web
