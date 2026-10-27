@@ -28,7 +28,7 @@ export class PropertiesService {
       .sort({ publishedAt: -1 }).select('-__v').lean().exec();
   }
 
-  async updateMine(ownerId: string, identifier: string, input: CreatePropertyDto) {
+  async updateMine(ownerId: string, identifier: string, input: Partial<CreatePropertyDto>) {
     const mongoose = await import('mongoose');
     if (!mongoose.isValidObjectId(identifier)) return null;
     return this.properties.findOneAndUpdate(
