@@ -4,6 +4,7 @@
 [data-theme="light"] {
   color-scheme: light;
   --color-primary: #2563EB;
+  --color-on-primary: #FFFFFF;
   --color-primary-hover: #1D4ED8;
   --color-green: #10B981;
   --color-navy: #0F172A;
@@ -26,7 +27,7 @@
 /* 1. Deep Navy — premium, cool blue surfaces */
 [data-theme="midnight"] {
   color-scheme: dark;
-  --color-primary: #60A5FA; --color-primary-hover: #93C5FD; --color-green: #34D399;
+  --color-primary: #60A5FA; --color-primary-hover: #93C5FD; --color-on-primary: #0B1120; --color-green: #34D399;
   --color-navy: #E5EEFF; --color-bg: #0B1120; --color-surface: #111B2E;
   --color-surface-raised: #17243A; --color-surface-subtle: #1D2B43;
   --color-text: #F1F5F9; --color-text-secondary: #C0CCDD; --color-muted: #91A1B8;
@@ -37,7 +38,7 @@
 /* 2. Graphite — neutral charcoal with restrained green accents */
 [data-theme="graphite"] {
   color-scheme: dark;
-  --color-primary: #7CB4FF; --color-primary-hover: #A5CCFF; --color-green: #4ADE80;
+  --color-primary: #7CB4FF; --color-primary-hover: #A5CCFF; --color-on-primary: #111827; --color-green: #4ADE80;
   --color-navy: #F1F5F9; --color-bg: #17191D; --color-surface: #202328;
   --color-surface-raised: #292D33; --color-surface-subtle: #30353C;
   --color-text: #F5F5F5; --color-text-secondary: #D0D4DA; --color-muted: #A0A7B2;
@@ -59,7 +60,7 @@
 /* 4. AMOLED — true black background to reduce lit pixels on OLED screens */
 [data-theme="amoled"] {
   color-scheme: dark;
-  --color-primary: #60A5FA; --color-primary-hover: #93C5FD; --color-green: #34D399;
+  --color-primary: #60A5FA; --color-primary-hover: #93C5FD; --color-on-primary: #0B1120; --color-green: #34D399;
   --color-navy: #F8FAFC; --color-bg: #000000; --color-surface: #080808;
   --color-surface-raised: #111111; --color-surface-subtle: #181818;
   --color-text: #FAFAFA; --color-text-secondary: #D4D4D4; --color-muted: #A3A3A3;
