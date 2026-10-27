@@ -1,5 +1,6 @@
 import BrandLogo from "./components/BrandLogo";
 import ThemePicker from "./components/ThemePicker";
+import FeaturedProperties from "./components/FeaturedProperties";
 
 const categories = [
   { icon: "⌂", title: "Independent homes", copy: "Space to grow, room to belong", type: "house" },
@@ -8,11 +9,7 @@ const categories = [
   { icon: "▱", title: "Plots & land", copy: "Start with a place of your own", type: "plot" },
 ];
 
-const homes = [
-  { id: "sample-1", kind: "Apartment · For sale", title: "Cedar Grove Residences", location: "Whitefield, Bengaluru", price: "₹1.28 Cr", meta: "3 BHK · 1,650 sq ft · Ready to move", art: "home-art-blue", tag: "New listing" },
-  { id: "sample-2", kind: "Independent house · For sale", title: "Indiranagar Garden Home", location: "Indiranagar, Bengaluru", price: "₹1.85 Cr", meta: "3 BHK · 1,780 sq ft · Ready to move", art: "home-art-green", tag: "Owner listed" },
-  { id: "sample-3", kind: "Plot · For sale", title: "Whitefield Residential Plot", location: "Whitefield, Bengaluru", price: "₹86 L", meta: "1,200 sq ft · Residential plot", art: "home-art-sand", tag: "Explore" },
-];
+
 
 export default function HomePage() {
   return <main>
@@ -49,12 +46,12 @@ export default function HomePage() {
 
     <section className="featured-section">
       <div className="page-shell">
-        <div className="section-heading"><div><p className="eyebrow">A PLACE TO BEGIN</p><h2>Good homes. Great possibilities.</h2><p className="section-subtitle">Concept preview · Fictional listings and illustrative data.</p></div><a className="text-link" href="/search">See all properties <span>↗</span></a></div>
-        <div className="property-grid">{homes.map((home) => <article className="property-card" key={home.id}><a href={`/property/${home.id}`} className={`property-art ${home.art}`} aria-label={`View ${home.title}`}><span className="property-tag">{home.tag}</span><span className="property-art-shape shape-a"/><span className="property-art-shape shape-b"/><span className="property-art-shape shape-c"/></a><div className="property-info"><p className="property-kind">{home.kind}</p><h3><a href={`/property/${home.id}`}>{home.title}</a></h3><p className="property-location"><span aria-hidden="true">⌖</span> {home.location}</p><p className="property-meta">{home.meta}</p><div className="property-bottom"><strong>{home.price}</strong><a className="round-arrow" href={`/property/${home.id}`} aria-label={`View details for ${home.title}`}>↗</a></div></div></article>)}</div>
+        <div className="section-heading"><div><p className="eyebrow">A PLACE TO BEGIN</p><h2>Good homes. Great possibilities.</h2><p className="section-subtitle">Recently published · Live marketplace listings.</p></div><a className="text-link" href="/search">See all properties <span>↗</span></a></div>
+        <FeaturedProperties />
       </div>
     </section>
 
     <section className="owner-banner page-shell"><div className="owner-mark">↗</div><div><p className="eyebrow">YOUR PROPERTY, YOUR WAY</p><h2>Have a place to share?</h2><p>Reach people looking for a place just like yours.</p></div><a className="button button-light" href="/list-property">List your property <span>↗</span></a></section>
-    <footer className="site-footer page-shell"><a className="footer-brand" href="/">Apna <b>Ghar</b></a><span>Thoughtful search. Better decisions.</span><div><a href="/about">About</a><a href="/safety">Trust & safety</a><a href="/privacy">Privacy</a></div><small>© {new Date().getFullYear()} Apna Ghar. Sample content is illustrative.</small></footer>
+    <footer className="site-footer page-shell"><a className="footer-brand" href="/">Apna <b>Ghar</b></a><span>Thoughtful search. Better decisions.</span><div><a href="/about">About</a><a href="/safety">Trust & safety</a><a href="/privacy">Privacy</a></div><small>© {new Date().getFullYear()} Apna Ghar.</small></footer>
   </main>;
 }
