@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, SortOrder } from 'mongoose';
 import { ListPropertiesQueryDto } from './dto/list-properties-query.dto';
 import { Property, PropertyDocument } from './schemas/property.schema';
 
@@ -24,9 +24,9 @@ export class PropertiesService {
       filter.$or = [{ title: expression }, { description: expression }, { 'location.city': expression }, { 'location.locality': expression }];
     }
 
-    const sort = query.sort === 'price_asc' ? { priceAmount: 1 as const }
-      : query.sort === 'price_desc' ? { priceAmount: -1 as const }
-      : { publishedAt: -1 as const };
+    const sort: Record<string, SortOrder> = query.sort === 'price_asc' ? { priceAmount: 1 }
+      : query.sort === 'price_desc' ? { priceAmount: -1 }
+      : { publishedAt: -1 };
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
     const [items, total] = await Promise.all([
