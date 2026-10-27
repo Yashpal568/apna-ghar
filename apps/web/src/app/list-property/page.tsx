@@ -1,5 +1,6 @@
-import BrandLogo from "../components/BrandLogo";
 "use client";
+import BrandLogo from "../components/BrandLogo";
+
 
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
