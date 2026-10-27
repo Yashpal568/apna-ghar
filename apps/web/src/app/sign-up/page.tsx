@@ -5,6 +5,8 @@ import ThemePicker from "../components/ThemePicker";
 export const metadata: Metadata = { title: "Create account" };
 
 export default function SignUpPage() {
+  const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+
   return (
     <main className="auth-page page-shell">
       <header className="site-header auth-header">
@@ -19,7 +21,11 @@ export default function SignUpPage() {
           <p className="eyebrow">MAKE YOURSELF AT HOME</p>
           <h1>Create your Apna Ghar account</h1>
           <p className="auth-muted">Save homes, connect with owners and manage your listings.</p>
-          <SignUp routing="hash" signInUrl="/sign-in" />
+          {clerkConfigured ? (
+            <SignUp routing="hash" signInUrl="/sign-in" />
+          ) : (
+            <p role="status">Account creation is not configured yet. Add the Clerk publishable key to the web app environment to enable authentication.</p>
+          )}
         </div>
       </section>
       <footer className="simple-footer auth-footer">
