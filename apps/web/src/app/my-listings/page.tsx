@@ -1,3 +1,4 @@
+import BrandLogo from "../components/BrandLogo";
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
@@ -120,7 +121,7 @@ export default function MyListingsPage() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   return <main className="page-shell interior-page">
     <header className="site-header interior-header">
-      <a className="brand" href="/" aria-label="Apna Ghar home"><span className="brand-placeholder">INSERT APPROVED APNA GHAR LOGO ASSET</span><span className="brand-name">Apna <b>Ghar</b></span></a>
+      <a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a>
       <nav className="desktop-nav" aria-label="Main navigation"><a href="/search">Explore homes</a><a href="/saved">Saved homes</a><a href="/list-property">List property</a></nav>
       <div className="header-actions"><a className="button button-outline" href="/profile">Profile</a></div>
     </header>
