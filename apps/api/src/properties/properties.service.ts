@@ -20,9 +20,7 @@ export class PropertiesService {
       publishedAt: new Date(),
       deletedAt: null,
     });
-    const result = property.toObject();
-    delete (result as Record<string, unknown>).__v;
-    return result;
+    return property.toObject();
   }
 
   async list(query: ListPropertiesQueryDto) {
