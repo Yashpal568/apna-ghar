@@ -66,7 +66,7 @@ export default function PropertySearchResults({ location, transaction, category 
       setError("");
       const params = new URLSearchParams({ page: "1", limit: "12", sort: "newest" });
       if (location) params.set("city", location);
-      if (transaction === "rent" || transaction === "sale") params.set("listingType", transaction);
+      if (transaction === "rent" || transaction === "sale" || transaction === "buy") params.set("listingType", transaction === "buy" ? "sale" : transaction);
       if (category && category !== "all property types") params.set("categoryId", category);
       try {
         const response = await fetch(`${apiBase}/properties?${params.toString()}`, { signal: controller.signal, headers: { Accept: "application/json" } });
