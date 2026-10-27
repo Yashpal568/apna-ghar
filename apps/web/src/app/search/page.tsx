@@ -2,6 +2,8 @@ import BrandLogo from "../components/BrandLogo";
 import type { Metadata } from "next";
 import ThemePicker from "../components/ThemePicker";
 import PropertySearchResults from "../components/PropertySearchResults";
+import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
 
 export const metadata: Metadata = { title: "Explore properties", description: "Explore property types and locations on Apna Ghar." };
 
@@ -10,11 +12,11 @@ export default function SearchPage({ searchParams }: { searchParams: { location?
   const type = searchParams.type && searchParams.type !== "any" ? searchParams.type : "all property types";
   const transaction = searchParams.transaction === "rent" ? "rent" : "buy";
   return <main className="page-shell interior-page">
-    <header className="site-header interior-header"><a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a><nav className="desktop-nav"><a href="/search">Explore</a><a href="/list-property">List property</a></nav><div className="header-actions"><ThemePicker compact/><a className="button button-primary" href="/sign-in">Sign in</a></div></header>
+    <SiteHeader active="search" />
     <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>Explore properties</span></div>
     <section className="search-page-heading"><p className="eyebrow">YOUR SEARCH, YOUR PACE</p><h1>Find the place<br/>that feels <em>right.</em></h1><p>Browse with a clear head. Compare the details that matter to you.</p></section>
     <form action="/search" className="search-card search-page-form"><div className="search-field"><label htmlFor="location">Location</label><input id="location" name="location" defaultValue={location} placeholder="City, area or PIN code"/></div><div className="search-field"><label htmlFor="transaction">Looking to</label><select id="transaction" name="transaction" defaultValue={transaction}><option value="buy">Buy</option><option value="rent">Rent</option></select></div><div className="search-field"><label htmlFor="type">Property type</label><select id="type" name="type" defaultValue={type}><option value="all property types">All types</option><option value="house">Independent house</option><option value="apartment">Apartment</option><option value="villa">Villa</option><option value="plot">Plot / land</option></select></div><div className="search-field"><label htmlFor="minPrice">Min price (₹)</label><input id="minPrice" name="minPrice" type="number" min="0" inputMode="numeric" defaultValue={searchParams.minPrice} placeholder="No minimum"/></div><div className="search-field"><label htmlFor="maxPrice">Max price (₹)</label><input id="maxPrice" name="maxPrice" type="number" min="0" inputMode="numeric" defaultValue={searchParams.maxPrice} placeholder="No maximum"/></div><button className="button button-primary" type="submit">Update search ↗</button></form>
     <PropertySearchResults location={location} transaction={transaction} category={type} minPrice={searchParams.minPrice} maxPrice={searchParams.maxPrice} initialSort={searchParams.sort} />
-    <footer className="simple-footer">Apna Ghar · Live property search</footer>
+    <SiteFooter />
   </main>;
 }
