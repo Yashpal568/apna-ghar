@@ -4,8 +4,6 @@ import ThemePicker from "../components/ThemePicker";
 import PropertySearchResults from "../components/PropertySearchResults";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import SiteHeader from "../components/SiteHeader";
-import SiteFooter from "../components/SiteFooter";
 
 export const metadata: Metadata = { title: "Explore properties", description: "Explore property types and locations on Apna Ghar." };
 
