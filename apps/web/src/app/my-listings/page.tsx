@@ -60,8 +60,9 @@ function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getTo
       <h3>{listing.title}</h3>
       <p>{[listing.location?.locality, listing.location?.city, listing.location?.state].filter(Boolean).join(", ") || "Location not provided"}</p>
       <strong>{money(listing.priceAmount)}{listing.listingType === "rent" ? " / month" : ""}</strong>
-      <p className="owner-listing-facts">{listing.bedrooms ? `${listing.bedrooms} beds · ` : ""}{listing.bathrooms ? `${listing.bathrooms} baths · ` : ""}{listing.areaValue} {listing.areaUnit}</p><div className="owner-listing-analytics"><span><strong>{(listing.viewsCount ?? 0).toLocaleString("en-IN")}</strong> listing views</span><span><strong>—</strong> enquiries <small>(tracking coming soon)</small></span></div>
-      <div className="owner-listing-analytics"><span><strong>{listing.viewsCount ?? 0}</strong> Listing views</span><span><strong>—</strong> Enquiries <small>tracking not enabled yet</small></span><span><strong>{listing.publishedAt ? new Date(listing.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}</strong> Published</span></div>\n      <div className="owner-listing-actions">
+      <p className="owner-listing-facts">{listing.bedrooms ? `${listing.bedrooms} beds · ` : ""}{listing.bathrooms ? `${listing.bathrooms} baths · ` : ""}{listing.areaValue} {listing.areaUnit}</p>
+      <div className="owner-listing-analytics"><span><strong>{(listing.viewsCount ?? 0).toLocaleString("en-IN")}</strong> listing views</span><span><strong>—</strong> enquiries <small>tracking not enabled yet</small></span><span><strong>{listing.publishedAt ? new Date(listing.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}</strong> Published</span></div>
+      <div className="owner-listing-actions">
         <a className="button button-outline" href={`/property/${encodeURIComponent(listing.slug || listing._id)}`}>View listing</a>
         <button className="button button-outline" type="button" disabled={busy} onClick={() => void mutate("visibility")}>{busy ? "Please wait…" : listing.status === "active" ? "Hide listing" : "Publish listing"}</button>
         <button className="button button-outline owner-delete-action" type="button" disabled={busy} onClick={() => void mutate("delete")}>Delete</button>
