@@ -1,4 +1,31 @@
 import type { Metadata } from "next";
+import { SignUp } from "@clerk/nextjs";
 import ThemePicker from "../components/ThemePicker";
+
 export const metadata: Metadata = { title: "Create account" };
-export default function SignUpPage() { return <main className="auth-page page-shell"><header className="site-header auth-header"><a className="brand" href="/"><span className="brand-placeholder">INSERT APPROVED APNA GHAR LOGO ASSET</span><span className="brand-name">Apna <b>Ghar</b></span></a><ThemePicker compact/></header><section className="auth-single"><div className="auth-card"><p className="eyebrow">MAKE YOURSELF AT HOME</p><h2>Create your account</h2><p className="auth-muted">Save homes, connect with owners and manage your listings.</p><button className="button button-outline button-full google-button" type="button" disabled><span className="google-g">G</span> Sign up with Google <small>Coming soon</small></button><div className="auth-separator"><span/>or use your email<span/></div><form className="auth-form"><label htmlFor="full-name">Full name</label><input id="full-name" autoComplete="name" placeholder="Your full name" required/><label htmlFor="email">Email address</label><input id="email" type="email" autoComplete="email" placeholder="you@example.com" required/><label htmlFor="password">Create password</label><input id="password" type="password" autoComplete="new-password" placeholder="At least 8 characters" minLength={8} required/><p className="auth-muted">Use a unique password you don’t use on other sites.</p><button className="button button-primary button-full" type="button" disabled>Create account</button><p className="auth-notice">Account creation and email verification will activate after Clerk integration.</p></form><p className="auth-switch">Already have an account? <a href="/sign-in">Sign in</a></p></div></section><footer className="simple-footer auth-footer"><a href="/">← Back to Apna Ghar</a><span>Terms and privacy links will be added before launch.</span></footer></main>; }
+
+export default function SignUpPage() {
+  return (
+    <main className="auth-page page-shell">
+      <header className="site-header auth-header">
+        <a className="brand" href="/" aria-label="Apna Ghar home">
+          <span className="brand-placeholder">INSERT APPROVED APNA GHAR LOGO ASSET</span>
+          <span className="brand-name">Apna <b>Ghar</b></span>
+        </a>
+        <ThemePicker compact />
+      </header>
+      <section className="auth-single">
+        <div className="auth-card clerk-auth-card">
+          <p className="eyebrow">MAKE YOURSELF AT HOME</p>
+          <h1>Create your Apna Ghar account</h1>
+          <p className="auth-muted">Save homes, connect with owners and manage your listings.</p>
+          <SignUp routing="hash" signInUrl="/sign-in" />
+        </div>
+      </section>
+      <footer className="simple-footer auth-footer">
+        <a href="/">← Back to Apna Ghar</a>
+        <span>Secure account access</span>
+      </footer>
+    </main>
+  );
+}
