@@ -1,5 +1,6 @@
-import BrandLogo from "../components/BrandLogo";
 "use client";
+import BrandLogo from "../components/BrandLogo";
+
 import { useEffect,useState } from "react";
 import ThemePicker from "../components/ThemePicker";
 type Home={_id:string;slug?:string;title:string;description?:string;listingType:"sale"|"rent";priceAmount:number;areaValue:number;areaUnit:string;bedrooms?:number;bathrooms?:number;imageUrls?:string[];location?:{city?:string;state?:string;locality?:string}};
