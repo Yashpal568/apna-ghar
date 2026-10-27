@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
 import { PropertyAuthGuard } from './property-auth.guard';
 import { PropertyReportsService } from './property-reports.service';
@@ -17,9 +17,9 @@ export class PropertyReportsController {
 
   @Get('admin')
   @UseGuards(AdminAuthGuard)
-  listForModeration(@Req() request: AuthenticatedRequest, @Param('status') _unused?: string) {
+  listForModeration(@Req() request: AuthenticatedRequest, @Query('status') status?: string) {
     if (!request.authUserId) throw new BadRequestException('Authenticated admin identity is missing');
-    return this.service.listForModeration();
+    return this.service.listForModeration(status);
   }
 
   @Post('admin/:reportId/status')
