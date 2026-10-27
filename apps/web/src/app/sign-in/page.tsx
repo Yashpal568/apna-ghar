@@ -10,9 +10,17 @@ export default function SignInPage() {
 
   return (
     <main className="auth-page page-shell">
-      <header className="site-header auth-header">
+      <header className="site-header auth-header premium-auth-navbar">
         <a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a>
-        <ThemePicker compact />
+        <form action="/search" className="auth-nav-search" role="search">
+          <span aria-hidden="true">⌕</span>
+          <input name="location" aria-label="Search by city or locality" placeholder="Search city, locality or project" />
+          <button type="submit">Search homes <span aria-hidden="true">↗</span></button>
+        </form>
+        <nav className="auth-nav-links" aria-label="Main navigation">
+          <a href="/search">Buy</a><a href="/search?transaction=rent">Rent</a><a href="/list-property">Sell</a>
+        </nav>
+        <div className="auth-nav-actions"><a href="/sign-up">Create account</a><ThemePicker compact /></div>
       </header>
       <section className="auth-layout">
         <div className="auth-story">
