@@ -739,3 +739,22 @@ select option { color: var(--color-text); background: var(--color-surface); }
 .hero-art{background-image:linear-gradient(135deg,rgba(8,32,40,.12),rgba(8,32,40,.03)),url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=85");background-size:cover;background-position:center;overflow:hidden}.hero-art>*{display:none}.hero-art:after{content:"Thoughtfully chosen spaces";position:absolute;left:24px;bottom:22px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,.9);color:#0f172a;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.12)}
 .property-art{background-size:cover;background-position:center;isolation:isolate}.property-art:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,15,25,.02) 30%,rgba(8,15,25,.48));z-index:-1}.property-art-blue{background-image:url("https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=80")}.property-art-green{background-image:url("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80")}.property-art-sand{background-image:url("https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=900&q=80")}.property-art .property-art-shape{display:none}
 .property-result-image{background-image:linear-gradient(135deg,var(--color-surface-soft),var(--color-border))}.property-result-image img{width:100%;height:100%;object-fit:cover;display:block}.results-toolbar-actions{gap:18px}
+
+
+/* Admin safety report workflow */
+.report-filter-label,.admin-report-actions label{display:flex;align-items:center;gap:10px;color:var(--text-secondary);font-size:13px;font-weight:650}
+.report-filter-label select,.admin-report-actions select{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface);color:var(--text);font:inherit;max-width:100%}
+.admin-report-list{display:grid;gap:14px;margin-top:18px}
+.admin-report-card{padding:20px;border:1px solid var(--border);border-radius:16px;background:var(--surface);color:var(--text);min-width:0}
+.admin-report-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.admin-report-heading h3{font-size:17px;margin:10px 0 0;color:var(--text)}
+.admin-report-heading time{font-size:12px;color:var(--text-muted);text-align:right}
+.report-status{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:750;text-transform:capitalize;background:var(--surface-muted);color:var(--text-secondary)}
+.report-status-open{background:#fff4d6;color:#8a5b00}.report-status-reviewing{background:#dcecff;color:#174f9b}.report-status-resolved{background:#d9f8e8;color:#086b45}.report-status-dismissed{background:#f0e8ff;color:#6339a3}
+.admin-report-card dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.admin-report-card dl div{min-width:0}.admin-report-card dt{font-size:11px;color:var(--text-muted);margin-bottom:5px}.admin-report-card dd{font-size:12px;overflow-wrap:anywhere;color:var(--text)}
+.admin-report-details{padding:12px 14px;border-radius:10px;background:var(--surface-muted);color:var(--text-secondary);white-space:pre-wrap;overflow-wrap:anywhere}
+.admin-report-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;border-top:1px solid var(--border);padding-top:14px;margin-top:14px}
+.report-list-skeleton{display:grid;gap:12px;padding-top:16px}.report-list-skeleton div{height:150px;border-radius:14px;background:linear-gradient(90deg,var(--surface-muted),var(--border),var(--surface-muted));background-size:200% 100%;animation:report-shimmer 1.4s ease-in-out infinite}
+@keyframes report-shimmer{to{background-position:-200% 0}}
+@media(max-width:680px){.admin-report-heading{flex-direction:column}.admin-report-heading time{text-align:left}.admin-report-card dl{grid-template-columns:1fr}.admin-report-actions{align-items:flex-start;flex-direction:column}.report-filter-label{align-items:flex-start;flex-direction:column}}
