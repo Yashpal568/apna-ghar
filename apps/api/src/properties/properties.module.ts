@@ -13,10 +13,11 @@ import { VisitRequestsService } from './visit-requests.service';
 import { PropertyReport, PropertyReportSchema } from './schemas/property-report.schema';
 import { PropertyReportsController } from './property-reports.controller';
 import { PropertyReportsService } from './property-reports.service';
+import { AdminAuthGuard } from './admin-auth.guard';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Property.name, schema: PropertySchema }, { name: SavedProperty.name, schema: SavedPropertySchema }, { name: VisitRequest.name, schema: VisitRequestSchema }, { name: PropertyReport.name, schema: PropertyReportSchema }])],
   controllers: [PropertiesController, SavedPropertiesController, VisitRequestsController, PropertyReportsController],
-  providers: [PropertiesService, SavedPropertiesService, VisitRequestsService, PropertyReportsService, PropertyAuthGuard],
+  providers: [PropertiesService, SavedPropertiesService, VisitRequestsService, PropertyReportsService, PropertyAuthGuard, AdminAuthGuard],
 })
 export class PropertiesModule {}
