@@ -10,6 +10,10 @@
 *.mobileprovision
 
 # Dependencies / build output
+apps/mobile/android/.gradle/
+apps/mobile/android/app/build/
+apps/mobile/ios/Pods/
+apps/mobile/ios/build/
 node_modules/
 dist/
 build/
