@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
 import { PropertiesModule } from './properties/properties.module';
 
@@ -15,6 +16,7 @@ import { PropertiesModule } from './properties/properties.module';
         serverSelectionTimeoutMS: 5000,
       }),
     }),
+    AuthModule,
     HealthModule,
     PropertiesModule,
   ],
