@@ -5,6 +5,8 @@ import SiteFooter from "../components/SiteFooter";
 
 import { useEffect,useState } from "react";
 import ThemePicker from "../components/ThemePicker";
+import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
 import { useAuth } from "@clerk/nextjs";
 type Home={_id:string;slug?:string;title:string;description?:string;listingType:"sale"|"rent";priceAmount:number;areaValue:number;areaUnit:string;bedrooms?:number;bathrooms?:number;imageUrls?:string[];location?:{city?:string;state?:string;locality?:string}};
 const money=(n:number)=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n);
@@ -21,4 +23,4 @@ function SavedPageContent(){
 }
 export default function SavedPage(){const enabled=Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);return enabled?<SavedPageContent/>:<SavedPageLocal/>;}
 function SavedPageLocal(){return <SavedPageFallback/>;}
-function SavedPageFallback(){return <main className="page-shell interior-page"><header className="site-header interior-header"><a className="brand" href="/"><BrandLogo /></a><nav className="desktop-nav"><a href="/search">Explore homes</a></nav><div className="header-actions"><ThemePicker compact/><a className="button button-primary" href="/sign-in">Sign in to sync</a></div></header><div className="search-empty"><h1>Saved homes</h1><p>Your browser-saved homes are available on this device. Sign in to sync saved properties to your account.</p><a className="button button-primary" href="/search">Explore properties</a></div></main>;}
+function SavedPageFallback(){return <main className="page-shell interior-page"><SiteHeader active="saved" /><div className="search-empty"><h1>Saved homes</h1><p>Your browser-saved homes are available on this device. Sign in to sync saved properties to your account.</p><a className="button button-primary" href="/search">Explore properties</a></div></main>;}
