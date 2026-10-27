@@ -1,15 +1,23 @@
 import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
-import type { Request } from 'express';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { PropertyAuthGuard } from './property-auth.guard';
 import { ListPropertiesQueryDto } from './dto/list-properties-query.dto';
 import { PropertiesService } from './properties.service';
 
+type AuthenticatedRequest = { authUserId?: string };
+
 @Controller('properties')
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
 
-  @Post()\n  @UseGuards(PropertyAuthGuard)\n  create(@Req() request: Request & { authUserId?: string }, @Body() body: CreatePropertyDto) {\n    if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');\n    return this.propertiesService.create(request.authUserId, body);\n  }\n\n  @Get()
+  @Post()
+  @UseGuards(PropertyAuthGuard)
+  create(@Req() request: AuthenticatedRequest, @Body() body: CreatePropertyDto) {
+    if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
+    return this.propertiesService.create(request.authUserId, body);
+  }
+
+  @Get()
   list(@Query() query: ListPropertiesQueryDto) {
     if (query.minPrice !== undefined && query.maxPrice !== undefined && query.minPrice > query.maxPrice) {
       throw new BadRequestException('minPrice must not exceed maxPrice');
