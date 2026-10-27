@@ -5,16 +5,24 @@
   "workspaces": [
     "apps/api",
     "apps/web",
+    "apps/mobile",
     "packages/*"
   ],
   "scripts": {
     "dev:api": "npm run start:dev -w @apna-ghar/api",
     "dev:web": "npm run dev -w @apna-ghar/web",
+    "dev:mobile": "npm run start -w @apna-ghar/mobile",
     "build:api": "npm run build -w @apna-ghar/api",
     "build:web": "npm run build -w @apna-ghar/web",
     "build": "npm run build:api && npm run build:web",
     "test:api": "npm run test -w @apna-ghar/api",
-    "lint:web": "npm run lint -w @apna-ghar/web"
+    "lint:web": "npm run lint -w @apna-ghar/web",
+    "typecheck:api": "npx tsc --noEmit -p apps/api/tsconfig.json",
+    "typecheck:web": "npx tsc --noEmit -p apps/web/tsconfig.json",
+    "typecheck": "npm run typecheck:api && npm run typecheck:web && npm run typecheck:mobile",
+    "test": "npm run test:api",
+    "ci": "npm run typecheck && npm run test && npm run build",
+    "typecheck:mobile": "npx tsc --noEmit -p apps/mobile/tsconfig.json"
   },
   "engines": {
     "node": ">=20.11.0"
