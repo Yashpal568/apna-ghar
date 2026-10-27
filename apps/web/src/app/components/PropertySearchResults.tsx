@@ -36,7 +36,7 @@ function toggleSavedProperty(property: Property): boolean {
   }
 }
 
-export default function PropertySearchResults({ location, transaction, category, minPrice, maxPrice, minBedrooms, initialSort }: { location?: string; transaction: string; category?: string; minPrice?: string; maxPrice?: string; minBedrooms?: string; initialSort?: string }) {
+export default function PropertySearchResults({ location, transaction, category, minPrice, maxPrice, minBedrooms, minBathrooms, furnishing, initialSort }: { location?: string; transaction: string; category?: string; minPrice?: string; maxPrice?: string; minBedrooms?: string; minBathrooms?: string; furnishing?: string; initialSort?: string }) {
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -71,6 +71,8 @@ export default function PropertySearchResults({ location, transaction, category,
       if (minPrice && Number(minPrice) >= 0) params.set("minPrice", minPrice);
       if (maxPrice && Number(maxPrice) >= 0) params.set("maxPrice", maxPrice);
       if (minBedrooms && Number(minBedrooms) >= 0) params.set("minBedrooms", minBedrooms);
+      if (minBathrooms && Number(minBathrooms) >= 0) params.set("minBathrooms", minBathrooms);
+      if (furnishing) params.set("furnishing", furnishing);
       if (transaction === "rent" || transaction === "sale" || transaction === "buy") params.set("listingType", transaction === "buy" ? "sale" : transaction);
       if (category && category !== "all property types") params.set("categoryId", category);
       try {
@@ -86,7 +88,7 @@ export default function PropertySearchResults({ location, transaction, category,
     }
     void load();
     return () => controller.abort();
-  }, [location, transaction, category, minPrice, maxPrice, minBedrooms, page, sort]);
+  }, [location, transaction, category, minPrice, maxPrice, minBedrooms, minBathrooms, furnishing, page, sort]);
 
   if (loading) return <section className="results-loading" role="status" aria-label="Loading properties"><div className="results-toolbar"><div><div className="skeleton skeleton-heading" /><div className="skeleton skeleton-copy" /></div><div className="skeleton skeleton-action" /></div><div className="property-results-grid">{Array.from({ length: 6 }, (_, index) => <article className="property-result-card skeleton-card" key={index} aria-hidden="true"><div className="skeleton skeleton-image" /><div className="property-result-body"><div className="skeleton skeleton-copy" /><div className="skeleton skeleton-heading" /><div className="skeleton skeleton-price" /><div className="skeleton skeleton-copy skeleton-short" /></div><div className="skeleton skeleton-action skeleton-save" /></article>)}</div><span className="sr-only">Finding properties…</span></section>;
   if (error) return <div className="search-empty" role="alert"><h2>Listings temporarily unavailable</h2><p>{error}</p><button className="button button-outline" onClick={() => window.location.reload()} type="button">Retry</button></div>;
