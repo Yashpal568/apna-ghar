@@ -1,3 +1,4 @@
+import BrandLogo from "../components/BrandLogo";
 "use client";
 
 import { useEffect, useState } from "react";
@@ -11,7 +12,7 @@ export default function ProfilePage(){
  useEffect(()=>{try{const raw=localStorage.getItem("apna-ghar-profile");if(raw)setProfile({...blank,...JSON.parse(raw)});}catch{setMessage("Could not load this browser's saved profile.");}},[]);
  const set=(key:keyof Profile,value:string)=>setProfile(old=>({...old,[key]:value}));
  const save=(e:React.FormEvent)=>{e.preventDefault();try{localStorage.setItem("apna-ghar-profile",JSON.stringify(profile));setMessage("Profile saved on this device. Account sync will be available after API integration.");}catch{setMessage("Could not save profile in this browser.");}};
- return <main className="page-shell interior-page"><header className="site-header interior-header"><a className="brand" href="/"><span className="brand-mark">⌂</span><span className="brand-name">Apna <b>Ghar</b></span></a><nav className="desktop-nav"><a href="/saved">Saved homes</a><a href="/my-listings">My listings</a></nav><div className="header-actions"><ThemePicker compact/><a className="button button-quiet" href="/sign-in">Sign in</a></div></header>
+ return <main className="page-shell interior-page"><header className="site-header interior-header"><a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a><nav className="desktop-nav"><a href="/saved">Saved homes</a><a href="/my-listings">My listings</a></nav><div className="header-actions"><ThemePicker compact/><a className="button button-quiet" href="/sign-in">Sign in</a></div></header>
  <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>My profile</span></div>
  <section className="listing-intro"><p className="eyebrow">YOUR ACCOUNT</p><h1>A little more<br/><em>about you.</em></h1><p>Keep your contact details handy for property enquiries and visits.</p></section>
  <section className="auth-single" style={{maxWidth:680,marginTop:0}}><form className="auth-card auth-form" onSubmit={save}><div className="profile-avatar" aria-hidden="true">{profile.name.trim()?profile.name.trim().split(/\s+/).slice(0,2).map(x=>x[0].toUpperCase()).join(""):"AG"}</div><h2>Profile details</h2><p className="auth-muted">Your profile is saved locally in this browser for now, not in a shared account.</p>
