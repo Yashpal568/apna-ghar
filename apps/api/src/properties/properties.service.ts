@@ -23,6 +23,21 @@ export class PropertiesService {
     return property.toObject();
   }
 
+  async listMine(ownerId: string) {
+    return this.properties.find({ ownerId, deletedAt: null })
+      .sort({ publishedAt: -1 }).select('-__v').lean().exec();
+  }
+
+  async removeMine(ownerId: string, identifier: string) {
+    const mongoose = await import('mongoose');
+    if (!mongoose.isValidObjectId(identifier)) return null;
+    return this.properties.findOneAndUpdate(
+      { _id: identifier, ownerId, deletedAt: null },
+      { $set: { status: 'deleted', deletedAt: new Date() } },
+      { new: true },
+    ).select('-__v').lean().exec();
+  }
+
   async list(query: ListPropertiesQueryDto) {
     const filter: FilterQuery<PropertyDocument> = { status: 'active', deletedAt: null };
     if (query.city) filter['location.city'] = new RegExp(this.escapeRegex(query.city), 'i');
