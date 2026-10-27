@@ -27,7 +27,7 @@ export default function ThemePicker({ compact = false }: { compact?: boolean }) 
     setTheme(initial);
     document.documentElement.dataset.theme = resolveTheme(initial);
     const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => { if (initial === "system") document.documentElement.dataset.theme = resolveTheme("system"); };
+    const onChange = () => { if (window.localStorage.getItem("apna-ghar-theme") === "system") document.documentElement.dataset.theme = resolveTheme("system"); };
     media.addEventListener?.("change", onChange);
     return () => media.removeEventListener?.("change", onChange);
   }, []);
