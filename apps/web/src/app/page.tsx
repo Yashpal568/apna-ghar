@@ -3,8 +3,6 @@ import ThemePicker from "./components/ThemePicker";
 import FeaturedProperties from "./components/FeaturedProperties";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
-import SiteHeader from "./components/SiteHeader";
-import SiteFooter from "./components/SiteFooter";
 
 const categories = [
   { icon: "⌂", title: "Independent homes", copy: "Space to grow, room to belong", type: "house" },
