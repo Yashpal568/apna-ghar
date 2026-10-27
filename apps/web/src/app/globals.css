@@ -12,7 +12,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .page-shell { max-width: var(--content-width); margin: 0 auto; padding: 0 36px; }
 .site-header { height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 205px; text-decoration: none; }
-.brand-placeholder { display: grid; place-items: center; flex: 0 0 38px; width: 38px; height: 38px; padding: 3px; border: 1px dashed var(--color-muted); border-radius: 9px; color: var(--color-muted); font-size: 4.7px; line-height: 1.15; letter-spacing: 0; text-align: center; overflow-wrap: anywhere; }
+.brand-mark { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; }
+.brand-mark svg { display: block; width: 40px; height: 40px; }
+.clerk-auth-card { padding: 26px; }
+.clerk-auth-card .cl-rootBox { width: 100%; }
+.clerk-auth-card .cl-card { box-shadow: none; border: 0; background: transparent; }
+.clerk-auth-card .cl-headerTitle { color: var(--color-text); letter-spacing: -.5px; }
+.clerk-auth-card .cl-headerSubtitle { color: var(--color-muted); }
+.clerk-auth-card .cl-formButtonPrimary { background: var(--color-primary); }
+.clerk-auth-card .cl-footerActionLink { color: var(--color-primary); }
 .brand-name { font-size: 22px; letter-spacing: -1px; font-weight: 600; color: var(--color-text); white-space: nowrap; }
 .brand-name b,.footer-brand b { color: var(--color-primary); font-weight: 800; }
 .desktop-nav { display: flex; align-items: center; gap: 32px; }
