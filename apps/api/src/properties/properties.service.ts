@@ -98,7 +98,7 @@ export class PropertiesService {
     } else {
       filter.slug = identifier.toLowerCase();
     }
-    return this.properties.findOne(filter).select('-__v').lean().exec();
+    return this.properties.findOneAndUpdate(filter, { $inc: { viewsCount: 1 } }, { new: true }).select('-__v').lean().exec();
   }
 
   private escapeRegex(value: string) {
