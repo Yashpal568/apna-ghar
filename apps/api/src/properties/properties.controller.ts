@@ -1,5 +1,6 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Patch, Query, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Patch, Query, Req, UseGuards } from '@nestjs/common';
 import { CreatePropertyDto } from './dto/create-property.dto';
+import { UpdatePropertyDto } from './dto/update-property.dto';
 import { PropertyAuthGuard } from './property-auth.guard';
 import { ListPropertiesQueryDto } from './dto/list-properties-query.dto';
 import { PropertiesService } from './properties.service';
@@ -24,9 +25,9 @@ export class PropertiesController {
     return this.propertiesService.listMine(request.authUserId);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @UseGuards(PropertyAuthGuard)
-  async updateMine(@Req() request: AuthenticatedRequest, @Param('id') id: string, @Body() body: CreatePropertyDto) {
+  async updateMine(@Req() request: AuthenticatedRequest, @Param('id') id: string, @Body() body: UpdatePropertyDto) {
     if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
     const property = await this.propertiesService.updateMine(request.authUserId, id, body);
     if (!property) throw new NotFoundException('Property not found or not owned by this account');
