@@ -15,7 +15,7 @@ export default function HomePage() {
   return <main>
     <header className="site-header page-shell">
       <a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a>
-      <nav className="desktop-nav" aria-label="Main navigation"><a href="/search">Buy a home</a><a href="/search?type=rent">Rent</a><a href="/list-property">List property</a></nav>
+      <nav className="desktop-nav" aria-label="Main navigation"><a href="/search">Buy a home</a><a href="/search?transaction=rent">Rent</a><a href="/list-property">List property</a></nav>
       <div className="header-actions"><ThemePicker compact /><a className="button button-quiet sign-in" href="/sign-in">Sign in</a><a className="button button-primary" href="/list-property">Post a property <span aria-hidden="true">↗</span></a></div>
     </header>
 
