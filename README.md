@@ -13,6 +13,10 @@ Premium Indian real-estate buy/sell marketplace.
 - Subscriptions: dynamic plans/features/entitlements designed from MVP; all users Free and payments disabled at launch
 
 ## Current scaffold status
+- A design-finalization branch (`design/finalize-web`) now contains a responsive Next.js UI pass for home discovery, search empty state, property details, sign-in/sign-up/recovery, listing creation, theme switching, public information drafts and admin workspace screens. See `docs/17-web-design-implementation-status.md` for what is visual-only versus production-gated.
+- The approved logo asset is not present in this repository; the UI intentionally displays the required asset placeholder rather than inventing a replacement.
+
+## Current scaffold status
 - NestJS API starter and liveness endpoint are committed.
 - Next.js public homepage starter and an admin placeholder route are committed.
 - Shared design tokens, transport types and feature-key types are committed.
