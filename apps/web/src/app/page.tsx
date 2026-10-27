@@ -8,9 +8,9 @@ const categories = [
 ];
 
 const homes = [
-  { id: "sample-1", kind: "Apartment · For sale", title: "Sunlit 3 BHK apartment", location: "Sector 62, Noida", price: "₹1.24 Cr", meta: "3 beds · 2 baths · 1,420 sq ft", art: "home-art-blue", tag: "New listing" },
-  { id: "sample-2", kind: "Independent house · For sale", title: "A calmer kind of home", location: "Indirapuram, Ghaziabad", price: "₹98 L", meta: "3 beds · 3 baths · 1,850 sq ft", art: "home-art-green", tag: "Owner listed" },
-  { id: "sample-3", kind: "Plot · For sale", title: "Room to build your future", location: "Greater Noida West", price: "₹42 L", meta: "1,200 sq ft · Residential plot", art: "home-art-sand", tag: "Explore" },
+  { id: "sample-1", kind: "Apartment · For sale", title: "Cedar Grove Residences", location: "Whitefield, Bengaluru", price: "₹1.28 Cr", meta: "3 BHK · 1,650 sq ft · Ready to move", art: "home-art-blue", tag: "New listing" },
+  { id: "sample-2", kind: "Independent house · For sale", title: "Indiranagar Garden Home", location: "Indiranagar, Bengaluru", price: "₹1.85 Cr", meta: "3 BHK · 1,780 sq ft · Ready to move", art: "home-art-green", tag: "Owner listed" },
+  { id: "sample-3", kind: "Plot · For sale", title: "Whitefield Residential Plot", location: "Whitefield, Bengaluru", price: "₹86 L", meta: "1,200 sq ft · Residential plot", art: "home-art-sand", tag: "Explore" },
 ];
 
 export default function HomePage() {
@@ -23,10 +23,10 @@ export default function HomePage() {
 
     <section className="hero-wrap page-shell">
       <div className="hero-copy">
-        <div className="eyebrow"><span className="eyebrow-dot"/> A better way to find your place</div>
-        <h1>Somewhere you<br/>can <em>just be.</em></h1>
-        <p className="hero-description">Find a home that fits your life, not just your checklist. Explore properties with clarity and confidence.</p>
-        <div className="hero-proof"><span className="proof-icon">✓</span><span>Made for real home decisions</span><span className="proof-divider"/><span>Built for India</span></div>
+        <div className="eyebrow"><span className="eyebrow-dot"/> Made for your life in Bengaluru</div>
+        <h1>More than a place.<br/><em>Your place.</em></h1>
+        <p className="hero-description">Discover homes, explore neighbourhoods and connect directly with owners.</p>
+        <div className="hero-proof"><span className="proof-icon">✓</span><span>Details you can trust</span><span className="proof-divider"/><span>People, not middlemen</span></div>
       </div>
       <div className="hero-art" aria-label="Illustration of a modern home">
         <div className="art-sun"/><div className="art-hill art-hill-back"/><div className="art-hill art-hill-front"/>
@@ -34,21 +34,21 @@ export default function HomePage() {
         <div className="art-plant plant-one"/><div className="art-plant plant-two"/><div className="art-caption"><span className="caption-dot"/> A place to call yours</div>
       </div>
       <form action="/search" className="search-card">
-        <div className="search-field"><label htmlFor="transaction">I’m looking to</label><select id="transaction" name="transaction" defaultValue="buy"><option value="buy">Buy a property</option><option value="rent">Rent a property</option></select></div>
-        <div className="search-field"><label htmlFor="location">Location</label><input id="location" name="location" placeholder="City, neighbourhood or PIN code"/></div>
-        <div className="search-field"><label htmlFor="property-type">Property type</label><select id="property-type" name="type" defaultValue="any"><option value="any">All property types</option><option value="house">Independent house</option><option value="apartment">Apartment</option><option value="villa">Villa</option><option value="plot">Plot / land</option></select></div>
-        <button className="button button-primary search-submit" type="submit"><span aria-hidden="true">⌕</span> Find homes</button>
+        <div className="search-field"><label htmlFor="transaction">I’m looking to</label><select id="transaction" name="transaction" defaultValue="buy"><option value="buy">Buy</option><option value="rent">Rent</option></select></div>
+        <div className="search-field"><label htmlFor="location">Location</label><input id="location" name="location" placeholder="Bengaluru · Locality or project"/></div>
+        <div className="search-field"><label htmlFor="property-type">Property type</label><select id="property-type" name="type" defaultValue="any"><option value="any">Property type</option><option value="house">Independent house</option><option value="apartment">Apartment</option><option value="villa">Villa</option><option value="plot">Plot / land</option></select></div>
+        <button className="button button-primary search-submit" type="submit"><span aria-hidden="true">⌕</span> Search homes</button>
       </form>
     </section>
 
     <section className="section page-shell" id="explore">
-      <div className="section-heading"><div><p className="eyebrow">START WITH WHAT MATTERS</p><h2>Find your kind of place.</h2><p className="section-subtitle">A little inspiration for the next chapter.</p></div><a className="text-link" href="/search">Explore all <span>↗</span></a></div>
+      <div className="section-heading"><div><p className="eyebrow">EVERY KIND OF HOME</p><h2>Every kind of you.</h2><p className="section-subtitle">Apartments, independent homes, plots and new projects.</p></div><a className="text-link" href="/search">Explore all <span>↗</span></a></div>
       <div className="category-grid">{categories.map((category) => <a className="category-card" key={category.type} href={`/search?type=${category.type}`}><span className="category-icon">{category.icon}</span><h3>{category.title}</h3><p>{category.copy}</p><span className="category-arrow">↗</span></a>)}</div>
     </section>
 
     <section className="featured-section">
       <div className="page-shell">
-        <div className="section-heading"><div><p className="eyebrow">A PLACE TO BEGIN</p><h2>Homes worth a closer look.</h2><p className="section-subtitle">Illustrative sample listings — live inventory is not connected yet.</p></div><a className="text-link" href="/search">See all properties <span>↗</span></a></div>
+        <div className="section-heading"><div><p className="eyebrow">A PLACE TO BEGIN</p><h2>Good homes. Great possibilities.</h2><p className="section-subtitle">Concept preview · Fictional listings and illustrative data.</p></div><a className="text-link" href="/search">See all properties <span>↗</span></a></div>
         <div className="property-grid">{homes.map((home) => <article className="property-card" key={home.id}><a href={`/property/${home.id}`} className={`property-art ${home.art}`} aria-label={`View ${home.title}`}><span className="property-tag">{home.tag}</span><span className="property-art-shape shape-a"/><span className="property-art-shape shape-b"/><span className="property-art-shape shape-c"/></a><div className="property-info"><p className="property-kind">{home.kind}</p><h3><a href={`/property/${home.id}`}>{home.title}</a></h3><p className="property-location"><span aria-hidden="true">⌖</span> {home.location}</p><p className="property-meta">{home.meta}</p><div className="property-bottom"><strong>{home.price}</strong><a className="round-arrow" href={`/property/${home.id}`} aria-label={`View details for ${home.title}`}>↗</a></div></div></article>)}</div>
       </div>
     </section>
