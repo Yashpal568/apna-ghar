@@ -775,3 +775,18 @@ select option { color: var(--color-text); background: var(--color-surface); }
 /* Search results pagination */
 .results-pagination{display:flex;align-items:center;justify-content:center;gap:18px;margin:30px 0 8px;color:var(--color-text-secondary);font-size:13px}.results-pagination button:disabled{opacity:.45;cursor:not-allowed}.results-pagination strong{color:var(--color-text)}
 @media(max-width:520px){.results-pagination{gap:10px;flex-wrap:wrap}.results-pagination .button{padding:10px 12px;font-size:12px}}
+
+
+/* Branded local authentication routes */
+.ag-header-actions .ag-signup-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 15px;border:1px solid var(--color-primary,#064bd3);border-radius:12px;color:var(--color-primary,#064bd3);font-weight:700;text-decoration:none;white-space:nowrap}
+.ag-header-actions .ag-account-link{color:var(--color-text);text-decoration:none;font-weight:600;white-space:nowrap}
+.auth-route-shell{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:40px 20px;background:var(--color-bg,#f8f9ff);color:var(--color-text,#10172c)}
+.auth-route-heading{text-align:center;max-width:440px}
+.auth-route-brand{display:inline-block;margin-bottom:12px;color:var(--color-primary,#064bd3);font-size:26px;font-weight:850;letter-spacing:-1px;text-decoration:none}
+.auth-route-heading p{margin:0;color:var(--color-text-secondary,#52617b);font-size:14px}
+.auth-route-shell .cl-rootBox{width:100%;max-width:440px}
+.auth-route-shell .cl-card{box-shadow:0 18px 55px rgba(15,23,42,.08);border:1px solid var(--color-border,#e3e7f0);border-radius:20px}
+.auth-route-card{width:100%;max-width:440px;padding:34px;border:1px solid var(--color-border,#e3e7f0);border-radius:20px;background:var(--color-surface,#fff);box-shadow:0 18px 55px rgba(15,23,42,.08)}
+.auth-route-card h1{margin:0 0 12px;font-size:28px;letter-spacing:-.8px}
+.auth-route-card p{margin:0 0 24px;color:var(--color-text-secondary,#52617b);font-size:14px;line-height:1.7}
+@media(max-width:520px){.auth-route-shell{justify-content:flex-start;padding:36px 16px}.auth-route-card{padding:24px}.ag-header-actions .ag-signup-link{padding:0 11px}}
