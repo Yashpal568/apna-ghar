@@ -1,5 +1,5 @@
-/* Apna Ghar design tokens. Set data-theme on <html> or the app root.
-   Keep these semantic token names aligned across Next.js and React Native. */
+/* Apna Ghar design tokens — aligned to the supplied Stitch 5-theme matrix.
+   Logo artwork is intentionally owned by the app's BrandLogo component and is not defined here. */
 :root,
 [data-theme="light"] {
   color-scheme: light;
@@ -11,11 +11,11 @@
   --color-bg: #F3F4F6;
   --color-surface: #FFFFFF;
   --color-surface-raised: #FFFFFF;
-  --color-surface-subtle: #EEF2F7;
+  --color-surface-subtle: #F8FAFC;
   --color-text: #0F172A;
   --color-text-secondary: #475569;
   --color-muted: #64748B;
-  --color-border: #E2E8F0;
+  --color-border: #E5E7EB;
   --color-input: #FFFFFF;
   --color-overlay: rgb(15 23 42 / 55%);
   --color-focus: #60A5FA;
@@ -24,52 +24,92 @@
   --space-6: 24px; --space-8: 32px;
 }
 
-/* 1. Deep Navy — premium, cool blue surfaces */
+/* Midnight — low-glare navy with bright blue CTAs and emerald confirmation. */
 [data-theme="midnight"] {
   color-scheme: dark;
-  --color-primary: #60A5FA; --color-primary-hover: #93C5FD; --color-on-primary: #0B1120; --color-green: #34D399;
-  --color-navy: #E5EEFF; --color-bg: #0B1120; --color-surface: #111B2E;
-  --color-surface-raised: #17243A; --color-surface-subtle: #1D2B43;
-  --color-text: #F1F5F9; --color-text-secondary: #C0CCDD; --color-muted: #91A1B8;
-  --color-border: #2A3A53; --color-input: #101A2B; --color-overlay: rgb(0 0 0 / 68%);
-  --color-focus: #93C5FD;
+  --color-primary: #3B82F6;
+  --color-on-primary: #FFFFFF;
+  --color-primary-hover: #60A5FA;
+  --color-green: #34D399;
+  --color-navy: #F8FAFC;
+  --color-bg: #0B1120;
+  --color-surface: #131D31;
+  --color-surface-raised: #18243A;
+  --color-surface-subtle: #1B273E;
+  --color-text: #F8FAFC;
+  --color-text-secondary: #CBD5E1;
+  --color-muted: #94A3B8;
+  --color-border: #1E2C46;
+  --color-input: #131D31;
+  --color-overlay: rgb(0 0 0 / 68%);
+  --color-focus: #60A5FA;
 }
 
-/* 2. Graphite — neutral charcoal with restrained green accents */
+/* Graphite — neutral architectural charcoal, no blue tint in surfaces. */
 [data-theme="graphite"] {
   color-scheme: dark;
-  --color-primary: #7CB4FF; --color-primary-hover: #A5CCFF; --color-on-primary: #111827; --color-green: #4ADE80;
-  --color-navy: #F1F5F9; --color-bg: #17191D; --color-surface: #202328;
-  --color-surface-raised: #292D33; --color-surface-subtle: #30353C;
-  --color-text: #F5F5F5; --color-text-secondary: #D0D4DA; --color-muted: #A0A7B2;
-  --color-border: #3A4049; --color-input: #202328; --color-overlay: rgb(0 0 0 / 72%);
-  --color-focus: #A5CCFF;
+  --color-primary: #3B82F6;
+  --color-on-primary: #FFFFFF;
+  --color-primary-hover: #60A5FA;
+  --color-green: #10B981;
+  --color-navy: #F3F4F6;
+  --color-bg: #17191D;
+  --color-surface: #212429;
+  --color-surface-raised: #292D33;
+  --color-surface-subtle: #2A2E35;
+  --color-text: #F3F4F6;
+  --color-text-secondary: #D1D5DB;
+  --color-muted: #9CA3AF;
+  --color-border: #2F343B;
+  --color-input: #212429;
+  --color-overlay: rgb(0 0 0 / 72%);
+  --color-focus: #60A5FA;
 }
 
-/* 3. Forest — deep green undertone, still blue-led brand */
+/* Forest Noir — botanical green-black surfaces, blue primary CTA, mint secondary. */
 [data-theme="forest"] {
   color-scheme: dark;
-  --color-primary: #7CB4FF; --color-primary-hover: #A5CCFF; --color-green: #6EE7B7;
-  --color-navy: #E6FFF5; --color-bg: #0B1715; --color-surface: #10221E;
-  --color-surface-raised: #173029; --color-surface-subtle: #1D3A31;
-  --color-text: #F0FDF8; --color-text-secondary: #C1E2D6; --color-muted: #91B8AA;
-  --color-border: #2A4A40; --color-input: #10221E; --color-overlay: rgb(0 0 0 / 70%);
+  --color-primary: #2563EB;
+  --color-on-primary: #FFFFFF;
+  --color-primary-hover: #3B82F6;
+  --color-green: #10B981;
+  --color-navy: #ECFDF5;
+  --color-bg: #0B1715;
+  --color-surface: #11221F;
+  --color-surface-raised: #16332C;
+  --color-surface-subtle: #182E2A;
+  --color-text: #ECFDF5;
+  --color-text-secondary: #C7E5DA;
+  --color-muted: #A7F3D0;
+  --color-border: #1C3731;
+  --color-input: #11221F;
+  --color-overlay: rgb(0 0 0 / 70%);
   --color-focus: #6EE7B7;
 }
 
-/* 4. AMOLED — true black background to reduce lit pixels on OLED screens */
+/* AMOLED Black — true black canvas with near-black cards and clear white text. */
 [data-theme="amoled"] {
   color-scheme: dark;
-  --color-primary: #60A5FA; --color-primary-hover: #93C5FD; --color-on-primary: #0B1120; --color-green: #34D399;
-  --color-navy: #F8FAFC; --color-bg: #000000; --color-surface: #080808;
-  --color-surface-raised: #111111; --color-surface-subtle: #181818;
-  --color-text: #FAFAFA; --color-text-secondary: #D4D4D4; --color-muted: #A3A3A3;
-  --color-border: #292929; --color-input: #080808; --color-overlay: rgb(0 0 0 / 80%);
-  --color-focus: #93C5FD;
+  --color-primary: #3B82F6;
+  --color-on-primary: #FFFFFF;
+  --color-primary-hover: #60A5FA;
+  --color-green: #10B981;
+  --color-navy: #FFFFFF;
+  --color-bg: #000000;
+  --color-surface: #0D0D0D;
+  --color-surface-raised: #141414;
+  --color-surface-subtle: #141414;
+  --color-text: #FFFFFF;
+  --color-text-secondary: #D4D4D8;
+  --color-muted: #A1A1AA;
+  --color-border: #222222;
+  --color-input: #0D0D0D;
+  --color-overlay: rgb(0 0 0 / 80%);
+  --color-focus: #60A5FA;
 }
 
 :root { --motion-fast: 140ms; --motion-normal: 220ms; }
-html { background: var(--color-bg); }
+html { background: var(--color-bg); color: var(--color-text); }
 body { background: var(--color-bg); color: var(--color-text); }
 *, *::before, *::after { box-sizing: border-box; }
 :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
