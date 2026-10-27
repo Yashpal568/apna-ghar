@@ -229,3 +229,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .brand .brand-wordmark b{font-weight:800;background:linear-gradient(100deg,#1768df,#0644a8);-webkit-background-clip:text;background-clip:text;color:transparent}
 .brand-compact .brand-symbol{width:38px;height:32px}
 @media(max-width:480px){.brand .brand-symbol{width:39px;height:33px}.brand .brand-wordmark{font-size:22px}}
+
+/* Theme-aware controls and surfaces. Avoid fixed light-theme colours in shared UI. */
+.button-primary { color: var(--color-bg); background: var(--color-primary); border-color: var(--color-primary); }
+.button-primary:hover:not(:disabled) { color: var(--color-bg); background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
+.button-light { color: var(--color-navy); background: var(--color-surface); border-color: var(--color-border); }
+.button-light:hover:not(:disabled) { background: var(--color-surface-subtle); }
+.proof-icon { color: var(--color-bg); background: var(--color-green); }
+.theme-trigger:hover,.theme-option:focus-visible { border-color: var(--color-primary); }
+input,select,textarea { accent-color: var(--color-primary); }
+::selection { color: var(--color-bg); background: var(--color-primary); }
