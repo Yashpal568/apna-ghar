@@ -790,3 +790,12 @@ select option { color: var(--color-text); background: var(--color-surface); }
 .auth-route-card h1{margin:0 0 12px;font-size:28px;letter-spacing:-.8px}
 .auth-route-card p{margin:0 0 24px;color:var(--color-text-secondary,#52617b);font-size:14px;line-height:1.7}
 @media(max-width:520px){.auth-route-shell{justify-content:flex-start;padding:36px 16px}.auth-route-card{padding:24px}.ag-header-actions .ag-signup-link{padding:0 11px}}
+
+
+/* Premium, compact desktop account actions */
+.ag-header-actions .ag-signin-link{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 9px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:-.1px}
+.ag-header-actions .ag-signin-link:hover{background:var(--color-surface-subtle)}
+.ag-header-actions .ag-signup-link{min-height:40px;padding:0 14px;border:1px solid color-mix(in srgb,var(--color-primary) 18%,var(--color-border));border-radius:11px;background:color-mix(in srgb,var(--color-primary) 7%,var(--color-surface));color:var(--color-primary);font-size:12px;font-weight:800;letter-spacing:-.1px;box-shadow:0 1px 2px rgba(15,23,42,.03);transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.ag-header-actions .ag-signup-link:hover{background:color-mix(in srgb,var(--color-primary) 12%,var(--color-surface));border-color:color-mix(in srgb,var(--color-primary) 32%,var(--color-border));transform:translateY(-1px)}
+.ag-header-actions .ag-account-link{display:inline-flex;align-items:center;min-height:40px;padding:0 4px;font-size:12px}
+@media(max-width:760px){.ag-mobile-menu{padding-top:4px}.ag-mobile-menu>a:not(.button){padding:11px 8px}}
