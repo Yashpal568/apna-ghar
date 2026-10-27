@@ -1,0 +1,2 @@
+export const metadata = { title: 'Admin workspace' };
+export default function AdminPlaceholder() { return <main className="admin-shell"><a href="/">← Back to Apna Ghar</a><p className="eyebrow">ADMIN WORKSPACE</p><h1>Management console</h1><p>UI shell only. Clerk authentication, server-side admin authorization and management APIs must be implemented before this route is used for real administration.</p></main>; }
