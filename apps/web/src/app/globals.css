@@ -1,10 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800&display=swap");
 @import "../../../../styles/design-tokens.css";
 
 :root { --content-width: 1240px; --shadow-soft: 0 20px 60px rgb(15 23 42 / 7%); }
 * { box-sizing: border-box; }
 html { background: var(--color-bg); color-scheme: light; scroll-behavior: smooth; }
 html[data-theme="midnight"],html[data-theme="graphite"],html[data-theme="forest"],html[data-theme="amoled"] { color-scheme: dark; }
-body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: Inter, "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; transition: background-color var(--motion-normal) ease, color var(--motion-normal) ease; }
+body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: Roboto, "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; transition: background-color var(--motion-normal) ease, color var(--motion-normal) ease; }
 a { color: inherit; }
 button,input,select,textarea { font: inherit; }
 button,a,input,select { -webkit-tap-highlight-color: transparent; }
@@ -733,3 +734,8 @@ select option { color: var(--color-text); background: var(--color-surface); }
 
 /* Search results controls: theme-aware sorting and pagination */
 .results-toolbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:18px;flex-wrap:wrap}.sort-control{display:flex;align-items:center;gap:8px;color:var(--color-text-secondary);font-size:13px;font-weight:600}.sort-control select{min-height:40px;max-width:220px;padding:8px 34px 8px 12px;border:1px solid var(--color-border);border-radius:12px;background:var(--color-input,var(--color-surface));color:var(--color-text);font:inherit}.sort-control select:focus-visible{outline:3px solid var(--color-primary);outline-offset:2px}.pagination-controls{display:flex;align-items:center;justify-content:center;gap:16px;padding:28px 0 12px;color:var(--color-text-secondary);font-size:14px}.pagination-controls button:disabled{opacity:.45;cursor:not-allowed;transform:none}.pagination-controls .button{color:var(--color-text);border-color:var(--color-border);background:var(--color-surface)}@media(max-width:600px){.results-toolbar-actions{width:100%;justify-content:space-between}.sort-control{flex:1;justify-content:space-between}.sort-control select{max-width:190px}.pagination-controls{gap:10px}.pagination-controls .button{padding:10px 12px}}
+
+/* Richer property imagery while keeping real listing facts API-driven. */
+.hero-art{background-image:linear-gradient(135deg,rgba(8,32,40,.12),rgba(8,32,40,.03)),url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=85");background-size:cover;background-position:center;overflow:hidden}.hero-art>*{display:none}.hero-art:after{content:"Thoughtfully chosen spaces";position:absolute;left:24px;bottom:22px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,.9);color:#0f172a;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.property-art{background-size:cover;background-position:center;isolation:isolate}.property-art:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,15,25,.02) 30%,rgba(8,15,25,.48));z-index:-1}.property-art-blue{background-image:url("https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=80")}.property-art-green{background-image:url("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80")}.property-art-sand{background-image:url("https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=900&q=80")}.property-art .property-art-shape{display:none}
+.property-result-image{background-image:linear-gradient(135deg,var(--color-surface-soft),var(--color-border))}.property-result-image img{width:100%;height:100%;object-fit:cover;display:block}.results-toolbar-actions{gap:18px}
