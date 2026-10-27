@@ -1,5 +1,6 @@
-import BrandLogo from "../components/BrandLogo";
 "use client";
+
+import BrandLogo from "../components/BrandLogo";
 
 import { useEffect, useState } from "react";
 import ThemePicker from "../components/ThemePicker";
