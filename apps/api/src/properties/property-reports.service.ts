@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { PropertyReport, PropertyReportDocument } from './schemas/property-report.schema';
 import { Property, PropertyDocument } from './schemas/property.schema';
 
@@ -12,7 +12,7 @@ export class PropertyReportsService {
   ) {}
 
   async listForModeration(status?: string) {
-    const filter: Record<string, unknown> = {};
+    const filter: FilterQuery<PropertyReportDocument> = {};
     if (status && ['open', 'reviewing', 'resolved', 'dismissed'].includes(status)) filter.status = status;
     return this.reports.find(filter).sort({ createdAt: -1 }).limit(200).lean().exec();
   }
