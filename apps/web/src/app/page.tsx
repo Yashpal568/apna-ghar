@@ -1,3 +1,4 @@
+import BrandLogo from "./components/BrandLogo";
 import ThemePicker from "./components/ThemePicker";
 
 const categories = [
@@ -16,7 +17,7 @@ const homes = [
 export default function HomePage() {
   return <main>
     <header className="site-header page-shell">
-      <a className="brand" href="/" aria-label="Apna Ghar home"><span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48" role="img"><rect x="1" y="1" width="46" height="46" rx="12" fill="#e8f6f1"/><path d="M8 23 24 10l16 13" fill="none" stroke="#087f70" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M13 21v16h22V21M21 37V26h7v11" fill="none" stroke="#087f70" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/></svg></span><span className="brand-name">Apna <b>Ghar</b></span></a>
+      <a className="brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a>
       <nav className="desktop-nav" aria-label="Main navigation"><a href="/search">Buy a home</a><a href="/search?type=rent">Rent</a><a href="/list-property">List property</a></nav>
       <div className="header-actions"><ThemePicker compact /><a className="button button-quiet sign-in" href="/sign-in">Sign in</a><a className="button button-primary" href="/list-property">Post a property <span aria-hidden="true">↗</span></a></div>
     </header>
