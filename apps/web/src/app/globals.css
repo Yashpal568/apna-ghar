@@ -615,3 +615,82 @@ select option { color: var(--color-text); background: var(--color-surface); }
     transition: color var(--motion-normal) ease, background-color var(--motion-normal) ease, border-color var(--motion-normal) ease, transform var(--motion-fast) ease, box-shadow var(--motion-normal) ease;
   }
 }
+
+
+/* Final parity layer: all surfaces, including admin and Clerk account flows, use semantic theme tokens. */
+.admin-page, .admin-main, .admin-sidebar, .admin-topbar, .admin-panel, .admin-metric,
+.admin-table-wrap, .admin-table, .admin-table th, .admin-table td, .admin-queue-empty,
+.admin-policy-note, .admin-chart-empty, .admin-sidebar-foot {
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.admin-page { background: var(--color-bg); }
+.admin-sidebar, .admin-panel, .admin-metric, .admin-table-wrap {
+  background: var(--color-surface);
+}
+.admin-topbar, .admin-table th, .admin-policy-note, .admin-queue-empty {
+  background: var(--color-surface-subtle);
+}
+.admin-sidebar small, .admin-nav-label, .admin-metric span, .admin-metric small,
+.admin-panel-head p, .admin-footer, .admin-table-empty p { color: var(--color-muted); }
+.admin-nav-item { color: var(--color-text-secondary); }
+.admin-nav-item:hover, .admin-nav-item.active {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+}
+.admin-table td, .admin-table th { border-color: var(--color-border); }
+.admin-table-empty, .admin-chart-empty { color: var(--color-muted); }
+.admin-preview-label { color: var(--color-text-secondary); background: var(--color-surface-subtle); border-color: var(--color-border); }
+.admin-welcome { background: var(--color-surface-raised); color: var(--color-text); border-color: var(--color-border); }
+.admin-welcome-mark { background: var(--color-surface-subtle); color: var(--color-primary); }
+.admin-warning { color: var(--color-text); }
+.owner-status-active { color: var(--color-green); background: color-mix(in srgb, var(--color-green) 13%, var(--color-surface)); }
+.owner-status-hidden_by_owner, .owner-status-deleted { color: var(--color-text-secondary); background: var(--color-surface-subtle); }
+.form-notice { color: var(--color-text-secondary); background: var(--color-surface-subtle); border-color: var(--color-border); }
+.auth-page, .auth-layout, .auth-single { color: var(--color-text); }
+.auth-story > p:not(.eyebrow), .auth-muted { color: var(--color-text-secondary); }
+.auth-nav-search, .auth-nav-search input, .auth-nav-search button {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+.auth-nav-search button {
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+}
+.auth-nav-search button:hover { background: var(--color-primary-hover); }
+.clerk-auth-card, .clerk-auth-card * { --clerk-color-primary: var(--color-primary); }
+.clerk-auth-card .cl-card,
+.clerk-auth-card .cl-cardBox,
+.clerk-auth-card .cl-footer,
+.clerk-auth-card .cl-footerPages,
+.clerk-auth-card .cl-socialButtonsBlockButton,
+.clerk-auth-card .cl-formFieldInput,
+.clerk-auth-card .cl-otpCodeFieldInput {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+.clerk-auth-card .cl-formButtonPrimary {
+  background-color: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+.clerk-auth-card .cl-formButtonPrimary:hover { background-color: var(--color-primary-hover) !important; }
+.clerk-auth-card .cl-socialButtonsBlockButtonText,
+.clerk-auth-card .cl-headerTitle,
+.clerk-auth-card .cl-formFieldLabel,
+.clerk-auth-card .cl-footerActionText,
+.clerk-auth-card .cl-footerActionLink,
+.clerk-auth-card .cl-dividerText,
+.clerk-auth-card .cl-formFieldAction { color: var(--color-text) !important; }
+.clerk-auth-card .cl-headerSubtitle,
+.clerk-auth-card .cl-formFieldHintText,
+.clerk-auth-card .cl-footer p { color: var(--color-text-secondary) !important; }
+.clerk-auth-card .cl-footerActionLink { color: var(--color-primary) !important; }
+.clerk-auth-card .cl-formFieldInput::placeholder { color: var(--color-muted) !important; }
+.property-save-button[aria-pressed="true"], .detail-quick-actions button[aria-pressed="true"] {
+  color: var(--color-on-cta-secondary);
+  background: var(--color-cta-secondary);
+  border-color: var(--color-cta-secondary);
+}
