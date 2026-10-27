@@ -30,8 +30,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .button { min-height: 44px; display: inline-flex; justify-content: center; align-items: center; gap: 10px; border-radius: 12px; padding: 0 18px; font-size: 12px; font-weight: 750; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform .18s ease, background .18s ease, border-color .18s ease; white-space: nowrap; }
 .button:hover:not(:disabled) { transform: translateY(-1px); }
 .button:disabled { opacity: .5; cursor: not-allowed; }
-.button-primary { color: #fff; background: #2563EB; border-color: #2563EB; }
-.button-primary:hover:not(:disabled) { background: #1D4ED8; border-color: #1D4ED8; }
+.button-primary { color: var(--color-on-primary); background: var(--color-primary); border-color: var(--color-primary); }
+.button-primary:hover:not(:disabled) { color: var(--color-on-primary); background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
 .button-quiet { color: var(--color-text); background: transparent; }
 .button-quiet:hover { background: var(--color-surface-subtle); }
 .button-outline { color: var(--color-text); background: var(--color-surface); border-color: var(--color-border); }
@@ -231,14 +231,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media(max-width:480px){.brand .brand-symbol{width:39px;height:33px}.brand .brand-wordmark{font-size:22px}}
 
 /* Theme-aware controls and surfaces. Avoid fixed light-theme colours in shared UI. */
-.button-primary { color: var(--color-bg); background: var(--color-primary); border-color: var(--color-primary); }
-.button-primary:hover:not(:disabled) { color: var(--color-bg); background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
+.button-primary { color: var(--color-on-primary); background: var(--color-primary); border-color: var(--color-primary); }
+.button-primary:hover:not(:disabled) { color: var(--color-on-primary); background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
 .button-light { color: var(--color-navy); background: var(--color-surface); border-color: var(--color-border); }
 .button-light:hover:not(:disabled) { background: var(--color-surface-subtle); }
 .proof-icon { color: var(--color-bg); background: var(--color-green); }
 .theme-trigger:hover,.theme-option:focus-visible { border-color: var(--color-primary); }
 input,select,textarea { accent-color: var(--color-primary); }
-::selection { color: var(--color-bg); background: var(--color-primary); }
+::selection { color: var(--color-on-primary); background: var(--color-primary); }
 
 /* Authentication pages: consistent brand shell, calm surfaces, responsive composition. */
 .auth-page { max-width: 100%; min-height: 100vh; padding-left: max(28px, calc((100vw - 1240px) / 2)); padding-right: max(28px, calc((100vw - 1240px) / 2)); background: var(--color-bg); }
@@ -250,7 +250,7 @@ input,select,textarea { accent-color: var(--color-primary); }
 .auth-story::after { content: ""; display: block; width: min(100%,480px); height: 155px; margin-top: 30px; border-radius: 18px; background: radial-gradient(ellipse at 80% 15%,color-mix(in srgb,var(--color-green) 40%,transparent) 0 13%,transparent 14%),linear-gradient(145deg,color-mix(in srgb,var(--color-primary) 18%,var(--color-surface)) 0%,var(--color-surface-subtle) 65%,color-mix(in srgb,var(--color-green) 15%,var(--color-surface))); border: 1px solid var(--color-border); }
 .auth-card { border-radius: 22px; background: var(--color-surface); border-color: var(--color-border); box-shadow: 0 24px 70px rgb(15 23 42 / 9%); }
 .clerk-auth-card .cl-card { border-radius: 16px; }
-.clerk-auth-card .cl-formButtonPrimary { color: var(--color-bg); background: var(--color-primary); }
+.clerk-auth-card .cl-formButtonPrimary { color: var(--color-on-primary); background: var(--color-primary); }
 .clerk-auth-card .cl-formFieldInput { background: var(--color-input); color: var(--color-text); border-color: var(--color-border); }
 .clerk-auth-card .cl-formFieldLabel,.clerk-auth-card .cl-footerActionText { color: var(--color-text-secondary); }
 .auth-footer { max-width: 1080px; margin: 0 auto; }
