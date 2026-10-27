@@ -4,16 +4,21 @@
 !.env.example
 *.pem
 *.key
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
 
 # Dependencies / build output
 node_modules/
-.expo/
 dist/
 build/
 coverage/
 .next/
-android/
-ios/
+android/.gradle/
+android/app/build/
+ios/Pods/
+ios/build/
 *.log
 .DS_Store
 Thumbs.db
