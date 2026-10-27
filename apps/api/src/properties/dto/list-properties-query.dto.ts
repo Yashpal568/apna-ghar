@@ -20,6 +20,12 @@ export class ListPropertiesQueryDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(20)
   minBedrooms?: number;
 
+  @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(20)
+  minBathrooms?: number;
+
+  @IsOptional() @IsIn(['unfurnished', 'semi-furnished', 'furnished', 'unknown'])
+  furnishing?: 'unfurnished' | 'semi-furnished' | 'furnished' | 'unknown';
+
   @IsOptional() @IsIn(['newest', 'price_asc', 'price_desc'])
   sort: 'newest' | 'price_asc' | 'price_desc' = 'newest';
 
