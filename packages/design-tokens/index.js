@@ -1,0 +1,1 @@
+module.exports = { color: { primary:'#2563EB', secondary:'#10B981', navy:'#0F172A', lightSurface:'#F3F4F6', white:'#FFFFFF' }, theme: { light:{background:'#F3F4F6',surface:'#FFFFFF',text:'#0F172A',muted:'#64748B'}, dark:{background:'#0B1220',surface:'#111C2E',text:'#EDF3FF',muted:'#9AAAC1'} } };
