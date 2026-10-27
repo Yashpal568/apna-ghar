@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
 import { ListPropertiesQueryDto } from './dto/list-properties-query.dto';
 import { PropertiesService } from './properties.service';
 
@@ -9,7 +9,7 @@ export class PropertiesController {
   @Get()
   list(@Query() query: ListPropertiesQueryDto) {
     if (query.minPrice !== undefined && query.maxPrice !== undefined && query.minPrice > query.maxPrice) {
-      throw new (require('@nestjs/common').BadRequestException)('minPrice must not exceed maxPrice');
+      throw new BadRequestException('minPrice must not exceed maxPrice');
     }
     return this.propertiesService.list(query);
   }
