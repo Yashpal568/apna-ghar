@@ -1,10 +1,11 @@
 import { Test } from '@nestjs/testing';
+import type { INestApplication } from '@nestjs/common';
 import { getConnectionToken } from '@nestjs/mongoose';
 import type { Connection } from 'mongoose';
 import { HealthController } from '../src/health/health.controller';
 
 describe('Health HTTP (e2e)', () => {
-  let app: Awaited<ReturnType<Awaited<ReturnType<typeof Test.createTestingModule>>['createNestApplication']>>;
+  let app: INestApplication;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
