@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, Req, UseGuards } from '@nestjs/common';
 import { IsEmail, IsOptional, IsString, MaxLength } from 'class-validator';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { UsersService } from './users.service';
@@ -19,7 +19,7 @@ export class UsersController {
   constructor(private readonly users: UsersService) {}
 
   @Get()
-  getMyProfile(@Body() _unused: unknown, @Req() request: AuthenticatedRequest) {
+  getMyProfile(@Req() request: AuthenticatedRequest) {
     return this.users.getMyProfile(request.auth.userId);
   }
 
