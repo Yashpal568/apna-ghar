@@ -15,12 +15,13 @@ Premium Indian real-estate buy/sell/rent marketplace.
 ## M1 foundation status
 
 - npm workspaces and shared developer scripts are configured.
-- NestJS API has liveness and MongoDB-aware readiness routes plus baseline unit tests.
+- NestJS API has liveness and MongoDB-aware readiness routes, baseline unit tests, request validation, and a registered centralized HTTP exception filter.
 - API validates the port and MongoDB URI during configuration.
 - Shared design tokens, transport contracts, API client and entitlement keys are present.
 - Next.js web app and admin design shell exist; admin authorization is not implemented and admin screens are not safe for real operations.
 - Mobile package and branded starter screen are present, but native `android/` and `ios/` project directories are still missing. This remains an M1 acceptance blocker.
-- Check GitHub Actions on the M1 pull request for actual build/test status; do not assume success until CI is green.
+- M1 is still blocked by missing native `android/` and `ios/` projects and unverified HTTP end-to-end coverage. See `docs/12-m1-implementation-checklist.md` and `docs/13-mobile-native-setup.md`.
+- The current Ubuntu CI does not build native Android/iOS binaries; do not treat TypeScript checks as native-build validation.
 
 ## Requirements
 
