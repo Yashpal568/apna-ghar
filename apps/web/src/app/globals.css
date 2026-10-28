@@ -802,14 +802,14 @@ select option { color: var(--color-text); background: var(--color-surface); }
 
 
 /* Premium profile page layout */
-.profile-page-shell{max-width:1240px;margin:0 auto;padding:0 36px}
-.profile-page-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;padding:36px 0 28px}
-.profile-page-hero .listing-intro{margin:0;max-width:560px}
-.profile-page-hero .listing-intro h1{font-size:clamp(42px,5vw,62px);line-height:.98;letter-spacing:-3px;margin:16px 0}
+.profile-page-shell{width:min(100% - 48px,1320px);max-width:1320px;margin:0 auto;padding:0 24px}
+.profile-page-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;padding:52px 0 34px}
+.profile-page-hero .listing-intro{margin:0;max-width:720px}
+.profile-page-hero .listing-intro h1{font-size:clamp(44px,5vw,68px);line-height:1.02;letter-spacing:-2.8px;margin:16px 0}
 .profile-page-hero .listing-intro>p:last-child{max-width:470px;color:var(--color-text-secondary);font-size:14px;line-height:1.75}
-.profile-page-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);align-items:start;gap:22px;margin:8px auto 48px;max-width:1000px}
+.profile-page-layout{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:24px;margin:8px 0 56px;max-width:820px}
 .profile-page-layout .auth-single,.profile-page-layout .profile-account-settings{max-width:none!important;margin:0!important;width:100%}
-.profile-page-layout .auth-card{padding:30px;border:1px solid var(--color-border);border-radius:22px;background:var(--color-surface);box-shadow:0 16px 44px rgba(15,23,42,.045)}
+.profile-page-layout .auth-card{padding:clamp(24px,3vw,40px);border:1px solid var(--color-border);border-radius:22px;background:var(--color-surface);box-shadow:0 16px 44px rgba(15,23,42,.045)}
 .profile-page-layout .profile-avatar{width:58px;height:58px;display:grid;place-items:center;border-radius:18px;background:color-mix(in srgb,var(--color-primary) 12%,var(--color-surface));color:var(--color-primary);font-size:18px;font-weight:850;letter-spacing:-.5px}
 .profile-page-layout .auth-form h2{font-size:23px;letter-spacing:-.8px;margin:16px 0 8px}
 .profile-page-layout .auth-muted{font-size:12px;line-height:1.75;margin:0 0 24px}
@@ -823,8 +823,8 @@ select option { color: var(--color-text); background: var(--color-surface); }
 .profile-page-layout .profile-account-settings .account-settings-panel{padding:26px;border-radius:22px;box-shadow:0 16px 44px rgba(15,23,42,.045)}
 .profile-page-layout .profile-account-settings h2{font-size:20px;letter-spacing:-.6px}
 .profile-page-layout .profile-account-settings p{font-size:12px;line-height:1.8}
-@media(max-width:800px){.profile-page-shell{padding:0 20px}.profile-page-hero{padding:24px 0 20px}.profile-page-layout{grid-template-columns:1fr;max-width:620px}.profile-page-layout .auth-card{padding:23px}}
-@media(max-width:520px){.profile-page-shell{padding:0 16px}.profile-page-hero .listing-intro h1{font-size:42px;letter-spacing:-2.2px}.profile-page-layout .profile-links{flex-direction:column}}
+@media(max-width:800px){.profile-page-shell{width:100%;padding:0 20px}.profile-page-hero{padding:24px 0 20px}.profile-page-layout{grid-template-columns:1fr;max-width:620px}.profile-page-layout .auth-card{padding:23px}}
+@media(max-width:520px){.profile-page-shell{width:100%;padding:0 16px}.profile-page-hero .listing-intro h1{font-size:42px;letter-spacing:-2.2px}.profile-page-layout .profile-links{flex-direction:column}}
 
 
 /* Mobile appearance control */
