@@ -20,7 +20,8 @@ Premium Indian real-estate buy/sell/rent marketplace.
 - Shared design tokens, transport contracts, API client and entitlement keys are present.
 - Next.js web app and admin design shell exist; admin authorization is not implemented and admin screens are not safe for real operations.
 - Mobile package and branded starter screen are present, but native `android/` and `ios/` project directories are still missing. This remains an M1 acceptance blocker.
-- M1 is still blocked by missing native `android/` and `ios/` projects and unverified HTTP end-to-end coverage. See `docs/12-m1-implementation-checklist.md` and `docs/13-mobile-native-setup.md`.
+- HTTP-level health/readiness end-to-end tests have been added; their status must be confirmed on the latest CI run before M1 is marked complete.
+- Native `android/` and `ios/` projects are intentionally deferred to the final mobile phase. The approved delivery workflow is web + admin + marketing/SEO + backend/security/data integrations first, APK last. See `docs/08-milestones.md`, `docs/12-m1-implementation-checklist.md`, and `docs/18-web-first-delivery-roadmap.md`.
 - The current Ubuntu CI does not build native Android/iOS binaries; do not treat TypeScript checks as native-build validation.
 
 ## Requirements
@@ -55,6 +56,7 @@ Website: http://localhost:3000
 - `npm run build` — API and web production builds
 - `npm run typecheck` — API, web and mobile TypeScript checks
 - `npm run test` — API unit tests
+- `npm run test:e2e:api` — API HTTP end-to-end health/readiness tests
 
 ## Docs
 
