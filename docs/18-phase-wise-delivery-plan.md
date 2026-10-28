@@ -62,12 +62,12 @@
 ### P1 — Monorepo foundation, configuration and CI
 
 **Tasks**
-- [ ] Verify npm workspace structure, shared TypeScript conventions, lint/format commands and scripts.
+- [x] Verify npm workspace structure, per-app TypeScript configurations, and root/app scripts. Shared lint/format tooling remains a follow-up quality improvement.
 - [ ] Validate environment variables at startup; maintain safe `.env.example` files and never commit secrets.
 - [ ] Keep NestJS API, Next.js web/admin, and React Native Community CLI as separate app targets.
-- [ ] Add/verify API health and dependency readiness behavior without claiming database readiness from liveness alone.
-- [ ] Add API unit tests, web build checks, type checks, and practical smoke checks to CI.
-- [ ] Fix existing CI failures before adding feature work on top of a broken baseline.
+- [x] Add/verify API health and dependency readiness behavior without claiming database readiness from liveness alone.
+- [x] Add API unit tests, web build checks, type checks and API HTTP e2e test wiring to CI.
+- [ ] **Separate next gate before M2:** fix all CI failures on the latest commit; do not begin M2 until CI remediation is complete.
 - [ ] Document reproducible local setup and Android Studio/JDK/SDK requirements.
 - [x] Keep the mobile workspace parked during web-first phases. Generate the native Community CLI project in P9, after web, admin, backend, SEO, security, entitlements and data/media integration gates are accepted.
 
