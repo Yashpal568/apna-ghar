@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 
 const themes = [
-  { id: "light", label: "Light Classic", swatch: "#F3F4F6" },
-  { id: "midnight", label: "Midnight Navy", swatch: "#0B1120" },
+  { id: "light", label: "Light", swatch: "#F3F4F6" },
+  { id: "midnight", label: "Midnight", swatch: "#0B1120" },
   { id: "graphite", label: "Graphite", swatch: "#202328" },
-  { id: "forest", label: "Forest Dark", swatch: "#0B1715" },
+  { id: "forest", label: "Forest", swatch: "#0B1715" },
   { id: "amoled", label: "AMOLED Black", swatch: "#000000" },
   { id: "system", label: "System default", swatch: "linear-gradient(135deg,#F3F4F6 50%,#0B1120 50%)" },
 ] as const;
