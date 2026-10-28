@@ -912,3 +912,14 @@ select option { color: var(--color-text); background: var(--color-surface); }
 @media(max-width:760px){.auth-experience-grid,.auth-signup-grid{grid-template-columns:1fr;min-height:0}.auth-story-panel{min-height:340px;padding:28px 24px}.auth-story-content{padding-bottom:28px}.auth-story-content h1{font-size:clamp(38px,10vw,54px);letter-spacing:-2px;margin:17px 0 12px}.auth-story-content>p{font-size:13px;line-height:1.65;margin-bottom:12px}.auth-story-caption{left:24px;right:24px;bottom:14px;font-size:8px}.auth-story-signup{min-height:420px}.auth-benefit-list{gap:8px;margin-top:16px}.auth-benefit-list>div{padding:8px 10px}.auth-form-panel{padding:34px 18px 38px}.auth-form-intro{margin-bottom:22px}.auth-form-panel .cl-card{padding:20px!important}.auth-experience-footer{padding:18px;flex-direction:column;gap:10px}.auth-experience-footer nav{flex-wrap:wrap;gap:14px}.auth-experience-header{gap:12px}.auth-experience-header p{max-width:56%;text-align:right;line-height:1.5}}
 @media(max-width:420px){.auth-story-panel{min-height:320px}.auth-story-signup{min-height:400px}.auth-story-kicker{font-size:8px;letter-spacing:1.4px}.auth-story-content h1{font-size:38px}.auth-trust-row span{font-size:10px;padding:8px 10px}.auth-form-panel .cl-card{padding:16px!important}}
 @media(prefers-reduced-motion:reduce){.auth-story-image,.auth-story-content{animation:none!important}.auth-story-image{transform:none}}
+
+
+/* Mobile header: keep appearance one tap away without opening the menu. */
+.ag-mobile-theme { display: none; }
+@media (max-width: 900px) {
+  .ag-mobile-theme { display: flex; align-items: center; }
+  .ag-mobile-theme .theme-trigger { min-height: 42px; width: 42px; padding: 0; justify-content: center; gap: 0; border-radius: 12px; }
+  .ag-mobile-theme .theme-trigger-label,
+  .ag-mobile-theme .theme-trigger > span:last-child { display: none; }
+  .ag-mobile-theme .theme-menu { right: 0; left: auto; z-index: 1000; }
+}

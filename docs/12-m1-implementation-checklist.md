@@ -15,16 +15,16 @@ Turn the planning-only repository into a locally runnable monorepo with three in
 ## Work packages
 
 ### M1.1 — Workspace and developer experience
-- [ ] Root package.json using npm workspaces.
-- [ ] Shared scripts for install, lint, typecheck, test and app-specific dev commands.
+- [x] Root package.json using npm workspaces (API, web, mobile and packages/*).
+- [x] Shared scripts for install, typecheck, test, build and app-specific dev commands. Web lint script exists but still needs validation.
 - [ ] Consistent TypeScript, ESLint and formatting configuration.
-- [ ] .gitignore excludes node_modules, build output, local environment files, signing keys and secrets.
-- [ ] .env.example documents required variable names with safe placeholders only.
+- [x] .gitignore excludes node_modules, build output, local environment files, signing keys and secrets.
+- [x] .env.example documents variable names with safe placeholders only.
 
 ### M1.2 — NestJS API
 - [ ] Scaffold apps/api with NestJS and TypeScript.
-- [ ] Add /api/v1/health (liveness) and readiness response; readiness must not claim MongoDB is connected unless checked.
-- [ ] Add configuration validation and centralized error handling.
+- [x] Add /api/v1/health (liveness) and database-aware /api/v1/health/ready response.
+- [ ] Add configuration validation (API port and Mongo URI validation added; centralized error handling remains).
 - [ ] Add baseline unit/e2e tests and a documented start command.
 - [ ] Establish modules boundaries for auth, users, properties, categories, subscriptions/entitlements and admin without pretending those features are already implemented.
 
@@ -36,18 +36,18 @@ Turn the planning-only repository into a locally runnable monorepo with three in
 - [ ] Keep SEO metadata, sitemap and robots implementation queued for the web milestone.
 
 ### M1.4 — React Native Community CLI mobile
-- [ ] Scaffold a native React Native project in apps/mobile; retain android/ and ios/ projects.
+- [ ] Native React Native Community CLI package and starter screen added; generated android/ and ios/ platform projects are still missing.
 - [ ] Add theme tokens and a minimal branded starter screen with system light/dark mode.
 - [ ] Document Android Studio, JDK, Android SDK, emulator and physical-device setup.
 - [ ] Document that local iOS builds require macOS with Xcode.
 - [ ] Keep ShadCN Studio web components out of the native app.
 
 ### M1.5 — Shared packages and CI
-- [ ] packages/design-tokens exports framework-neutral brand/theme values.
-- [ ] packages/contracts contains shared transport types/schemas without importing app-specific UI.
-- [ ] packages/api-client defines a typed client boundary and base URL configuration.
-- [ ] packages/entitlement-core defines stable feature-key types only; server remains the authority.
-- [ ] Add GitHub Actions CI for install, lint, typecheck and tests supported in CI.
+- [x] packages/design-tokens exports framework-neutral brand/theme values.
+- [x] packages/contracts contains shared transport types without importing app-specific UI.
+- [x] packages/api-client defines a typed client boundary and base URL configuration.
+- [x] packages/entitlement-core defines stable feature-key types; server remains the authority.
+- [x] GitHub Actions CI added for install, typechecks, API tests, API build and web build (result pending).
 - [ ] Document which mobile-native checks require platform runners and avoid claiming CI validates them if it does not.
 
 ## Acceptance criteria

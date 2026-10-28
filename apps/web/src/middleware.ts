@@ -8,7 +8,14 @@ const isProtectedRoute = createRouteMatcher([
 
 const clerkHandler = clerkMiddleware(async (auth, request) => {
   if (isProtectedRoute(request)) {
-    await auth.protect();
+    const { userId } = await auth();
+    if (!userId) {
+      // Keep authentication inside the branded Apna Ghar experience instead of
+      // sending users to Clerk's hosted accounts.dev page.
+      const signInUrl = new URL("/sign-in", request.url);
+      signInUrl.searchParams.set("redirect_url", request.url);
+      return NextResponse.redirect(signInUrl);
+    }
   }
 });
 
