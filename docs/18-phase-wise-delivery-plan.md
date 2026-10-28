@@ -82,7 +82,7 @@
 
 **Tasks**
 - [ ] Extract and verify typography, spacing, radius, elevation, breakpoints, and remaining semantic tokens against the approved Figma source. (Base light-theme brand colors were aligned to the documented palette.)
-- [ ] Build shared web/admin primitives with accessible focus, disabled, validation, skeleton, toast, dialog, dropdown, filter, table, and empty/error states.
+- [ ] Finish shared web/admin primitives and apply them consistently across existing routes. Initial theme-aware field, button, status, panel, skeleton, toast, dialog, table, and empty/error-state CSS primitives are in place; component adoption and dropdown/filter coverage remain.
 - [x] Keep the existing Light, Midnight, Graphite, Forest, and AMOLED Black palettes and System default picker; align visible theme labels to the documented names. Full cross-route visual review remains open.
 - [x] Preserve the existing local-device theme preference persistence and immediate theme switching. Verify cross-route behavior and first-paint flash during QA.
 - [x] Add `/appearance` settings and a dedicated showcase displaying the same representative property UI in all five themes. Visual review and responsive QA remain open.
