@@ -1,13 +1,19 @@
 name: CI
+
 on:
   push:
     branches: [main, "feat/**", "fix/**"]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -15,11 +21,11 @@ jobs:
           node-version: 20
           cache: npm
       - name: Install workspace dependencies
-        run: npm install
+        run: npm install --include=dev
       - name: Typecheck API, web and mobile
         run: npm run typecheck
       - name: Test API
-        run: npm run test:api
+        run: npm run test:api -- --runInBand
       - name: Build API
         run: npm run build:api
       - name: Build web
