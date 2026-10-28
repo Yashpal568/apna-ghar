@@ -23,7 +23,7 @@
     "test": "npm run test:api",
     "ci": "npm run typecheck && npm run test && npm run build",
     "typecheck:mobile": "npx tsc --noEmit -p apps/mobile/tsconfig.json",
-    "test:e2e:api": "npm run test:e2e -w @apna-ghar/api"
+    "test:e2e:api": "npm run test:e2e -w @apna-ghar/api -- --runInBand"
   },
   "engines": {
     "node": ">=20.11.0"
