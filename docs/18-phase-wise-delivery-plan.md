@@ -69,7 +69,7 @@
 - [ ] Add API unit tests, web build checks, type checks, and practical smoke checks to CI.
 - [ ] Fix existing CI failures before adding feature work on top of a broken baseline.
 - [ ] Document reproducible local setup and Android Studio/JDK/SDK requirements.
-- [ ] Confirm the mobile scaffold exists; if not, create the native Community CLI project in its own phase/PR rather than calling a placeholder a mobile app.
+- [x] Keep the mobile workspace parked during web-first phases. Generate the native Community CLI project in P9, after web, admin, backend, SEO, security, entitlements and data/media integration gates are accepted.
 
 **Exit criteria**
 - Fresh dependency install succeeds.
