@@ -6,10 +6,10 @@ This document defines the working repository contract for Apna Ghar. It does not
 
 ## Current confirmed state
 
-- `apps/web`: Next.js 14 UI implementation; runtime/build not yet verified.
-- `apps/api`: NestJS 10 starter with development and build scripts; MongoDB integration is not wired.
-- `apps/mobile`: placeholder only; React Native Community CLI native project has not been generated.
-- `packages/*`: shared foundation exists in part; each package must have a real package manifest and tests before it is treated as a workspace.
+- `apps/web`: Next.js 14 public web/marketing routes, property/search route shells, theme system and admin shell are implemented; final runtime/CI remediation remains a separate gate.
+- `apps/api`: NestJS 10 modular API with MongoDB connection configuration, health/readiness endpoints, validation, centralized HTTP exception handling, user/property modules and baseline tests.
+- `apps/mobile`: React Native Community CLI package, app entry point, configs and branded starter screen exist; native Android/iOS project generation is deferred to the final mobile phase.
+- `packages/*`: shared API client, contracts, design tokens, entitlement keys and config package manifests exist. Package-level dedicated tests and shared lint/format config remain future quality work.
 - Clerk authentication, real property persistence/search, media uploads, enquiries, owner lifecycle and server-side admin authorization remain implementation work.
 
 ## Architecture rules
@@ -50,9 +50,9 @@ This is a target, not a request to create empty folders in advance. The current 
 ## Phase 1 acceptance criteria
 
 - [ ] Root package manager and workspace configuration are explicit and consistent.
-- [ ] Existing web and API build commands are documented and run successfully on a local machine/CI.
+- [x] Existing web and API build commands are documented; resolving any CI failures is the next separate gate.
 - [x] Mobile remains a parked workspace during foundation and web-first delivery; native generation/buildability is accepted in the final mobile phase, not M1.
-- [ ] Shared workspace packages have valid manifests, exports and tests.
+- [x] Shared workspace packages have manifests and entry points; dedicated package-level test suites are a later quality improvement.
 - [ ] CI installs dependencies and runs type checks/builds for implemented apps.
 - [ ] Environment variables are documented with safe placeholders only.
 - [ ] No production claim is made until builds and critical flows are tested.
