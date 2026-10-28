@@ -24,8 +24,10 @@ jobs:
         run: npm install --include=dev
       - name: Typecheck API, web and mobile
         run: npm run typecheck
-      - name: Test API
+      - name: Test API unit suite
         run: npm run test:api -- --runInBand
+      - name: Test API HTTP end-to-end suite
+        run: npm run test:e2e:api -- --runInBand
       - name: Build API
         run: npm run build:api
       - name: Build web
