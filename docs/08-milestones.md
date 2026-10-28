@@ -10,11 +10,11 @@
 - Blue/green branding and system light/dark themes confirmed.
 - Free launch with payment collection disabled; subscription entitlements remain part of the backend design.
 
-## M1 — Foundation and CI — IN PROGRESS
+## M1 — Foundation implementation — COMPLETE; CI REMEDIATION — NEXT GATE
 - Stabilize npm workspaces, shared packages, environment validation, API health/readiness, tests and CI.
 - Prioritize API and Next.js web developer experience.
 - Mobile workspace may remain parked; native Android/iOS projects are not an acceptance blocker for the current web-first phase.
-- Verify builds and report actual CI outcomes; never claim success without green checks.
+- Foundation scaffolding, health/readiness, shared packages, test wiring and setup docs are implemented. CI failures are explicitly deferred to the immediate follow-up task; fix all workflows before starting M2. Never claim green checks without actual success.
 
 ## M2 — Web experience
 Responsive marketing/home page, property search/filter/sort, property detail pages, city/category landing pages, customer accounts, favorites, seller/broker dashboards and listing management.
