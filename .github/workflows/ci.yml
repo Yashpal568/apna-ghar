@@ -27,7 +27,7 @@ jobs:
       - name: Test API unit suite
         run: npm run test:api -- --runInBand
       - name: Test API HTTP end-to-end suite
-        run: npm run test:e2e:api -- --runInBand
+        run: npm run test:e2e:api
       - name: Build API
         run: npm run build:api
       - name: Build web
