@@ -34,6 +34,7 @@ export class UsersService {
       { $set: clean, $setOnInsert: { clerkUserId } },
       { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
     ).lean().exec();
+    if (!profile) throw new Error('Profile could not be saved. Please retry.');
     return this.toPublicProfile(profile);
   }
 
