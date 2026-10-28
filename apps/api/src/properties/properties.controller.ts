@@ -38,7 +38,7 @@ export class PropertiesController {
       .digest('hex');
 
     const form = new FormData();
-    form.append('file', new Blob([file.buffer], { type: file.mimetype }), 'property-image');
+    form.append('file', new Blob([new Uint8Array(file.buffer)], { type: file.mimetype }), 'property-image');
     form.append('api_key', apiKey);
     form.append('timestamp', String(timestamp));
     form.append('folder', folder);

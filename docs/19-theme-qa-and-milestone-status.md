@@ -1,6 +1,6 @@
 # Theme QA and Milestone Progress
 
-Last updated: 2026-10-27
+Last updated: 2026-10-28
 
 ## Theme implementation status
 
@@ -46,8 +46,11 @@ Implementation pass applied to shared web surfaces. **Final visual acceptance re
 - [x] Use Clerk's supported account UI for signed-in users to manage email, password, connected accounts and security settings.
 - [x] Provide sign-in and not-configured states.
 - [ ] Verify signed-in and signed-out behavior with configured Clerk keys.
-- [ ] Persist marketplace profile/contact preferences to a server-side user record; current custom contact fields are still browser-local.
-- [ ] Add tests for account route states and authorization boundaries.
+- [x] Add authenticated GET/PUT `/api/v1/users/me/profile` endpoints backed by MongoDB and keyed by verified Clerk user ID.
+- [x] Connect the profile page to the API for signed-in users; retain local-only profile saving for signed-out visitors.
+- [ ] Verify signed-in and signed-out behavior with configured Clerk keys and a reachable MongoDB deployment.
+- [x] Add initial unit tests for profile defaults, public response shape, input normalization and Clerk-user-scoped upsert.
+- [ ] Add controller/guard authorization tests and run the API test suite in CI.
 
 ## Scope guardrails
 - No invented user/listing metrics.

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
+import Script from 'next/script';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -20,6 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        {process.env.NODE_ENV === 'production' ? (
+          <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
+        ) : null}
         {publishableKey ? (
           <ClerkProvider
             publishableKey={publishableKey}
