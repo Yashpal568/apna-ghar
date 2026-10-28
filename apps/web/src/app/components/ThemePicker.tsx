@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 const themes = [
   { id: "light", label: "Light", swatch: "#F3F4F6" },
@@ -12,35 +12,94 @@ const themes = [
 ] as const;
 
 type Theme = (typeof themes)[number]["id"];
+const THEME_STORAGE_KEY = "apna-ghar-theme";
+
 function resolveTheme(theme: Theme) {
   if (theme !== "system") return theme;
-  return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? "midnight" : "light";
+  return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "midnight"
+    : "light";
+}
+
+function isTheme(value: string | null): value is Theme {
+  return themes.some((item) => item.id === value);
 }
 
 export default function ThemePicker({ compact = false }: { compact?: boolean }) {
   const [theme, setTheme] = useState<Theme>("system");
   const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const menuId = useId();
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("apna-ghar-theme") as Theme | null;
-    const initial = saved && themes.some((item) => item.id === saved) ? saved : "system";
+    const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
+    const initial: Theme = isTheme(saved) ? saved : "system";
     setTheme(initial);
     document.documentElement.dataset.theme = resolveTheme(initial);
+
     const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => { const savedTheme = window.localStorage.getItem("apna-ghar-theme"); if (!savedTheme || savedTheme === "system") document.documentElement.dataset.theme = resolveTheme("system"); };
-    media.addEventListener?.("change", onChange);
-    return () => media.removeEventListener?.("change", onChange);
+    const onSystemChange = () => {
+      const current = window.localStorage.getItem(THEME_STORAGE_KEY);
+      if (!isTheme(current) || current === "system") {
+        document.documentElement.dataset.theme = resolveTheme("system");
+      }
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.target instanceof Node && !rootRef.current?.contains(event.target)) setOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    media.addEventListener("change", onSystemChange);
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      media.removeEventListener("change", onSystemChange);
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   function chooseTheme(next: Theme) {
     setTheme(next);
-    window.localStorage.setItem("apna-ghar-theme", next);
+    window.localStorage.setItem(THEME_STORAGE_KEY, next);
     document.documentElement.dataset.theme = resolveTheme(next);
     setOpen(false);
   }
 
-  return <div className={compact ? "theme-control theme-control-compact" : "theme-control"}>
-    <button className="theme-trigger" type="button" aria-expanded={open} aria-label="Choose appearance" onClick={() => setOpen(!open)}><span className="theme-trigger-icon" aria-hidden="true">◐</span>{compact ? <span className="theme-trigger-label">Appearance</span> : <span>Appearance</span>}<span aria-hidden="true">⌄</span></button>
-    {open && <div className="theme-menu" role="dialog" aria-label="Choose a theme"><p>Choose your look</p>{themes.map((item) => <button type="button" key={item.id} className={`theme-option ${theme === item.id ? "is-selected" : ""}`} onClick={() => chooseTheme(item.id)}><span className="theme-swatch" style={{ background: item.swatch }}/><span>{item.label}</span>{theme === item.id && <span className="theme-check" aria-label="Selected">✓</span>}</button>)}</div>}
-  </div>;
+  return (
+    <div ref={rootRef} className={compact ? "theme-control theme-control-compact" : "theme-control"}>
+      <button
+        className="theme-trigger"
+        type="button"
+        aria-expanded={open}
+        aria-controls={menuId}
+        aria-label={compact ? "Choose appearance" : "Choose appearance theme"}
+        onClick={() => setOpen((value) => !value)}
+      >
+        <span className="theme-trigger-icon" aria-hidden="true">◐</span>
+        <span className="theme-trigger-label">Appearance</span>
+        <span aria-hidden="true">⌄</span>
+      </button>
+      {open && (
+        <div id={menuId} className="theme-menu" role="group" aria-label="Choose a theme">
+          <p>Choose your look</p>
+          {themes.map((item) => (
+            <button
+              type="button"
+              key={item.id}
+              className={`theme-option ${theme === item.id ? "is-selected" : ""}`}
+              aria-pressed={theme === item.id}
+              onClick={() => chooseTheme(item.id)}
+            >
+              <span className="theme-swatch" style={{ background: item.swatch }} aria-hidden="true" />
+              <span>{item.label}</span>
+              {theme === item.id && <span className="theme-check" aria-label="Selected">✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
