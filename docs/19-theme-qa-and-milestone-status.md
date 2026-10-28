@@ -49,8 +49,8 @@ Implementation pass applied to shared web surfaces. **Final visual acceptance re
 - [x] Add authenticated GET/PUT `/api/v1/users/me/profile` endpoints backed by MongoDB and keyed by verified Clerk user ID.
 - [x] Connect the profile page to the API for signed-in users; retain local-only profile saving for signed-out visitors.
 - [ ] Verify signed-in and signed-out behavior with configured Clerk keys and a reachable MongoDB deployment.
-- [ ] Add automated tests for profile validation, account route states and authorization boundaries.
-- [ ] Add tests for account route states and authorization boundaries.
+- [x] Add initial unit tests for profile defaults, public response shape, input normalization and Clerk-user-scoped upsert.
+- [ ] Add controller/guard authorization tests and run the API test suite in CI.
 
 ## Scope guardrails
 - No invented user/listing metrics.
