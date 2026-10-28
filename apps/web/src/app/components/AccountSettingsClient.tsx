@@ -28,7 +28,7 @@ export default function AccountSettingsClient() {
           <div className="profile-setting-links">
             <a href="/saved"><span>Saved homes</span><span aria-hidden="true">↗</span></a>
             <a href="/my-listings"><span>My listings</span><span aria-hidden="true">↗</span></a>
-            <a href="/sign-in/factor-one"><span>Sign-in & security</span><span aria-hidden="true">↗</span></a>
+            <a href="/profile#profile-details"><span>Edit profile details</span><span aria-hidden="true">↗</span></a>
           </div>
           <button className="profile-signout-button" type="button" disabled={signingOut} onClick={async () => { setSigningOut(true); try { await signOut({ redirectUrl: "/" }); } finally { setSigningOut(false); } }}>
             {signingOut ? "Signing out…" : "Sign out"}
