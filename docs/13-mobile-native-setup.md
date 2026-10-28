@@ -18,6 +18,6 @@ Install Xcode and its Command Line Tools, install CocoaPods, and use a macOS mac
 
 The current GitHub Actions workflow runs on Ubuntu and validates TypeScript, API tests/build, and the Next.js web build. It does **not** build Android or iOS binaries. Add platform-specific CI only after the generated native projects are checked in and the required platform runners/tooling are configured.
 
-## M1 acceptance gate
+## Final mobile-phase acceptance gate
 
-Do not mark mobile foundation complete until both native project directories are committed, the Android project builds on an Android-capable runner or developer machine, and iOS project configuration is verified on macOS. A TypeScript check alone does not prove native buildability.
+Native build acceptance belongs to the final mobile phase, after web, admin, backend, SEO, security, entitlements and data/media integrations are accepted. Until then, native project directories may remain absent by design. When the mobile phase starts, require both platform project directories, an Android build on an Android-capable runner or developer machine, and iOS project configuration verification on macOS. A TypeScript check alone does not prove native buildability.
