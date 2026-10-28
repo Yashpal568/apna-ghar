@@ -51,7 +51,7 @@ This is a target, not a request to create empty folders in advance. The current 
 
 - [ ] Root package manager and workspace configuration are explicit and consistent.
 - [ ] Existing web and API build commands are documented and run successfully on a local machine/CI.
-- [ ] Mobile app is generated with React Native Community CLI in a compatible local environment.
+- [x] Mobile remains a parked workspace during foundation and web-first delivery; native generation/buildability is accepted in the final mobile phase, not M1.
 - [ ] Shared workspace packages have valid manifests, exports and tests.
 - [ ] CI installs dependencies and runs type checks/builds for implemented apps.
 - [ ] Environment variables are documented with safe placeholders only.
