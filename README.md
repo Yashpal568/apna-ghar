@@ -24,6 +24,14 @@ Premium Indian real-estate buy/sell/rent marketplace.
 - Native `android/` and `ios/` projects are intentionally deferred to the final mobile phase. The approved delivery workflow is web + admin + marketing/SEO + backend/security/data integrations first, APK last. See `docs/08-milestones.md`, `docs/12-m1-implementation-checklist.md`, and `docs/18-web-first-delivery-roadmap.md`.
 - The current Ubuntu CI does not build native Android/iOS binaries; do not treat TypeScript checks as native-build validation.
 
+
+## Typography
+
+- Web body/UI text uses Google Fonts **Inter** (16px base, 1.55 line-height).
+- Web headings and brand display text use Google Fonts **Plus Jakarta Sans**.
+- Icon glyphs use Material Symbols Outlined; do not use icon fonts for ordinary text.
+- Typography rules for web and the planned React Native app are documented in [docs/19-typography-guidelines.md](docs/19-typography-guidelines.md). Native font assets will be bundled during the mobile UI phase; CSS imports do not apply to React Native.
+
 ## Requirements
 
 - Node.js >= 20.11 and npm
