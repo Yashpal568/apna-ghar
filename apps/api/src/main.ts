@@ -12,7 +12,32 @@ async function bootstrap() {
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
-  app.enableCors({ origin: allowedOrigins });
+  const vercelProductionOrigins = new Set([
+    'https://web-dun-two-91.vercel.app',
+    'https://web-yashs-projects-cd385495.vercel.app',
+    'https://web-git-main-yashs-projects-cd385495.vercel.app',
+  ]);
+  app.enableCors({
+    origin: (origin, callback) => {
+      // Allow non-browser/server-to-server calls and explicitly configured origins.
+      if (!origin || allowedOrigins.includes(origin) || vercelProductionOrigins.has(origin)) {
+        return callback(null, true);
+      }
+      try {
+        const parsed = new URL(origin);
+        // Permit this project's Vercel preview deployments without opening CORS to every Vercel app.
+        if (
+          parsed.protocol === 'https:' &&
+          /^web-[a-z0-9-]+-yashs-projects-cd385495\\.vercel\\.app$/.test(parsed.hostname)
+        ) {
+          return callback(null, true);
+        }
+      } catch {
+        // Reject malformed origins below.
+      }
+      return callback(new Error('Origin is not allowed by CORS'), false);
+    },
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
