@@ -11,6 +11,7 @@ class PropertyLocationDto {
 export class CreatePropertyDto {
   @IsString() @MaxLength(140) title!: string;
   @IsString() @MaxLength(5000) description!: string;
+  @IsOptional() @IsString() @MaxLength(100) contactName?: string;
   @IsOptional() @IsString() @MaxLength(30) contactPhone?: string;
   @IsString() @MaxLength(80) categoryId!: string;
   @IsIn(['sale', 'rent']) listingType!: 'sale' | 'rent';
