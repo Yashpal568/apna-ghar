@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth, useClerk } from "@clerk/nextjs";
 import BrandLogo from "./BrandLogo";
 import ThemePicker from "./ThemePicker";
-type Property={_id:string;slug:string;title:string;description?:string;listingType:"sale"|"rent";priceAmount:number;currency?:string;categoryId:string;location?:{city?:string;state?:string;locality?:string};areaValue:number;areaUnit:string;bedrooms?:number;bathrooms?:number;imageUrls?:string[];contactPhone?:string;furnishing?:string};
+type Property={_id:string;slug:string;title:string;description?:string;listingType:"sale"|"rent";priceAmount:number;currency?:string;categoryId:string;location?:{city?:string;state?:string;locality?:string};areaValue:number;areaUnit:string;bedrooms?:number;bathrooms?:number;imageUrls?:string[];contactName?:string;contactPhone?:string;furnishing?:string};
 type Result={items:Property[];pagination:{total:number;pages:number;page:number}};
 const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:4000/api/v1").replace(/\/$/,"");
 type Category={key:string;label:string;icon:string};
