@@ -1746,3 +1746,39 @@ select option { color: var(--color-text); background: var(--color-surface); }
  .profile-stitch-insight-links small{font-size:8px!important}
  .profile-stitch-carousel-controls{top:10px!important;right:10px!important}
 }
+
+
+/* Profile hero: make carousel photography reliable and avoid suggesting unavailable live metrics. */
+.profile-stitch-slide img {
+  object-fit: cover;
+  object-position: center 48%;
+  filter: brightness(1.34) saturate(1.12) contrast(1.04) !important;
+}
+.profile-stitch-hero-shade {
+  background:
+    linear-gradient(90deg, rgba(5, 22, 42, .76) 0%, rgba(5, 22, 42, .48) 44%, rgba(5, 22, 42, .06) 100%),
+    linear-gradient(0deg, rgba(5, 22, 42, .42), rgba(5, 22, 42, .01) 68%) !important;
+}
+.profile-stitch-account-label {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(220, 244, 255, .3);
+  border-radius: 999px;
+  padding: 6px 9px;
+  color: #e8f8ff;
+  background: rgba(5, 30, 56, .32);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: .35px;
+  white-space: nowrap;
+}
+.profile-stitch-insight-links > a { min-width: 0; }
+.profile-stitch-insight-links strong { overflow-wrap: anywhere; }
+@media (max-width: 700px) {
+  .profile-stitch-hero-shade {
+    background:
+      linear-gradient(90deg, rgba(5, 22, 42, .63), rgba(5, 22, 42, .18)),
+      linear-gradient(0deg, rgba(5, 22, 42, .48), rgba(5, 22, 42, .08) 70%) !important;
+  }
+  .profile-stitch-account-label { font-size: 8px; padding: 5px 7px; }
+}
