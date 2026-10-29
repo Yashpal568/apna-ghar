@@ -1318,3 +1318,12 @@ select option { color: var(--color-text); background: var(--color-surface); }
  .ag-marketplace-phone { transform: scale(.86) rotate(-5deg); }
  .ag-marketplace-app-inner h2 { font-size: 30px; }
 }
+
+
+/* Marketplace search tabs are buttons so transaction/category state stays in the search form. */
+.ag-marketplace-transaction-tabs button { display: inline-flex; align-items: center; justify-content: center; min-height: 35px; padding: 0 15px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--color-muted); font: inherit; font-size: 12px; font-weight: 750; cursor: pointer; }
+.ag-marketplace-transaction-tabs button:hover { background: var(--color-surface-subtle); color: var(--color-text); }
+.ag-marketplace-transaction-tabs button.is-selected { border-color: color-mix(in srgb,var(--color-primary) 18%,var(--color-border)); background: color-mix(in srgb,var(--color-primary) 10%,var(--color-surface)); color: var(--color-primary); }
+@media (max-width: 640px) {
+  .ag-marketplace-transaction-tabs button { min-height: 31px; padding: 0 9px; font-size: 10px; }
+}
