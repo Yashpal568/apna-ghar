@@ -1,16 +1,14 @@
 "use client";
 
 import { useAuth, useClerk } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 
 export default function AccountNavLinks({ mobile = false }: { mobile?: boolean }) {
   const { isLoaded, isSignedIn } = useAuth();
   const { signOut } = useClerk();
-  const router = useRouter();
   if (!isLoaded) return null;
 
   if (isSignedIn) {
-    const logout = <button className={mobile ? "ag-mobile-logout" : "ag-signout-link"} type="button" onClick={() => void signOut(() => router.push("/"))}>
+    const logout = <button className={mobile ? "ag-mobile-logout" : "ag-signout-link"} type="button" onClick={() => void signOut({ redirectUrl: "/" })}>
       <span aria-hidden="true">↪</span> Sign out
     </button>;
     return mobile
