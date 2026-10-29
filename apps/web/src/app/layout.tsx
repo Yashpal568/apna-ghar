@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {process.env.NODE_ENV === 'production' ? (
+        {process.env.VERCEL === '1' ? (
           <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
         ) : null}
         {publishableKey ? (
