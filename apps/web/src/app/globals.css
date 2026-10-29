@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800&display=swap");
 @import "../../../../styles/design-tokens.css";
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200");
 
 :root { --content-width: 1240px; --shadow-soft: 0 20px 60px rgb(15 23 42 / 7%); }
 * { box-sizing: border-box; }
@@ -1558,7 +1559,6 @@ select option { color: var(--color-text); background: var(--color-surface); }
 
 
 /* Stitch PropTech Horizon profile page — converted to responsive application CSS. */
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200");
 .profile-redesign{--stitch-bg:#f8f9ff;--stitch-surface:#fff;--stitch-ink:#0b1c30;--stitch-muted:#626d80;--stitch-line:#dce4f2;--stitch-blue:#005bea;--stitch-green:#50fd9f;background:var(--stitch-bg);color:var(--stitch-ink);font-family:"Plus Jakarta Sans",sans-serif}
 .material-symbols-outlined{font-family:"Material Symbols Outlined";font-weight:normal;font-style:normal;font-size:20px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;font-feature-settings:"liga";-webkit-font-feature-settings:"liga";-webkit-font-smoothing:antialiased;font-variation-settings:"FILL" 0,"wght" 500,"GRAD" 0,"opsz" 24}
 .profile-redesign-shell{width:min(1240px,calc(100% - 48px));margin:0 auto;padding:24px 0 54px}
