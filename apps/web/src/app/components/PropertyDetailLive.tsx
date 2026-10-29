@@ -10,6 +10,23 @@ const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:4000/api/v1")
 
 function AuthenticatedSaveButton({ property, identifier, saved, onSaved, onNotice }: { property: Property; identifier: string; saved: boolean; onSaved: (value: boolean) => void; onNotice: (value: string) => void }) {
   const { isSignedIn, getToken } = useAuth();
+  useEffect(() => {
+    if (!isSignedIn) return;
+    const controller = new AbortController();
+    void (async () => {
+      try {
+        const token = await getToken();
+        if (!token) return;
+        const response = await fetch(api + "/saved-properties", { headers: { Authorization: "Bearer " + token, Accept: "application/json" }, signal: controller.signal });
+        if (!response.ok) return;
+        const homes = await response.json() as Property[];
+        if (Array.isArray(homes) && homes.some((home) => home._id === property._id)) onSaved(true);
+      } catch {
+        // Keep the browser's saved state when account sync is unavailable.
+      }
+    })();
+    return () => controller.abort();
+  }, [getToken, isSignedIn, onSaved, property._id]);
   async function toggle() {
     const exists = (() => {
       try { return (JSON.parse(localStorage.getItem("apna-ghar-saved-homes") || "[]") as Property[]).some((home) => home._id === property._id || home.slug === property.slug || home.slug === identifier); }
