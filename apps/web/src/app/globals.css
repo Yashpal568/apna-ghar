@@ -2310,3 +2310,9 @@ img,video,svg { max-width:100%; }
   .ag-home-hero-slide { transition:none !important; }
   .ag-home-hero-slide:not(.is-active) { visibility:hidden; }
 }
+
+.profile-stitch-logout { display:flex; align-items:center; justify-content:center; gap:9px; width:100%; min-height:46px; margin-top:12px; padding:12px 14px; border:1px solid #fecaca; border-radius:12px; background:#fff7f7; color:#b91c1c; font-family:var(--font-ui); font-size:13px; font-weight:750; cursor:pointer; }
+.profile-stitch-logout:hover { background:#fee2e2; border-color:#fca5a5; }
+.profile-stitch-logout:focus-visible { outline:3px solid #2563eb; outline-offset:3px; }
+html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .profile-stitch-logout,html[data-theme="forest"] .profile-stitch-logout,html[data-theme="amoled"] .profile-stitch-logout { background:#35191d; color:#fecaca; border-color:#7f1d1d; }
+@media(max-width:760px) { .profile-stitch-logout { min-height:48px; } }
