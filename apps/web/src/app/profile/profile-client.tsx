@@ -84,7 +84,12 @@ export default function ProfilePage() {
   return <main className="interior-page"><SiteHeader active="account" /><div className="profile-page-shell">
     <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>My profile</span></div>
     <section className="profile-page-hero"><section className="listing-intro"><p className="eyebrow">YOUR ACCOUNT</p><h1>A little more<br/><em>about you.</em></h1><p>Keep your contact details handy for property enquiries and visits.</p></section></section>
-    <div className="profile-page-layout"><section className="auth-single"><form id="profile-details" className="auth-card auth-form" onSubmit={save}>
+    <section className="profile-summary-card" aria-label="Profile summary">
+      <div className="profile-summary-avatar" aria-hidden="true">{profile.name.trim() ? profile.name.trim().split(/\s+/).slice(0, 2).map(x => x[0].toUpperCase()).join("") : "AG"}</div>
+      <div className="profile-summary-copy"><h2>{profile.name.trim() || "Your Apna Ghar profile"}</h2><p>{profile.email || (isSignedIn ? "Account email not available" : "Sign in to connect your account")}</p><span>{isSignedIn ? "Account connected" : "Profile saved on this device"}</span></div>
+      <div className="profile-summary-actions"><a href="/saved">Saved homes <span aria-hidden="true">↗</span></a><a href="/my-listings">My listings <span aria-hidden="true">↗</span></a></div>
+    </section>
+    <div className="profile-page-layout"><section className="profile-details-column"><form id="profile-details" className="auth-card auth-form" onSubmit={save}>
       <div className="profile-avatar" aria-hidden="true">{profile.name.trim() ? profile.name.trim().split(/\s+/).slice(0, 2).map(x => x[0].toUpperCase()).join("") : "AG"}</div><h2>Profile details</h2>
       <p className="auth-muted">{isSignedIn ? "Your details sync with your Apna Ghar account." : "Sign in to sync these details across your devices."}</p>
       {loading && <p role="status" className="form-notice">Loading your account profile…</p>}
