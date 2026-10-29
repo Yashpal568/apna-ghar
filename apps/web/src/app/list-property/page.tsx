@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
@@ -50,6 +50,17 @@ function ListingForm() {
   const [notice, setNotice] = useState("");
   const [publishing, setPublishing] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("apna-ghar-listing-draft");
+      if (!saved) return;
+      const parsed = JSON.parse(saved) as Partial<Draft>;
+      setDraft((current) => ({ ...current, ...Object.fromEntries(Object.keys(initialDraft).map((key) => [key, typeof parsed[key as keyof Draft] === "string" ? parsed[key as keyof Draft] : current[key as keyof Draft]])) } as Draft));
+    } catch {
+      // Ignore an invalid or outdated local draft and let the owner start fresh.
+    }
+  }, []);
 
   const update = (key: keyof Draft, value: string) => {
     setDraft((current) => ({ ...current, [key]: value }));
