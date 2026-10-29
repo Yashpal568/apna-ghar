@@ -132,6 +132,17 @@
 |---|---|---|---|
 | 2026-10-29 | Improved property detail error layout (`2cd6305`), restored listing drafts (`4015cc0`), and fixed saved-home removal to match either slug or ID (`ef80954`). Vercel success was confirmed for `4015cc0`; no CI status has yet been returned for `ef80954`. | `ef80954` — code committed; CI/deployment/browser QA pending | Verify latest CI/deployment, then test live search and authenticated create/manage listing journey. |
 
+## 2026-10-29 Mobile responsive follow-up
+
+- Reviewed the user's screenshots and the saved Apna Ghar design PDF/HTML reference. Updated typography to load Inter, Manrope, and Plus Jakarta Sans directly from the document head; use Manrope for display/editorial headings, Plus Jakarta Sans for general headings, and Inter for body/control text. The reference PDF specifies Manrope + Inter; the master HTML reference specifies Plus Jakarta Sans + Inter.
+- Added an accessible four-image auto-rotating homepage hero carousel with manual slide dots and reduced-motion support.
+- Fixed mobile homepage hero/search vertical spacing at 600px and 380px breakpoints; ensured carousel image/shade/content/search stacking is intentional.
+- Added Clerk sign-out action to desktop account navigation and mobile drawer. Mobile drawer closes after link/button actions and remains keyboard-dismissable.
+- Replaced profile-page Material Symbol ligature text with inline SVG icons so icon names do not leak into the UI if the external icon font is delayed. Added full-width mobile profile card guards and hid duplicate hero quick links/completion panels on small screens.
+- Profile load now falls back to locally saved fields and Clerk identity when the API profile endpoint fails, and clearly distinguishes an API Clerk configuration error from a successful save.
+- CI verification is running for the latest changes. Live Cloudflare deployment and mobile-browser verification are still pending. The screenshot's API 401 is not safely fixable in frontend code: API guard returns `Authentication is not configured` when the Render API environment lacks `CLERK_SECRET_KEY`. Configure that secret in the API hosting environment for the same Clerk instance as the website's publishable key; do not bypass the guard.
+- Keep M2 acceptance open until the latest CI/build passes and the updated preview is checked at narrow mobile widths and desktop.
+
 ## Blockers / decisions needed
 
 - Confirm Clerk sign-in methods before auth wiring; do not assume OTP.
