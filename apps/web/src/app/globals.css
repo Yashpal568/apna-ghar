@@ -1490,7 +1490,7 @@ select option { color: var(--color-text); background: var(--color-surface); }
 .profile-page-hero-premium{
   display:flex;align-items:center;min-height:340px;margin:14px 0 0;padding:clamp(28px,4vw,42px);
   border:0;border-radius:22px 22px 0 0;
-  background:linear-gradient(90deg,rgba(8,27,49,.96) 0%,rgba(12,39,67,.88) 48%,rgba(12,39,67,.36) 100%),url('https://lh3.googleusercontent.com/aida-public/AB6AXuAsHFYeomTwdsW-e_jSy0iVvdU35E7zhZ6NhIs7AmKfy-voMu95fHmYH1DKN8Vw0KsqEmYzk6fbIVIMZ89bfl4a44CvZjqKcrQsMZLrkYCE1YlaF8zTIsN_HtzJVr_HCXb3x4NhrQfMNsfPC1ecxdDSj7zMhZgMwr0kBeqEcET6SlyFgNLjVaklvbH8-UBFZFOirmyFdSyvaB6nsnA7UF1GvXlYUBAuPqW9NTYc27Q') center 48%/cover no-repeat;
+  background:linear-gradient(90deg,rgba(8,27,49,.96) 0%,rgba(12,39,67,.88) 48%,rgba(12,39,67,.36) 100%),url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90') center 48%/cover no-repeat;
   box-shadow:0 16px 36px rgba(13,34,61,.12);
 }
 .profile-page-hero-premium:before{display:none}
