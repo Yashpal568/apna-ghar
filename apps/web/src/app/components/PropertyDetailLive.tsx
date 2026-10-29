@@ -62,7 +62,7 @@ function AuthenticatedSaveButton({ property, identifier, saved, onSaved, onNotic
   return <button className="button button-outline" type="button" aria-pressed={saved} onClick={() => void toggle()}>{saved ? "♥ Saved" : "♡ Save home"}</button>;
 }
 
-function PropertyContactActions({ propertyId, slug, phone }: { propertyId: string; slug: string; phone?: string }) {
+function AuthenticatedPropertyContactActions({ propertyId, slug, phone }: { propertyId: string; slug: string; phone?: string }) {
   const { isSignedIn, getToken } = useAuth();
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
@@ -93,6 +93,16 @@ function PropertyContactActions({ propertyId, slug, phone }: { propertyId: strin
     <button className="button button-primary button-full" type="button" onClick={() => void startChat()} disabled={busy}>{busy ? "Opening chat…" : "▤ Chat with owner"}</button>
     {notice && <p className="form-notice" role="status">{notice}</p>}
   </div>;
+}
+
+function PropertyContactActions({ propertyId, slug, phone }: { propertyId: string; slug: string; phone?: string }) {
+  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+    return <div className="property-contact-actions">
+      {phone?.trim() ? <a className="button button-outline button-full" href={"tel:" + phone.replace(/[^+0-9]/g, "")}>☎ Call owner</a> : <p className="contact-phone-missing">The owner has not added a public contact number.</p>}
+      <a className="button button-primary button-full" href={"/sign-in?redirect_url=" + encodeURIComponent("/property/" + slug)}>▤ Sign in to chat</a>
+    </div>;
+  }
+  return <AuthenticatedPropertyContactActions propertyId={propertyId} slug={slug} phone={phone} />;
 }
 
 export default function PropertyDetailLive({id}:{id:string}){const [p,setP]=useState<Property|null>(null);const [error,setError]=useState("");const [loading,setLoading]=useState(true);const [saved,setSaved]=useState(false);const [notice,setNotice]=useState("");
