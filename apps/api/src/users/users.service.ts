@@ -21,6 +21,21 @@ export class UsersService {
     return { name: '', email: '', phone: '', city: '', about: '' };
   }
 
+  async syncClerkIdentity(clerkUserId: string, identity: { name?: string; email?: string }) {
+    const existing = await this.profiles.findOne({ clerkUserId }).lean().exec();
+    const existingName = typeof existing?.name === 'string' ? existing.name.trim() : '';
+    const existingEmail = typeof existing?.email === 'string' ? existing.email.trim().toLowerCase() : '';
+    const name = existingName || identity.name?.trim() || '';
+    const email = identity.email?.trim().toLowerCase() || existingEmail;
+    const profile = await this.profiles.findOneAndUpdate(
+      { clerkUserId },
+      { $set: { name, email }, $setOnInsert: { clerkUserId } },
+      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+    ).lean().exec();
+    if (!profile) throw new Error('Account profile could not be synchronized.');
+    return this.toPublicProfile(profile);
+  }
+
   async saveMyProfile(clerkUserId: string, input: ProfileInput) {
     const clean = {
       ...(input.name !== undefined ? { name: input.name.trim() } : {}),
