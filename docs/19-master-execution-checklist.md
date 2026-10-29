@@ -59,7 +59,7 @@
 - [x] Category/type values align with the existing listing form and string-based API filter (end-to-end data QA pending).
 - [ ] Real API-backed search, filters, sort, pagination verified end-to-end (Vercel build/deploy check passed; live browser/API interaction still pending).
 - [x] Property detail page uses live API data with loading and not-found/error states; error state now retains shared marketplace header/footer and navigation (deployment/browser QA pending).
-- [ ] Listing form create/preview/publish flow is API-backed.
+- [x] Listing form has API-backed create/publish and a three-step preview; saved local drafts now restore into the form (commit `4015cc0`; build/browser QA pending).
 - [ ] My Listings supports real user-owned listings and lifecycle actions.
 - [ ] Saved properties behavior is defined and persistence requirements are met.
 - [ ] Profile/account workflows are functional.
@@ -117,7 +117,7 @@
 
 | Date | Change / evidence | Commit | Next exact task |
 |---|---|---|---|
-| 2026-10-29 | Created the master checklist, fixed homepage search state/category options, confirmed Vercel success for `8d993ab`, and kept M2 active. Improved property detail unavailable/error state to retain shared marketplace header, breadcrumbs and footer. Commit: `2cd6305`. | `2cd6305` — code committed; deployment/build and browser QA not yet checked | Verify search and property detail against deployed API, then proceed through listing publish/My Listings before M3. |
+| 2026-10-29 | Improved property detail error layout (`2cd6305`) and added restore-on-load for saved property listing drafts (`4015cc0`). The listing draft restore is committed but build/browser QA has not run. | `4015cc0` — code committed; CI/deployment/browser QA pending | Check build/CI and audit listing publish + My Listings API contracts; then test live buyer and owner journeys. |
 
 ## Blockers / decisions needed
 
