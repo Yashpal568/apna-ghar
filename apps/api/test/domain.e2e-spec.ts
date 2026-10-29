@@ -26,7 +26,6 @@ describe('M3 identity and profile HTTP (e2e)', () => {
 
   beforeAll(async () => {
     (verifyToken as jest.Mock).mockResolvedValue({ sub: 'user_test_123' });
-    (verifyToken as jest.Mock).mockResolvedValue({ sub: 'user_test_123' });
     (createClerkClient as jest.Mock).mockReturnValue({
       users: { getUser: jest.fn().mockResolvedValue(clerkUser) },
     });
@@ -56,6 +55,7 @@ describe('M3 identity and profile HTTP (e2e)', () => {
   beforeEach(() => {
     allowAuth = true;
     jest.clearAllMocks();
+    (verifyToken as jest.Mock).mockResolvedValue({ sub: 'user_test_123' });
     (createClerkClient as jest.Mock).mockReturnValue({
       users: { getUser: jest.fn().mockResolvedValue(clerkUser) },
     });
