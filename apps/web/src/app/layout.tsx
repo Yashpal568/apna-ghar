@@ -53,6 +53,7 @@ export default function RootLayout({
         ) : (
           children
         )}
+        <MobileBottomNav />
       </body>
     </html>
   );
