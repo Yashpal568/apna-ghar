@@ -28,7 +28,7 @@ async function bootstrap() {
         // Permit this project's Vercel preview deployments without opening CORS to every Vercel app.
         if (
           parsed.protocol === 'https:' &&
-          /^web-[a-z0-9-]+-yashs-projects-cd385495\\.vercel\\.app$/.test(parsed.hostname)
+          /^web-[a-z0-9-]+-yashs-projects-cd385495\.vercel\.app$/.test(parsed.hostname)
         ) {
           return callback(null, true);
         }
