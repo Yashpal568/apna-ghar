@@ -13,6 +13,12 @@ const api = (configuredApi || (process.env.NODE_ENV === "development"
   ? "http://localhost:4000/api/v1"
   : "https://apna-ghar-api-j4fo.onrender.com/api/v1")).replace(/\/$/, "");
 const fallbackPhoto = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=95";
+function friendlyProfileError(detail: string) {
+  if (detail === "Authentication is not configured") return "Profile sync is unavailable because the API is missing its Clerk secret configuration. Set CLERK_SECRET_KEY in the API host to the same Clerk instance used by this website, then redeploy. Your changes are not synced yet.";
+  if (detail === "Invalid or expired authentication token") return "The API could not verify this sign-in session. Confirm the website and API use the same Clerk instance, then sign in again.";
+  if (detail === "Failed to fetch") return "We couldn't reach the Apna Ghar API. Check the API deployment and CORS configuration, then retry.";
+  return detail || "Could not load your account profile.";
+}
 const heroPhotos = [
   { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=95", alt: "Bright contemporary home with warm neutral architecture" },
   { src: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2000&q=95", alt: "Sunlit modern living room opening onto a garden" },
@@ -90,9 +96,17 @@ function ProfileClientWithClerk() {
       } catch (error) {
         if (!cancelled) {
           const detail = error instanceof Error ? error.message : "";
-          setMessage(detail === "Failed to fetch"
-            ? "We couldn't reach the Apna Ghar API. Check the API deployment and CORS configuration, then retry."
-            : detail || "Could not load your account profile.");
+          let local: Profile = blank;
+          try {
+            const raw = localStorage.getItem("apna-ghar-profile");
+            if (raw) local = { ...blank, ...JSON.parse(raw) };
+          } catch { /* keep a safe empty fallback */ }
+          setProfile({
+            ...local,
+            name: local.name || user?.fullName || "",
+            email: local.email || user?.primaryEmailAddress?.emailAddress || "",
+          });
+          setMessage(friendlyProfileError(detail));
         }
       } finally { if (!cancelled) setLoading(false); }
     };
@@ -125,7 +139,7 @@ function ProfileClientWithClerk() {
           body: JSON.stringify(profile),
         });
         const body = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Profile could not be saved.");
+        if (!response.ok) throw new Error(friendlyProfileError(typeof body.message === "string" ? body.message : "Profile could not be saved."));
         const updated = { ...blank, ...body, email: body.email || profile.email };
         setProfile(updated);
         localStorage.setItem("apna-ghar-profile", JSON.stringify(updated));
@@ -208,7 +222,7 @@ function ProfileClientWithClerk() {
               <div className="profile-stitch-field"><label htmlFor="profile-city">City / Preferred Locality</label><div className="profile-stitch-input-wrap"><Icon>location_on</Icon><input id="profile-city" value={profile.city} maxLength={100} onChange={e => set("city", e.target.value)} placeholder="City or neighbourhood" autoComplete="address-level2" /></div></div>
               <div className="profile-stitch-field"><label htmlFor="profile-about">About &amp; buyer preferences</label><div className="profile-stitch-input-wrap profile-stitch-textarea-wrap"><Icon>edit_note</Icon><textarea id="profile-about" rows={4} value={profile.about} maxLength={500} onChange={e => set("about", e.target.value)} placeholder="Tell us a little about the kind of property you're looking for..." /></div><small>{profile.about.length}/500 characters</small></div>
               {loading && <p className="profile-stitch-notice" role="status">Loading your account profile…</p>}
-              {message && <p className="profile-stitch-notice" role="status">{message}</p>}
+              {message && <p className={"profile-stitch-notice" + (/unavailable|could not|couldn.t|couldn’t|not synced|could not verify/i.test(message) ? " is-error" : "")} role="status">{message}</p>}
               <div className="profile-stitch-form-footer"><span><Icon>shield_lock</Icon> Your information stays associated with your account.</span><button type="submit" disabled={saving || loading}>{saving ? <><Icon>sync</Icon> Saving…</> : <><Icon>check</Icon> Save profile</>}</button></div>
             </form>
           </section>
