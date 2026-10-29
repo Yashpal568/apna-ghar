@@ -30,7 +30,8 @@
 - [x] Fixed homepage Buy/Rent tabs to control the transaction value submitted by the search form.
 - [x] Matched homepage property types (house, apartment, villa, plot, commercial) to the listing form's existing category values and added the missing commercial option to the search page.
 - [x] Inspected API DTO/service and confirmed `categoryId` is a string filter and `listingType` accepts only `sale` / `rent`; the UI maps Buy to the API's `sale` value in the existing search-results component.
-- [ ] Run relevant typecheck/build/tests and record actual results; verify the deployed search journey against real listings.
+- [x] Vercel deployment check reports success for checklist commit `8d993abc571d4f174b4f0fc6e0a8f796ba2c8b5a` (the deployment includes the homepage search fixes). This confirms the deployment build gate, not browser-level functional QA.
+- [ ] Verify the deployed search journey against real listings and inspect filters/pagination in the browser; runtime log access requires Vercel team authorization.
 
 ## Milestone status
 
@@ -56,7 +57,7 @@
 - [x] Responsive CSS pass for new homepage.
 - [x] Homepage Buy/Rent tabs and search form state work together (implementation committed; browser QA pending).
 - [x] Category/type values align with the existing listing form and string-based API filter (end-to-end data QA pending).
-- [ ] Real API-backed search, filters, sort, pagination verified end-to-end.
+- [ ] Real API-backed search, filters, sort, pagination verified end-to-end (Vercel build/deploy check passed; live browser/API interaction still pending).
 - [ ] Property details use live API data and correct loading/empty/error/not-found states.
 - [ ] Listing form create/preview/publish flow is API-backed.
 - [ ] My Listings supports real user-owned listings and lifecycle actions.
@@ -116,7 +117,7 @@
 
 | Date | Change / evidence | Commit | Next exact task |
 |---|---|---|---|
-| 2026-10-29 | Created this master checklist. Fixed homepage search state, aligned property type options with the existing listing form/API string filter, and styled the interactive tabs. Commits: checklist `b4f2309`, search form `00ec3ae`, homepage integration `c7778be`, search options `2454417`, tab styles `a546b74`. | see commits above | Run typecheck/build/tests and then verify real API-backed search before moving to the next M2 flow. |
+| 2026-10-29 | Created this master checklist. Fixed homepage search state, aligned property type options with the existing listing form/API string filter, styled interactive tabs, and confirmed Vercel reports success for checklist commit `8d993abc571d4f174b4f0fc6e0a8f796ba2c8b5a`. Commits: checklist `b4f2309`, search form `00ec3ae`, homepage integration `c7778be`, search options `2454417`, tab styles `a546b74`, checklist verification `8d993ab`. | `8d993ab` deployment status: success | Complete browser-level search/API verification; Vercel runtime logs require team access approval. |
 
 ## Blockers / decisions needed
 
