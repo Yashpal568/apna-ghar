@@ -18,7 +18,38 @@ const heroPhotos = [
   { src: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2000&q=95", alt: "Sunlit modern living room opening onto a garden" },
   { src: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2000&q=95", alt: "Modern house exterior with landscaped surroundings" },
 ];
-const Icon = ({ children, className = "" }: { children: string; className?: string }) => <span aria-hidden="true" className={"material-symbols-outlined " + className}>{children}</span>;
+const iconPaths: Record<string, string[]> = {
+  home: ["M3 10.8 12 3l9 7.8", "M5.5 9.5V21h13V9.5", "M9 21v-7h6v7"],
+  verified: ["M12 2.5 15 4l3.4-.1.8 3.3 2.3 2.5-1.5 3 0 3.4-3.3.8-2.7 2.2-3-1.5-3.4 0-.8-3.3L4.5 12l1.5-3 0-3.4 3.3-.8z", "m8.5 11.8 2.2 2.2 4.8-5"],
+  chevron_left: ["m15 18-6-6 6-6"], chevron_right: ["m9 18 6-6-6-6"],
+  token: ["M12 3 20 7.5v9L12 21l-8-4.5v-9z", "m8.5 12 2.2 2.2 4.8-5"],
+  insights: ["M4 19V5", "M4 19h17", "m7 15 4-4 3 2 5-7"],
+  favorite: ["M20.8 8.8c0 5.1-8.8 11-8.8 11s-8.8-5.9-8.8-11A4.8 4.8 0 0 1 12 6.1a4.8 4.8 0 0 1 8.8 2.7Z"],
+  real_estate_agent: ["M3 10 12 3l9 7", "M5 9v12h14V9", "M9 21v-6h6v6", "M15 5v4"],
+  search: ["M20 20l-4.5-4.5", "M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"],
+  lock: ["M5 10h14v11H5z", "M8 10V7a4 4 0 0 1 8 0v3", "M12 14v3"],
+  person: ["M20 21a8 8 0 0 0-16 0", "M12 13a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z"],
+  mail: ["M3 5h18v14H3z", "m3 6 9 7 9-7"],
+  call: ["M7 3H4a1 1 0 0 0-1 1c0 9.4 7.6 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 3a15 15 0 0 1-8-8l3-2z"],
+  location_on: ["M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z", "M12 10a2.3 2.3 0 1 0 0-4.6A2.3 2.3 0 0 0 12 10Z"],
+  edit_note: ["M4 5h11", "M4 10h8", "M4 15h6", "m14 16 5-5 2 2-5 5-3 1z"],
+  shield_lock: ["M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z", "M9 11V9a3 3 0 0 1 6 0v2", "M8 11h8v6H8z"],
+  sync: ["M20 7v5h-5", "M4 17v-5h5", "M6 9a7 7 0 0 1 12-2l2 5", "M18 15a7 7 0 0 1-12 2l-2-5"],
+  check: ["m5 12 4 4L19 6"],
+  notifications_active: ["M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9", "M10 21h4", "M21 4l-2 2", "M3 4l2 2"],
+  arrow_outward: ["M7 17 17 7", "M8 7h9v9"],
+  admin_panel_settings: ["M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z", "M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z", "M8.5 16a3.5 3.5 0 0 1 7 0"],
+  shield: ["M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"],
+  devices: ["M4 5h16v11H4z", "M2 20h20", "M9 16v4", "M15 16v4"],
+  login: ["M10 17l5-5-5-5", "M15 12H3", "M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"],
+  verified_user: ["M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z", "m8 12 2.5 2.5L16 9"],
+  home_pin: ["M3 10 12 3l9 7", "M5 9v12h14V9", "M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z", "M12 11v3"],
+};
+const Icon = ({ children, className = "" }: { children: string; className?: string }) => (
+  <svg aria-hidden="true" className={"profile-inline-icon " + className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    {(iconPaths[children] || iconPaths.home).map((d, i) => <path d={d} key={i} />)}
+  </svg>
+);
 
 function ProfileClientWithClerk() {
   const { isLoaded, isSignedIn, getToken } = useAuth();
