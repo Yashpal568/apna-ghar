@@ -47,6 +47,27 @@ export default function PropertySearchResults({ location, transaction, category,
   const [savedNotice, setSavedNotice] = useState("");
   const { isSignedIn, getToken } = useAuth();
 
+  async function contactOwner(property: Property) {
+    if (!isSignedIn) {
+      window.location.assign("/sign-in?redirect_url=" + encodeURIComponent("/property/" + (property.slug || property._id)));
+      return;
+    }
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("Please sign in again to contact the owner.");
+      const response = await fetch(apiBase + "/conversations/property/" + encodeURIComponent(property._id), {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token, "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({}),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Could not open this conversation.");
+      window.location.assign("/messages?conversation=" + encodeURIComponent(body.conversationId));
+    } catch (error) {
+      setSavedNotice(error instanceof Error ? error.message : "Could not contact this owner.");
+    }
+  }
+
   async function changeSaved(property: Property, isSaved: boolean) {
     const nextSaved = !isSaved;
     const changed = toggleSavedProperty(property);
@@ -157,7 +178,11 @@ export default function PropertySearchResults({ location, transaction, category,
             <div className="property-result-image">{property.imageUrls?.[0] ? <img src={property.imageUrls[0]} alt="" loading="lazy" /> : <span aria-hidden="true">⌂</span>}<span className="property-result-badge">{property.listingType === "rent" ? "FOR RENT" : "FOR SALE"}</span></div>
             <div className="property-result-body"><p className="property-result-location">{[property.location?.locality, property.location?.city, property.location?.state].filter(Boolean).join(", ")}</p><h3>{property.title}</h3><p className="property-result-price">{money(property.priceAmount)}{property.listingType === "rent" ? " / month" : ""}</p><p className="property-result-facts">{property.bedrooms ? `${property.bedrooms} beds · ` : ""}{property.bathrooms ? `${property.bathrooms} baths · ` : ""}{property.areaValue} {property.areaUnit}</p></div>
           </a>
-          <button className="button button-outline property-save-button" type="button" aria-pressed={isSaved} onClick={() => { void changeSaved(property, isSaved); }}>{isSaved ? "♥ Saved" : "♡ Save home"}</button>
+          <div className="property-card-actions">
+            <button className="button button-outline property-save-button" type="button" aria-pressed={isSaved} onClick={() => { void changeSaved(property, isSaved); }}>{isSaved ? "♥ Saved" : "♡ Save home"}</button>
+            {property.contactPhone?.trim() ? <a className="button button-outline" href={"tel:" + property.contactPhone.replace(/[^+0-9]/g, "")}>☎ Call owner</a> : null}
+            <button className="button button-primary" type="button" onClick={() => void contactOwner(property)}>Chat owner</button>
+          </div>
         </article>;
       })}
     </div>
