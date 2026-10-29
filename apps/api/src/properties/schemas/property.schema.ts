@@ -18,6 +18,7 @@ export class Property {
   @Prop({ required: true, trim: true, maxlength: 140 }) title!: string;
   @Prop({ required: true, unique: true, trim: true, lowercase: true, index: true }) slug!: string;
   @Prop({ required: true, trim: true, maxlength: 5000 }) description!: string;
+  @Prop({ trim: true, maxlength: 30, default: '' }) contactPhone!: string;
   @Prop({ required: true, trim: true, index: true }) categoryId!: string;
   @Prop({ required: true, enum: ['sale', 'rent'], index: true }) listingType!: 'sale' | 'rent';
   @Prop({ required: true, min: 0, index: true }) priceAmount!: number;
