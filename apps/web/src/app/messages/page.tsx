@@ -10,7 +10,7 @@ type Message = { _id?: string; senderId: string; text: string; sentAt: string };
 type Conversation = { _id: string; propertyId: string; propertyTitle: string; propertySlug: string; ownerId: string; buyerId: string; participantIds: string[]; messages: Message[]; lastMessageAt: string };
 
 export default function MessagesPage() {
-  const { isSignedIn, getToken } = useAuth();
+  const { isSignedIn, getToken, userId: currentUserId } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -18,6 +18,8 @@ export default function MessagesPage() {
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
   const [userId, setUserId] = useState("");
+
+  useEffect(() => { setUserId(currentUserId || ""); }, [currentUserId]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -31,7 +33,6 @@ export default function MessagesPage() {
     if (!response.ok) throw new Error(response.status === 401 ? "Your session expired. Sign in again." : "Could not load your conversations.");
     const data = await response.json() as Conversation[];
     setConversations(data);
-    setUserId((id) => id || data[0]?.participantIds?.find((participant) => participant !== "") || "");
     if (!selectedId && data[0]?._id) setSelectedId(data[0]._id);
   }, [getToken, selectedId]);
 
