@@ -62,14 +62,14 @@
 ### P1 — Monorepo foundation, configuration and CI
 
 **Tasks**
-- [ ] Verify npm workspace structure, shared TypeScript conventions, lint/format commands and scripts.
+- [x] Verify npm workspace structure, per-app TypeScript configurations, and root/app scripts. Shared lint/format tooling remains a follow-up quality improvement.
 - [ ] Validate environment variables at startup; maintain safe `.env.example` files and never commit secrets.
 - [ ] Keep NestJS API, Next.js web/admin, and React Native Community CLI as separate app targets.
-- [ ] Add/verify API health and dependency readiness behavior without claiming database readiness from liveness alone.
-- [ ] Add API unit tests, web build checks, type checks, and practical smoke checks to CI.
-- [ ] Fix existing CI failures before adding feature work on top of a broken baseline.
+- [x] Add/verify API health and dependency readiness behavior without claiming database readiness from liveness alone.
+- [x] Add API unit tests, web build checks, type checks and API HTTP e2e test wiring to CI.
+- [x] **Separate gate before M2:** latest CI and Quality Checks were verified green on the M1 foundation commit before starting M2.
 - [ ] Document reproducible local setup and Android Studio/JDK/SDK requirements.
-- [ ] Confirm the mobile scaffold exists; if not, create the native Community CLI project in its own phase/PR rather than calling a placeholder a mobile app.
+- [x] Keep the mobile workspace parked during web-first phases. Generate the native Community CLI project in P9, after web, admin, backend, SEO, security, entitlements and data/media integration gates are accepted.
 
 **Exit criteria**
 - Fresh dependency install succeeds.
@@ -81,11 +81,11 @@
 ### P2 — Design system and theme implementation
 
 **Tasks**
-- [ ] Extract approved color, typography, spacing, radius, elevation, breakpoints, and semantic tokens from Figma.
-- [ ] Build shared web/admin primitives with accessible focus, disabled, validation, skeleton, toast, dialog, dropdown, filter, table, and empty/error states.
-- [ ] Implement Light, Midnight, Graphite, Forest, and AMOLED Black; add System default following OS/browser preference.
-- [ ] Persist user theme preference and update appearance immediately when changed.
-- [ ] Implement the Appearance settings screen and dedicated Theme Showcase with the same representative UI in all five themes.
+- [ ] Extract and verify typography, spacing, radius, elevation, breakpoints, and remaining semantic tokens against the approved Figma source. (Base light-theme brand colors were aligned to the documented palette.)
+- [ ] Finish shared web/admin primitives and apply them consistently across existing routes. Initial theme-aware field, button, status, panel, skeleton, toast, dialog, table, and empty/error-state CSS primitives are in place; component adoption and dropdown/filter coverage remain.
+- [x] Keep the existing Light, Midnight, Graphite, Forest, and AMOLED Black palettes and System default picker; align visible theme labels to the documented names. Full cross-route visual review remains open.
+- [x] Preserve the existing local-device theme preference persistence and immediate theme switching. Verify cross-route behavior and first-paint flash during QA.
+- [x] Add `/appearance` settings and a dedicated showcase displaying the same representative property UI in all five themes. Visual review and responsive QA remain open.
 - [ ] Map tokens to native-compatible equivalents; do not reuse web DOM components in React Native.
 - [ ] Compare representative screens at mobile, tablet, and desktop sizes against Figma screenshots.
 

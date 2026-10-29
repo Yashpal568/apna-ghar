@@ -3,13 +3,13 @@
 :root,
 [data-theme="light"] {
   color-scheme: light;
-  --color-primary: #004AC5;
+  --color-primary: #2563EB;
   --color-on-primary: #FFFFFF;
-  --color-primary-hover: #003A9E;
-  --color-green: #00E6A0;
-  --color-accent: #004AC5;
+  --color-primary-hover: #1D4ED8;
+  --color-green: #10B981;
+  --color-accent: #2563EB;
   --color-navy: #0F172A;
-  --color-bg: #F9F9FF;
+  --color-bg: #F3F4F6;
   --color-surface: #FFFFFF;
   --color-surface-raised: #FFFFFF;
   --color-surface-subtle: #F1F4FF;

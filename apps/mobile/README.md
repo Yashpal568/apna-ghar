@@ -2,11 +2,11 @@
 
 This workspace uses React Native Community CLI (not Expo). It now contains the package manifest, TypeScript configuration, Metro/Babel configuration, app entry point, and a branded starter screen with system light/dark theme support.
 
-## M1 blocker: native project files
+## Delivery timing: mobile is last
 
-The Android and iOS project directories (`android/` and `ios/`) have not yet been generated. Until these exist, device builds cannot run. This remains an M1 acceptance blocker; the starter screen alone is not a complete native project.
+The Android and iOS project directories (`android/` and `ios/`) have not yet been generated. This is intentional during the approved web-first workflow, not an M1 blocker. Finish the public web/marketing experience, admin panel, backend contracts, authentication/security, SEO and data/media integrations before generating the native project and building the APK in the final mobile phase.
 
-Generate the platform project using the React Native Community CLI in a compatible environment, align its generated React Native version with this package manifest, and merge the generated native files without overwriting the root npm workspace.
+When the mobile phase starts, generate the platform project using React Native Community CLI in a compatible environment, align the generated React Native version with this package manifest, and merge the native files without overwriting the root npm workspace.
 
 ## Requirements
 

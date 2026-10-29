@@ -1,3 +1,5 @@
 # Shared configuration package
 
-Keep shared TypeScript, lint and formatting conventions here as the monorepo grows. Do not put secrets or environment-specific credentials in this package. M1 currently centralizes workspace scripts at the root; shared tool configuration can be extracted after the initial app builds are verified.
+This package is reserved for shared repository tooling configuration. The current applications each have an explicit TypeScript configuration, while root npm scripts coordinate typechecks, tests and builds.
+
+Do not claim shared lint/format configuration is implemented until the corresponding configs and dependencies are added and adopted by the workspaces. Do not put secrets or environment-specific credentials in this package. Native mobile build configuration remains deferred to the final mobile phase.
