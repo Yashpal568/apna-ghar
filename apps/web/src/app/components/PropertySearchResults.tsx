@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 
 type Property = {
   _id: string;
@@ -43,6 +44,35 @@ export default function PropertySearchResults({ location, transaction, category,
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc">(initialSort === "price_asc" || initialSort === "price_desc" ? initialSort : "newest");
+  const [savedNotice, setSavedNotice] = useState("");
+  const { isSignedIn, getToken } = useAuth();
+
+  async function changeSaved(property: Property, isSaved: boolean) {
+    const nextSaved = !isSaved;
+    const changed = toggleSavedProperty(property);
+    if (changed !== nextSaved) {
+      setSavedNotice("Could not update saved homes on this device.");
+      return;
+    }
+    setSavedIds((ids) => nextSaved ? [property._id, ...ids.filter((id) => id !== property._id)] : ids.filter((id) => id !== property._id));
+    setSavedNotice("");
+    if (!isSignedIn) {
+      setSavedNotice("Saved on this device. Sign in to sync across devices.");
+      return;
+    }
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("Your session is not ready. Sign in again.");
+      const response = await fetch(`${apiBase}/saved-properties/${encodeURIComponent(property._id)}`, {
+        method: nextSaved ? "POST" : "DELETE",
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+      });
+      if (!response.ok) throw new Error(response.status === 401 ? "Your session expired. Sign in again." : "Account sync failed. This change is saved on this device for now.");
+      setSavedNotice(nextSaved ? "Saved to your account." : "Removed from your account.");
+    } catch (error) {
+      setSavedNotice(error instanceof Error ? error.message : "Account sync failed. This change remains on this device.");
+    }
+  }
 
   useEffect(() => {
     const refreshSaved = () => {
@@ -104,7 +134,7 @@ export default function PropertySearchResults({ location, transaction, category,
             <div className="property-result-image">{property.imageUrls?.[0] ? <img src={property.imageUrls[0]} alt="" loading="lazy" /> : <span aria-hidden="true">⌂</span>}<span className="property-result-badge">{property.listingType === "rent" ? "FOR RENT" : "FOR SALE"}</span></div>
             <div className="property-result-body"><p className="property-result-location">{[property.location?.locality, property.location?.city, property.location?.state].filter(Boolean).join(", ")}</p><h3>{property.title}</h3><p className="property-result-price">{money(property.priceAmount)}{property.listingType === "rent" ? " / month" : ""}</p><p className="property-result-facts">{property.bedrooms ? `${property.bedrooms} beds · ` : ""}{property.bathrooms ? `${property.bathrooms} baths · ` : ""}{property.areaValue} {property.areaUnit}</p></div>
           </a>
-          <button className="button button-outline property-save-button" type="button" aria-pressed={isSaved} onClick={() => { toggleSavedProperty(property); setSavedIds((ids) => isSaved ? ids.filter((id) => id !== property._id) : [property._id, ...ids]); }}>{isSaved ? "♥ Saved" : "♡ Save home"}</button>
+          <button className="button button-outline property-save-button" type="button" aria-pressed={isSaved} onClick={() => { void changeSaved(property, isSaved); }}>{isSaved ? "♥ Saved" : "♡ Save home"}</button>
         </article>;
       })}
     </div>
