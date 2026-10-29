@@ -1696,3 +1696,53 @@ select option { color: var(--color-text); background: var(--color-surface); }
 .profile-stitch-hero{min-height:470px}
 @media(max-width:1000px){.profile-stitch-hero,.profile-stitch-hero-content{min-height:450px}.profile-stitch-hero-content{grid-template-columns:minmax(0,1fr) minmax(250px,.8fr);grid-template-rows:minmax(0,1fr) auto;gap:18px;padding:24px}.profile-stitch-insight-links>a{min-height:94px}.profile-stitch-completeness{padding:11px 13px}}
 @media(max-width:700px){.profile-stitch-hero,.profile-stitch-hero-content{min-height:0}.profile-stitch-hero-content{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;gap:19px;padding:72px 18px 18px}.profile-stitch-hero-copy{grid-column:1;grid-row:1}.profile-stitch-hero-insights{grid-column:1;grid-row:2;padding:13px}.profile-stitch-insight-links{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.profile-stitch-insight-links>a{min-height:84px;padding:9px 5px;gap:7px}.profile-stitch-insight-icon{width:31px;height:31px;flex-basis:31px}.profile-stitch-insight-links>a>strong{font-size:9px}.profile-stitch-completeness{grid-column:1;grid-row:3;grid-template-columns:minmax(0,1fr);gap:0;padding:12px}.profile-stitch-completeness>div:first-child{grid-column:1;grid-row:1}.profile-stitch-progress{grid-column:1;grid-row:2;margin-top:8px}.profile-stitch-completeness>small{grid-column:1;grid-row:3;max-width:none;margin-top:7px;text-align:left;font-size:9px}.profile-stitch-hero h1{font-size:clamp(34px,8vw,44px)}}
+
+
+/* Hero refinements from the supplied reference: compact discovery copy, bottom indicators, clear image, and three compact stats. */
+.profile-stitch-hero{min-height:360px!important;border-radius:20px}
+.profile-stitch-hero-content{min-height:360px!important;grid-template-columns:minmax(0,1.2fr) minmax(275px,.72fr)!important;gap:clamp(22px,3vw,42px)!important;padding:clamp(24px,3.2vw,42px)!important}
+.profile-stitch-hero-copy{align-self:center;min-width:0}
+.profile-stitch-hero-copy .profile-stitch-kicker{margin-bottom:1px}
+.profile-stitch-hero h1{max-width:620px;font-size:clamp(35px,4.2vw,54px)!important;line-height:1.05!important;letter-spacing:-2.1px!important;margin:15px 0 10px!important}
+.profile-stitch-hero-copy>p{max-width:580px;font-size:14px!important;line-height:1.65!important}
+.profile-stitch-status{margin-top:16px!important;max-width:100%;width:max-content}
+.profile-stitch-hero-copy .profile-stitch-indicators{margin-top:23px!important;gap:7px!important}
+.profile-stitch-indicators button{width:8px!important;height:8px!important;background:rgba(255,255,255,.72)!important;border:1px solid rgba(255,255,255,.38)!important}
+.profile-stitch-indicators button.is-active{width:32px!important;height:6px!important;background:#50fdba!important;border-color:#50fdba!important}
+.profile-stitch-slide img{filter:brightness(1.48) saturate(1.2) contrast(1.06)!important;transform:scale(1.015)!important;object-position:center 48%}
+.profile-stitch-slide.is-active img{transform:scale(1.035)!important}
+.profile-stitch-hero-shade{background:linear-gradient(90deg,rgba(5,22,42,.78) 0%,rgba(5,22,42,.53) 44%,rgba(5,22,42,.08) 100%),linear-gradient(0deg,rgba(5,22,42,.45),rgba(5,22,42,.02) 65%)!important}
+.profile-stitch-hero-insights{padding:16px!important;border-radius:16px!important;background:linear-gradient(135deg,rgba(225,244,255,.25),rgba(10,36,61,.36))!important}
+.profile-stitch-insight-heading{margin-bottom:11px!important}
+.profile-stitch-insight-heading .profile-stitch-kicker{font-size:9px!important;letter-spacing:.8px!important;padding:7px 9px!important}
+.profile-stitch-insight-links{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+.profile-stitch-insight-links>a{position:relative;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;min-height:106px;padding:12px 8px!important;text-align:center;border-radius:12px!important;background:rgba(226,246,255,.15)!important}
+.profile-stitch-insight-links>a:hover{background:rgba(226,246,255,.24)!important}
+.profile-stitch-insight-icon{width:34px!important;height:34px!important;flex-basis:34px!important;border-radius:10px!important;background:rgba(0,91,234,.56)!important}
+.profile-stitch-insight-icon .material-symbols-outlined{font-size:19px!important}
+.profile-stitch-insight-links>a>span:nth-child(2){gap:4px!important}
+.profile-stitch-insight-links strong{font-size:10px!important;line-height:1.3!important}
+.profile-stitch-insight-links small{font-size:9px!important;line-height:1.35!important}
+.profile-stitch-insight-links>a>.material-symbols-outlined:last-child{display:none!important}
+.profile-stitch-completeness{margin-top:12px!important;padding-top:12px!important}
+.profile-stitch-completeness>div:first-child{font-size:10px!important}
+.profile-stitch-completeness strong{font-size:12px!important}
+.profile-stitch-progress{height:6px!important;margin:8px 0 6px!important}
+.profile-stitch-completeness>small{font-size:9px!important}
+@media(max-width:1000px){
+ .profile-stitch-hero,.profile-stitch-hero-content{min-height:360px!important}
+ .profile-stitch-hero-content{grid-template-columns:minmax(0,1fr) minmax(260px,.82fr)!important;gap:20px!important;padding:24px!important}
+ .profile-stitch-hero h1{font-size:clamp(33px,4.1vw,44px)!important}
+ .profile-stitch-insight-links>a{min-height:100px!important;padding:9px 5px!important}
+}
+@media(max-width:700px){
+ .profile-stitch-hero,.profile-stitch-hero-content{min-height:0!important}
+ .profile-stitch-hero-content{grid-template-columns:minmax(0,1fr)!important;gap:18px!important;padding:65px 17px 18px!important}
+ .profile-stitch-hero h1{font-size:clamp(33px,8vw,42px)!important;letter-spacing:-1.4px!important}
+ .profile-stitch-hero-copy>p{font-size:13px!important}
+ .profile-stitch-hero-insights{padding:12px!important}
+ .profile-stitch-insight-links>a{min-height:91px!important;padding:9px 4px!important}
+ .profile-stitch-insight-links strong{font-size:9px!important}
+ .profile-stitch-insight-links small{font-size:8px!important}
+ .profile-stitch-carousel-controls{top:10px!important;right:10px!important}
+}
