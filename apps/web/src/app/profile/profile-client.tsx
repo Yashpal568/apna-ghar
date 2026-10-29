@@ -85,12 +85,18 @@ function ProfileClientWithClerk() {
       try {
         const token = await getToken();
         if (!token) throw new Error("Your session is not ready. Please sign in again.");
+        const identityResponse = await fetch(api + "/users/me", { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
+        if (!identityResponse.ok) {
+          const identityError = await identityResponse.json().catch(() => ({}));
+          if (identityResponse.status !== 404) throw new Error(typeof identityError.message === "string" ? identityError.message : "Could not synchronize your account identity.");
+        }
+        const identity = identityResponse.ok ? await identityResponse.json() as Partial<Profile> : {};
         const response = await fetch(api + "/users/me/profile", { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
         const body = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Could not load your account profile.");
         if (!cancelled) {
           const serverProfile = { ...blank, ...body };
-          setProfile({ ...serverProfile, email: serverProfile.email || user?.primaryEmailAddress?.emailAddress || "" });
+          setProfile({ ...serverProfile, name: serverProfile.name || identity.name || user?.fullName || "", email: serverProfile.email || identity.email || user?.primaryEmailAddress?.emailAddress || "" });
           setMessage("");
         }
       } catch (error) {
