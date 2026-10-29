@@ -64,6 +64,7 @@ function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getTo
       <div className="owner-listing-analytics"><span><strong>{(listing.viewsCount ?? 0).toLocaleString("en-IN")}</strong> listing views</span><span><strong>—</strong> enquiries <small>tracking not enabled yet</small></span><span><strong>{listing.publishedAt ? new Date(listing.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}</strong> Published</span></div>
       <div className="owner-listing-actions">
         <a className="button button-outline" href={`/property/${encodeURIComponent(listing.slug || listing._id)}`}>View listing</a>
+        <a className="button button-outline" href={`/list-property?edit=${encodeURIComponent(listing._id)}`}>Edit details</a>
         <button className="button button-outline" type="button" disabled={busy} onClick={() => void mutate("visibility")}>{busy ? "Please wait…" : listing.status === "active" ? "Hide listing" : "Publish listing"}</button>
         <button className="button button-outline owner-delete-action" type="button" disabled={busy} onClick={() => void mutate("delete")}>Delete</button>
       </div>
