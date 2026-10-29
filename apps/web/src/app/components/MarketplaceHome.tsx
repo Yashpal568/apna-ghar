@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useAuth, useClerk } from "@clerk/nextjs";
+import BrandLogo from "./BrandLogo";
+import ThemePicker from "./ThemePicker";
 
 const photos = [
   "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
@@ -46,16 +48,12 @@ export default function MarketplaceHome() {
   return <main className="agh-market">
     <header className="agh-header">
       <div className="agh-header-main">
-        <a className="agh-brand" href="/" aria-label="Apna Ghar home">
-          <span className="agh-brand-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M4 23 23 7l12 10V12h5v9l4 3h-7L23 14 9 27H4Z" fill="#0752bd"/><path d="M4 31c9-7 15-8 23-3 5 3 9 4 15-1-5 8-13 11-21 6-6-3-10-4-17-2Z" fill="#18a66a"/></svg></span>
-          <span className="agh-brand-word">Apna <b>Ghar</b><small>DIRECT OWNER MARKETPLACE</small></span>
-          <span className="agh-verified">✓ Verified</span>
-        </a>
+        <a className="agh-brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a>
         <form className="agh-top-search" action="/search"><span aria-hidden="true">⌕</span><input name="location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Search city, locality, project or landmark…" /><button type="submit" aria-label="Search">⌕</button></form>
         <nav className="agh-desktop-nav" aria-label="Main navigation">
           <a className="active" href="/search">Browse properties</a><a href="/search?transaction=buy">Buy</a><a href="/search?transaction=rent">Rent</a><a href="/search?type=commercial">Commercial</a><a href="/search?type=plot">Plots</a>
         </nav>
-        <div className="agh-header-actions">
+        <div className="agh-header-actions">\n          <ThemePicker compact />
           <a className="agh-icon-link" href="/saved" aria-label="Saved homes">♡</a>
           <a className="agh-my-listings" href="/my-listings">My listings</a>
           {isSignedIn ? <button className="agh-account-btn" onClick={() => signOut({ redirectUrl: "/" })}>Sign out</button> : <a className="agh-account-btn" href="/sign-in">Sign in</a>}
