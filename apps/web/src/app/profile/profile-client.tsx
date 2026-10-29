@@ -8,7 +8,10 @@ import SiteFooter from "../components/SiteFooter";
 
 type Profile = { name: string; email: string; phone: string; city: string; about: string };
 const blank: Profile = { name: "", email: "", phone: "", city: "", about: "" };
-const api = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
+const configuredApi = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
+const api = (configuredApi || (process.env.NODE_ENV === "development"
+  ? "http://localhost:4000/api/v1"
+  : "https://apna-ghar-api-j4fo.onrender.com/api/v1")).replace(/\/$/, "");
 const fallbackPhoto = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=95";
 const heroPhotos = [
   { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=95", alt: "Bright contemporary home with warm neutral architecture" },
@@ -53,7 +56,12 @@ export default function ProfilePage() {
           setMessage("");
         }
       } catch (error) {
-        if (!cancelled) setMessage(error instanceof Error ? error.message : "Could not load your account profile.");
+        if (!cancelled) {
+          const detail = error instanceof Error ? error.message : "";
+          setMessage(detail === "Failed to fetch"
+            ? "We couldn't reach the Apna Ghar API. Check the API deployment and CORS configuration, then retry."
+            : detail || "Could not load your account profile.");
+        }
       } finally { if (!cancelled) setLoading(false); }
     };
     void load();
