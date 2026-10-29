@@ -136,3 +136,6 @@
 - Approved standalone logo assets are not present in the repo; do not replace the approved logo with an invented one.
 - App Store/Play Store links must remain placeholders until official release URLs exist.
 - Approved Figma inventory and frame-to-route comparison are not complete.
+
+
+| 2026-10-29 | Fixed visible icon-font/ligature fallback styling, added responsive mobile bottom navigation (Home/Explore/Saved/My listings/Profile), added a Clerk sign-out action to the profile security card, and tightened mobile homepage hero/search spacing, category/footer grids, profile cards/forms, and tablet header reflow. Existing four-photo homepage carousel remains with accessible slide controls and automatic rotation. Cloudflare build `94286fe4-7e4d-421f-b692-aee7dd59b577` completed successfully; deployed version `6973da97-07e2-4ea9-9951-e85aa9d89daf`. Mobile browser scrape at 390×844 confirms bottom nav spans the viewport (390×66), profile hero/cards fit within 366px content width, and header menu button is present. Sign-out button is conditional on a signed-in Clerk session and was not visible in unauthenticated browser scrape. | PR #12 merged into `deploy/cloudflare-preview` | Verify with a real signed-in Clerk session; test 320/360/390/430px widths and tablet/desktop, confirm carousel auto-advance visually, and continue M2 acceptance before M3. |
