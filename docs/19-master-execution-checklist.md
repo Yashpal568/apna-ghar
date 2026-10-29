@@ -16,7 +16,7 @@
 
 ## Current checkpoint — continue here
 
-**Active milestone:** Web marketplace (M2 / roadmap Phase 1), after marketplace-first homepage/navigation and API deployment fixes.
+**Active milestone:** M3 — Backend domain and identity (started after the requested homepage/page redesign). M2 implementation is present, but authenticated live listing lifecycle acceptance remains outstanding and must be closed before release sign-off.
 
 **Last known completed work**
 - [x] Reframed the homepage as a property marketplace rather than a generic agency/portfolio landing page.
@@ -66,12 +66,16 @@
 - [ ] All relevant routes tested at mobile, tablet, desktop.
 - [ ] Compare implemented screens with approved Figma; do not claim parity before review.
 
-### M3 — Backend domain and identity
-- [ ] Inspect/confirm domain APIs, DTO validation, consistent error/pagination contracts.
-- [ ] Clerk token verification and user/profile sync.
-- [ ] Server-side roles/permissions and ownership checks.
-- [ ] Property/category/user/favorite/contact/report domains implemented and tested.
-- [ ] Integration tests cover success, validation failure, unauthorized access, and ownership denial.
+### M3 — Backend domain and identity (IMPLEMENTATION IN PROGRESS)
+- [x] Versioned `/api/v1` prefix, global DTO whitelist/transform validation and consistent HTTP exception filter exist.
+- [x] Clerk server-side JWT verification is enforced by authenticated API guards; admin access uses a server-side Clerk user-ID allowlist.
+- [x] Added authenticated `GET /api/v1/users/me` to fetch canonical Clerk identity and sync name/email into the MongoDB profile without overwriting a user-customized display name.
+- [x] Property/category, saved-property, contact/conversation, visit-request and report endpoints exist with owner/participant checks and paginated property search.
+- [x] Listing owner display name now validates and persists with the property; listing forms send it and detail pages display it.
+- [x] Added unit coverage for Clerk token guard, owner-scoped property updates, inventory filters/pagination, report ownership/duplicate prevention, Clerk identity sync and buyer/seller message authorization/delivery.
+- [ ] Run the full API/web/mobile typecheck, API unit tests, API e2e tests and builds on a CI-triggering branch/PR; GitHub Actions results have not yet been returned for these latest commits.
+- [ ] Verify profile identity sync against the deployed Clerk secret and live MongoDB; run authenticated buyer/seller conversation flow in the browser.
+- [ ] Review rate limiting, message pagination, report moderation permissions and domain error contracts before declaring M3 complete.
 
 ### M4 — Admin and moderation
 - [ ] Server-protect admin routes and every privileged API.
@@ -152,3 +156,6 @@
 | 2026-10-29 | Post-deploy smoke: Browser Rendering confirms the 320px homepage brand remains one line (`Apna Ghar`, width 104px), hamburger stays within viewport (x=269..308), mobile search/category rails fit the 320px viewport, and `/messages` reaches the signed-out conversation gate after hydration with its mobile header in-bounds. | Worker version `c1a99412-85bf-49de-9ee9-9130aca1d542` live on workers.dev | No published listings exist in the sampled result set, so live listing contact actions and authenticated buyer/seller chat exchange cannot be exercised anonymously. |
 
 | 2026-10-29 | Redesigned the existing Next.js buyer/seller inbox (not a static HTML embed): it now fetches the selected property's real contact phone and shows a `Call owner` action when provided, plus dynamic quick-message chips for availability, visits and price negotiation. Applied a global wordmark no-wrap rule to every page using `BrandLogo`. Cloudflare build `a1833169-fa94-4f79-8167-b72647298372` succeeded, Worker version `e014d2d2-ff6b-4208-a642-b8910613d8f1` deployed; mobile scrape at 390×844 confirms horizontal `Apna Ghar` wordmark and in-bounds hamburger. | Live Cloudflare preview updated | Signed-out `/messages` gate is verified; chat exchange remains blocked by Render's missing `CLERK_SECRET_KEY` until the service environment is configured. |
+
+
+| 2026-10-29 | Restored the original horizontal blue-roof/green-sweep Apna Ghar logo lockup and replaced the newer generic cobalt/mint values with the legacy Apna Ghar blue `#064CC0` and green `#20E890` across all five themes (Light, Midnight, Graphite, Forest, AMOLED Black); System default remains supported. Polished the responsive listing wizard and chat layout. Added Clerk identity synchronization at `GET /api/v1/users/me`, preserving user-edited display names while synchronizing the canonical Clerk email. Added owner-name persistence to the property schema/DTO and listing flow. Added API unit tests for Clerk guard, property owner-scope/filtering, report ownership/deduplication and conversation message delivery/authorization. | `1144b6e`, `a968253`, `dea3526`, `e9fe653`, `d107396`, `50e6a76`, `7cb6a4b`, `7a071cf`, `80fcb53`, `34ed758`, `98d6aff`, `d7ce3ac`, `d132cde`, `6d576e6`, `6a4d58d`, `6c06e39` | Wait for the latest Cloudflare build; run API/web/mobile typecheck and all API tests on a CI-triggering branch/PR; browser-test the five themes, property post flow and two-account buyer/seller chat before M3 sign-off. M2 authenticated listing acceptance remains pending. |
