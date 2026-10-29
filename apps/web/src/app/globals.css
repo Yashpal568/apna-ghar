@@ -2313,7 +2313,7 @@ img,video,svg { max-width:100%; }
 
 .profile-stitch-logout { display:flex; align-items:center; justify-content:center; gap:9px; width:100%; min-height:46px; margin-top:12px; padding:12px 14px; border:1px solid #fecaca; border-radius:12px; background:#fff7f7; color:#b91c1c; font-family:var(--font-ui); font-size:13px; font-weight:750; cursor:pointer; }
 .profile-stitch-logout:hover { background:#fee2e2; border-color:#fca5a5; }
-.profile-stitch-logout:focus-visible { outline:3px solid #2563eb; outline-offset:3px; }
+.profile-stitch-logout:focus-visible { outline:3px solid #064CC0; outline-offset:3px; }
 html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .profile-stitch-logout,html[data-theme="forest"] .profile-stitch-logout,html[data-theme="amoled"] .profile-stitch-logout { background:#35191d; color:#fecaca; border-color:#7f1d1d; }
 @media(max-width:760px) { .profile-stitch-logout { min-height:48px; } }
 
@@ -2689,7 +2689,7 @@ html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .
 .agh-market .agh-mobile-drawer .agh-drawer-head { border-color:var(--color-border); }
 .agh-market .agh-menu-toggle { color:var(--color-text); background:var(--color-surface); border-color:var(--color-border); }
 .agh-market .agh-sell-btn { color:#fff !important; }
-.agh-market .agh-seller-banner { background:linear-gradient(110deg,#0644a8 0%,#2563eb 58%,#078e54 100%); }
+.agh-market .agh-seller-banner { background:linear-gradient(110deg,#0644a8 0%,#064CC0 58%,#078e54 100%); }
 .agh-market .agh-seller-kicker,.agh-market .agh-seller-banner > a { background:var(--color-green); color:#06251e; }
 html[data-theme="midnight"] .agh-market .agh-header,
 html[data-theme="graphite"] .agh-market .agh-header,
@@ -2698,7 +2698,7 @@ html[data-theme="amoled"] .agh-market .agh-header { background:var(--color-surfa
 html[data-theme="midnight"] .agh-market .agh-seller-banner,
 html[data-theme="graphite"] .agh-market .agh-seller-banner,
 html[data-theme="forest"] .agh-market .agh-seller-banner,
-html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gradient(110deg,#0644a8 0%,#2563eb 58%,#078e54 100%); }
+html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gradient(110deg,#0644a8 0%,#064CC0 58%,#078e54 100%); }
 .messages-page { max-width:1240px; margin:0 auto; padding:28px 24px 64px; color:var(--color-text); }
 .messages-heading { display:flex; justify-content:space-between; align-items:center; gap:18px; margin-bottom:22px; }
 .messages-heading h1 { margin:4px 0 7px; font-size:clamp(28px,4vw,40px); letter-spacing:-1.4px; }
