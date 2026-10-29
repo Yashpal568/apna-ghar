@@ -6,17 +6,17 @@ Use one consistent, readable typography system across the Apna Ghar web experien
 
 ## Approved font system
 
-Use Google Fonts for the web application:
+Use Google Fonts for the web application, matching the typography specified by the approved Figma source:
 
 - **Inter** — primary body/UI font for paragraphs, labels, forms, navigation, property metadata, tables, and buttons.
-- **Plus Jakarta Sans** — heading/display font for page titles, section headings, and brand wordmarks.
+- **Manrope** — heading/display font for page titles, section headings, and brand wordmarks.
 - **Material Symbols Outlined** — icons only; never use it as a text font.
 
-This keeps the product to two text families, in line with the design rule of using no more than two fonts. Do not introduce Roboto, Montserrat, Proxima Nova, or Manrope as additional web text families. SF Pro is an Apple platform font, not a Google Font, so it is not the web font source.
+This keeps the product to two text families, in line with the design rule of using no more than two fonts. Do not introduce Roboto, Montserrat, Proxima Nova, or Plus Jakarta Sans as additional web text families. SF Pro is an Apple platform font, not a Google Font, so it is not the web font source.
 
 ### Google Fonts import
 
-The web stylesheet loads Inter and Plus Jakarta Sans from Google Fonts. If the external font request fails, the CSS fallback stack must preserve legibility.
+The web stylesheet loads Inter and Manrope from Google Fonts. If the external font request fails, the CSS fallback stack must preserve legibility.
 
 ## Type scale and readability
 
@@ -43,7 +43,7 @@ The web stylesheet loads Inter and Plus Jakarta Sans from Google Fonts. If the e
 
 ## Mobile app rule
 
-The React Native Community CLI app is currently a foundation shell and remains behind the approved web-first delivery sequence. When the mobile UI phase starts, use the same semantic type scale and weights. To use Google Fonts in native builds, bundle licensed Inter/Plus Jakarta Sans font files in the app and configure React Native font assets; a Google Fonts CSS import only works on the web and does not load fonts into native Text components. Use platform system fallbacks until bundled font assets are added. Do not add Expo-only font packages to this Community CLI project.
+The React Native Community CLI app is currently a foundation shell and remains behind the approved web-first delivery sequence. When the mobile UI phase starts, use the same semantic type scale and weights. To use Google Fonts in native builds, bundle licensed Inter/Manrope font files in the app and configure React Native font assets; a Google Fonts CSS import only works on the web and does not load fonts into native Text components. Use platform system fallbacks until bundled font assets are added. Do not add Expo-only font packages to this Community CLI project.
 
 ## Implementation
 
