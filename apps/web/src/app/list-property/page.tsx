@@ -50,8 +50,48 @@ function ListingForm() {
   const [notice, setNotice] = useState("");
   const [publishing, setPublishing] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [editingId, setEditingId] = useState("");
 
   useEffect(() => {
+    let cancelled = false;
+    const editId = new URLSearchParams(window.location.search).get("edit");
+    if (editId) {
+      setEditingId(editId);
+      setNotice("Loading your listing for editing…");
+      void (async () => {
+        try {
+          const token = await getToken();
+          if (!token) throw new Error("Sign in to edit your listing.");
+          const response = await fetch(apiBase + "/properties/mine", { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
+          if (!response.ok) throw new Error("Could not load your listings. Please sign in and retry.");
+          const listings = await response.json() as Array<{ _id: string; title: string; description?: string; categoryId: string; listingType: "sale" | "rent"; priceAmount: number; location?: { state?: string; city?: string; locality?: string }; areaValue: number; bedrooms?: number; bathrooms?: number; imageUrls?: string[] }>;
+          const listing = listings.find((item) => item._id === editId);
+          if (!listing) throw new Error("This listing was not found in your account.");
+          if (cancelled) return;
+          setDraft({
+            purpose: listing.listingType,
+            type: listing.categoryId,
+            title: listing.title,
+            state: listing.location?.state || "",
+            city: listing.location?.city || "",
+            locality: listing.location?.locality || "",
+            price: String(listing.priceAmount),
+            area: String(listing.areaValue),
+            beds: listing.bedrooms === undefined ? "" : String(listing.bedrooms),
+            baths: listing.bathrooms === undefined ? "" : String(listing.bathrooms),
+            description: listing.description || "",
+            name: "",
+            phone: "",
+            email: "",
+            photos: (listing.imageUrls || []).join("\\n"),
+          });
+          setNotice("Listing loaded. Review the details and save your changes.");
+        } catch (error) {
+          if (!cancelled) setNotice(error instanceof Error ? error.message : "Could not load this listing.");
+        }
+      })();
+      return () => { cancelled = true; };
+    }
     try {
       const saved = localStorage.getItem("apna-ghar-listing-draft");
       if (!saved) return;
@@ -60,7 +100,8 @@ function ListingForm() {
     } catch {
       // Ignore an invalid or outdated local draft and let the owner start fresh.
     }
-  }, []);
+    return () => { cancelled = true; };
+  }, [getToken]);
 
   const update = (key: keyof Draft, value: string) => {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -178,7 +219,7 @@ function ListingForm() {
         title: created.title,
         createdAt: new Date().toISOString(),
       }));
-      window.location.assign("/my-listings?published=1");
+      window.location.assign(editingId ? "/my-listings?updated=1" : "/my-listings?published=1");
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Could not publish listing.");
     } finally {
@@ -192,9 +233,9 @@ function ListingForm() {
 
       <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>List your property</span></div>
       <section className="listing-intro">
-        <p className="eyebrow">OWNER EXPERIENCE</p>
-        <h1>Let the right people<br />find <em>your place.</em></h1>
-        <p>Create a clear listing and review it before publishing.</p>
+        <p className="eyebrow">{editingId ? "EDIT PROPERTY" : "OWNER EXPERIENCE"}</p>
+        <h1>{editingId ? <>Update your property<br /><em>details.</em></> : <>Let the right people<br />find <em>your place.</em></>}</h1>
+        <p>{editingId ? "Update your details and save the changes to your listing." : "Create a clear listing and review it before publishing."}</p>
         <div className="listing-steps">
           {["Property basics", "Details & photos", "Preview"].map((label, index) => (
             <span key={label} className={step === index + 1 ? "step-active" : ""}><b>{index + 1}</b>{label}</span>
