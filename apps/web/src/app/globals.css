@@ -3129,3 +3129,52 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
   .ag-site-header .ag-brand .brand-symbol { width:34px; height:28px; }
   .ag-site-header .ag-brand .brand-wordmark { font-size:18px !important; }
 }
+
+
+/* Marketplace flow polish: responsive listing wizard and two-sided buyer/seller inbox. */
+.interior-page .listing-intro { position:relative; padding:34px 28px 22px; margin:14px 0 22px; overflow:hidden; border:1px solid var(--color-border); border-radius:20px; background:linear-gradient(125deg,color-mix(in srgb,var(--color-primary) 8%,var(--color-surface)),var(--color-surface) 62%,color-mix(in srgb,var(--color-green) 8%,var(--color-surface))); }
+.interior-page .listing-intro .eyebrow { color:var(--color-primary); font-weight:850; letter-spacing:.12em; }
+.interior-page .listing-intro h1 { max-width:760px; font-size:clamp(34px,4.4vw,54px); line-height:1.06; letter-spacing:-.045em; }
+.interior-page .listing-intro>p:not(.eyebrow) { max-width:650px; line-height:1.7; }
+.interior-page .listing-steps { gap:clamp(8px,2vw,22px); flex-wrap:wrap; }
+.interior-page .listing-steps span { min-height:34px; padding:5px 10px 5px 5px; border:1px solid var(--color-border); border-radius:999px; background:var(--color-surface); }
+.interior-page .listing-steps .step-active { border-color:color-mix(in srgb,var(--color-primary) 35%,var(--color-border)); background:color-mix(in srgb,var(--color-primary) 8%,var(--color-surface)); }
+.interior-page .listing-form { min-width:0; }
+.interior-page .form-section { box-shadow:0 12px 32px color-mix(in srgb,var(--color-text) 5%,transparent); }
+.interior-page .form-section h2 { font-size:clamp(19px,2vw,24px); }
+.interior-page .form-grid input:focus,.interior-page .form-grid select:focus,.interior-page .form-grid textarea:focus { border-color:var(--color-primary); box-shadow:0 0 0 3px color-mix(in srgb,var(--color-primary) 14%,transparent); outline:none; }
+.interior-page .listing-sidebar { position:sticky; top:105px; box-shadow:0 12px 30px color-mix(in srgb,var(--color-text) 4%,transparent); }
+.messages-page { min-width:0; }
+.messages-layout { min-width:0; }
+.messages-sidebar,.messages-chat { min-width:0; }
+.messages-thread-copy { min-width:0; }
+.messages-thread-copy b,.messages-thread-copy small { overflow-wrap:anywhere; }
+.messages-chat-head { min-width:0; gap:12px; }
+.messages-chat-head>div:nth-child(2) { min-width:0; }
+.messages-chat-head>div:nth-child(2) strong { display:block; overflow-wrap:anywhere; }
+.messages-stream { scroll-behavior:smooth; overscroll-behavior:contain; }
+.messages-bubble { max-width:min(560px,100%); overflow-wrap:anywhere; }
+.messages-composer textarea { min-width:0; resize:vertical; }
+.messages-composer button { background:var(--color-primary); color:var(--color-on-primary); border:1px solid var(--color-primary); }
+.messages-composer button:disabled { opacity:.5; }
+@media(max-width:900px) {
+ .interior-page .listing-layout { grid-template-columns:minmax(0,1fr); }
+ .interior-page .listing-sidebar { position:static; }
+}
+@media(max-width:600px) {
+ .interior-page .listing-intro { margin:12px 0 15px; padding:22px 15px 15px; border-radius:15px; }
+ .interior-page .listing-intro h1 { font-size:clamp(32px,9vw,42px); letter-spacing:-.04em; }
+ .interior-page .listing-steps { display:grid; grid-template-columns:1fr; gap:7px; margin-top:18px; padding-bottom:0; border-bottom:0; }
+ .interior-page .listing-steps span { width:100%; border-radius:10px; padding:7px 9px; }
+ .interior-page .form-section { padding:17px 13px; }
+ .interior-page .listing-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+ .interior-page .listing-actions .button { width:100%; min-width:0; padding-inline:8px; white-space:normal; }
+ .interior-page .listing-actions .button-primary { grid-column:1/-1; grid-row:1; }
+ .interior-page .listing-sidebar { padding:17px 14px; }
+ .messages-layout { grid-template-columns:minmax(0,1fr); }
+ .messages-sidebar { max-height:260px; overflow:auto; }
+ .messages-chat { min-height:460px; }
+ .messages-chat-head-actions { padding-left:0; }
+ .messages-composer { grid-template-columns:minmax(0,1fr); }
+ .messages-composer button { width:100%; }
+}
