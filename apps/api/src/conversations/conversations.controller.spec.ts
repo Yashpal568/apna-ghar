@@ -50,8 +50,13 @@ describe('ConversationsController', () => {
   });
 
   it('does not disclose messages to a user who is not a participant', async () => {
-    conversations.findById.mockReturnValue(chain({ _id: 'conversation-1', participantIds: [buyer, owner], messages: [] }));
-    await expect(controller.getMessages({ auth: { userId: 'user_stranger' } }, 'conversation-1')).rejects.toBeInstanceOf(ForbiddenException);
+    conversations.findById.mockReturnValue(chain({ _id: '507f1f77bcf86cd799439012', participantIds: [buyer, owner], messages: [] }));
+    await expect(controller.getMessages({ auth: { userId: 'user_stranger' } }, '507f1f77bcf86cd799439012')).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('rejects malformed conversation ids before querying MongoDB', async () => {
+    await expect(controller.getMessages({ auth: { userId: buyer } }, 'not-an-object-id')).rejects.toBeInstanceOf(BadRequestException);
+    expect(conversations.findById).not.toHaveBeenCalled();
   });
 
   it('returns not found when the property is no longer active', async () => {
