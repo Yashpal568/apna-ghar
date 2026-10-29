@@ -2178,3 +2178,17 @@ button,input,select,textarea,.button,.ag-main-nav a,.ag-mobile-menu a,.ag-mobile
 @media(prefers-reduced-motion:reduce) {
   .ag-home-hero-slide,.ag-home-carousel-controls button { transition:none !important; }
 }
+
+
+/* Mobile width guardrails: account cards and forms must span the available viewport. */
+@media(max-width:760px) {
+  .profile-redesign-shell { display:block; width:100% !important; max-width:100% !important; margin:0 !important; padding:10px 12px 28px !important; }
+  .profile-stitch-hero,.profile-stitch-grid,.profile-stitch-form-card,.profile-stitch-security-card,.profile-stitch-notification-card { width:100% !important; max-width:none !important; min-width:0 !important; }
+  .profile-stitch-grid { display:flex !important; flex-direction:column !important; align-items:stretch !important; }
+  .profile-stitch-main-column,.profile-stitch-side-column { width:100% !important; min-width:0 !important; }
+  .profile-stitch-hero-insights,.profile-stitch-completeness,.profile-stitch-shortcuts,.profile-stitch-badges,.profile-stitch-recommendation { display:none !important; }
+}
+@media(max-width:380px) {
+  .profile-redesign-shell { padding-inline:10px !important; }
+  .profile-stitch-form-card,.profile-stitch-security-card { padding-inline:12px !important; }
+}
