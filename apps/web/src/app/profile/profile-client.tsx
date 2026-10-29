@@ -9,6 +9,13 @@ import SiteFooter from "../components/SiteFooter";
 type Profile = { name: string; email: string; phone: string; city: string; about: string };
 const blank: Profile = { name: "", email: "", phone: "", city: "", about: "" };
 const api = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
+const fallbackPhoto = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90";
+const heroPhotos = [
+  { src: "https://lh3.googleusercontent.com/aida/AEtjO1WdHBBFV9vFnk_fvJir2YNEKTOYcNi2jOJyYsiUg_AdCo9pH8DqzcbgYks778UBulwOimHWnEI9ZVDetG83cjkL0dC69D6JAD4Uw5pii2HWG6urs0sWp--hTFFddMw0cD5Cfpbl81IprIXVLMPq2HNTIz2IrUDHBSulGMbrj2fzosgyK6c7KtovrngQ0EsJdM7OgMlglYbDZ6pekZwY80MbZkGYee3gg5LnVg-yZ5Fm", alt: "Luxury glass high-rise buildings at blue dusk" },
+  { src: "https://lh3.googleusercontent.com/aida/AEtjO1VNsE3OXR0-o1QT_pWQX6o56NQ2iC09jsw3NUUMhWfeRWg9n8h9IVschYt7xMaXsoe6rsq1cjXwe5qU8EwkEY9ASD9C8SZ1wOXVM_4Bd4qQwDw546KGdtTOvcp3HlKQ43Eb95SsrqV15rdHUu1ldkAwP8rm73RO62-6omDyD7yQCd5uuctSwU-oCedOlESPqWjERpsGqcmwx_Ga-twJMuZqHiS3iPcLU-eTQ8N4-XBp", alt: "Luxury penthouse terrace and city skyline at twilight" },
+  { src: "https://lh3.googleusercontent.com/aida/AEtjO1XqhZSt8rLVQ1uLGM60Law8NbrPuDevPO21vntGCIhyGIMc9nKdGksy_5WlCxGHzOzNe10lsL_O13Lg6_GXOSVIdYVVbACCneQ6KIhF99m948c2mdvUXPjkRBQ6lCIvqgjpuh2_8V0OOk2NDZ-ECfbnXeu-yFxK7EdOtVOqVlJNb5XfpR4KXlR9Y1CL_5M2yhfbs_2yQ2EJiuxghNbdl6YolofKmo8cUluikrXBkfQ", alt: "Contemporary villa with illuminated swimming pool at night" },
+];
+const Icon = ({ children, className = "" }: { children: string; className?: string }) => <span aria-hidden="true" className={"material-symbols-outlined " + className}>{children}</span>;
 
 export default function ProfilePage() {
   const { isLoaded, isSignedIn, getToken } = useAuth();
@@ -18,11 +25,9 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [heroSlide, setHeroSlide] = useState(0);
-  const heroPhotos = [
-    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90",
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=90",
-    "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1800&q=90",
-  ];
+  const [imageFallback, setImageFallback] = useState<Record<number, boolean>>({});
+  const [tourNotifications, setTourNotifications] = useState(true);
+  const [securityTab, setSecurityTab] = useState<"profile" | "security" | "sessions">("profile");
 
   useEffect(() => {
     let cancelled = false;
@@ -39,15 +44,12 @@ export default function ProfilePage() {
       try {
         const token = await getToken();
         if (!token) throw new Error("Your session is not ready. Please sign in again.");
-        const response = await fetch(api + "/users/me/profile", {
-          headers: { Authorization: "Bearer " + token, Accept: "application/json" },
-        });
+        const response = await fetch(api + "/users/me/profile", { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
         const body = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Could not load your account profile.");
         if (!cancelled) {
           const serverProfile = { ...blank, ...body };
-          const email = user?.primaryEmailAddress?.emailAddress || "";
-          setProfile({ ...serverProfile, email: serverProfile.email || email });
+          setProfile({ ...serverProfile, email: serverProfile.email || user?.primaryEmailAddress?.emailAddress || "" });
           setMessage("");
         }
       } catch (error) {
@@ -58,12 +60,16 @@ export default function ProfilePage() {
     return () => { cancelled = true; };
   }, [isLoaded, isSignedIn, getToken, user]);
 
-  const set = (key: keyof Profile, value: string) => setProfile(old => ({ ...old, [key]: value }));
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("apna-ghar-tour-notifications");
+      if (saved !== null) setTourNotifications(saved === "true");
+    } catch { /* storage may be disabled */ }
+  }, []);
 
+  const set = (key: keyof Profile, value: string) => setProfile(old => ({ ...old, [key]: value }));
   const save = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    setMessage("");
+    e.preventDefault(); setSaving(true); setMessage("");
     try {
       if (isSignedIn) {
         const token = await getToken();
@@ -75,36 +81,113 @@ export default function ProfilePage() {
         });
         const body = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Profile could not be saved.");
-        setProfile({ ...blank, ...body });
-        localStorage.setItem("apna-ghar-profile", JSON.stringify(body));
+        const updated = { ...blank, ...body, email: body.email || profile.email };
+        setProfile(updated);
+        localStorage.setItem("apna-ghar-profile", JSON.stringify(updated));
         setMessage("Profile saved to your account.");
       } else {
         localStorage.setItem("apna-ghar-profile", JSON.stringify(profile));
         setMessage("Saved on this device. Sign in to sync your profile across devices.");
       }
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Profile could not be saved.");
-    } finally { setSaving(false); }
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Profile could not be saved."); }
+    finally { setSaving(false); }
   };
+  const changeTourNotifications = (checked: boolean) => {
+    setTourNotifications(checked);
+    try { localStorage.setItem("apna-ghar-tour-notifications", String(checked)); } catch { /* storage may be disabled */ }
+  };
+  const displayName = profile.name.trim() || user?.fullName || "Your Apna Ghar profile";
+  const initials = displayName === "Your Apna Ghar profile" ? "AG" : displayName.split(/\s+/).slice(0, 2).map(x => x[0]?.toUpperCase()).join("");
 
-  return <main className="interior-page"><SiteHeader active="account" /><div className="profile-page-shell">
-    <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>My profile</span></div>
-    <section className="profile-page-hero profile-page-hero-premium" style={{ backgroundImage: `linear-gradient(90deg,rgba(8,27,49,.94) 0%,rgba(12,39,67,.78) 52%,rgba(12,39,67,.24) 100%),url("${heroPhotos[heroSlide]}")` }}><div className="profile-hero-copy"><p className="eyebrow"><span className="profile-hero-eyebrow-dot" /> PERSONAL DISCOVERY PROFILE</p><h1>A little more<br/><em>about you.</em></h1><p>Keep your contact details handy for property enquiries, private scheduling and visit requests.</p><div className="profile-hero-status"><span className="profile-hero-status-dot" />{isSignedIn ? "Connected to your Apna Ghar account" : "Profile saved on this device"}</div></div><div className="profile-hero-carousel" aria-label="Property inspiration image carousel"><div className="profile-hero-carousel-arrows"><button type="button" aria-label="Previous image" onClick={() => setHeroSlide((heroSlide + heroPhotos.length - 1) % heroPhotos.length)}>‹</button><button type="button" aria-label="Next image" onClick={() => setHeroSlide((heroSlide + 1) % heroPhotos.length)}>›</button></div><div className="profile-hero-carousel-dots">{heroPhotos.map((photo, index) => <button key={photo} type="button" aria-label={`Show image ${index + 1}`} aria-pressed={heroSlide === index} className={heroSlide === index ? "is-active" : ""} onClick={() => setHeroSlide(index)} />)}</div></div></section>
-    <section className="profile-summary-card" aria-label="Profile summary">
-      <div className="profile-summary-avatar" aria-hidden="true">{profile.name.trim() ? profile.name.trim().split(/\s+/).slice(0, 2).map(x => x[0].toUpperCase()).join("") : "AG"}</div>
-      <div className="profile-summary-copy"><h2>{profile.name.trim() || "Your Apna Ghar profile"}</h2><p>{profile.email || (isSignedIn ? "Account email not available" : "Sign in to connect your account")}</p><span>{isSignedIn ? "Account connected" : "Profile saved on this device"}</span></div>
-      <div className="profile-summary-actions"><a href="/saved">Saved homes <span aria-hidden="true">↗</span></a><a href="/my-listings">My listings <span aria-hidden="true">↗</span></a></div>
-    </section>
-    <div className="profile-page-layout"><section className="profile-details-column"><form id="profile-details" className="auth-card auth-form" onSubmit={save}>
-      <div className="profile-avatar" aria-hidden="true">{profile.name.trim() ? profile.name.trim().split(/\s+/).slice(0, 2).map(x => x[0].toUpperCase()).join("") : "AG"}</div><h2>Profile details</h2>
-      <p className="auth-muted">{isSignedIn ? "Your details sync with your Apna Ghar account." : "Sign in to sync these details across your devices."}</p>
-      {loading && <p role="status" className="form-notice">Loading your account profile…</p>}
-      <label htmlFor="profile-name">Full name</label><input id="profile-name" value={profile.name} maxLength={100} onChange={e => set("name", e.target.value)} placeholder="Your name"/>
-      <label htmlFor="profile-email">Email</label><input id="profile-email" type="email" value={profile.email} maxLength={254} onChange={e => set("email", e.target.value)} placeholder="you@example.com"/>
-      <label htmlFor="profile-phone">Phone number</label><input id="profile-phone" type="tel" value={profile.phone} maxLength={30} onChange={e => set("phone", e.target.value)} placeholder="+91"/>
-      <label htmlFor="profile-city">City</label><input id="profile-city" value={profile.city} maxLength={100} onChange={e => set("city", e.target.value)} placeholder="Your city"/>
-      <label htmlFor="profile-about">About (optional)</label><textarea id="profile-about" rows={4} value={profile.about} maxLength={500} onChange={e => set("about", e.target.value)} placeholder="A short introduction"/>
-      {message && <p role="status" className="form-notice">{message}</p>}<button className="button button-primary button-full" type="submit" disabled={saving || loading}>{saving ? "Saving…" : "Save profile"}</button>
-      <div className="profile-links"><a href="/saved">View saved homes ↗</a><a href="/my-listings">Manage my listings ↗</a></div>
-    </form></section><section className="profile-account-settings"><AccountSettingsPanel /></section></div><SiteFooter /></div></main>;
+  return <main className="interior-page profile-redesign">
+    <SiteHeader active="account" />
+    <div className="profile-redesign-shell">
+      <div className="profile-design-breadcrumb">
+        <div><a href="/"><Icon>home</Icon> Home</a><Icon className="crumb-separator">chevron_right</Icon><span>My profile</span></div>
+        <span className="profile-verified-label"><Icon>verified</Icon> Personal account</span>
+      </div>
+
+      <section className="profile-stitch-hero" aria-label="Personal discovery profile">
+        <div className="profile-stitch-slides">
+          {heroPhotos.map((photo, index) => <div className={"profile-stitch-slide " + (heroSlide === index ? "is-active" : "")} key={photo.src} aria-hidden={heroSlide !== index}>
+            <img src={imageFallback[index] ? fallbackPhoto : photo.src} alt={photo.alt} onError={() => setImageFallback(old => ({ ...old, [index]: true }))} />
+          </div>)}
+          <div className="profile-stitch-hero-shade" />
+        </div>
+        <div className="profile-stitch-carousel-controls">
+          <button type="button" aria-label="Previous image" onClick={() => setHeroSlide(i => (i + heroPhotos.length - 1) % heroPhotos.length)}><Icon>chevron_left</Icon></button>
+          <button type="button" aria-label="Next image" onClick={() => setHeroSlide(i => (i + 1) % heroPhotos.length)}><Icon>chevron_right</Icon></button>
+        </div>
+        <div className="profile-stitch-hero-content">
+          <span className="profile-stitch-kicker"><Icon>token</Icon> Personal Discovery Profile</span>
+          <h1>A little more <span>about you.</span></h1>
+          <p>Keep your contact details handy for property enquiries, private scheduling and visit requests.</p>
+          <div className="profile-stitch-status"><span />{isSignedIn ? "Connected to your Apna Ghar account" : "Profile saved on this device"}</div>
+          <div className="profile-stitch-indicators" aria-label="Choose hero image">
+            {heroPhotos.map((photo, index) => <button key={photo.src} type="button" aria-label={"Show image " + (index + 1)} aria-pressed={heroSlide === index} className={heroSlide === index ? "is-active" : ""} onClick={() => setHeroSlide(index)} />)}
+          </div>
+        </div>
+      </section>
+
+      <div className="profile-stitch-badges">
+        <span><Icon>verified</Icon> Account profile</span>
+        <span><Icon>lock</Icon> Secure account access</span>
+      </div>
+
+      <div className="profile-stitch-grid">
+        <div className="profile-stitch-main-column">
+          <section className="profile-stitch-card profile-stitch-form-card">
+            <div className="profile-stitch-card-heading">
+              <div className="profile-stitch-avatar">{initials}</div>
+              <div><span className="profile-stitch-overline">YOUR ACCOUNT</span><h2>Profile details</h2><p>Keep your contact information up to date.</p></div>
+            </div>
+            <form id="profileForm" className="profile-stitch-form" onSubmit={save}>
+              <div className="profile-stitch-field"><label htmlFor="profile-name">Full name</label><div className="profile-stitch-input-wrap"><Icon>person</Icon><input id="profile-name" value={profile.name} maxLength={100} onChange={e => set("name", e.target.value)} placeholder="Your full name" autoComplete="name" /></div></div>
+              <div className="profile-stitch-field"><label htmlFor="profile-email">Email address</label><div className="profile-stitch-input-wrap"><Icon>mail</Icon><input id="profile-email" type="email" value={profile.email} maxLength={254} onChange={e => set("email", e.target.value)} placeholder="you@example.com" autoComplete="email" /></div></div>
+              <div className="profile-stitch-field"><label htmlFor="profile-phone">Phone number</label><div className="profile-stitch-input-wrap"><Icon>call</Icon><input id="profile-phone" type="tel" value={profile.phone} maxLength={30} onChange={e => set("phone", e.target.value)} placeholder="+91" autoComplete="tel" /></div></div>
+              <div className="profile-stitch-field"><label htmlFor="profile-city">City / Preferred Locality</label><div className="profile-stitch-input-wrap"><Icon>location_on</Icon><input id="profile-city" value={profile.city} maxLength={100} onChange={e => set("city", e.target.value)} placeholder="City or neighbourhood" autoComplete="address-level2" /></div></div>
+              <div className="profile-stitch-field"><label htmlFor="profile-about">About &amp; buyer preferences</label><div className="profile-stitch-input-wrap profile-stitch-textarea-wrap"><Icon>edit_note</Icon><textarea id="profile-about" rows={4} value={profile.about} maxLength={500} onChange={e => set("about", e.target.value)} placeholder="Tell us a little about the kind of property you're looking for..." /></div><small>{profile.about.length}/500 characters</small></div>
+              {loading && <p className="profile-stitch-notice" role="status">Loading your account profile…</p>}
+              {message && <p className="profile-stitch-notice" role="status">{message}</p>}
+              <div className="profile-stitch-form-footer"><span><Icon>shield_lock</Icon> Your information stays associated with your account.</span><button type="submit" disabled={saving || loading}>{saving ? <><Icon>sync</Icon> Saving…</> : <><Icon>check</Icon> Save profile</>}</button></div>
+            </form>
+          </section>
+
+          <section className="profile-stitch-card profile-stitch-notification-card">
+            <div className="profile-stitch-notification-icon"><Icon>notifications_active</Icon></div>
+            <div className="profile-stitch-notification-copy"><h2>Property tour updates</h2><p>Receive updates about tour requests and scheduling on this device.</p></div>
+            <label className="profile-stitch-switch"><input type="checkbox" checked={tourNotifications} onChange={e => changeTourNotifications(e.target.checked)} /><span /><b>{tourNotifications ? "On" : "Off"}</b></label>
+          </section>
+
+          <section className="profile-stitch-card profile-stitch-shortcuts">
+            <div><span className="profile-stitch-overline">QUICK ACCESS</span><h2>Your property journey</h2><p>Pick up where you left off.</p></div>
+            <a href="/saved"><Icon>favorite</Icon><span><strong>Saved homes</strong><small>Properties you bookmarked</small></span><Icon>arrow_outward</Icon></a>
+            <a href="/my-listings"><Icon>real_estate_agent</Icon><span><strong>My listings</strong><small>Manage properties you posted</small></span><Icon>arrow_outward</Icon></a>
+          </section>
+        </div>
+
+        <aside className="profile-stitch-side-column">
+          <section className="profile-stitch-card profile-stitch-security-card">
+            <div className="profile-stitch-security-heading"><div><span className="profile-stitch-overline">ACCOUNT</span><h2>Sign-in &amp; security</h2><p>Manage your profile and account access.</p></div><span className="profile-stitch-security-icon"><Icon>admin_panel_settings</Icon></span></div>
+            <div className="profile-stitch-tabs" role="tablist" aria-label="Account settings sections">
+              <button type="button" role="tab" aria-selected={securityTab === "profile"} className={securityTab === "profile" ? "is-active" : ""} onClick={() => setSecurityTab("profile")}><Icon>person</Icon> Profile</button>
+              <button type="button" role="tab" aria-selected={securityTab === "security"} className={securityTab === "security" ? "is-active" : ""} onClick={() => setSecurityTab("security")}><Icon>shield</Icon> Security</button>
+              <button type="button" role="tab" aria-selected={securityTab === "sessions"} className={securityTab === "sessions" ? "is-active" : ""} onClick={() => setSecurityTab("sessions")}><Icon>devices</Icon> Sessions</button>
+            </div>
+            {securityTab === "profile" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>mail</Icon></span><div><strong>Email address</strong><p>{profile.email || user?.primaryEmailAddress?.emailAddress || "No email available"}</p></div><span className="profile-stitch-row-status"><Icon>{profile.email || user?.primaryEmailAddress?.emailAddress ? "check_circle" : "info"}</Icon></span></div><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>call</Icon></span><div><strong>Phone number</strong><p>{profile.phone || "Add a phone number to your profile"}</p></div></div><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>account_circle</Icon></span><div><strong>Account status</strong><p>{isSignedIn ? "Signed in with Apna Ghar" : "Using this device"}</p></div><span className="profile-stitch-row-status"><Icon>{isSignedIn ? "verified_user" : "devices"}</Icon></span></div></div>}
+            {securityTab === "security" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>lock</Icon></span><div><strong>Authentication</strong><p>{isSignedIn ? "Your sign-in is managed by your authentication provider." : "Sign in to manage account security."}</p></div></div><a className="profile-stitch-security-link" href="/sign-in"><Icon>login</Icon> Open sign-in options <Icon>arrow_outward</Icon></a></div>}
+            {securityTab === "sessions" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-session-note"><Icon>devices</Icon><p>For your security, session management is handled by your sign-in provider. Use account settings there to review active sessions.</p></div><a className="profile-stitch-security-link" href="/sign-in"><Icon>manage_accounts</Icon> Manage sign-in <Icon>arrow_outward</Icon></a></div>}
+            <div className="profile-stitch-security-foot"><Icon>verified_user</Icon> Never share your password or one-time codes.</div>
+          </section>
+
+          <section className="profile-stitch-recommendation">
+            <div className="profile-stitch-recommendation-photo"><img src={fallbackPhoto} alt="Modern home with warm lighting and landscaped surroundings" /><span><Icon>home_pin</Icon> Explore properties</span></div>
+            <div className="profile-stitch-recommendation-body"><span className="profile-stitch-overline">YOUR NEXT CHAPTER</span><h2>Find a place that feels like home.</h2><p>Explore available properties, compare listing details and save the ones you want to revisit.</p><div className="profile-stitch-recommendation-actions"><a href="/search"><Icon>search</Icon> Browse homes</a><a href="/saved" aria-label="View saved homes"><Icon>favorite</Icon></a></div></div>
+          </section>
+          <section className="profile-stitch-owner-cta"><div className="profile-stitch-owner-icon"><Icon>real_estate_agent</Icon></div><div><h2>Have a property to share?</h2><p>Publish your listing and help the right people discover your space.</p></div><a href="/list-property">Post a property <Icon>arrow_outward</Icon></a></section>
+        </aside>
+      </div>
+    </div>
+    <SiteFooter />
+  </main>;
 }
