@@ -62,7 +62,7 @@ function AuthenticatedSaveButton({ property, identifier, saved, onSaved, onNotic
   return <button className="button button-outline" type="button" aria-pressed={saved} onClick={() => void toggle()}>{saved ? "♥ Saved" : "♡ Save home"}</button>;
 }
 
-function PropertyContactActions({ propertyId, slug, phone }: { propertyId: string; slug: string; phone?: string }) {
+function AuthenticatedPropertyContactActions({ propertyId, slug, phone }: { propertyId: string; slug: string; phone?: string }) {
   const { isSignedIn, getToken } = useAuth();
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
@@ -95,6 +95,15 @@ function PropertyContactActions({ propertyId, slug, phone }: { propertyId: strin
   </div>;
 }
 
+function PropertyContactActions({ propertyId, slug, phone }: { propertyId: string; slug: string; phone?: string }) {
+  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+    return <div className="property-contact-actions">
+      {phone?.trim() ? <a className="button button-outline button-full" href={"tel:" + phone.replace(/[^+0-9]/g, "")}>☎ Call owner</a> : <p className="contact-phone-missing">The owner has not added a public contact number.</p>}
+      <a className="button button-primary button-full" href={"/sign-in?redirect_url=" + encodeURIComponent("/property/" + slug)}>▤ Sign in to chat</a>
+    </div>;
+  }
+  return <AuthenticatedPropertyContactActions propertyId={propertyId} slug={slug} phone={phone} />;
+}
 export default function PropertyDetailLive({id}:{id:string}){const [p,setP]=useState<Property|null>(null);const [error,setError]=useState("");const [loading,setLoading]=useState(true);const [saved,setSaved]=useState(false);const [notice,setNotice]=useState("");
 useEffect(()=>{try{const savedHomes=JSON.parse(localStorage.getItem("apna-ghar-saved-homes")||"[]") as Property[];setSaved(savedHomes.some(home=>home._id===id||home.slug===id));}catch{setSaved(false)}const c=new AbortController();fetch(api+"/properties/"+encodeURIComponent(id),{signal:c.signal,headers:{Accept:"application/json"}}).then(async r=>{if(!r.ok)throw new Error(r.status===404?"This property is not available.":"Could not load property details.");return r.json() as Promise<Property>}).then(setP).catch(e=>{if(e.name!=="AbortError")setError(e.message||"Could not load property details.")}).finally(()=>{if(!c.signal.aborted)setLoading(false)});return()=>c.abort()},[id]);
 if(loading)return <main className="page-shell interior-page"><SiteHeader active="search" /><div className="detail-skeleton" role="status" aria-label="Loading property details"><div className="skeleton skeleton-heading"/><div className="skeleton skeleton-copy"/><div className="skeleton skeleton-image"/><div className="skeleton skeleton-heading"/><div className="skeleton skeleton-copy"/><span className="sr-only">Loading property details…</span></div></main>;
