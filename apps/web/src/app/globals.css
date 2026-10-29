@@ -2437,7 +2437,7 @@ html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .
 /* Stitch marketplace homepage: scoped styles, independent from legacy header rules. */
 .agh-market { --agh-blue:var(--color-primary); --agh-blue-strong:var(--color-primary-hover); --agh-ink:var(--color-text); --agh-muted:#606c80; --agh-line:var(--color-border); --agh-pale:#f3f6fd; --agh-green:var(--color-green); background:var(--color-bg); color:var(--agh-ink); min-height:100vh; font-family:"Plus Jakarta Sans",Inter,system-ui,sans-serif; overflow-x:clip; }
 .agh-market * { box-sizing:border-box; }
-.agh-market a { color:"Plus Jakarta Sans",Inter,system-ui,sans-serif; text-decoration:none; }
+.agh-market a { color:inherit; text-decoration:none; }
 .agh-header { position:sticky; top:0; z-index:1000; background:rgba(255,255,255,.97); border-bottom:1px solid var(--color-border); box-shadow:0 4px 20px rgba(15,32,60,.035); backdrop-filter:blur(18px); }
 .agh-header-main { max-width:1440px; min-height:76px; margin:auto; padding:12px 24px; display:flex; align-items:center; gap:22px; }
 .agh-brand { display:flex; align-items:center; gap:10px; flex:0 0 auto; min-width:180px; }
@@ -2671,3 +2671,83 @@ html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .
 .agh-market .agh-sell-btn { background:var(--color-green); color:var(--color-on-primary) !important; }
 .agh-market .agh-top-search button { background:var(--color-surface-subtle); color:var(--color-primary); }
 .agh-market .agh-mobile-search button { background:var(--color-primary); color:var(--color-on-primary); }
+
+
+/* Buyer-owner messaging and restored five-theme brand palette. */
+.agh-market .agh-brand { gap:9px; }
+.agh-market .agh-brand .brand { display:inline-flex; align-items:center; gap:8px; min-width:0; }
+.agh-market .agh-brand .brand-symbol { width:46px; height:36px; flex:0 0 46px; }
+.agh-market .agh-brand .brand-wordmark { color:var(--color-text); font-family:var(--font-heading); font-size:20px; font-weight:800; letter-spacing:-.8px; }
+.agh-market .agh-brand .brand-wordmark b { color:var(--color-primary); background:none; -webkit-text-fill-color:currentColor; }
+.agh-market .agh-brand-icon { background:var(--color-surface-subtle); }
+.agh-market .agh-verified { background:color-mix(in srgb,var(--color-green) 17%,var(--color-surface)); color:var(--color-green); }
+.agh-market .agh-filter-rail button { color:var(--color-text-secondary); }
+.agh-market .agh-filter-rail button.chosen { color:var(--color-green); }
+.agh-market .agh-location-muted,.agh-market .agh-listing-description,.agh-market .agh-listing-location,.agh-market .agh-listings-heading p,.agh-market .agh-listings-footer p,.agh-market .agh-trust-strip span,.agh-market .agh-footer-brand p { color:var(--color-muted); }
+.agh-market .agh-section-eyebrow,.agh-market .agh-listings-heading > a,.agh-market .agh-listings-footer > a { color:var(--color-primary); }
+.agh-market .agh-mobile-drawer .agh-drawer-sell { background:var(--color-green); color:#fff; }
+.agh-market .agh-mobile-drawer .agh-drawer-head { border-color:var(--color-border); }
+.agh-market .agh-menu-toggle { color:var(--color-text); background:var(--color-surface); border-color:var(--color-border); }
+.agh-market .agh-sell-btn { color:#fff !important; }
+.agh-market .agh-seller-banner { background:linear-gradient(110deg,#0644a8 0%,#2563eb 58%,#078e54 100%); }
+.agh-market .agh-seller-kicker,.agh-market .agh-seller-banner > a { background:var(--color-green); color:#06251e; }
+html[data-theme="midnight"] .agh-market .agh-header,
+html[data-theme="graphite"] .agh-market .agh-header,
+html[data-theme="forest"] .agh-market .agh-header,
+html[data-theme="amoled"] .agh-market .agh-header { background:var(--color-surface); }
+html[data-theme="midnight"] .agh-market .agh-seller-banner,
+html[data-theme="graphite"] .agh-market .agh-seller-banner,
+html[data-theme="forest"] .agh-market .agh-seller-banner,
+html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gradient(110deg,#0644a8 0%,#2563eb 58%,#078e54 100%); }
+.messages-page { max-width:1240px; margin:0 auto; padding:28px 24px 64px; color:var(--color-text); }
+.messages-heading { display:flex; justify-content:space-between; align-items:center; gap:18px; margin-bottom:22px; }
+.messages-heading h1 { margin:4px 0 7px; font-size:clamp(28px,4vw,40px); letter-spacing:-1.4px; }
+.messages-heading p:not(.eyebrow) { margin:0; color:var(--color-muted); font-size:13px; }
+.messages-layout { display:grid; grid-template-columns:minmax(260px,350px) minmax(0,1fr); min-height:540px; overflow:hidden; border:1px solid var(--color-border); border-radius:18px; background:var(--color-surface); box-shadow:0 12px 35px #1027470b; }
+.messages-sidebar { min-width:0; padding:17px 12px; border-right:1px solid var(--color-border); background:var(--color-surface); }
+.messages-sidebar h2 { margin:4px 8px 15px; font-size:14px; }
+.conversation-row { display:flex; width:100%; align-items:center; gap:10px; padding:11px 9px; border:0; border-radius:12px; background:transparent; color:var(--color-text); text-align:left; cursor:pointer; }
+.conversation-row:hover,.conversation-row.is-selected { background:var(--color-surface-subtle); }
+.conversation-avatar { display:grid; place-items:center; width:38px; height:38px; flex:0 0 38px; border-radius:12px; background:color-mix(in srgb,var(--color-primary) 14%,var(--color-surface)); color:var(--color-primary); font-size:20px; }
+.conversation-summary { display:flex; min-width:0; flex:1; flex-direction:column; gap:5px; }
+.conversation-summary strong { overflow:hidden; color:var(--color-text); font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
+.conversation-summary small,.conversation-row>small { overflow:hidden; color:var(--color-muted); font-size:9px; text-overflow:ellipsis; white-space:nowrap; }
+.messages-chat { display:flex; min-width:0; min-height:540px; flex-direction:column; background:var(--color-bg); }
+.messages-chat-header { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:17px 20px; border-bottom:1px solid var(--color-border); background:var(--color-surface); }
+.messages-chat-header>div { display:flex; flex-direction:column; gap:4px; }
+.messages-chat-header strong { font-size:13px; }
+.messages-chat-header small { color:var(--color-muted); font-size:10px; }
+.messages-chat-header>a { color:var(--color-primary); font-size:10px; font-weight:750; white-space:nowrap; }
+.messages-thread { display:flex; min-height:300px; flex:1; flex-direction:column; gap:11px; padding:22px; overflow:auto; }
+.message-bubble { max-width:min(78%,520px); padding:11px 13px 8px; border:1px solid var(--color-border); border-radius:14px 14px 14px 4px; background:var(--color-surface); color:var(--color-text); overflow-wrap:anywhere; }
+.message-bubble p { margin:0; font-size:12px; line-height:1.6; white-space:pre-wrap; }
+.message-bubble time { display:block; margin-top:5px; color:var(--color-muted); font-size:8px; text-align:right; }
+.message-mine { align-self:flex-end; border-color:var(--color-primary); border-radius:14px 14px 4px 14px; background:color-mix(in srgb,var(--color-primary) 12%,var(--color-surface)); }
+.message-theirs { align-self:flex-start; }
+.messages-compose { display:flex; align-items:flex-end; gap:10px; padding:13px; border-top:1px solid var(--color-border); background:var(--color-surface); }
+.messages-compose textarea { min-width:0; flex:1; resize:vertical; padding:12px; border:1px solid var(--color-border); border-radius:12px; background:var(--color-input); color:var(--color-text); font:inherit; font-size:12px; }
+.messages-compose .button { min-height:44px; }
+.messages-empty { padding:20px 12px; color:var(--color-muted); font-size:11px; line-height:1.6; }
+.messages-empty strong,.messages-empty h2 { color:var(--color-text); }
+.messages-empty p { margin:6px 0 10px; }
+.messages-empty a { color:var(--color-primary); font-weight:750; }
+.messages-select-empty { display:flex; flex:1; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+.messages-select-empty>span { display:grid; place-items:center; width:48px; height:48px; border-radius:15px; background:var(--color-surface-subtle); color:var(--color-primary); font-size:25px; }
+.messages-select-empty h2 { margin:13px 0 3px; font-size:16px; }
+.messages-select-empty p { max-width:300px; }
+.property-contact-actions { display:grid; gap:9px; margin:14px 0; }
+.property-contact-actions .button { display:flex; align-items:center; justify-content:center; min-height:45px; }
+.contact-phone-missing { margin:0; padding:9px 11px; border-radius:9px; background:var(--color-surface-subtle); color:var(--color-muted); font-size:10px; line-height:1.5; }
+@media(max-width:760px) {
+  .messages-page { padding:20px 0 40px; }
+  .messages-heading { align-items:flex-start; flex-direction:column; padding:0 4px; }
+  .messages-layout { grid-template-columns:1fr; min-height:600px; }
+  .messages-sidebar { border-right:0; border-bottom:1px solid var(--color-border); }
+  .messages-sidebar h2 { margin-bottom:8px; }
+  .conversation-row { padding:9px; }
+  .messages-chat { min-height:420px; }
+  .messages-thread { padding:14px; }
+  .message-bubble { max-width:90%; }
+  .messages-compose { padding:9px; }
+  .messages-compose .button { padding-inline:12px; }
+}
