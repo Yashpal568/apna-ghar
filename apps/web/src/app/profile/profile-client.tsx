@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuth, useClerk, useUser } from "@clerk/nextjs";
 import AccountSettingsPanel from "../components/AccountSettingsPanel";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
@@ -22,6 +22,7 @@ const Icon = ({ children, className = "" }: { children: string; className?: stri
 
 function ProfileClientWithClerk() {
   const { isLoaded, isSignedIn, getToken } = useAuth();
+  const { openUserProfile } = useClerk();
   const { user } = useUser();
   const [profile, setProfile] = useState<Profile>(blank);
   const [message, setMessage] = useState("");
@@ -202,8 +203,8 @@ function ProfileClientWithClerk() {
               <button type="button" role="tab" aria-selected={securityTab === "security"} className={securityTab === "security" ? "is-active" : ""} onClick={() => setSecurityTab("security")}><Icon>shield</Icon> Security</button>
               <button type="button" role="tab" aria-selected={securityTab === "sessions"} className={securityTab === "sessions" ? "is-active" : ""} onClick={() => setSecurityTab("sessions")}><Icon>devices</Icon> Sessions</button>
             </div>
-            {securityTab === "security" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>lock</Icon></span><div><strong>Authentication</strong><p>{isSignedIn ? "Your sign-in is managed by your authentication provider." : "Sign in to manage account security."}</p></div></div><a className="profile-stitch-security-link" href="/sign-in"><Icon>login</Icon> Open sign-in options <Icon>arrow_outward</Icon></a></div>}
-            {securityTab === "sessions" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-session-note"><Icon>devices</Icon><p>For your security, session management is handled by your sign-in provider. Use account settings there to review active sessions.</p></div><a className="profile-stitch-security-link" href="/sign-in"><Icon>manage_accounts</Icon> Manage sign-in <Icon>arrow_outward</Icon></a></div>}
+            {securityTab === "security" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>lock</Icon></span><div><strong>Authentication</strong><p>{isSignedIn ? "Your sign-in is managed by your authentication provider." : "Sign in to manage account security."}</p></div></div>{isSignedIn ? <button className="profile-stitch-security-link" type="button" onClick={() => openUserProfile()}><Icon>shield</Icon> Manage security settings <Icon>arrow_outward</Icon></button> : <a className="profile-stitch-security-link" href="/sign-in"><Icon>login</Icon> Sign in to secure your account <Icon>arrow_outward</Icon></a>}</div>}
+            {securityTab === "sessions" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-session-note"><Icon>devices</Icon><p>For your security, session management is handled by your sign-in provider. Use account settings there to review active sessions.</p></div>{isSignedIn ? <button className="profile-stitch-security-link" type="button" onClick={() => openUserProfile()}><Icon>devices</Icon> Manage sessions & access <Icon>arrow_outward</Icon></button> : <a className="profile-stitch-security-link" href="/sign-in"><Icon>login</Icon> Sign in to manage access <Icon>arrow_outward</Icon></a>}</div>}
             <div className="profile-stitch-security-foot"><Icon>verified_user</Icon> Never share your password or one-time codes.</div>
           </section>
 
