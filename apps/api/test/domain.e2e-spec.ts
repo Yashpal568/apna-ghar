@@ -94,7 +94,7 @@ describe('M3 identity and profile HTTP (e2e)', () => {
     });
     expect(invalidEmail.status).toBe(400);
     const unknownField = await fetch(`${await app.getUrl()}/api/v1/users/me/profile`, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer test-token' },
       body: JSON.stringify({ phone: '1234567890', isAdmin: true }),
     });
     expect(unknownField.status).toBe(400);
@@ -103,7 +103,7 @@ describe('M3 identity and profile HTTP (e2e)', () => {
 
   it('accepts a valid profile update for the authenticated Clerk subject', async () => {
     const response = await fetch(`${await app.getUrl()}/api/v1/users/me/profile`, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer test-token' },
       body: JSON.stringify({ name: 'Test Buyer', city: 'Rudrapur' }),
     });
     expect(response.status).toBe(200);
