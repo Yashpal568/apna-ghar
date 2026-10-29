@@ -17,7 +17,7 @@ export default function HomeHeroCarousel() {
     const timer = window.setInterval(() => setActive(index => (index + 1) % slides.length), 5600);
     return () => window.clearInterval(timer);
   }, []);
-  return <div className="ag-home-hero-image" aria-label={slides[active].alt} role="img">
+  return <div className="ag-home-hero-image" role="region" aria-label="Homepage property photo carousel">
     {slides.map((slide, index) => <div className={"ag-home-hero-slide" + (index === active ? " is-active" : "")} key={slide.src} aria-hidden="true">
       <img src={slide.src} alt="" loading={index === 0 ? "eager" : "lazy"} fetchPriority={index === 0 ? "high" : "auto"} style={{ objectPosition: slide.position }} />
     </div>)}
