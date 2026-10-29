@@ -117,7 +117,7 @@
 
 | Date | Change / evidence | Commit | Next exact task |
 |---|---|---|---|
-| 2026-10-29 | Improved property detail error layout (`2cd6305`) and added restore-on-load for saved property listing drafts (`4015cc0`). The listing draft restore is committed but build/browser QA has not run. | `4015cc0` — code committed; CI/deployment/browser QA pending | Check build/CI and audit listing publish + My Listings API contracts; then test live buyer and owner journeys. |
+| 2026-10-29 | Improved property detail error layout (`2cd6305`), restored listing drafts (`4015cc0`), and fixed saved-home removal to match either slug or ID (`ef80954`). Vercel success was confirmed for `4015cc0`; no CI status has yet been returned for `ef80954`. | `ef80954` — code committed; CI/deployment/browser QA pending | Verify latest CI/deployment, then test live search and authenticated create/manage listing journey. |
 
 ## Blockers / decisions needed
 
