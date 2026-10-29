@@ -3013,3 +3013,59 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
 .agh-market .agh-drawer-theme>span { color:var(--color-muted); font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
 .agh-market .agh-drawer-theme .theme-trigger { min-height:36px; padding:0 10px; border-color:var(--color-border); background:var(--color-surface); color:var(--color-text); }
 .agh-market .agh-drawer-theme .theme-trigger-label { display:inline; }
+
+
+/* Apna Ghar legacy brand restoration + five-theme homepage token bridge.
+   Keep the original blue roof / green sweep mark identical in every theme. */
+.agh-market {
+  background: var(--color-bg) !important;
+  color: var(--color-text) !important;
+  --agh-blue: var(--color-primary);
+  --agh-blue-strong: var(--color-primary-hover);
+  --agh-ink: var(--color-text);
+  --agh-muted: var(--color-muted);
+  --agh-line: var(--color-border);
+  --agh-pale: var(--color-surface-subtle);
+  --agh-green: var(--color-green);
+}
+.agh-market .agh-header { background:var(--color-surface) !important; border-color:var(--color-border) !important; }
+.agh-market .agh-header-main { color:var(--color-text); }
+.agh-market .agh-brand { display:flex !important; flex-direction:row !important; align-items:center !important; gap:9px !important; min-width:0; }
+.agh-market .agh-brand > .brand { display:inline-flex !important; flex-direction:row !important; align-items:center !important; gap:9px !important; width:auto; min-width:0; white-space:nowrap; }
+.agh-market .agh-brand .brand-symbol { display:block !important; width:44px !important; height:36px !important; flex:0 0 44px !important; }
+.agh-market .agh-brand .brand-wordmark { display:inline-flex !important; flex-direction:row !important; align-items:baseline !important; gap:4px !important; white-space:nowrap !important; font-family:var(--font-heading),Inter,sans-serif !important; font-size:21px !important; line-height:1 !important; font-weight:800 !important; letter-spacing:-.8px !important; color:var(--color-text) !important; }
+.agh-market .agh-brand .brand-wordmark b { color:var(--color-primary) !important; background:none !important; -webkit-text-fill-color:var(--color-primary) !important; }
+.agh-market .agh-top-search,.agh-market .agh-mobile-search form { background:var(--color-surface-subtle) !important; border-color:var(--color-border) !important; color:var(--color-muted); }
+.agh-market .agh-top-search input,.agh-market .agh-mobile-search input { color:var(--color-text) !important; }
+.agh-market .agh-top-search button { background:var(--color-primary) !important; color:var(--color-on-primary) !important; }
+.agh-market .agh-desktop-nav a { color:var(--color-text-secondary) !important; }
+.agh-market .agh-desktop-nav a:hover,.agh-market .agh-desktop-nav a.active { background:color-mix(in srgb,var(--color-primary) 11%,var(--color-surface)) !important; color:var(--color-primary) !important; }
+.agh-market .agh-account-btn,.agh-market .agh-icon-link,.agh-market .agh-menu-toggle { background:var(--color-surface) !important; color:var(--color-text) !important; border-color:var(--color-border) !important; }
+.agh-market .agh-category-rail button { background:var(--color-surface-subtle) !important; border-color:var(--color-border) !important; color:var(--color-text-secondary) !important; }
+.agh-market .agh-category-rail button span { color:var(--color-primary) !important; }
+.agh-market .agh-category-rail button.selected { background:var(--color-primary) !important; border-color:var(--color-primary) !important; color:var(--color-on-primary) !important; }
+.agh-market .agh-category-rail button.selected span { color:var(--color-on-primary) !important; }
+.agh-market .agh-filter-rail button { background:var(--color-surface) !important; border-color:var(--color-border) !important; color:var(--color-text-secondary) !important; }
+.agh-market .agh-filter-rail button.chosen { background:color-mix(in srgb,var(--color-green) 15%,var(--color-surface)) !important; border-color:var(--color-green) !important; color:var(--color-text) !important; }
+.agh-market .agh-location-bar,.agh-market .agh-listing-card,.agh-market .agh-trust-strip,.agh-market .agh-footer,.agh-market .agh-mobile-drawer { background:var(--color-surface) !important; border-color:var(--color-border) !important; color:var(--color-text) !important; }
+.agh-market .agh-location-bar strong,.agh-market .agh-listing-info h3,.agh-market .agh-trust-strip strong,.agh-market .agh-footer > div > strong,.agh-market .agh-listing-facts b { color:var(--color-text) !important; }
+.agh-market .agh-location-actions select,.agh-market .agh-location-actions > a,.agh-market .agh-listing-facts { background:var(--color-surface-subtle) !important; border-color:var(--color-border) !important; color:var(--color-text-secondary) !important; }
+.agh-market .agh-seller-banner { background:linear-gradient(110deg,var(--color-primary) 0%,color-mix(in srgb,var(--color-primary) 70%,var(--color-green)) 58%,var(--color-green) 100%) !important; }
+.agh-market .agh-seller-banner h1,.agh-market .agh-seller-banner p { color:#fff !important; }
+.agh-market .agh-seller-kicker,.agh-market .agh-seller-banner > a,.agh-market .agh-sell-btn { background:var(--color-green) !important; color:#06251e !important; }
+.agh-market .agh-section-eyebrow,.agh-market .agh-listings-heading > a,.agh-market .agh-listings-footer > a { color:var(--color-primary) !important; }
+.agh-market .agh-location-muted,.agh-market .agh-listing-description,.agh-market .agh-listing-location,.agh-market .agh-listings-heading p,.agh-market .agh-listings-footer p,.agh-market .agh-trust-strip span,.agh-market .agh-footer-brand p { color:var(--color-muted) !important; }
+.agh-market .agh-mobile-search button,.agh-market .agh-listing-actions .agh-chat-owner { background:var(--color-primary) !important; color:var(--color-on-primary) !important; border-color:var(--color-primary) !important; }
+.agh-market .agh-listing-actions { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; margin-top:13px !important; }
+.agh-market .agh-listing-actions .agh-call-owner,.agh-market .agh-listing-actions .agh-chat-owner { min-width:0; min-height:40px; display:flex; align-items:center; justify-content:center; gap:5px; padding:8px 7px; border:1px solid var(--color-border); border-radius:10px; font:750 10px/1.2 var(--font-body),Inter,sans-serif; text-align:center; cursor:pointer; }
+.agh-market .agh-listing-actions .agh-call-owner { background:color-mix(in srgb,var(--color-green) 13%,var(--color-surface)) !important; color:var(--color-text) !important; border-color:color-mix(in srgb,var(--color-green) 55%,var(--color-border)) !important; }
+.agh-market .agh-listing-actions .agh-call-owner.is-unavailable { opacity:.55; cursor:not-allowed; }
+.agh-market .agh-listing-actions .agh-chat-owner:disabled { opacity:.65; cursor:wait; }
+.agh-market .agh-view-property { display:flex; align-items:center; justify-content:center; margin-top:8px; padding:9px; border-radius:9px; background:var(--color-surface-subtle); color:var(--color-primary) !important; font-size:10px; font-weight:800; }
+.agh-market .agh-mobile-drawer > a,.agh-market .agh-drawer-signout { color:var(--color-text) !important; }
+.agh-market .agh-mobile-drawer .agh-drawer-sell { background:var(--color-green) !important; color:#06251e !important; }
+@media(max-width:600px) {
+  .agh-market .agh-brand .brand-symbol { width:38px !important; height:32px !important; flex-basis:38px !important; }
+  .agh-market .agh-brand .brand-wordmark { font-size:18px !important; }
+  .agh-market .agh-listing-actions .agh-call-owner,.agh-market .agh-listing-actions .agh-chat-owner { font-size:11px; }
+}
