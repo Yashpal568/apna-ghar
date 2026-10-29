@@ -1,7 +1,7 @@
 # Apna Ghar — Master Execution Checklist
 
 **Repository:** `Yashpal568/apna-ghar`  
-**Working branch in this session:** `deploy/cloudflare-preview` (the existing mainline marketplace checkpoint is documented separately below; keep this preview branch isolated until runtime and CI are verified).  
+**Working branches in this session:** `deploy/cloudflare-preview` (M2 live preview) and `feat/m3-backend-identity` (isolated M3 groundwork; do not merge to main until CI and review pass).  
 **Last updated:** 2026-10-29  
 **Purpose:** Single day-to-day source of truth. Update this file whenever work starts, finishes, is blocked, or changes scope. Do not restart from a different milestone without recording why.
 
@@ -66,7 +66,7 @@
 - [ ] All relevant routes tested at mobile, tablet, desktop.
 - [ ] Compare implemented screens with approved Figma; do not claim parity before review.
 
-### M3 — Backend domain and identity
+### M3 — Backend domain and identity (WORK STARTED ON `feat/m3-backend-identity`)
 - [ ] Inspect/confirm domain APIs, DTO validation, consistent error/pagination contracts.
 - [ ] Clerk token verification and user/profile sync.
 - [ ] Server-side roles/permissions and ownership checks.
@@ -114,6 +114,8 @@
 - [ ] Verify five themes plus System and device/emulator behavior.
 
 ## Session log
+
+| 2026-10-29 | User requested independent live-site verification and to begin M3 rather than being asked to perform manual QA. Existing deployed smoke-test evidence remains: homepage/search HTTP 200 and search reaches empty-results state; a fresh repeat browser-rendering attempt was rate-limited (HTTP 429), so no new pass is claimed. Started isolated branch `feat/m3-backend-identity` and added unit coverage for Clerk bearer-token verification and admin allowlist authorization. M2 remains marked active because authenticated owner lifecycle and real-inventory filter QA are not fully evidenced; M3 groundwork is proceeding in a separate branch per user's explicit request. | `11b729a0`, `9058a6d3` | Continue M3 by testing/refactoring auth and domain contracts; rerun live smoke tests after Browser Rendering rate limit clears. |
 
 | 2026-10-29 | Dynamic search smoke test on the deployed Worker returned HTTP 200 for `/search?transaction=buy&type=commercial`; client-side search reached the empty-results state rather than the API-unavailable/error state. Worker telemetry for version `76982847-875b-4adc-b5b1-2bb73eb14eb7` shows successful `/search` and `/icon.svg` requests; no Vercel Insights request appeared in that version's smoke-test events. The API currently returned zero matching published listings for this query, so price/sort/pagination with actual inventory and the authenticated publish/edit/hide/delete journey cannot be fully proven without a signed-in session and an active test listing. | `76982847-875b-4adc-b5b1-2bb73eb14eb7` | M2 implementation deployed; finish authenticated owner lifecycle QA with a test listing before marking M2 complete. |
 
