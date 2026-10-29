@@ -74,4 +74,33 @@ describe('ConversationsController', () => {
     properties.findOne.mockReturnValue(chain(null));
     await expect(controller.startForProperty({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011', {})).rejects.toBeInstanceOf(NotFoundException);
   });
+  it('stores a message from an authenticated participant and advances the conversation timestamp', async () => {
+    const conversation = {
+      _id: 'conversation-1',
+      participantIds: [buyer, owner],
+      messages: [] as Array<{ senderId: string; text: string; sentAt: Date }>,
+      lastMessageAt: new Date('2026-01-01T00:00:00.000Z'),
+      save: jest.fn().mockResolvedValue(undefined),
+    };
+    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    const response = await controller.sendMessage({ auth: { userId: buyer } }, 'conversation-1', { text: '  Is the property available?  ' });
+    expect(response.success).toBe(true);
+    expect(conversation.messages).toHaveLength(1);
+    expect(conversation.messages[0]).toEqual(expect.objectContaining({ senderId: buyer, text: 'Is the property available?' }));
+    expect(conversation.lastMessageAt).toBeInstanceOf(Date);
+    expect(conversation.save).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not allow a non-participant to send a message', async () => {
+    const conversation = {
+      participantIds: [buyer, owner],
+      messages: [],
+      save: jest.fn(),
+    };
+    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    await expect(controller.sendMessage({ auth: { userId: 'user_stranger' } }, 'conversation-1', { text: 'Hello' }))
+      .rejects.toBeInstanceOf(ForbiddenException);
+    expect(conversation.save).not.toHaveBeenCalled();
+  });
+
 });
