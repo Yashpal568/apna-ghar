@@ -17,6 +17,12 @@ export default function ProfilePage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [heroSlide, setHeroSlide] = useState(0);
+  const heroPhotos = [
+    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1800&q=90",
+  ];
 
   useEffect(() => {
     let cancelled = false;
@@ -83,7 +89,7 @@ export default function ProfilePage() {
 
   return <main className="interior-page"><SiteHeader active="account" /><div className="profile-page-shell">
     <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>My profile</span></div>
-    <section className="profile-page-hero profile-page-hero-premium"><div className="profile-hero-copy"><p className="eyebrow"><span className="profile-hero-eyebrow-dot" /> PERSONAL DISCOVERY PROFILE</p><h1>A little more<br/><em>about you.</em></h1><p>Keep your contact details handy for property enquiries, private scheduling and visit requests.</p><div className="profile-hero-status"><span className="profile-hero-status-dot" />{isSignedIn ? "Connected to your Apna Ghar account" : "Profile saved on this device"}</div></div></section>
+    <section className="profile-page-hero profile-page-hero-premium" style={{ backgroundImage: `linear-gradient(90deg,rgba(8,27,49,.94) 0%,rgba(12,39,67,.78) 52%,rgba(12,39,67,.24) 100%),url("${heroPhotos[heroSlide]}")` }}><div className="profile-hero-copy"><p className="eyebrow"><span className="profile-hero-eyebrow-dot" /> PERSONAL DISCOVERY PROFILE</p><h1>A little more<br/><em>about you.</em></h1><p>Keep your contact details handy for property enquiries, private scheduling and visit requests.</p><div className="profile-hero-status"><span className="profile-hero-status-dot" />{isSignedIn ? "Connected to your Apna Ghar account" : "Profile saved on this device"}</div></div><div className="profile-hero-carousel" aria-label="Property inspiration image carousel"><div className="profile-hero-carousel-arrows"><button type="button" aria-label="Previous image" onClick={() => setHeroSlide((heroSlide + heroPhotos.length - 1) % heroPhotos.length)}>‹</button><button type="button" aria-label="Next image" onClick={() => setHeroSlide((heroSlide + 1) % heroPhotos.length)}>›</button></div><div className="profile-hero-carousel-dots">{heroPhotos.map((photo, index) => <button key={photo} type="button" aria-label={`Show image ${index + 1}`} aria-pressed={heroSlide === index} className={heroSlide === index ? "is-active" : ""} onClick={() => setHeroSlide(index)} />)}</div></div></section>
     <section className="profile-summary-card" aria-label="Profile summary">
       <div className="profile-summary-avatar" aria-hidden="true">{profile.name.trim() ? profile.name.trim().split(/\s+/).slice(0, 2).map(x => x[0].toUpperCase()).join("") : "AG"}</div>
       <div className="profile-summary-copy"><h2>{profile.name.trim() || "Your Apna Ghar profile"}</h2><p>{profile.email || (isSignedIn ? "Account email not available" : "Sign in to connect your account")}</p><span>{isSignedIn ? "Account connected" : "Profile saved on this device"}</span></div>
