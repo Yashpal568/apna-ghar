@@ -2432,3 +2432,212 @@ html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .
   .ag-mobile-toggle { right: 12px !important; }
   .ag-mobile-menu { top: 116px !important; left: 8px !important; right: 8px !important; max-height: calc(100dvh - 128px) !important; }
 }
+
+
+/* Stitch marketplace homepage: scoped styles, independent from legacy header rules. */
+.agh-market { --agh-blue:#064cc0; --agh-blue-strong:#0045b7; --agh-ink:#0b1c30; --agh-muted:#606c80; --agh-line:#dfe6f2; --agh-pale:#f3f6fd; --agh-green:#20e890; background:#f6f8fe; color:var(--agh-ink); min-height:100vh; font-family:"Plus Jakarta Sans",Inter,system-ui,sans-serif; overflow-x:clip; }
+.agh-market * { box-sizing:border-box; }
+.agh-market a { color:inherit; text-decoration:none; }
+.agh-header { position:sticky; top:0; z-index:1000; background:rgba(255,255,255,.97); border-bottom:1px solid #e8edf5; box-shadow:0 4px 20px rgba(15,32,60,.035); backdrop-filter:blur(18px); }
+.agh-header-main { max-width:1440px; min-height:76px; margin:auto; padding:12px 24px; display:flex; align-items:center; gap:22px; }
+.agh-brand { display:flex; align-items:center; gap:10px; flex:0 0 auto; min-width:180px; }
+.agh-brand-icon { width:42px; height:42px; display:grid; place-items:center; border-radius:12px; background:#edf4ff; color:#0752bd; font-size:28px; font-weight:800; flex:0 0 auto; }
+.agh-brand-icon svg { width:38px; height:38px; }
+.agh-brand-word { display:flex; flex-direction:column; font-size:18px; font-weight:800; line-height:1.1; letter-spacing:-.04em; white-space:nowrap; }
+.agh-brand-word b { color:#0752bd; display:inline; }
+.agh-brand-word small { margin-top:5px; font-size:8px; letter-spacing:.12em; color:#66748a; font-weight:800; }
+.agh-verified { margin-left:2px; padding:5px 8px; border-radius:999px; color:#006c3d; background:#d9ffea; font-size:9px; font-weight:800; text-transform:uppercase; white-space:nowrap; }
+.agh-top-search { display:flex; align-items:center; gap:8px; height:44px; padding:0 8px 0 14px; background:#f0f4fc; border:1px solid transparent; border-radius:999px; min-width:190px; flex:1 1 280px; max-width:340px; color:#66748a; }
+.agh-top-search:focus-within,.agh-mobile-search form:focus-within { background:#fff; border-color:#9dbaf1; box-shadow:0 0 0 3px #dbe8ff; }
+.agh-top-search input,.agh-mobile-search input { min-width:0; flex:1; width:100%; border:0; outline:0; background:transparent; color:#102541; font:500 12px inherit; }
+.agh-top-search input::placeholder,.agh-mobile-search input::placeholder { color:#748197; }
+.agh-top-search button { width:30px; height:30px; border:0; border-radius:50%; background:#dce8ff; color:#064cc0; font-size:21px; cursor:pointer; }
+.agh-desktop-nav { display:flex; align-items:center; gap:2px; flex:0 1 auto; white-space:nowrap; }
+.agh-desktop-nav a { padding:11px 10px; border-radius:999px; font-size:12px; font-weight:700; color:#536178; transition:background .18s,color .18s; }
+.agh-desktop-nav a:hover,.agh-desktop-nav a.active { background:#e8efff; color:#064cc0; }
+.agh-header-actions { display:flex; align-items:center; gap:8px; margin-left:auto; white-space:nowrap; }
+.agh-icon-link { width:36px; height:36px; display:grid; place-items:center; border-radius:50%; color:#064cc0; font-size:25px; }
+.agh-icon-link:hover { background:#eef3ff; }
+.agh-my-listings,.agh-account-btn { padding:10px 12px; border-radius:12px; font-size:11px; font-weight:750; color:#33435a; }
+.agh-account-btn { border:1px solid var(--agh-line); background:#fff; cursor:pointer; font-family:inherit; }
+.agh-my-listings:hover,.agh-account-btn:hover { background:#f3f6fc; }
+.agh-sell-btn { display:flex; align-items:center; gap:7px; padding:12px 16px; border-radius:999px; background:#23ed9a; color:#004d2d !important; font-size:11px; font-weight:850; box-shadow:0 5px 14px #12a7681c; }
+.agh-sell-btn span { font-size:17px; }
+.agh-menu-toggle { display:none; width:42px; height:42px; flex:0 0 42px; place-items:center; border:1px solid #dce4f0; border-radius:13px; background:#fff; color:#0c2748; font:700 23px/1 inherit; box-shadow:0 4px 12px #132b4b0b; cursor:pointer; }
+.agh-mobile-search { display:none; }
+.agh-drawer-backdrop { position:fixed; inset:0; z-index:1001; border:0; background:rgba(7,19,39,.45); backdrop-filter:blur(3px); }
+.agh-mobile-drawer { position:fixed; z-index:1002; top:12px; right:12px; width:min(340px,calc(100vw - 24px)); max-height:calc(100dvh - 24px); overflow:auto; padding:16px; display:flex; flex-direction:column; gap:5px; border:1px solid #e1e7f1; border-radius:22px; background:#fff; box-shadow:0 24px 80px #07162d40; }
+.agh-drawer-head { display:flex; justify-content:space-between; align-items:center; padding:5px 3px 14px; margin-bottom:4px; border-bottom:1px solid #edf0f6; }
+.agh-drawer-head strong { font-size:15px; }
+.agh-drawer-head button { width:34px; height:34px; border:0; border-radius:10px; background:#f0f4fb; font-size:24px; cursor:pointer; }
+.agh-mobile-drawer > a,.agh-drawer-signout { display:flex; align-items:center; min-height:44px; padding:0 12px; border:0; border-radius:11px; background:transparent; text-align:left; color:#253b58; font:650 13px inherit; cursor:pointer; }
+.agh-mobile-drawer > a:hover,.agh-drawer-signout:hover { background:#f0f5ff; color:#064cc0; }
+.agh-mobile-drawer .agh-drawer-sell { margin-top:7px; justify-content:center; background:#20e890; color:#004d2d; font-weight:850; }
+.agh-drawer-signout { color:#b42318; }
+.agh-category-rail { max-width:1440px; margin:auto; padding:12px 24px 10px; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
+.agh-category-rail::-webkit-scrollbar,.agh-filter-rail::-webkit-scrollbar { display:none; }
+.agh-category-rail button { flex:0 0 auto; display:flex; align-items:center; gap:8px; min-height:38px; padding:0 15px; border:1px solid #dfe7f5; border-radius:999px; background:#eaf0fd; color:#344761; font:700 11px inherit; cursor:pointer; white-space:nowrap; }
+.agh-category-rail button span { color:#0752bd; font-size:17px; }
+.agh-category-rail button b { padding:3px 6px; border-radius:999px; background:#fff; color:#0752bd; font-size:9px; }
+.agh-category-rail button.selected { border-color:#064cc0; background:#064cc0; color:#fff; box-shadow:0 4px 12px #064cc026; }
+.agh-category-rail button.selected span { color:#fff; }
+.agh-filter-rail { max-width:1440px; margin:auto; padding:0 24px 12px; display:flex; align-items:center; gap:7px; overflow-x:auto; scrollbar-width:none; }
+.agh-filter-label { flex:0 0 auto; color:#718098; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; margin-right:3px; }
+.agh-filter-rail button { flex:0 0 auto; padding:7px 11px; border:1px solid #e0e7f2; border-radius:999px; background:#fff; color:#51617a; font:700 10px inherit; white-space:nowrap; cursor:pointer; }
+.agh-filter-rail button.chosen { background:#dcffec; border-color:#8be9b8; color:#00663a; }
+.agh-filter-rail button.agh-clear-filter { border-color:transparent; background:transparent; color:#064cc0; }
+.agh-location-bar { max-width:1392px; min-height:62px; margin:6px auto 14px; padding:12px 18px; display:flex; align-items:center; justify-content:space-between; gap:14px; border:1px solid #e4eaf4; border-radius:16px; background:#fff; }
+.agh-location-bar > div:first-child { display:flex; align-items:center; flex-wrap:wrap; gap:9px; }
+.agh-location-pin { width:28px; height:28px; display:grid; place-items:center; border-radius:9px; background:#eaf1ff; color:#0752bd; font-size:19px; }
+.agh-location-bar strong { font-size:12px; }
+.agh-location-muted { color:#7b879a; font-size:10px; }
+.agh-location-actions { display:flex; align-items:center; gap:10px; }
+.agh-location-actions label { display:flex; align-items:center; gap:6px; color:#728096; font-size:10px; font-weight:700; text-transform:uppercase; }
+.agh-location-actions select { max-width:155px; padding:9px 10px; border:1px solid #e1e8f3; border-radius:10px; background:#f7f9fe; color:#1c304d; font:650 10px inherit; text-transform:none; }
+.agh-location-actions > a { padding:8px 10px; border:1px solid #e1e8f3; border-radius:10px; color:#0752bd; font-size:12px; white-space:nowrap; }
+.agh-location-actions > a span { font-size:10px; font-weight:700; }
+.agh-seller-banner { max-width:1392px; min-height:104px; margin:0 auto 26px; padding:20px 26px; display:flex; align-items:center; gap:17px; border-radius:18px; color:#fff; background:linear-gradient(105deg,#0649bf 0%,#0068a6 60%,#00844e 100%); box-shadow:0 8px 18px #064cc01c; }
+.agh-seller-icon { width:42px; height:42px; display:grid; place-items:center; flex:0 0 auto; border:1px solid #ffffff30; border-radius:13px; background:#ffffff1d; font-size:23px; }
+.agh-seller-banner > div:nth-child(2) { min-width:0; flex:1; }
+.agh-seller-kicker { display:inline-flex; padding:4px 8px; border-radius:999px; background:#23ed9a; color:#00452a; font-size:9px; font-weight:900; letter-spacing:.06em; }
+.agh-seller-banner h1 { margin:7px 0 4px; font-size:19px; line-height:1.25; letter-spacing:-.03em; }
+.agh-seller-banner p { margin:0; color:#e5f1ff; font-size:11px; line-height:1.6; }
+.agh-seller-banner > a { display:flex; align-items:center; gap:10px; flex:0 0 auto; padding:13px 18px; border-radius:999px; background:#23ed9a; color:#004d2d; font-size:11px; font-weight:850; }
+.agh-listings-section { max-width:1392px; margin:0 auto; }
+.agh-listings-heading { display:flex; justify-content:space-between; align-items:end; gap:18px; margin:0 0 16px; }
+.agh-section-eyebrow { color:#0752bd; font-size:9px; font-weight:900; letter-spacing:.13em; }
+.agh-listings-heading h2 { margin:6px 0 5px; font-size:24px; line-height:1.25; letter-spacing:-.04em; }
+.agh-listings-heading p { margin:0; color:#6c7890; font-size:11px; }
+.agh-listings-heading > a,.agh-listings-footer > a { flex:0 0 auto; color:#0752bd; font-size:11px; font-weight:850; }
+.agh-listing-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+.agh-listing-card { min-width:0; overflow:hidden; border:1px solid #e4eaf4; border-radius:17px; background:#fff; box-shadow:0 4px 14px #10274708; transition:transform .2s,box-shadow .2s; }
+.agh-listing-card:hover { transform:translateY(-3px); box-shadow:0 14px 34px #10274713; }
+.agh-listing-photo { position:relative; display:flex; flex-direction:column; justify-content:end; height:210px; padding:16px; background-size:cover; background-position:center; color:#fff !important; }
+.agh-listing-badge,.agh-preview-badge { position:absolute; top:12px; left:12px; padding:5px 7px; border-radius:5px; background:#064cc0; color:#fff; font-size:8px; font-weight:900; letter-spacing:.04em; }
+.agh-listing-badge.badge-apartment { background:#087849; }
+.agh-listing-badge.badge-plot { background:#087849; }
+.agh-listing-badge.badge-commercial { background:#0b56c8; }
+.agh-preview-badge { top:12px; left:auto; right:46px; background:#fff; color:#52627a; font-size:7px; }
+.agh-listing-heart { position:absolute; top:10px; right:10px; width:31px; height:31px; display:grid; place-items:center; border-radius:50%; background:#ffffffed; color:#183451; font-size:22px; }
+.agh-listing-photo strong { font-size:23px; line-height:1.15; letter-spacing:-.04em; text-shadow:0 1px 5px #0006; }
+.agh-listing-photo small { margin-top:4px; font-size:10px; font-weight:650; text-shadow:0 1px 5px #0008; }
+.agh-listing-info { padding:14px; }
+.agh-listing-location { margin:0 0 7px; color:#66748b; font-size:9px; font-weight:750; }
+.agh-listing-info h3 { min-height:39px; margin:0 0 7px; font-size:14px; line-height:1.4; letter-spacing:-.025em; }
+.agh-listing-description { min-height:34px; margin:0 0 13px; color:#6b778d; font-size:10px; line-height:1.6; }
+.agh-listing-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px; padding:10px 8px; border-radius:10px; background:#f0f4fd; }
+.agh-listing-facts span { display:flex; min-width:0; flex-direction:column; align-items:center; gap:4px; text-align:center; }
+.agh-listing-facts small { color:#78859b; font-size:8px; }
+.agh-listing-facts b { overflow-wrap:anywhere; color:#253a57; font-size:9px; }
+.agh-listing-actions { display:grid; grid-template-columns:1fr 40px; gap:7px; margin-top:12px; }
+.agh-listing-actions a { min-height:37px; display:grid; place-items:center; border-radius:9px; background:#dfeaff; color:#064cc0; font-size:10px; font-weight:850; }
+.agh-listing-actions a:first-child { background:#064cc0; color:#fff; }
+.agh-listings-footer { display:flex; justify-content:space-between; align-items:center; gap:14px; padding:15px 2px 22px; }
+.agh-listings-footer p { margin:0; color:#8490a2; font-size:9px; }
+.agh-trust-strip { max-width:1392px; margin:0 auto 32px; padding:20px 12px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border:1px solid #e4eaf4; border-radius:16px; background:#fff; }
+.agh-trust-strip > div { display:flex; flex-direction:column; align-items:center; gap:6px; padding:4px 10px; text-align:center; }
+.agh-trust-strip > div + div { border-left:1px solid #e7edf5; }
+.agh-trust-strip strong { color:#0752bd; font-size:19px; letter-spacing:-.03em; }
+.agh-trust-strip span { color:#69768c; font-size:9px; }
+.agh-footer { display:grid; grid-template-columns:1.6fr repeat(3,1fr); gap:30px; padding:32px max(24px,calc((100vw - 1392px)/2)); border-top:1px solid #e3e9f2; background:#fff; }
+.agh-footer-brand .agh-brand { margin-bottom:12px; }
+.agh-footer-brand p { max-width:270px; color:#6d7a90; font-size:11px; line-height:1.7; }
+.agh-footer > div:not(.agh-footer-brand):not(.agh-footer-bottom) { display:flex; flex-direction:column; align-items:flex-start; gap:10px; }
+.agh-footer > div > strong { margin-bottom:4px; font-size:11px; }
+.agh-footer > div > a { color:#6b7890; font-size:10px; }
+.agh-footer > div > a:hover { color:#0752bd; }
+.agh-footer-bottom { grid-column:1/-1; padding-top:18px; border-top:1px solid #e8edf5; color:#8490a2; font-size:9px; }
+@media (min-width:1441px) { .agh-location-bar,.agh-seller-banner,.agh-listings-section,.agh-trust-strip { max-width:1392px; } }
+@media (max-width:1240px) {
+  .agh-header-main { gap:12px; padding-inline:18px; }
+  .agh-brand { min-width:155px; }
+  .agh-verified { display:none; }
+  .agh-desktop-nav a { padding-inline:8px; font-size:11px; }
+  .agh-top-search { max-width:250px; }
+  .agh-header-actions { gap:4px; }
+  .agh-listings-section,.agh-trust-strip,.agh-location-bar,.agh-seller-banner { margin-left:18px; margin-right:18px; }
+}
+@media (max-width:980px) {
+  .agh-header-main { min-height:66px; padding:10px 16px; gap:12px; }
+  .agh-brand { min-width:0; }
+  .agh-brand-word { font-size:17px; }
+  .agh-top-search { display:none; }
+  .agh-desktop-nav { display:none; }
+  .agh-header-actions { margin-left:auto; }
+  .agh-header-actions .agh-icon-link,.agh-header-actions .agh-my-listings { display:none; }
+  .agh-menu-toggle { display:grid; }
+  .agh-mobile-search { display:block; padding:0 16px 12px; }
+  .agh-mobile-search form { display:flex; align-items:center; gap:9px; min-height:44px; padding:5px 6px 5px 13px; border:1px solid #e2e9f4; border-radius:13px; background:#f2f5fc; color:#61718a; }
+  .agh-mobile-search form > span { font-size:21px; }
+  .agh-mobile-search button { min-height:34px; padding:0 14px; border:0; border-radius:9px; background:#0752bd; color:#fff; font:750 11px inherit; cursor:pointer; }
+  .agh-category-rail { padding:11px 16px 9px; }
+  .agh-filter-rail { padding:0 16px 10px; }
+  .agh-location-bar { align-items:flex-start; margin:7px 16px 12px; }
+  .agh-seller-banner { margin:0 16px 22px; }
+  .agh-listings-section,.agh-trust-strip { margin-left:16px; margin-right:16px; }
+  .agh-listing-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+  .agh-listing-photo { height:190px; }
+  .agh-footer { grid-template-columns:repeat(2,minmax(0,1fr)); padding:28px 20px; gap:24px; }
+}
+@media (max-width:600px) {
+  .agh-header { position:sticky; top:0; }
+  .agh-header-main { min-height:58px; display:flex; padding:9px 12px; gap:8px; }
+  .agh-brand { gap:7px; }
+  .agh-brand-icon { width:35px; height:35px; border-radius:10px; }
+  .agh-brand-icon svg { width:33px; height:33px; }
+  .agh-brand-word { font-size:16px; }
+  .agh-brand-word small { font-size:7px; margin-top:4px; }
+  .agh-header-actions { gap:5px; }
+  .agh-header-actions .agh-account-btn { display:none; }
+  .agh-sell-btn { padding:10px 11px; font-size:10px; gap:3px; }
+  .agh-sell-btn span { font-size:15px; }
+  .agh-menu-toggle { width:39px; height:39px; flex-basis:39px; border-radius:11px; font-size:21px; }
+  .agh-mobile-search { padding:0 12px 10px; }
+  .agh-mobile-search form { min-height:42px; }
+  .agh-category-rail { padding:10px 12px 8px; gap:6px; }
+  .agh-category-rail button { min-height:35px; padding:0 12px; font-size:10px; }
+  .agh-filter-rail { padding:0 12px 9px; }
+  .agh-filter-label { display:none; }
+  .agh-filter-rail button { padding:7px 9px; font-size:9px; }
+  .agh-location-bar { flex-direction:column; margin:7px 12px 12px; padding:12px; border-radius:13px; }
+  .agh-location-bar > div:first-child { gap:7px; }
+  .agh-location-muted { flex-basis:100%; padding-left:35px; }
+  .agh-location-actions { width:100%; justify-content:space-between; }
+  .agh-location-actions select { max-width:170px; }
+  .agh-seller-banner { align-items:flex-start; flex-wrap:wrap; gap:10px; margin:0 12px 20px; padding:16px; border-radius:15px; }
+  .agh-seller-icon { width:35px; height:35px; border-radius:11px; }
+  .agh-seller-banner > div:nth-child(2) { flex:1 1 calc(100% - 50px); }
+  .agh-seller-kicker { font-size:7px; }
+  .agh-seller-banner h1 { font-size:16px; }
+  .agh-seller-banner p { font-size:10px; }
+  .agh-seller-banner > a { width:100%; justify-content:center; min-height:40px; padding:10px; }
+  .agh-listings-section { margin:0 12px; }
+  .agh-listings-heading { align-items:flex-start; flex-direction:column; gap:10px; margin-bottom:13px; }
+  .agh-listings-heading h2 { font-size:21px; }
+  .agh-listings-heading p { font-size:10px; line-height:1.6; }
+  .agh-listing-grid { grid-template-columns:minmax(0,1fr); gap:13px; }
+  .agh-listing-photo { height:225px; }
+  .agh-listing-info { padding:13px; }
+  .agh-listing-info h3 { min-height:0; font-size:15px; }
+  .agh-listing-description { min-height:0; }
+  .agh-listing-facts b { font-size:9px; }
+  .agh-listings-footer { align-items:flex-start; flex-direction:column; gap:8px; }
+  .agh-trust-strip { grid-template-columns:repeat(2,minmax(0,1fr)); margin:0 12px 22px; padding:14px 5px; }
+  .agh-trust-strip > div { padding:12px 6px; }
+  .agh-trust-strip > div:nth-child(3) { border-left:0; }
+  .agh-trust-strip > div:nth-child(n+3) { border-top:1px solid #e7edf5; }
+  .agh-trust-strip strong { font-size:16px; }
+  .agh-trust-strip span { font-size:8px; }
+  .agh-footer { grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px 15px; padding:24px 14px calc(24px + env(safe-area-inset-bottom)); }
+  .agh-footer-brand { grid-column:1/-1; }
+  .agh-footer-bottom { font-size:8px; line-height:1.6; }
+}
+@media (max-width:360px) {
+  .agh-brand-word { font-size:14px; }
+  .agh-brand-word small { font-size:6px; }
+  .agh-sell-btn { padding-inline:8px; font-size:9px; }
+  .agh-header-main { gap:5px; }
+  .agh-location-actions label { font-size:9px; }
+  .agh-location-actions select { max-width:135px; }
+  .agh-listing-photo { height:195px; }
+}
