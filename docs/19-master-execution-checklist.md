@@ -27,9 +27,10 @@
 - [x] User confirmed API health and readiness are ready (user confirmation; not independently re-run in this session).
 
 **Immediate next task (do this before moving to another milestone)**
-- [ ] Fix and verify the homepage search controls: Buy/Rent tabs must carry the selected transaction into search; category links and form values must match the actual API category/search contract; commercial must not silently become an unsupported/empty filter.
-- [ ] Inspect backend DTOs, property category model, and search service before deciding how category filtering should be represented.
-- [ ] Run relevant typecheck/build/tests and record actual results.
+- [x] Fixed homepage Buy/Rent tabs to control the transaction value submitted by the search form.
+- [x] Matched homepage property types (house, apartment, villa, plot, commercial) to the listing form's existing category values and added the missing commercial option to the search page.
+- [x] Inspected API DTO/service and confirmed `categoryId` is a string filter and `listingType` accepts only `sale` / `rent`; the UI maps Buy to the API's `sale` value in the existing search-results component.
+- [ ] Run relevant typecheck/build/tests and record actual results; verify the deployed search journey against real listings.
 
 ## Milestone status
 
@@ -53,8 +54,8 @@
 ### M2 — Web marketplace experience (ACTIVE)
 - [x] Marketplace-first homepage and primary navigation pass.
 - [x] Responsive CSS pass for new homepage.
-- [ ] Homepage Buy/Rent tabs and search form state work together.
-- [ ] Category/type values are compatible with the backend contract.
+- [x] Homepage Buy/Rent tabs and search form state work together (implementation committed; browser QA pending).
+- [x] Category/type values align with the existing listing form and string-based API filter (end-to-end data QA pending).
 - [ ] Real API-backed search, filters, sort, pagination verified end-to-end.
 - [ ] Property details use live API data and correct loading/empty/error/not-found states.
 - [ ] Listing form create/preview/publish flow is API-backed.
@@ -115,7 +116,7 @@
 
 | Date | Change / evidence | Commit | Next exact task |
 |---|---|---|---|
-| 2026-10-29 | Checklist created from the existing phase plan and current branch checkpoint. Previous known commits: homepage `3226ae4`, navigation `139dba5`, homepage styles `5a4436a`, API startup fixes `6408096` and `884b04b`. | pending | Inspect category/search API contract and fix homepage search transaction/category mismatch. |
+| 2026-10-29 | Created this master checklist. Fixed homepage search state, aligned property type options with the existing listing form/API string filter, and styled the interactive tabs. Commits: checklist `b4f2309`, search form `00ec3ae`, homepage integration `c7778be`, search options `2454417`, tab styles `a546b74`. | see commits above | Run typecheck/build/tests and then verify real API-backed search before moving to the next M2 flow. |
 
 ## Blockers / decisions needed
 
