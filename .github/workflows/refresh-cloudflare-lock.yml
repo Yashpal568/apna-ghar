@@ -1,4 +1,4 @@
-name: Refresh Cloudflare frontend lockfile
+name: Refresh npm lockfile for Cloudflare migration
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
 jobs:
   refresh-lockfile:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,17 +20,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Generate standalone frontend lockfile
-        working-directory: apps/web
-        run: npm install --package-lock-only --workspaces=false --include=dev --ignore-scripts
-      - name: Commit frontend lockfile
+          cache: npm
+      - name: Regenerate full workspace lockfile
+        run: npm install --package-lock-only --include=dev --ignore-scripts
+      - name: Commit updated lockfile
         run: |
-          git add apps/web/package-lock.json
+          git add package-lock.json
           if git diff --cached --quiet; then
-            echo "Frontend lockfile is already up to date"
+            echo "package-lock.json is already up to date"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore: generate standalone web lockfile for Cloudflare"
+          git commit -m "chore: refresh full npm workspace lockfile for Cloudflare"
           git push origin HEAD:feat/cloudflare-workers-migration
