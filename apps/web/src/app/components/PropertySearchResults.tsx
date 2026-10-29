@@ -75,6 +75,7 @@ export default function PropertySearchResults({ location, transaction, category,
   }
 
   useEffect(() => {
+    let cancelled = false;
     const refreshSaved = () => {
       try {
         setSavedIds((JSON.parse(localStorage.getItem("apna-ghar-saved-homes") || "[]") as Property[]).map((item) => item._id));
@@ -83,13 +84,35 @@ export default function PropertySearchResults({ location, transaction, category,
       }
     };
     refreshSaved();
+    if (isSignedIn) {
+      void (async () => {
+        try {
+          const token = await getToken();
+          if (!token) return;
+          const response = await fetch(apiBase + "/saved-properties", { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
+          if (!response.ok) return;
+          const serverHomes = await response.json() as Property[];
+          if (cancelled || !Array.isArray(serverHomes)) return;
+          const localHomes = (() => {
+            try { return JSON.parse(localStorage.getItem("apna-ghar-saved-homes") || "[]") as Property[]; }
+            catch { return []; }
+          })();
+          const merged = [...serverHomes, ...localHomes.filter((home) => !serverHomes.some((serverHome) => serverHome._id === home._id))];
+          setSavedIds(merged.map((item) => item._id));
+          localStorage.setItem("apna-ghar-saved-homes", JSON.stringify(merged));
+        } catch {
+          // Local saved state remains available when account sync is offline.
+        }
+      })();
+    }
     window.addEventListener("apna-ghar-saved-change", refreshSaved);
     window.addEventListener("storage", refreshSaved);
     return () => {
+      cancelled = true;
       window.removeEventListener("apna-ghar-saved-change", refreshSaved);
       window.removeEventListener("storage", refreshSaved);
     };
-  }, []);
+  }, [getToken, isSignedIn]);
 
   useEffect(() => {
     const controller = new AbortController();
