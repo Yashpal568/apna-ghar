@@ -9,9 +9,9 @@ const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:4000/api/v1")
 type Category={key:string;label:string;icon:string};
 const money=(v:number)=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(v);
 const photos=["https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=85","https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=85","https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=85"];
-export default function MarketplaceHome(){
+function MarketplaceHomeContent({ isSignedIn, getToken, signOut }: { isSignedIn: boolean; getToken: () => Promise<string | null>; signOut: (options: { redirectUrl: string }) => Promise<void> }){
  const [menuOpen,setMenuOpen]=useState(false),[transaction,setTransaction]=useState<"buy"|"rent">("buy"),[category,setCategory]=useState("all"),[location,setLocation]=useState(""),[sort,setSort]=useState("newest"),[filter,setFilter]=useState("All"),[slide,setSlide]=useState(0),[result,setResult]=useState<Result|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(""),[contactBusy,setContactBusy]=useState(""),[notice,setNotice]=useState(""),[retry,setRetry]=useState(0),[categoryOptions,setCategoryOptions]=useState<Category[]>([]);
- const {isSignedIn,getToken}=useAuth();const {signOut}=useClerk();
+
  useEffect(()=>{const close=(e:KeyboardEvent)=>{if(e.key==="Escape")setMenuOpen(false)};window.addEventListener("keydown",close);return()=>window.removeEventListener("keydown",close)},[]);
  useEffect(()=>{const controller=new AbortController();void fetch(api+"/categories",{signal:controller.signal,headers:{Accept:"application/json"}}).then(async r=>{if(!r.ok)throw new Error("Categories unavailable");const data=await r.json() as Category[];if(Array.isArray(data))setCategoryOptions(data)}).catch(()=>{});return()=>controller.abort()},[]);
  useEffect(()=>{const timer=window.setInterval(()=>setSlide(v=>(v+1)%photos.length),5000);return()=>window.clearInterval(timer)},[]);
@@ -44,4 +44,21 @@ export default function MarketplaceHome(){
  <section className="agh-trust-strip"><div><strong>₹0</strong><span>No listing fee at launch</span></div><div><strong>Owner-led</strong><span>Connect directly where available</span></div><div><strong>Clear details</strong><span>Browse published listings</span></div><div><strong>One place</strong><span>Save and manage your journey</span></div></section>
  <footer className="agh-footer"><div className="agh-footer-brand"><a className="agh-brand" href="/"><BrandLogo/></a><p>Explore homes, apartments, plots and commercial spaces across India.</p></div><div><strong>Discover</strong><a href="/search">All properties</a><a href="/search?transaction=buy">Buy</a><a href="/search?transaction=rent">Rent</a><a href="/search?type=commercial">Commercial</a></div><div><strong>For owners</strong><a href="/list-property">Post a property</a><a href="/my-listings">Manage listings</a><a href="/saved">Saved homes</a></div><div><strong>Account & help</strong><a href="/profile">My profile</a><a href="/messages">Messages</a><a href="/about">About Apna Ghar</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div><div className="agh-footer-bottom">© {new Date().getFullYear()} Apna Ghar · Property discovery made clearer.</div></footer>
  </main>;
+}
+
+
+function MarketplaceHomeWithClerk() {
+  const { isSignedIn, getToken } = useAuth();
+  const { signOut } = useClerk();
+  return <MarketplaceHomeContent isSignedIn={Boolean(isSignedIn)} getToken={getToken} signOut={signOut} />;
+}
+
+function MarketplaceHomeWithoutClerk() {
+  return <MarketplaceHomeContent isSignedIn={false} getToken={async () => null} signOut={async () => undefined} />;
+}
+
+export default function MarketplaceHome() {
+  return process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+    ? <MarketplaceHomeWithClerk />
+    : <MarketplaceHomeWithoutClerk />;
 }
