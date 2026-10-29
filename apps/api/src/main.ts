@@ -12,7 +12,23 @@ async function bootstrap() {
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
-  app.enableCors({ origin: allowedOrigins });
+  app.enableCors({
+    origin: (origin, callback) => {
+      // Requests without an Origin header (health checks and server-to-server calls) are allowed.
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      try {
+        const parsed = new URL(origin);
+        // Vercel creates a unique preview hostname per deployment. Only HTTPS Vercel
+        // deployments are accepted here; custom production domains stay explicitly configured.
+        if (parsed.protocol === 'https:' && parsed.hostname.endsWith('.vercel.app')) {
+          return callback(null, true);
+        }
+      } catch {
+        // Reject malformed origins below.
+      }
+      return callback(new Error('Origin is not allowed by CORS'), false);
+    },
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
