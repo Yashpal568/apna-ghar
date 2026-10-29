@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [main, "feat/**", "fix/**"]
@@ -20,6 +23,17 @@ jobs:
         with:
           node-version: 20
           cache: npm
+      - name: Refresh lockfile for Cloudflare migration branch
+        if: github.ref == 'refs/heads/feat/cloudflare-workers-migration'
+        run: |
+          npm install --package-lock-only --include=dev --ignore-scripts
+          if ! git diff --quiet -- package-lock.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add package-lock.json
+            git commit -m "chore: refresh full npm workspace lockfile for Cloudflare"
+            git push origin HEAD:feat/cloudflare-workers-migration
+          fi
       - name: Install workspace dependencies
         run: npm install --include=dev
       - name: Typecheck API, web and mobile
