@@ -47,7 +47,7 @@ export default function HomePage() {
         </div>
         <div className="ag-home-search-fields">
           <label className="ag-home-search-field"><span>Location</span><input name="location" placeholder="City, neighbourhood or PIN code" /></label>
-          <label className="ag-home-search-field"><span>Property type</span><select name="type" defaultValue="any"><option value="any">All property types</option><option value="house">Independent home</option><option value="apartment">Apartment</option><option value="villa">Villa</option><option value="plot">Plot &amp; land</option></select></label>
+          <label className="ag-home-search-field"><span>Property type</span><select name="type" defaultValue="any"><option value="any">All property types</option><option value="house">Independent home</option><option value="apartment">Apartment</option><option value="villa">Villa</option><option value="plot">Plot &amp; land</option><option value="commercial">Commercial property</option></select></label>
           <label className="ag-home-search-field"><span>Maximum budget</span><select name="maxPrice" defaultValue=""><option value="">Any budget</option><option value="2500000">Up to ₹25 lakh</option><option value="5000000">Up to ₹50 lakh</option><option value="10000000">Up to ₹1 crore</option><option value="50000000">Up to ₹5 crore</option></select></label>
           <button className="button button-primary" type="submit"><span aria-hidden="true">⌕</span> Search homes</button>
         </div>
