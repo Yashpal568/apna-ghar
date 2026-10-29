@@ -8,12 +8,15 @@ import SiteFooter from "../components/SiteFooter";
 
 type Profile = { name: string; email: string; phone: string; city: string; about: string };
 const blank: Profile = { name: "", email: "", phone: "", city: "", about: "" };
-const api = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
-const fallbackPhoto = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=90";
+const configuredApi = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
+const api = (configuredApi || (process.env.NODE_ENV === "development"
+  ? "http://localhost:4000/api/v1"
+  : "https://apna-ghar-api-j4fo.onrender.com/api/v1")).replace(/\/$/, "");
+const fallbackPhoto = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=95";
 const heroPhotos = [
-  { src: "https://lh3.googleusercontent.com/aida/AEtjO1WdHBBFV9vFnk_fvJir2YNEKTOYcNi2jOJyYsiUg_AdCo9pH8DqzcbgYks778UBulwOimHWnEI9ZVDetG83cjkL0dC69D6JAD4Uw5pii2HWG6urs0sWp--hTFFddMw0cD5Cfpbl81IprIXVLMPq2HNTIz2IrUDHBSulGMbrj2fzosgyK6c7KtovrngQ0EsJdM7OgMlglYbDZ6pekZwY80MbZkGYee3gg5LnVg-yZ5Fm", alt: "Luxury glass high-rise buildings at blue dusk" },
-  { src: "https://lh3.googleusercontent.com/aida/AEtjO1VNsE3OXR0-o1QT_pWQX6o56NQ2iC09jsw3NUUMhWfeRWg9n8h9IVschYt7xMaXsoe6rsq1cjXwe5qU8EwkEY9ASD9C8SZ1wOXVM_4Bd4qQwDw546KGdtTOvcp3HlKQ43Eb95SsrqV15rdHUu1ldkAwP8rm73RO62-6omDyD7yQCd5uuctSwU-oCedOlESPqWjERpsGqcmwx_Ga-twJMuZqHiS3iPcLU-eTQ8N4-XBp", alt: "Luxury penthouse terrace and city skyline at twilight" },
-  { src: "https://lh3.googleusercontent.com/aida/AEtjO1XqhZSt8rLVQ1uLGM60Law8NbrPuDevPO21vntGCIhyGIMc9nKdGksy_5WlCxGHzOzNe10lsL_O13Lg6_GXOSVIdYVVbACCneQ6KIhF99m948c2mdvUXPjkRBQ6lCIvqgjpuh2_8V0OOk2NDZ-ECfbnXeu-yFxK7EdOtVOqVlJNb5XfpR4KXlR9Y1CL_5M2yhfbs_2yQ2EJiuxghNbdl6YolofKmo8cUluikrXBkfQ", alt: "Contemporary villa with illuminated swimming pool at night" },
+  { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=95", alt: "Bright contemporary home with warm neutral architecture" },
+  { src: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2000&q=95", alt: "Sunlit modern living room opening onto a garden" },
+  { src: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2000&q=95", alt: "Modern house exterior with landscaped surroundings" },
 ];
 const Icon = ({ children, className = "" }: { children: string; className?: string }) => <span aria-hidden="true" className={"material-symbols-outlined " + className}>{children}</span>;
 
@@ -27,7 +30,7 @@ export default function ProfilePage() {
   const [heroSlide, setHeroSlide] = useState(0);
   const [imageFallback, setImageFallback] = useState<Record<number, boolean>>({});
   const [tourNotifications, setTourNotifications] = useState(true);
-  const [securityTab, setSecurityTab] = useState<"profile" | "security" | "sessions">("profile");
+  const [securityTab, setSecurityTab] = useState<"profile" | "security" | "sessions">("security");
 
   useEffect(() => {
     let cancelled = false;
@@ -53,7 +56,12 @@ export default function ProfilePage() {
           setMessage("");
         }
       } catch (error) {
-        if (!cancelled) setMessage(error instanceof Error ? error.message : "Could not load your account profile.");
+        if (!cancelled) {
+          const detail = error instanceof Error ? error.message : "";
+          setMessage(detail === "Failed to fetch"
+            ? "We couldn't reach the Apna Ghar API. Check the API deployment and CORS configuration, then retry."
+            : detail || "Could not load your account profile.");
+        }
       } finally { if (!cancelled) setLoading(false); }
     };
     void load();
@@ -134,11 +142,11 @@ export default function ProfilePage() {
             </div>
           </div>
           <div className="profile-stitch-hero-insights">
-            <div className="profile-stitch-insight-heading"><span className="profile-stitch-kicker"><Icon>insights</Icon> Your account</span><span className="profile-stitch-live-dot">Live</span></div>
+            <div className="profile-stitch-insight-heading"><span className="profile-stitch-kicker"><Icon>insights</Icon> Your account</span><span className="profile-stitch-account-label">Quick links</span></div>
             <div className="profile-stitch-insight-links">
               <a href="/saved"><span className="profile-stitch-insight-icon"><Icon>favorite</Icon></span><strong>Saved homes</strong></a>
               <a href="/my-listings"><span className="profile-stitch-insight-icon"><Icon>real_estate_agent</Icon></span><strong>My properties</strong></a>
-              <a href="/search"><span className="profile-stitch-insight-icon"><Icon>calendar_month</Icon></span><strong>Property visits</strong></a>
+              <a href="/search"><span className="profile-stitch-insight-icon"><Icon>search</Icon></span><strong>Explore homes</strong></a>
             </div>
           </div>
           <div className="profile-stitch-completeness">
@@ -188,13 +196,12 @@ export default function ProfilePage() {
 
         <aside className="profile-stitch-side-column">
           <section className="profile-stitch-card profile-stitch-security-card">
-            <div className="profile-stitch-security-heading"><div><span className="profile-stitch-overline">ACCOUNT</span><h2>Sign-in &amp; security</h2><p>Manage your profile and account access.</p></div><span className="profile-stitch-security-icon"><Icon>admin_panel_settings</Icon></span></div>
+            <div className="profile-stitch-security-heading"><div><span className="profile-stitch-overline">ACCOUNT PROTECTION</span><h2>Security &amp; access</h2><p>Manage sign-in and active account access.</p></div><span className="profile-stitch-security-icon"><Icon>admin_panel_settings</Icon></span></div>
             <div className="profile-stitch-tabs" role="tablist" aria-label="Account settings sections">
-              <button type="button" role="tab" aria-selected={securityTab === "profile"} className={securityTab === "profile" ? "is-active" : ""} onClick={() => setSecurityTab("profile")}><Icon>person</Icon> Profile</button>
+              
               <button type="button" role="tab" aria-selected={securityTab === "security"} className={securityTab === "security" ? "is-active" : ""} onClick={() => setSecurityTab("security")}><Icon>shield</Icon> Security</button>
               <button type="button" role="tab" aria-selected={securityTab === "sessions"} className={securityTab === "sessions" ? "is-active" : ""} onClick={() => setSecurityTab("sessions")}><Icon>devices</Icon> Sessions</button>
             </div>
-            {securityTab === "profile" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>mail</Icon></span><div><strong>Email address</strong><p>{profile.email || user?.primaryEmailAddress?.emailAddress || "No email available"}</p></div><span className="profile-stitch-row-status"><Icon>{profile.email || user?.primaryEmailAddress?.emailAddress ? "check_circle" : "info"}</Icon></span></div><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>call</Icon></span><div><strong>Phone number</strong><p>{profile.phone || "Add a phone number to your profile"}</p></div></div><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>account_circle</Icon></span><div><strong>Account status</strong><p>{isSignedIn ? "Signed in with Apna Ghar" : "Using this device"}</p></div><span className="profile-stitch-row-status"><Icon>{isSignedIn ? "verified_user" : "devices"}</Icon></span></div></div>}
             {securityTab === "security" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>lock</Icon></span><div><strong>Authentication</strong><p>{isSignedIn ? "Your sign-in is managed by your authentication provider." : "Sign in to manage account security."}</p></div></div><a className="profile-stitch-security-link" href="/sign-in"><Icon>login</Icon> Open sign-in options <Icon>arrow_outward</Icon></a></div>}
             {securityTab === "sessions" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-session-note"><Icon>devices</Icon><p>For your security, session management is handled by your sign-in provider. Use account settings there to review active sessions.</p></div><a className="profile-stitch-security-link" href="/sign-in"><Icon>manage_accounts</Icon> Manage sign-in <Icon>arrow_outward</Icon></a></div>}
             <div className="profile-stitch-security-foot"><Icon>verified_user</Icon> Never share your password or one-time codes.</div>
