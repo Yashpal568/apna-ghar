@@ -158,8 +158,8 @@ function ListingForm() {
     draft.locality.trim() && Number(draft.price) > 0 && Number(draft.area) > 0
   );
   const contactValid = Boolean(
-    draft.name.trim() && draft.phone.replace(/[^0-9]/g, "").length >= 8 &&
-    draft.phone.replace(/[^0-9+]/g, "").length <= 18
+    editingId || (draft.name.trim() && draft.phone.replace(/[^0-9]/g, "").length >= 8 &&
+    draft.phone.replace(/[^0-9+]/g, "").length <= 18)
   );
 
   const saveDraft = () => {
@@ -183,8 +183,8 @@ function ListingForm() {
       const token = await getToken();
       if (!token) throw new Error("Sign in before publishing your property.");
 
-      const response = await fetch(apiBase + "/properties", {
-        method: "POST",
+      const response = await fetch(apiBase + (editingId ? "/properties/" + encodeURIComponent(editingId) : "/properties"), {
+        method: editingId ? "PATCH" : "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -305,8 +305,8 @@ function ListingForm() {
                   </div>)}
                 </div>
                 }
-                <label>Contact name *<input required value={draft.name} onChange={(event) => update("name", event.target.value)} /></label>
-                <label>Phone *<input required type="tel" value={draft.phone} onChange={(event) => update("phone", event.target.value)} placeholder="+91 98765 43210" /></label>
+                <label>Contact name *<input required={!editingId} value={draft.name} onChange={(event) => update("name", event.target.value)} /></label>
+                <label>Phone *<input required={!editingId} type="tel" value={draft.phone} onChange={(event) => update("phone", event.target.value)} placeholder="+91 98765 43210" /></label>
                 <label className="form-span">Email<input type="email" value={draft.email} onChange={(event) => update("email", event.target.value)} /></label>
               </div>
             </div>
