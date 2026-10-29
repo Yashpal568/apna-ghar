@@ -16,6 +16,7 @@ async function bootstrap() {
     'https://web-dun-two-91.vercel.app',
     'https://web-yashs-projects-cd385495.vercel.app',
     'https://web-git-main-yashs-projects-cd385495.vercel.app',
+    'https://apna-ghar-web.yash38688.workers.dev',
   ]);
   app.enableCors({
     origin: (origin, callback) => {
@@ -28,7 +29,8 @@ async function bootstrap() {
         // Permit this project's Vercel preview deployments without opening CORS to every Vercel app.
         if (
           parsed.protocol === 'https:' &&
-          /^web-[a-z0-9-]+-yashs-projects-cd385495\.vercel\.app$/.test(parsed.hostname)
+          (/^web-[a-z0-9-]+-yashs-projects-cd385495\.vercel\.app$/.test(parsed.hostname) ||
+            /^apna-ghar-web(?:-[a-z0-9-]+)?\.yash38688\.workers\.dev$/.test(parsed.hostname))
         ) {
           return callback(null, true);
         }
