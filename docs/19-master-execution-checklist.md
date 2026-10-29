@@ -58,7 +58,7 @@
 - [x] Homepage Buy/Rent tabs and search form state work together (implementation committed; browser QA pending).
 - [x] Category/type values align with the existing listing form and string-based API filter (end-to-end data QA pending).
 - [ ] Real API-backed search, filters, sort, pagination verified end-to-end (Vercel build/deploy check passed; live browser/API interaction still pending).
-- [ ] Property details use live API data and correct loading/empty/error/not-found states.
+- [x] Property detail page uses live API data with loading and not-found/error states; error state now retains shared marketplace header/footer and navigation (deployment/browser QA pending).
 - [ ] Listing form create/preview/publish flow is API-backed.
 - [ ] My Listings supports real user-owned listings and lifecycle actions.
 - [ ] Saved properties behavior is defined and persistence requirements are met.
@@ -117,7 +117,7 @@
 
 | Date | Change / evidence | Commit | Next exact task |
 |---|---|---|---|
-| 2026-10-29 | Created this master checklist. Fixed homepage search state, aligned property type options with the existing listing form/API string filter, styled interactive tabs, and confirmed Vercel reports success for checklist commit `8d993abc571d4f174b4f0fc6e0a8f796ba2c8b5a`. Commits: checklist `b4f2309`, search form `00ec3ae`, homepage integration `c7778be`, search options `2454417`, tab styles `a546b74`, checklist verification `8d993ab`. | `8d993ab` deployment status: success | Complete browser-level search/API verification; Vercel runtime logs require team access approval. |
+| 2026-10-29 | Created the master checklist, fixed homepage search state/category options, confirmed Vercel success for `8d993ab`, and kept M2 active. Improved property detail unavailable/error state to retain shared marketplace header, breadcrumbs and footer. Commit: `2cd6305`. | `2cd6305` — code committed; deployment/build and browser QA not yet checked | Verify search and property detail against deployed API, then proceed through listing publish/My Listings before M3. |
 
 ## Blockers / decisions needed
 
