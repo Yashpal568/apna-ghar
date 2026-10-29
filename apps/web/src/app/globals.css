@@ -2027,3 +2027,8 @@ select option { color: var(--color-text); background: var(--color-surface); }
   .profile-stitch-insight-links > a { min-height: 74px !important; }
   .profile-stitch-insight-links strong { font-size: 8px !important; }
 }
+
+@media (max-width: 760px) {
+  .profile-stitch-recommendation { order: 4; }
+  .profile-stitch-owner-cta { order: 5; }
+}
