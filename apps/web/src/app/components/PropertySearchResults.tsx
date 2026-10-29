@@ -18,6 +18,7 @@ type Property = {
   bedrooms?: number;
   bathrooms?: number;
   imageUrls?: string[];
+  contactPhone?: string;
 };
 
 type Result = { items: Property[]; pagination: { page: number; limit: number; total: number; pages: number } };
