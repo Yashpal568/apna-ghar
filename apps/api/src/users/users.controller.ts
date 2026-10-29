@@ -11,7 +11,17 @@ class UpdateProfileDto {
   @IsOptional() @IsString() @MaxLength(500) about?: string;
 }
 
-type AuthenticatedRequest = { auth: { userId: string } };
+type AuthenticatedRequest = { auth: { userId: string; claims?: Record<string, unknown> } };
+
+function claimText(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function identityFromClaims(claims: Record<string, unknown> = {}) {
+  const name = claimText(claims.name) || [claimText(claims.first_name), claimText(claims.last_name)].filter(Boolean).join(' ');
+  const email = claimText(claims.email) || claimText(claims.email_address);
+  return { name, email };
+}
 
 @Controller('users/me/profile')
 @UseGuards(ClerkAuthGuard)
@@ -20,7 +30,7 @@ export class UsersController {
 
   @Get()
   getMyProfile(@Req() request: AuthenticatedRequest) {
-    return this.users.getMyProfile(request.auth.userId);
+    return this.users.getMyProfile(request.auth.userId, identityFromClaims(request.auth.claims));
   }
 
   @Put()
