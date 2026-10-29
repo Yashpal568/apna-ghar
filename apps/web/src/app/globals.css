@@ -1782,3 +1782,108 @@ select option { color: var(--color-text); background: var(--color-surface); }
   }
   .profile-stitch-account-label { font-size: 8px; padding: 5px 7px; }
 }
+
+
+/* Profile page theme parity: map all interactive surfaces to the same tokens as the navbar. */
+.profile-redesign .profile-stitch-form-footer > button,
+.profile-redesign .profile-stitch-recommendation-actions > a:first-child,
+.profile-redesign .profile-stitch-owner-cta > a {
+  background: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
+  border: 1px solid var(--color-primary) !important;
+  box-shadow: none;
+}
+.profile-redesign .profile-stitch-form-footer > button:hover:not(:disabled),
+.profile-redesign .profile-stitch-recommendation-actions > a:first-child:hover,
+.profile-redesign .profile-stitch-owner-cta > a:hover {
+  background: var(--color-primary-hover) !important;
+  color: var(--color-on-primary) !important;
+}
+.profile-redesign .profile-stitch-recommendation-actions > a:last-child {
+  background: var(--color-surface-subtle) !important;
+  color: var(--color-primary) !important;
+  border: 1px solid var(--color-border) !important;
+}
+.profile-redesign .profile-stitch-form-footer > span,
+.profile-redesign .profile-stitch-field > small,
+.profile-redesign .profile-stitch-form-footer > span .material-symbols-outlined {
+  color: var(--color-muted) !important;
+}
+.profile-redesign .profile-stitch-input-wrap:focus-within {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 16%, transparent) !important;
+}
+.profile-redesign .profile-stitch-notice {
+  background: color-mix(in srgb, var(--color-green) 10%, var(--color-surface)) !important;
+  color: var(--color-text) !important;
+  border-color: color-mix(in srgb, var(--color-green) 35%, var(--color-border)) !important;
+}
+.profile-redesign .profile-stitch-security-foot,
+.profile-redesign .profile-stitch-security-foot .material-symbols-outlined {
+  color: var(--color-muted) !important;
+}
+.profile-redesign .profile-stitch-tabs button.is-active {
+  background: var(--color-surface-raised) !important;
+  color: var(--color-primary) !important;
+  box-shadow: inset 0 0 0 1px var(--color-border) !important;
+}
+.profile-redesign .profile-stitch-shortcuts > a,
+.profile-redesign .profile-stitch-security-link {
+  color: var(--color-primary) !important;
+}
+
+/* Reference parity: pin the profile-strength bar to the hero's bottom edge. */
+.profile-stitch-hero-content {
+  position: relative;
+  padding-bottom: 96px !important;
+}
+.profile-stitch-completeness {
+  position: absolute !important;
+  left: clamp(24px, 3.2vw, 42px);
+  right: clamp(24px, 3.2vw, 42px);
+  bottom: 14px;
+  width: auto;
+  margin: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center;
+  gap: 8px 18px;
+  padding: 11px 15px !important;
+  border: 1px solid rgba(222, 243, 255, .27) !important;
+  border-radius: 12px;
+  background: rgba(224, 242, 255, .12) !important;
+  backdrop-filter: blur(10px);
+}
+.profile-stitch-completeness > div:first-child {
+  grid-column: 1;
+  grid-row: 1;
+}
+.profile-stitch-progress {
+  grid-column: 1;
+  grid-row: 2;
+  width: 100%;
+  margin: 0 !important;
+}
+.profile-stitch-completeness > small {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  max-width: 210px;
+}
+@media (max-width: 700px) {
+  .profile-stitch-hero-content { padding-bottom: 20px !important; }
+  .profile-stitch-completeness {
+    position: static !important;
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0;
+    padding: 12px !important;
+  }
+  .profile-stitch-completeness > div:first-child { grid-column: 1; grid-row: 1; }
+  .profile-stitch-progress { grid-column: 1; grid-row: 2; margin-top: 8px !important; }
+  .profile-stitch-completeness > small {
+    grid-column: 1; grid-row: 3; max-width: none; margin-top: 7px;
+    text-align: left;
+  }
+}
