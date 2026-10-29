@@ -1,0 +1,36 @@
+name: Refresh npm lockfile for Cloudflare migration
+
+on:
+  push:
+    branches: ["feat/cloudflare-workers-migration"]
+    paths: [".github/workflows/refresh-cloudflare-lock.yml"]
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-lockfile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/cloudflare-workers-migration
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Regenerate workspace lockfile
+        run: npm install --package-lock-only --include=dev --ignore-scripts
+      - name: Commit updated lockfile
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "package-lock.json is already up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "chore: refresh npm lockfile for Cloudflare build"
+          git push origin HEAD:feat/cloudflare-workers-migration
