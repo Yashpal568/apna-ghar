@@ -2316,3 +2316,119 @@ img,video,svg { max-width:100%; }
 .profile-stitch-logout:focus-visible { outline:3px solid #2563eb; outline-offset:3px; }
 html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .profile-stitch-logout,html[data-theme="forest"] .profile-stitch-logout,html[data-theme="amoled"] .profile-stitch-logout { background:#35191d; color:#fecaca; border-color:#7f1d1d; }
 @media(max-width:760px) { .profile-stitch-logout { min-height:48px; } }
+
+
+/* Final mobile header override: keep menu control in the top row, never as a third grid item. */
+@media (max-width: 760px) {
+  .ag-site-header { position: sticky !important; top: 0; z-index: 1100 !important; }
+  .ag-header-inner {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 42px !important;
+    grid-template-rows: 42px 44px !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    row-gap: 10px !important;
+    padding: 10px 12px 12px !important;
+    min-height: 0 !important;
+  }
+  .ag-brand {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    justify-self: start !important;
+    align-self: center !important;
+    max-width: calc(100% - 6px) !important;
+    overflow: hidden;
+  }
+  .ag-brand .brand { display: inline-flex; align-items: center; }
+  .ag-brand .brand-symbol { width: 32px !important; height: 26px !important; }
+  .ag-brand .brand-wordmark { font-size: 18px !important; white-space: nowrap; }
+  .ag-main-nav, .ag-header-actions { display: none !important; }
+  .ag-mobile-theme {
+    display: flex !important;
+    position: absolute !important;
+    top: 10px !important;
+    right: 60px !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    margin: 0 !important;
+    justify-self: auto !important;
+    align-self: auto !important;
+    z-index: 2 !important;
+  }
+  .ag-mobile-theme .theme-trigger {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+  }
+  .ag-mobile-theme .theme-trigger-label,
+  .ag-mobile-theme .theme-trigger > span:last-child { display: none !important; }
+  .ag-mobile-toggle {
+    display: grid !important;
+    position: absolute !important;
+    top: 10px !important;
+    right: 12px !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    align-self: auto !important;
+    justify-self: auto !important;
+    z-index: 3 !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    place-items: center !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 12px !important;
+    background: var(--color-surface) !important;
+    color: var(--color-text) !important;
+    font-family: var(--font-ui) !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+    box-shadow: 0 4px 14px rgba(15,23,42,.08) !important;
+    cursor: pointer;
+  }
+  .ag-header-search {
+    display: flex !important;
+    position: relative !important;
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    align-self: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 44px !important;
+    margin: 0 !important;
+  }
+  .ag-mobile-backdrop { position: fixed !important; inset: 0 !important; z-index: 1101 !important; }
+  .ag-mobile-menu {
+    position: fixed !important;
+    top: 116px !important;
+    left: 10px !important;
+    right: 10px !important;
+    bottom: auto !important;
+    z-index: 1102 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    max-height: calc(100dvh - 132px) !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    padding: 14px !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 18px !important;
+    background: var(--color-surface) !important;
+    box-shadow: 0 24px 70px rgba(7,16,32,.28) !important;
+  }
+}
+@media (max-width: 420px) {
+  .ag-header-inner { padding-inline: 12px !important; }
+  .ag-mobile-theme { right: 60px !important; }
+  .ag-mobile-toggle { right: 12px !important; }
+  .ag-mobile-menu { top: 116px !important; left: 8px !important; right: 8px !important; max-height: calc(100dvh - 128px) !important; }
+}
