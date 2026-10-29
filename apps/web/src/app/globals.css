@@ -1,12 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap");
 @import "../../../../styles/design-tokens.css";
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200");
 
-:root { --content-width: 1240px; --shadow-soft: 0 20px 60px rgb(15 23 42 / 7%); }
+:root { --content-width: 1240px; --shadow-soft: 0 20px 60px rgb(15 23 42 / 7%); --font-body: "Inter", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; --font-heading: "Plus Jakarta Sans", "Inter", sans-serif; --text-body-size: 16px; --text-body-line-height: 1.55; }
 * { box-sizing: border-box; }
 html { background: var(--color-bg); color-scheme: light; scroll-behavior: smooth; }
 html[data-theme="midnight"],html[data-theme="graphite"],html[data-theme="forest"],html[data-theme="amoled"] { color-scheme: dark; }
-body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: Roboto, "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; transition: background-color var(--motion-normal) ease, color var(--motion-normal) ease; }
+body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); font-size: var(--text-body-size); line-height: var(--text-body-line-height); transition: background-color var(--motion-normal) ease, color var(--motion-normal) ease; }
+h1, h2, h3, h4, h5, h6, .brand-name, .footer-brand { font-family: var(--font-heading); }
 a { color: inherit; }
 button,input,select,textarea { font: inherit; }
 button,a,input,select { -webkit-tap-highlight-color: transparent; }
@@ -174,7 +174,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
 /* Figma fidelity pass: display typography, desktop rhythm, and Clerk surface integration. */
 .hero-copy h1,.search-page-heading h1,.section-heading h2,.owner-banner h2,.auth-story h1,.listing-intro h1,.info-page h1,.detail-topline h1 {
-  font-family: Manrope, Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-heading);
 }
 @media (min-width: 1200px) {
   .page-shell { padding-left: 40px; padding-right: 40px; }
@@ -183,7 +183,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .clerk-auth-card { overflow: hidden; }
 .clerk-auth-card .cl-rootBox { max-width: 100%; }
 .clerk-auth-card .cl-cardBox { width: 100%; }
-.clerk-auth-card .cl-headerTitle { font-family: Manrope, Inter, sans-serif; font-size: 22px; }
+.clerk-auth-card .cl-headerTitle { font-family: var(--font-heading); font-size: 22px; }
 .clerk-auth-card .cl-formFieldInput { min-height: 44px; border-radius: 10px; }
 .clerk-auth-card .cl-formButtonPrimary { min-height: 44px; border-radius: 10px; box-shadow: none; }
 .clerk-auth-card .cl-socialButtonsBlockButton { min-height: 44px; border-radius: 10px; }
