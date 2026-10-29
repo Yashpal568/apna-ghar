@@ -3069,3 +3069,11 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
   .agh-market .agh-brand .brand-wordmark { font-size:18px !important; }
   .agh-market .agh-listing-actions .agh-call-owner,.agh-market .agh-listing-actions .agh-chat-owner { font-size:11px; }
 }
+
+/* Keep the legacy wordmark on one line on narrow mobile headers. */
+@media(max-width:600px) {
+ .agh-market .agh-header-main>.agh-brand { width:auto !important; min-width:0 !important; flex:0 0 auto !important; }
+ .agh-market .agh-header-main>.agh-brand>.brand { width:auto !important; flex:0 0 auto !important; gap:5px !important; white-space:nowrap !important; }
+ .agh-market .agh-header-main>.agh-brand .brand-symbol { width:31px !important; height:27px !important; flex-basis:31px !important; }
+ .agh-market .agh-header-main>.agh-brand .brand-wordmark { display:inline-flex !important; flex:0 0 auto !important; font-size:16px !important; white-space:nowrap !important; word-break:keep-all !important; }
+}
