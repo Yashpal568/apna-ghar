@@ -56,4 +56,8 @@ export class ConversationsController {
   private assertParticipant(participants: string[], userId: string) {
     if (!participants.includes(userId)) throw new ForbiddenException('You do not have access to this conversation.');
   }
+
+  private isObjectId(value: string) {
+    return /^[a-f\\d]{24}$/i.test(value);
+  }
 }
