@@ -136,15 +136,15 @@ export default function ProfilePage() {
           <div className="profile-stitch-hero-insights">
             <div className="profile-stitch-insight-heading"><span className="profile-stitch-kicker"><Icon>insights</Icon> Your account</span><span className="profile-stitch-live-dot">Live</span></div>
             <div className="profile-stitch-insight-links">
-              <a href="/saved"><span className="profile-stitch-insight-icon"><Icon>favorite</Icon></span><span><strong>Saved homes</strong><small>Review your shortlist</small></span><Icon>arrow_outward</Icon></a>
-              <a href="/my-listings"><span className="profile-stitch-insight-icon"><Icon>real_estate_agent</Icon></span><span><strong>My properties</strong><small>Manage your listings</small></span><Icon>arrow_outward</Icon></a>
-              <a href="/search"><span className="profile-stitch-insight-icon"><Icon>calendar_month</Icon></span><span><strong>Property visits</strong><small>Explore homes to visit</small></span><Icon>arrow_outward</Icon></a>
+              <a href="/saved"><span className="profile-stitch-insight-icon"><Icon>favorite</Icon></span><strong>Saved homes</strong></a>
+              <a href="/my-listings"><span className="profile-stitch-insight-icon"><Icon>real_estate_agent</Icon></span><strong>My properties</strong></a>
+              <a href="/search"><span className="profile-stitch-insight-icon"><Icon>calendar_month</Icon></span><strong>Property visits</strong></a>
             </div>
-            <div className="profile-stitch-completeness">
-              <div><span>Profile completeness</span><strong>{Math.round([profile.name,profile.email || user?.primaryEmailAddress?.emailAddress,profile.phone,profile.city,profile.about].filter(value => Boolean(value?.trim())).length / 5 * 100)}%</strong></div>
-              <div className="profile-stitch-progress"><span style={{width: Math.round([profile.name,profile.email || user?.primaryEmailAddress?.emailAddress,profile.phone,profile.city,profile.about].filter(value => Boolean(value?.trim())).length / 5 * 100) + "%"}} /></div>
-              <small>Calculated from your saved profile details</small>
-            </div>
+          </div>
+          <div className="profile-stitch-completeness">
+            <div><span>Profile strength</span><strong>{Math.round([profile.name,profile.email || user?.primaryEmailAddress?.emailAddress,profile.phone,profile.city,profile.about].filter(value => Boolean(value?.trim())).length / 5 * 100)}% completed</strong></div>
+            <div className="profile-stitch-progress"><span style={{width: Math.round([profile.name,profile.email || user?.primaryEmailAddress?.emailAddress,profile.phone,profile.city,profile.about].filter(value => Boolean(value?.trim())).length / 5 * 100) + "%"}} /></div>
+            <small>Complete your contact details to make property enquiries easier.</small>
           </div>
         </div>
       </section>
