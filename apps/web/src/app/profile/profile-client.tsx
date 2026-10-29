@@ -61,6 +61,11 @@ export default function ProfilePage() {
   }, [isLoaded, isSignedIn, getToken, user]);
 
   useEffect(() => {
+    const timer = window.setInterval(() => setHeroSlide(index => (index + 1) % heroPhotos.length), 6500);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
     try {
       const saved = localStorage.getItem("apna-ghar-tour-notifications");
       if (saved !== null) setTourNotifications(saved === "true");
@@ -119,12 +124,27 @@ export default function ProfilePage() {
           <button type="button" aria-label="Next image" onClick={() => setHeroSlide(i => (i + 1) % heroPhotos.length)}><Icon>chevron_right</Icon></button>
         </div>
         <div className="profile-stitch-hero-content">
-          <span className="profile-stitch-kicker"><Icon>token</Icon> Personal Discovery Profile</span>
-          <h1>A little more <span>about you.</span></h1>
-          <p>Keep your contact details handy for property enquiries, private scheduling and visit requests.</p>
-          <div className="profile-stitch-status"><span />{isSignedIn ? "Connected to your Apna Ghar account" : "Profile saved on this device"}</div>
-          <div className="profile-stitch-indicators" aria-label="Choose hero image">
-            {heroPhotos.map((photo, index) => <button key={photo.src} type="button" aria-label={"Show image " + (index + 1)} aria-pressed={heroSlide === index} className={heroSlide === index ? "is-active" : ""} onClick={() => setHeroSlide(index)} />)}
+          <div className="profile-stitch-hero-copy">
+            <span className="profile-stitch-kicker"><Icon>token</Icon> Personal Discovery Profile</span>
+            <h1>A little more <span>about you.</span></h1>
+            <p>Keep your contact details handy for property enquiries, private scheduling and visit requests.</p>
+            <div className="profile-stitch-status"><span />{isSignedIn ? "Connected to your Apna Ghar account" : "Profile saved on this device"}</div>
+            <div className="profile-stitch-indicators" aria-label="Choose hero image">
+              {heroPhotos.map((photo, index) => <button key={photo.src} type="button" aria-label={"Show image " + (index + 1)} aria-pressed={heroSlide === index} className={heroSlide === index ? "is-active" : ""} onClick={() => setHeroSlide(index)} />)}
+            </div>
+          </div>
+          <div className="profile-stitch-hero-insights">
+            <div className="profile-stitch-insight-heading"><span className="profile-stitch-kicker"><Icon>insights</Icon> Your account</span><span className="profile-stitch-live-dot">Live</span></div>
+            <div className="profile-stitch-insight-links">
+              <a href="/saved"><span className="profile-stitch-insight-icon"><Icon>favorite</Icon></span><span><strong>Saved homes</strong><small>Review your shortlist</small></span><Icon>arrow_outward</Icon></a>
+              <a href="/my-listings"><span className="profile-stitch-insight-icon"><Icon>real_estate_agent</Icon></span><span><strong>My properties</strong><small>Manage your listings</small></span><Icon>arrow_outward</Icon></a>
+              <a href="/search"><span className="profile-stitch-insight-icon"><Icon>calendar_month</Icon></span><span><strong>Property visits</strong><small>Explore homes to visit</small></span><Icon>arrow_outward</Icon></a>
+            </div>
+            <div className="profile-stitch-completeness">
+              <div><span>Profile completeness</span><strong>{Math.round([profile.name,profile.email || user?.primaryEmailAddress?.emailAddress,profile.phone,profile.city,profile.about].filter(value => Boolean(value?.trim())).length / 5 * 100)}%</strong></div>
+              <div className="profile-stitch-progress"><span style={{width: Math.round([profile.name,profile.email || user?.primaryEmailAddress?.emailAddress,profile.phone,profile.city,profile.about].filter(value => Boolean(value?.trim())).length / 5 * 100) + "%"}} /></div>
+              <small>Calculated from your saved profile details</small>
+            </div>
           </div>
         </div>
       </section>
