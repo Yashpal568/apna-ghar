@@ -17,9 +17,20 @@ export class UsersService {
 
   async getMyProfile(clerkUserId: string, identity: { name?: string; email?: string } = {}) {
     const existing = await this.profiles.findOne({ clerkUserId }).lean().exec();
-    if (existing) return this.toPublicProfile(existing);
+    if (existing) {
+      const backfill: Record<string, string> = {};
+      if (!String(existing.name ?? '').trim() && identity.name?.trim()) backfill.name = identity.name.trim().slice(0, 100);
+      if (!String(existing.email ?? '').trim() && identity.email?.trim()) backfill.email = identity.email.trim().toLowerCase().slice(0, 254);
+      if (!Object.keys(backfill).length) return this.toPublicProfile(existing);
+      const synced = await this.profiles.findOneAndUpdate(
+        { clerkUserId },
+        { $set: backfill },
+        { new: true, runValidators: true },
+      ).lean().exec();
+      return this.toPublicProfile(synced ?? existing);
+    }
 
-    // Only use fields from the server-verified Clerk token; never accept an identity ID from the request body.
+    // Only use fields from server-verified Clerk identity; never accept an identity ID from the request body.
     const seed = {
       clerkUserId,
       name: (identity.name ?? '').trim().slice(0, 100),
