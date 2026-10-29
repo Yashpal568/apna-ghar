@@ -1,91 +1,46 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuth, useClerk } from "@clerk/nextjs";
 import BrandLogo from "./BrandLogo";
 import ThemePicker from "./ThemePicker";
-
-const photos = [
-  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1000&q=85",
-];
-const categories = [
-  ["▦", "All categories", "all"], ["⌂", "Apartments & flats", "apartment"],
-  ["⌂", "Villas & houses", "house"], ["⌁", "Plots & land", "plot"],
-  ["▤", "Shops & offices", "commercial"], ["▧", "PG & coliving", "pg"],
-];
-const examples = [
-  { title: "Modern family home with open living", location: "Whitefield, Bengaluru", price: "₹1.45 Cr", meta: "1,850 sq.ft", type: "house", badge: "FEATURED", detail: "3 Bed · 3 Bath", image: photos[0] },
-  { title: "Bright apartment near the city", location: "HSR Layout, Bengaluru", price: "₹38,000", meta: "1,150 sq.ft", type: "apartment", badge: "FOR RENT", detail: "2 Bed · 2 Bath", image: photos[1] },
-  { title: "Contemporary villa with garden", location: "Hebbal, Bengaluru", price: "₹3.20 Cr", meta: "3,400 sq.ft", type: "house", badge: "DIRECT OWNER", detail: "4 Bed · 5 Bath", image: photos[2] },
-  { title: "Street-facing retail space", location: "Near Metro, Bengaluru", price: "₹85,000", meta: "950 sq.ft", type: "commercial", badge: "COMMERCIAL", detail: "Ground floor", image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1000&q=85" },
-  { title: "Residential plot in a growing corridor", location: "North Bengaluru", price: "₹54 Lakh", meta: "1,500 sq.ft", type: "plot", badge: "PLOT / LAND", detail: "North facing", image: photos[3] },
-  { title: "Minimal studio with warm interiors", location: "Koramangala, Bengaluru", price: "₹22,000", meta: "600 sq.ft", type: "apartment", badge: "FOR RENT", detail: "Move-in ready", image: photos[5] },
-];
-
-export default function MarketplaceHome() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [transaction, setTransaction] = useState("buy");
-  const [category, setCategory] = useState("all");
-  const [location, setLocation] = useState("");
-  const [filter, setFilter] = useState("All");
-  const { isSignedIn } = useAuth();
-  const { signOut } = useClerk();
-
-  useEffect(() => {
-    const close = (e: KeyboardEvent) => { if (e.key === "Escape") setMenuOpen(false); };
-    window.addEventListener("keydown", close);
-    return () => window.removeEventListener("keydown", close);
-  }, []);
-
-  const visible = examples.filter((item) => category === "all" || item.type === category);
-  const searchUrl = "/search?transaction=" + transaction + (location.trim() ? "&location=" + encodeURIComponent(location.trim()) : "") + (category !== "all" ? "&type=" + category : "");
-
-  return <main className="agh-market">
-    <header className="agh-header">
-      <div className="agh-header-main">
-        <a className="agh-brand" href="/" aria-label="Apna Ghar home"><BrandLogo /></a>
-        <form className="agh-top-search" action="/search"><span aria-hidden="true">⌕</span><input name="location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Search city, locality, project or landmark…" /><button type="submit" aria-label="Search">⌕</button></form>
-        <nav className="agh-desktop-nav" aria-label="Main navigation">
-          <a className="active" href="/search">Browse properties</a><a href="/search?transaction=buy">Buy</a><a href="/search?transaction=rent">Rent</a><a href="/search?type=commercial">Commercial</a><a href="/search?type=plot">Plots</a>
-        </nav>
-        <div className="agh-header-actions">\n          <ThemePicker compact />
-          <a className="agh-icon-link" href="/saved" aria-label="Saved homes">♡</a>
-          <a className="agh-my-listings" href="/my-listings">My listings</a>
-          {isSignedIn ? <button className="agh-account-btn" onClick={() => signOut({ redirectUrl: "/" })}>Sign out</button> : <a className="agh-account-btn" href="/sign-in">Sign in</a>}
-          <a className="agh-sell-btn" href="/list-property"><span>＋</span> Sell property</a>
-        </div>
-        <button className="agh-menu-toggle" type="button" onClick={() => setMenuOpen(v => !v)} aria-expanded={menuOpen} aria-controls="agh-mobile-drawer" aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}>{menuOpen ? "×" : "☰"}</button>
-      </div>
-      <div className="agh-mobile-search"><form action="/search"><span aria-hidden="true">⌕</span><input name="location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Search city or locality…" /><button type="submit">Search</button></form></div>
-      {menuOpen && <><button className="agh-drawer-backdrop" onClick={() => setMenuOpen(false)} aria-label="Close navigation overlay" /><nav className="agh-mobile-drawer" id="agh-mobile-drawer" aria-label="Mobile navigation">
-        <div className="agh-drawer-head"><strong>Explore Apna Ghar</strong><button onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button></div>
-        <a href="/">Home</a><a href="/search">Browse all properties</a><a href="/search?transaction=buy">Buy a property</a><a href="/search?transaction=rent">Rent a property</a><a href="/search?type=commercial">Commercial spaces</a><a href="/search?type=plot">Plots & land</a><a href="/saved">Saved homes</a><a href="/my-listings">My listings</a><a className="agh-drawer-sell" href="/list-property">＋ Post a property</a>
-        {isSignedIn ? <button className="agh-drawer-signout" onClick={() => signOut({ redirectUrl: "/" })}>Sign out</button> : <a href="/sign-in">Sign in / Create account</a>}
-      </nav></>}
-    </header>
-
-    <div className="agh-category-rail" aria-label="Property categories">{categories.map(([icon, label, value]) => <button key={value} className={category === value ? "selected" : ""} onClick={() => setCategory(value)}><span>{icon}</span>{label}{value === "all" && <b>All</b>}</button>)}</div>
-    <div className="agh-filter-rail"><span className="agh-filter-label">Quick filters</span>{["Verified owner", "Zero brokerage", "Featured / urgent", "Price range", "2+ bedrooms", "Furnished", "Posted today"].map(item => <button className={filter === item ? "chosen" : ""} onClick={() => setFilter(filter === item ? "All" : item)} key={item}>{item === "Verified owner" ? "✓ " : ""}{item}</button>)}<button className="agh-clear-filter" onClick={() => { setFilter("All"); setCategory("all"); }}>Clear all</button></div>
-
-    <section className="agh-location-bar"><div><span className="agh-location-pin">⌖</span><strong>{location.trim() || "Explore properties across India"}</strong><span className="agh-location-muted">Choose your preferred city or locality</span></div><div className="agh-location-actions"><label>Sort <select defaultValue="newest"><option value="newest">Newest first</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label><a href="/search" aria-label="Open all listings">▦ <span>All listings</span></a></div></section>
-
-    <section className="agh-seller-banner"><div className="agh-seller-icon">↗</div><div><span className="agh-seller-kicker">FREE SELLER · ZERO COMMISSION P2P</span><h1>Selling or renting your property?</h1><p>Post your property details and connect directly with people looking for a place to call home.</p></div><a href="/list-property">＋ Post free ad <span>↗</span></a></section>
-
-    <section className="agh-listings-section">
-      <div className="agh-listings-heading"><div><span className="agh-section-eyebrow">DISCOVER YOUR NEXT PLACE</span><h2>Homes picked for your next chapter</h2><p>Browse a few examples of the Apna Ghar property experience.</p></div><a href="/search">Browse live listings <span>↗</span></a></div>
-      <div className="agh-listing-grid">{visible.map((item, index) => <article className="agh-listing-card" key={item.title}>
-        <a href={searchUrl} className="agh-listing-photo" style={{ backgroundImage: "linear-gradient(180deg,rgba(5,19,40,.04),rgba(5,19,40,.58)),url('" + item.image + "')" }} aria-label={"Browse " + item.title}><span className={"agh-listing-badge badge-" + item.type}>{item.badge}</span><span className="agh-preview-badge">DESIGN PREVIEW</span><span className="agh-listing-heart" aria-hidden="true">♡</span><strong>{item.price}</strong><small>{item.meta}</small></a>
-        <div className="agh-listing-info"><p className="agh-listing-location">⌖ {item.location}</p><h3>{item.title}</h3><p className="agh-listing-description">Illustrative card layout. Open live search to view currently published listings and verified details.</p><div className="agh-listing-facts"><span><small>Area</small><b>{item.meta}</b></span><span><small>Details</small><b>{item.detail}</b></span><span><small>Source</small><b>Preview</b></span></div><div className="agh-listing-actions"><a href={searchUrl}>View listings</a><a href="/search" aria-label="Find similar properties">⌕</a></div></div>
-      </article>)}</div>
-      <div className="agh-listings-footer"><p>Preview cards are illustrative, not published property advertisements.</p><a href="/search">View live property inventory <span>→</span></a></div>
-    </section>
-
-    <section className="agh-trust-strip"><div><strong>₹0</strong><span>Brokerage-first discovery</span></div><div><strong>Owner-led</strong><span>Connect directly where available</span></div><div><strong>Clear details</strong><span>Know what you are exploring</span></div><div><strong>One place</strong><span>Save and manage your journey</span></div></section>
-    <footer className="agh-footer"><div className="agh-footer-brand"><a className="agh-brand" href="/"><span className="agh-brand-icon" aria-hidden="true">⌂</span><span className="agh-brand-word">Apna <b>Ghar</b><small>FIND A PLACE TO CALL HOME</small></span></a><p>Explore homes, apartments, plots and commercial spaces across India.</p></div><div><strong>Discover</strong><a href="/search">All properties</a><a href="/search?transaction=buy">Buy</a><a href="/search?transaction=rent">Rent</a><a href="/search?type=commercial">Commercial</a></div><div><strong>For owners</strong><a href="/list-property">Post a property</a><a href="/my-listings">Manage listings</a><a href="/saved">Saved homes</a></div><div><strong>Account & help</strong><a href="/profile">My profile</a><a href="/about">About Apna Ghar</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div><div className="agh-footer-bottom">© {new Date().getFullYear()} Apna Ghar · Property discovery made clearer.</div></footer>
-  </main>;
+type Property={_id:string;slug:string;title:string;description?:string;listingType:"sale"|"rent";priceAmount:number;currency?:string;categoryId:string;location?:{city?:string;state?:string;locality?:string};areaValue:number;areaUnit:string;bedrooms?:number;bathrooms?:number;imageUrls?:string[];contactPhone?:string;furnishing?:string};
+type Result={items:Property[];pagination:{total:number;pages:number;page:number}};
+const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:4000/api/v1").replace(/\/$/,"");
+const categories=[["▦","All categories","all"],["⌂","Apartments & flats","apartment"],["⌂","Villas & houses","house"],["⌁","Plots & land","plot"],["▤","Shops & offices","commercial"],["▧","PG & coliving","pg"]] as const;
+const money=(v:number)=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(v);
+const photos=["https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=85","https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=85","https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=85"];
+export default function MarketplaceHome(){
+ const [menuOpen,setMenuOpen]=useState(false),[transaction,setTransaction]=useState<"buy"|"rent">("buy"),[category,setCategory]=useState("all"),[location,setLocation]=useState(""),[sort,setSort]=useState("newest"),[filter,setFilter]=useState("All"),[slide,setSlide]=useState(0),[result,setResult]=useState<Result|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(""),[contactBusy,setContactBusy]=useState(""),[notice,setNotice]=useState("");
+ const {isSignedIn,getToken}=useAuth();const {signOut}=useClerk();
+ useEffect(()=>{const close=(e:KeyboardEvent)=>{if(e.key==="Escape")setMenuOpen(false)};window.addEventListener("keydown",close);return()=>window.removeEventListener("keydown",close)},[]);
+ useEffect(()=>{const timer=window.setInterval(()=>setSlide(v=>(v+1)%photos.length),5000);return()=>window.clearInterval(timer)},[]);
+ useEffect(()=>{const controller=new AbortController();async function load(){setLoading(true);setError("");const q=new URLSearchParams({page:"1",limit:"9",sort});if(location.trim())q.set("q",location.trim());q.set("listingType",transaction==="rent"?"rent":"sale");if(category!=="all")q.set("categoryId",category);if(filter==="2+ bedrooms")q.set("minBedrooms","2");if(filter==="Furnished")q.set("furnishing","furnished");if(filter==="Price range"){q.set("minPrice","0");q.set("maxPrice","10000000")}try{const r=await fetch(api+"/properties?"+q.toString(),{signal:controller.signal,headers:{Accept:"application/json"}});if(!r.ok)throw new Error("Live property search returned "+r.status+".");setResult(await r.json() as Result)}catch(e){if(e instanceof Error&&e.name==="AbortError")return;setError("We couldn't reach live listings. Please check the API connection and retry.");setResult(null)}finally{if(!controller.signal.aborted)setLoading(false)}}void load();return()=>controller.abort()},[transaction,category,location,sort,filter]);
+ const searchUrl="/search?transaction="+transaction+(location.trim()?"&location="+encodeURIComponent(location.trim()):"")+(category!=="all"?"&type="+encodeURIComponent(category):"");
+ const contactOwner=useCallback(async(p:Property)=>{if(!isSignedIn){window.location.assign("/sign-in?redirect_url="+encodeURIComponent("/property/"+(p.slug||p._id)));return}setContactBusy(p._id);setNotice("");try{const token=await getToken();if(!token)throw new Error("Please sign in again to contact the owner.");const r=await fetch(api+"/conversations/property/"+encodeURIComponent(p._id),{method:"POST",headers:{Authorization:"Bearer "+token,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({})});const body=await r.json().catch(()=>({}));if(!r.ok)throw new Error(typeof body.message==="string"?body.message:"Couldn't open this conversation.");window.location.assign("/messages?conversation="+encodeURIComponent(body.conversationId))}catch(e){setNotice(e instanceof Error?e.message:"Couldn't open this conversation.");setContactBusy("")}},[getToken,isSignedIn]);
+ return <main className="agh-market">
+ <header className="agh-header"><div className="agh-header-main">
+ <a className="agh-brand" href="/" aria-label="Apna Ghar home"><BrandLogo/></a>
+ <form className="agh-top-search" action="/search"><span aria-hidden="true">⌕</span><input name="location" value={location} onChange={e=>setLocation(e.target.value)} placeholder="Search city, locality, project or landmark…"/><button type="submit" aria-label="Search">⌕</button></form>
+ <nav className="agh-desktop-nav" aria-label="Main navigation"><a className="active" href="/search">Browse properties</a><a href="/search?transaction=buy">Buy</a><a href="/search?transaction=rent">Rent</a><a href="/search?type=commercial">Commercial</a><a href="/search?type=plot">Plots</a><a href="/messages">Messages</a></nav>
+ <div className="agh-header-actions"><ThemePicker compact/><a className="agh-icon-link" href="/saved" aria-label="Saved homes">♡</a><a className="agh-my-listings" href="/my-listings">My listings</a>{isSignedIn?<button className="agh-account-btn" onClick={()=>signOut({redirectUrl:"/"})}>Sign out</button>:<a className="agh-account-btn" href="/sign-in">Sign in</a>}<a className="agh-sell-btn" href="/list-property"><span>＋</span> Sell property</a></div>
+ <button className="agh-menu-toggle" type="button" onClick={()=>setMenuOpen(v=>!v)} aria-expanded={menuOpen} aria-controls="agh-mobile-drawer" aria-label={menuOpen?"Close navigation menu":"Open navigation menu"}>{menuOpen?"×":"☰"}</button></div>
+ <div className="agh-mobile-search"><form action="/search"><span aria-hidden="true">⌕</span><input name="location" value={location} onChange={e=>setLocation(e.target.value)} placeholder="Search city or locality…"/><button type="submit">Search</button></form></div>
+ {menuOpen&&<><button className="agh-drawer-backdrop" onClick={()=>setMenuOpen(false)} aria-label="Close navigation overlay"/><nav className="agh-mobile-drawer" id="agh-mobile-drawer" aria-label="Mobile navigation"><div className="agh-drawer-head"><strong>Explore Apna Ghar</strong><button onClick={()=>setMenuOpen(false)} aria-label="Close menu">×</button></div><a href="/">Home</a><a href="/search">Browse all properties</a><a href="/search?transaction=buy">Buy a property</a><a href="/search?transaction=rent">Rent a property</a><a href="/search?type=commercial">Commercial spaces</a><a href="/search?type=plot">Plots & land</a><a href="/saved">Saved homes</a><a href="/my-listings">My listings</a><a href="/messages">Messages</a><a className="agh-drawer-sell" href="/list-property">＋ Post a property</a>{isSignedIn?<button className="agh-drawer-signout" onClick={()=>signOut({redirectUrl:"/"})}>Sign out</button>:<a href="/sign-in">Sign in / Create account</a>}</nav></>}
+ </header>
+ <div className="agh-transaction-rail"><button className={transaction==="buy"?"chosen":""} onClick={()=>setTransaction("buy")}>Buy</button><button className={transaction==="rent"?"chosen":""} onClick={()=>setTransaction("rent")}>Rent</button></div>
+ <div className="agh-category-rail" aria-label="Property categories">{categories.map(([icon,label,value])=><button key={value} className={category===value?"selected":""} onClick={()=>setCategory(value)}><span>{icon}</span>{label}{value==="all"&&<b>All</b>}</button>)}</div>
+ <div className="agh-filter-rail"><span className="agh-filter-label">Quick filters</span>{["Verified owner","Zero brokerage","Featured / urgent","Price range","2+ bedrooms","Furnished","Posted today"].map(item=><button className={filter===item?"chosen":""} onClick={()=>setFilter(filter===item?"All":item)} key={item}>{item==="Verified owner"?"✓ ":""}{item}</button>)}<button className="agh-clear-filter" onClick={()=>{setFilter("All");setCategory("all")}}>Clear all</button></div>
+ <section className="agh-location-bar"><div><span className="agh-location-pin">⌖</span><strong>{location.trim()||"Explore properties across India"}</strong><span className="agh-location-muted">{loading?"Loading live listings…":(result?.pagination.total??0)+" published listings"}</span></div><div className="agh-location-actions"><label>Sort <select value={sort} onChange={e=>setSort(e.target.value)}><option value="newest">Newest first</option><option value="price_asc">Price: low to high</option><option value="price_desc">Price: high to low</option></select></label><a href={searchUrl}>▦ <span>All listings</span></a></div></section>
+ <section className="agh-seller-banner"><div className="agh-seller-icon">↗</div><div><span className="agh-seller-kicker">FREE SELLER · ZERO COMMISSION P2P</span><h1>Selling or renting your property?</h1><p>Post your property details and connect directly with people looking for a place to call home.</p></div><a href="/list-property">＋ Post free ad <span>↗</span></a></section>
+ <section className="agh-listings-section"><div className="agh-listings-heading"><div><span className="agh-section-eyebrow">DISCOVER YOUR NEXT PLACE</span><h2>{transaction==="rent"?"Places to rent for your next chapter":"Homes for your next chapter"}</h2><p>Live properties from the Apna Ghar marketplace. Contact owners directly from a listing.</p></div><a href={searchUrl}>Browse all listings ↗</a></div>
+ {notice&&<p className="agh-live-notice" role="status">{notice}</p>}
+ {error&&<div className="agh-live-state" role="alert"><p>{error}</p><button type="button" onClick={()=>{setSort(v=>v)}}>Retry search</button></div>}
+ {loading&&<div className="agh-listing-grid">{Array.from({length:3},(_,i)=><article className="agh-listing-card agh-card-skeleton" key={i}><div className="agh-skeleton-image"/><div className="agh-listing-info"><div className="agh-skeleton-line"/><div className="agh-skeleton-line short"/></div></article>)}</div>}
+ {!loading&&!error&&(!result?.items.length)&&<div className="agh-live-state"><span>⌂</span><h3>No published properties match these filters yet</h3><p>Try another category or location, or be the first to post a listing.</p><a href="/list-property">Post a property ↗</a></div>}
+ {!loading&&!error&&!!result?.items.length&&<div className="agh-listing-grid">{result.items.map((p,index)=><article className="agh-listing-card" key={p._id}><a href={"/property/"+encodeURIComponent(p.slug||p._id)} className="agh-listing-photo" style={{backgroundImage:"linear-gradient(180deg,rgba(5,19,40,.04),rgba(5,19,40,.58)),url('"+(p.imageUrls?.[0]||photos[index%photos.length])+"')"}} aria-label={"View "+p.title}><span className={"agh-listing-badge badge-"+p.categoryId}>{p.listingType==="rent"?"FOR RENT":"FOR SALE"}</span><span className="agh-listing-heart" aria-hidden="true">⌂</span><strong>{money(p.priceAmount)}{p.listingType==="rent"?" / mo":""}</strong><small>{p.areaValue} {p.areaUnit}</small></a><div className="agh-listing-info"><p className="agh-listing-location">⌖ {[p.location?.locality,p.location?.city,p.location?.state].filter(Boolean).join(", ")}</p><h3>{p.title}</h3><p className="agh-listing-description">{p.description||"Contact the owner for more property details."}</p><div className="agh-listing-facts"><span><small>Area</small><b>{p.areaValue} {p.areaUnit}</b></span><span><small>Bedrooms</small><b>{p.bedrooms??"—"}</b></span><span><small>Type</small><b>{p.listingType==="rent"?"Rent":"Sale"}</b></span></div><div className="agh-listing-actions"><a href={"/property/"+encodeURIComponent(p.slug||p._id)}>View property</a><button type="button" onClick={()=>void contactOwner(p)} disabled={contactBusy===p._id}>{contactBusy===p._id?"Opening…":"Chat owner"}</button></div><div className="agh-card-contact">{p.contactPhone?.trim()?<a href={"tel:"+p.contactPhone.replace(/[^+0-9]/g,"")}>☎ Call owner</a>:<span>Contact details on listing</span>}</div></div></article>)}</div>}
+ <div className="agh-listings-footer"><p>{result?result.pagination.total+" live listings in the current result set.":"Live marketplace inventory"}</p><a href={searchUrl}>View live property inventory →</a></div></section>
+ <section className="agh-home-carousel" aria-label="Home inspiration carousel"><div className="agh-carousel-copy"><span className="agh-section-eyebrow">FIND YOUR PLACE</span><h2>Space for the life you’re building.</h2><p>Explore property styles and find a place that feels like yours.</p><div className="agh-carousel-dots">{photos.map((_,i)=><button key={i} aria-label={"Show inspiration image "+(i+1)} aria-pressed={slide===i} className={slide===i?"active":""} onClick={()=>setSlide(i)}/>)}</div></div><div className="agh-carousel-image" style={{backgroundImage:"linear-gradient(90deg,rgba(7,25,47,.08),rgba(7,25,47,.1)),url('"+photos[slide]+"')"}}><button type="button" aria-label="Previous image" onClick={()=>setSlide((slide+photos.length-1)%photos.length)}>‹</button><button type="button" aria-label="Next image" onClick={()=>setSlide((slide+1)%photos.length)}>›</button></div></section>
+ <section className="agh-trust-strip"><div><strong>₹0</strong><span>No listing fee at launch</span></div><div><strong>Owner-led</strong><span>Connect directly where available</span></div><div><strong>Clear details</strong><span>Browse published listings</span></div><div><strong>One place</strong><span>Save and manage your journey</span></div></section>
+ <footer className="agh-footer"><div className="agh-footer-brand"><a className="agh-brand" href="/"><BrandLogo/></a><p>Explore homes, apartments, plots and commercial spaces across India.</p></div><div><strong>Discover</strong><a href="/search">All properties</a><a href="/search?transaction=buy">Buy</a><a href="/search?transaction=rent">Rent</a><a href="/search?type=commercial">Commercial</a></div><div><strong>For owners</strong><a href="/list-property">Post a property</a><a href="/my-listings">Manage listings</a><a href="/saved">Saved homes</a></div><div><strong>Account & help</strong><a href="/profile">My profile</a><a href="/messages">Messages</a><a href="/about">About Apna Ghar</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div><div className="agh-footer-bottom">© {new Date().getFullYear()} Apna Ghar · Property discovery made clearer.</div></footer>
+ </main>;
 }
