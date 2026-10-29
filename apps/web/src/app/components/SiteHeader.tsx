@@ -23,6 +23,7 @@ export default function SiteHeader({active="home"}:{active?:string}) {
         <a className={active==="rent"?"is-active":""} href="/search?transaction=rent">Rent</a>
         <a className={active==="search"?"is-active":""} href="/search">All properties</a>
         <a href="/saved">Saved</a>
+        <a href="/messages">Messages</a>
         <a href="/my-listings">My listings</a>
       </nav>
       <form className="ag-header-search" action="/search" role="search">
