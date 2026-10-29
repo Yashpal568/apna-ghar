@@ -2,7 +2,7 @@ import { UnauthorizedException, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import type { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createClerkClient } from '@clerk/backend';
+import { createClerkClient, verifyToken } from '@clerk/backend';
 import { ClerkAuthGuard } from '../src/auth/clerk-auth.guard';
 import { UsersController } from '../src/users/users.controller';
 import { UsersService } from '../src/users/users.service';
@@ -25,6 +25,8 @@ describe('M3 identity and profile HTTP (e2e)', () => {
   };
 
   beforeAll(async () => {
+    (verifyToken as jest.Mock).mockResolvedValue({ sub: 'user_test_123' });
+    (verifyToken as jest.Mock).mockResolvedValue({ sub: 'user_test_123' });
     (createClerkClient as jest.Mock).mockReturnValue({
       users: { getUser: jest.fn().mockResolvedValue(clerkUser) },
     });
@@ -69,7 +71,7 @@ describe('M3 identity and profile HTTP (e2e)', () => {
   });
 
   it('synchronizes verified Clerk identity through the versioned API', async () => {
-    const response = await fetch(`${await app.getUrl()}/api/v1/users/me`);
+    const response = await fetch(`${await app.getUrl()}/api/v1/users/me`, { headers: { Authorization: 'Bearer test-token' } });
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual(expect.objectContaining({
       id: 'user_test_123', name: 'Yash Pal', email: 'yash@example.com',
@@ -87,7 +89,7 @@ describe('M3 identity and profile HTTP (e2e)', () => {
 
   it('rejects invalid profile email and unknown DTO fields', async () => {
     const invalidEmail = await fetch(`${await app.getUrl()}/api/v1/users/me/profile`, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer test-token' },
       body: JSON.stringify({ email: 'not-an-email' }),
     });
     expect(invalidEmail.status).toBe(400);
