@@ -3112,3 +3112,20 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
   .messages-quick-prompts { padding-inline:10px; }
   .messages-quick-prompts button { font-size:9px; }
 }
+
+
+/* The original horizontal Apna Ghar wordmark is shared by every Next.js page. */
+.brand { flex-wrap:nowrap !important; }
+.brand .brand-wordmark {
+  display:block !important;
+  width:max-content !important;
+  min-width:max-content !important;
+  max-width:none !important;
+  white-space:nowrap !important;
+  overflow-wrap:normal !important;
+  word-break:keep-all !important;
+}
+@media(max-width:480px) {
+  .ag-site-header .ag-brand .brand-symbol { width:34px; height:28px; }
+  .ag-site-header .ag-brand .brand-wordmark { font-size:18px !important; }
+}
