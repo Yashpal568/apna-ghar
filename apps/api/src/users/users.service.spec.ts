@@ -11,10 +11,36 @@ describe('UsersService', () => {
 
   it('returns an empty profile for a new account', async () => {
     model.findOne.mockReturnValue({ lean: () => ({ exec: async () => null }) });
+    model.findOneAndUpdate.mockReturnValue({ lean: () => ({ exec: async () => ({
+      clerkUserId: 'clerk_user', name: '', email: '', phone: '', city: '', about: '',
+    }) }) });
     await expect(service.getMyProfile('clerk_user')).resolves.toEqual({
       name: '', email: '', phone: '', city: '', about: '',
     });
     expect(model.findOne).toHaveBeenCalledWith({ clerkUserId: 'clerk_user' });
+    expect(model.findOneAndUpdate).toHaveBeenCalledWith(
+      { clerkUserId: 'clerk_user' },
+      { $setOnInsert: { clerkUserId: 'clerk_user', name: '', email: '' } },
+      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+    );
+  });
+
+  it('seeds a first profile from verified identity claims without replacing a saved profile', async () => {
+    model.findOne.mockReturnValue({ lean: () => ({ exec: async () => null }) });
+    model.findOneAndUpdate.mockReturnValue({ lean: () => ({ exec: async () => ({
+      clerkUserId: 'clerk_user', name: 'Verified Person', email: 'verified@example.com',
+      phone: '', city: '', about: '',
+    }) }) });
+    await expect(service.getMyProfile('clerk_user', {
+      name: ' Verified Person ', email: ' VERIFIED@Example.com ',
+    })).resolves.toEqual({
+      name: 'Verified Person', email: 'verified@example.com', phone: '', city: '', about: '',
+    });
+    expect(model.findOneAndUpdate).toHaveBeenCalledWith(
+      { clerkUserId: 'clerk_user' },
+      { $setOnInsert: { clerkUserId: 'clerk_user', name: 'Verified Person', email: 'verified@example.com' } },
+      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+    );
   });
 
   it('returns only public profile fields', async () => {
