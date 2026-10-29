@@ -21,8 +21,6 @@
   "devDependencies": {
     "@types/node": "^20.17.10",
     "@types/react": "^18.3.12",
-    "typescript": "^5.7.2",
-    "@opennextjs/cloudflare": "^1.20.13",
-    "wrangler": "^4.154.0"
+    "typescript": "^5.7.2"
   }
 }
