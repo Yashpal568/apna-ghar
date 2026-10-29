@@ -1,7 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap");
 @import "../../../../styles/design-tokens.css";
 
-:root { --content-width: 1240px; --shadow-soft: 0 20px 60px rgb(15 23 42 / 7%); --font-body: "Inter", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; --font-heading: "Manrope", "Inter", sans-serif; --font-ui: "Inter", sans-serif; --font-editorial: "Manrope", sans-serif; --font-display: "Manrope", sans-serif; --text-body-size: 16px; --text-body-line-height: 1.55; }
+:root { --content-width: 1240px; --shadow-soft: 0 20px 60px rgb(15 23 42 / 7%); --font-body: "Inter", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; --font-heading: "Plus Jakarta Sans", "Manrope", sans-serif; --font-ui: "Inter", sans-serif; --font-editorial: "Manrope", sans-serif; --font-display: "Manrope", "Plus Jakarta Sans", sans-serif; --font-section: "Plus Jakarta Sans", "Manrope", sans-serif; --font-control: "Inter", sans-serif; --font-metadata: "Inter", sans-serif; --font-caption: "Inter", sans-serif; --text-body-size: 16px; --text-body-line-height: 1.55; }
 * { box-sizing: border-box; }
 html { background: var(--color-bg); color-scheme: light; scroll-behavior: smooth; }
 html[data-theme="midnight"],html[data-theme="graphite"],html[data-theme="forest"],html[data-theme="amoled"] { color-scheme: dark; }
