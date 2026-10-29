@@ -2437,7 +2437,7 @@ html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .
 /* Stitch marketplace homepage: scoped styles, independent from legacy header rules. */
 .agh-market { --agh-blue:#064cc0; --agh-blue-strong:#0045b7; --agh-ink:#0b1c30; --agh-muted:#606c80; --agh-line:#dfe6f2; --agh-pale:#f3f6fd; --agh-green:#20e890; background:#f6f8fe; color:var(--agh-ink); min-height:100vh; font-family:"Plus Jakarta Sans",Inter,system-ui,sans-serif; overflow-x:clip; }
 .agh-market * { box-sizing:border-box; }
-.agh-market a { color:inherit; text-decoration:none; }
+.agh-market a { color:"Plus Jakarta Sans",Inter,system-ui,sans-serif; text-decoration:none; }
 .agh-header { position:sticky; top:0; z-index:1000; background:rgba(255,255,255,.97); border-bottom:1px solid #e8edf5; box-shadow:0 4px 20px rgba(15,32,60,.035); backdrop-filter:blur(18px); }
 .agh-header-main { max-width:1440px; min-height:76px; margin:auto; padding:12px 24px; display:flex; align-items:center; gap:22px; }
 .agh-brand { display:flex; align-items:center; gap:10px; flex:0 0 auto; min-width:180px; }
@@ -2449,7 +2449,7 @@ html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .
 .agh-verified { margin-left:2px; padding:5px 8px; border-radius:999px; color:#006c3d; background:#d9ffea; font-size:9px; font-weight:800; text-transform:uppercase; white-space:nowrap; }
 .agh-top-search { display:flex; align-items:center; gap:8px; height:44px; padding:0 8px 0 14px; background:#f0f4fc; border:1px solid transparent; border-radius:999px; min-width:190px; flex:1 1 280px; max-width:340px; color:#66748a; }
 .agh-top-search:focus-within,.agh-mobile-search form:focus-within { background:#fff; border-color:#9dbaf1; box-shadow:0 0 0 3px #dbe8ff; }
-.agh-top-search input,.agh-mobile-search input { min-width:0; flex:1; width:100%; border:0; outline:0; background:transparent; color:#102541; font:500 12px inherit; }
+.agh-top-search input,.agh-mobile-search input { min-width:0; flex:1; width:100%; border:0; outline:0; background:transparent; color:#102541; font:500 12px "Plus Jakarta Sans",Inter,system-ui,sans-serif; }
 .agh-top-search input::placeholder,.agh-mobile-search input::placeholder { color:#748197; }
 .agh-top-search button { width:30px; height:30px; border:0; border-radius:50%; background:#dce8ff; color:#064cc0; font-size:21px; cursor:pointer; }
 .agh-desktop-nav { display:flex; align-items:center; gap:2px; flex:0 1 auto; white-space:nowrap; }
@@ -2459,31 +2459,31 @@ html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .
 .agh-icon-link { width:36px; height:36px; display:grid; place-items:center; border-radius:50%; color:#064cc0; font-size:25px; }
 .agh-icon-link:hover { background:#eef3ff; }
 .agh-my-listings,.agh-account-btn { padding:10px 12px; border-radius:12px; font-size:11px; font-weight:750; color:#33435a; }
-.agh-account-btn { border:1px solid var(--agh-line); background:#fff; cursor:pointer; font-family:inherit; }
+.agh-account-btn { border:1px solid var(--agh-line); background:#fff; cursor:pointer; font-family:"Plus Jakarta Sans",Inter,system-ui,sans-serif; }
 .agh-my-listings:hover,.agh-account-btn:hover { background:#f3f6fc; }
 .agh-sell-btn { display:flex; align-items:center; gap:7px; padding:12px 16px; border-radius:999px; background:#23ed9a; color:#004d2d !important; font-size:11px; font-weight:850; box-shadow:0 5px 14px #12a7681c; }
 .agh-sell-btn span { font-size:17px; }
-.agh-menu-toggle { display:none; width:42px; height:42px; flex:0 0 42px; place-items:center; border:1px solid #dce4f0; border-radius:13px; background:#fff; color:#0c2748; font:700 23px/1 inherit; box-shadow:0 4px 12px #132b4b0b; cursor:pointer; }
+.agh-menu-toggle { display:none; width:42px; height:42px; flex:0 0 42px; place-items:center; border:1px solid #dce4f0; border-radius:13px; background:#fff; color:#0c2748; font:700 23px/1 "Plus Jakarta Sans",Inter,system-ui,sans-serif; box-shadow:0 4px 12px #132b4b0b; cursor:pointer; }
 .agh-mobile-search { display:none; }
 .agh-drawer-backdrop { position:fixed; inset:0; z-index:1001; border:0; background:rgba(7,19,39,.45); backdrop-filter:blur(3px); }
 .agh-mobile-drawer { position:fixed; z-index:1002; top:12px; right:12px; width:min(340px,calc(100vw - 24px)); max-height:calc(100dvh - 24px); overflow:auto; padding:16px; display:flex; flex-direction:column; gap:5px; border:1px solid #e1e7f1; border-radius:22px; background:#fff; box-shadow:0 24px 80px #07162d40; }
 .agh-drawer-head { display:flex; justify-content:space-between; align-items:center; padding:5px 3px 14px; margin-bottom:4px; border-bottom:1px solid #edf0f6; }
 .agh-drawer-head strong { font-size:15px; }
 .agh-drawer-head button { width:34px; height:34px; border:0; border-radius:10px; background:#f0f4fb; font-size:24px; cursor:pointer; }
-.agh-mobile-drawer > a,.agh-drawer-signout { display:flex; align-items:center; min-height:44px; padding:0 12px; border:0; border-radius:11px; background:transparent; text-align:left; color:#253b58; font:650 13px inherit; cursor:pointer; }
+.agh-mobile-drawer > a,.agh-drawer-signout { display:flex; align-items:center; min-height:44px; padding:0 12px; border:0; border-radius:11px; background:transparent; text-align:left; color:#253b58; font:650 13px "Plus Jakarta Sans",Inter,system-ui,sans-serif; cursor:pointer; }
 .agh-mobile-drawer > a:hover,.agh-drawer-signout:hover { background:#f0f5ff; color:#064cc0; }
 .agh-mobile-drawer .agh-drawer-sell { margin-top:7px; justify-content:center; background:#20e890; color:#004d2d; font-weight:850; }
 .agh-drawer-signout { color:#b42318; }
 .agh-category-rail { max-width:1440px; margin:auto; padding:12px 24px 10px; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
 .agh-category-rail::-webkit-scrollbar,.agh-filter-rail::-webkit-scrollbar { display:none; }
-.agh-category-rail button { flex:0 0 auto; display:flex; align-items:center; gap:8px; min-height:38px; padding:0 15px; border:1px solid #dfe7f5; border-radius:999px; background:#eaf0fd; color:#344761; font:700 11px inherit; cursor:pointer; white-space:nowrap; }
+.agh-category-rail button { flex:0 0 auto; display:flex; align-items:center; gap:8px; min-height:38px; padding:0 15px; border:1px solid #dfe7f5; border-radius:999px; background:#eaf0fd; color:#344761; font:700 11px "Plus Jakarta Sans",Inter,system-ui,sans-serif; cursor:pointer; white-space:nowrap; }
 .agh-category-rail button span { color:#0752bd; font-size:17px; }
 .agh-category-rail button b { padding:3px 6px; border-radius:999px; background:#fff; color:#0752bd; font-size:9px; }
 .agh-category-rail button.selected { border-color:#064cc0; background:#064cc0; color:#fff; box-shadow:0 4px 12px #064cc026; }
 .agh-category-rail button.selected span { color:#fff; }
 .agh-filter-rail { max-width:1440px; margin:auto; padding:0 24px 12px; display:flex; align-items:center; gap:7px; overflow-x:auto; scrollbar-width:none; }
 .agh-filter-label { flex:0 0 auto; color:#718098; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; margin-right:3px; }
-.agh-filter-rail button { flex:0 0 auto; padding:7px 11px; border:1px solid #e0e7f2; border-radius:999px; background:#fff; color:#51617a; font:700 10px inherit; white-space:nowrap; cursor:pointer; }
+.agh-filter-rail button { flex:0 0 auto; padding:7px 11px; border:1px solid #e0e7f2; border-radius:999px; background:#fff; color:#51617a; font:700 10px "Plus Jakarta Sans",Inter,system-ui,sans-serif; white-space:nowrap; cursor:pointer; }
 .agh-filter-rail button.chosen { background:#dcffec; border-color:#8be9b8; color:#00663a; }
 .agh-filter-rail button.agh-clear-filter { border-color:transparent; background:transparent; color:#064cc0; }
 .agh-location-bar { max-width:1392px; min-height:62px; margin:6px auto 14px; padding:12px 18px; display:flex; align-items:center; justify-content:space-between; gap:14px; border:1px solid #e4eaf4; border-radius:16px; background:#fff; }
@@ -2493,7 +2493,7 @@ html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .
 .agh-location-muted { color:#7b879a; font-size:10px; }
 .agh-location-actions { display:flex; align-items:center; gap:10px; }
 .agh-location-actions label { display:flex; align-items:center; gap:6px; color:#728096; font-size:10px; font-weight:700; text-transform:uppercase; }
-.agh-location-actions select { max-width:155px; padding:9px 10px; border:1px solid #e1e8f3; border-radius:10px; background:#f7f9fe; color:#1c304d; font:650 10px inherit; text-transform:none; }
+.agh-location-actions select { max-width:155px; padding:9px 10px; border:1px solid #e1e8f3; border-radius:10px; background:#f7f9fe; color:#1c304d; font:650 10px "Plus Jakarta Sans",Inter,system-ui,sans-serif; text-transform:none; }
 .agh-location-actions > a { padding:8px 10px; border:1px solid #e1e8f3; border-radius:10px; color:#0752bd; font-size:12px; white-space:nowrap; }
 .agh-location-actions > a span { font-size:10px; font-weight:700; }
 .agh-seller-banner { max-width:1392px; min-height:104px; margin:0 auto 26px; padding:20px 26px; display:flex; align-items:center; gap:17px; border-radius:18px; color:#fff; background:linear-gradient(105deg,#0649bf 0%,#0068a6 60%,#00844e 100%); box-shadow:0 8px 18px #064cc01c; }
@@ -2569,7 +2569,7 @@ html[data-theme="midnight"] .profile-stitch-logout,html[data-theme="graphite"] .
   .agh-mobile-search { display:block; padding:0 16px 12px; }
   .agh-mobile-search form { display:flex; align-items:center; gap:9px; min-height:44px; padding:5px 6px 5px 13px; border:1px solid #e2e9f4; border-radius:13px; background:#f2f5fc; color:#61718a; }
   .agh-mobile-search form > span { font-size:21px; }
-  .agh-mobile-search button { min-height:34px; padding:0 14px; border:0; border-radius:9px; background:#0752bd; color:#fff; font:750 11px inherit; cursor:pointer; }
+  .agh-mobile-search button { min-height:34px; padding:0 14px; border:0; border-radius:9px; background:#0752bd; color:#fff; font:750 11px "Plus Jakarta Sans",Inter,system-ui,sans-serif; cursor:pointer; }
   .agh-category-rail { padding:11px 16px 9px; }
   .agh-filter-rail { padding:0 16px 10px; }
   .agh-location-bar { align-items:flex-start; margin:7px 16px 12px; }
