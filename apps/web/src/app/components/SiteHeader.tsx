@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BrandLogo from "./BrandLogo";
 import ThemePicker from "./ThemePicker";
 import AccountNavLinks from "./AccountNavLinks";
@@ -8,6 +8,12 @@ import AccountNavLinks from "./AccountNavLinks";
 export default function SiteHeader({active="home"}:{active?:string}) {
   const [menuOpen,setMenuOpen]=useState(false);
   const [query,setQuery]=useState("");
+  useEffect(() => {
+    if (!menuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setMenuOpen(false); };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
   return <header className="ag-site-header">
     <div className="ag-header-inner">
       <a className="ag-brand" href="/" aria-label="Apna Ghar home"><BrandLogo/></a>
@@ -26,6 +32,6 @@ export default function SiteHeader({active="home"}:{active?:string}) {
       <div className="ag-mobile-theme"><ThemePicker compact /></div>
       <button className="ag-mobile-toggle" type="button" aria-controls="ag-mobile-navigation" aria-expanded={menuOpen} aria-label={menuOpen?"Close navigation":"Open navigation"} onClick={()=>setMenuOpen(v=>!v)}>{menuOpen?"✕":"☰"}</button>
     </div>
-    {menuOpen&&<div className="ag-mobile-menu" id="ag-mobile-navigation" onClick={e => { if ((e.target as HTMLElement).closest("a")) setMenuOpen(false); }}><div className="ag-mobile-appearance"><span>Appearance</span><ThemePicker /></div><a href="/">Home</a><a href="/search?transaction=buy">Buy a home</a><a href="/search?transaction=rent">Rent a home</a><a href="/search">Explore properties</a><a href="/my-listings">My listings</a><a href="/saved">Saved homes</a>{process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? <AccountNavLinks mobile /> : <><a href="/sign-in">Sign in</a><a href="/sign-up">Create account</a></>}<a className="button button-primary" href="/list-property">Post a property ↗</a></div>}
+    {menuOpen&&<><button className="ag-mobile-backdrop" type="button" aria-label="Close navigation menu" onClick={() => setMenuOpen(false)} /><div className="ag-mobile-menu" id="ag-mobile-navigation" onClick={e => { if ((e.target as HTMLElement).closest("a, button")) setMenuOpen(false); }}><div className="ag-mobile-appearance"><span>Appearance</span><ThemePicker /></div><a href="/">Home</a><a href="/search?transaction=buy">Buy a home</a><a href="/search?transaction=rent">Rent a home</a><a href="/search">Explore properties</a><a href="/my-listings">My listings</a><a href="/saved">Saved homes</a>{process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? <AccountNavLinks mobile /> : <><a href="/sign-in">Sign in</a><a href="/sign-up">Create account</a></>}<a className="button button-primary" href="/list-property">Post a property ↗</a></div></>}
   </header>;
 }

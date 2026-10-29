@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import FeaturedProperties from "./components/FeaturedProperties";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
+import HomeHeroCarousel from "./components/HomeHeroCarousel";
 
 export const metadata: Metadata = {
   title: "Find a place to call home",
@@ -26,7 +27,7 @@ export default function HomePage() {
     <SiteHeader active="home" />
 
     <section className="ag-home-hero">
-      <div className="ag-home-hero-image" aria-hidden="true" />
+      <HomeHeroCarousel />
       <div className="ag-home-hero-shade" aria-hidden="true" />
       <div className="ag-home-hero-content page-shell">
         <div className="ag-home-hero-copy">
