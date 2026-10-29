@@ -14,15 +14,16 @@ async function bootstrap() {
     .filter(Boolean);
   app.enableCors({
     origin: (origin, callback) => {
-      // Requests without an Origin header (health checks and server-to-server calls) are allowed.
       if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
       try {
         const parsed = new URL(origin);
-        // Vercel creates a unique preview hostname per deployment. Only HTTPS Vercel
-        // deployments are accepted here; custom production domains stay explicitly configured.
         if (parsed.protocol === 'https:' && parsed.hostname.endsWith('.vercel.app')) {
           return callback(null, true);
         }
+        const isApnaGharWorker = parsed.protocol === 'https:' &&
+          (parsed.hostname === 'apna-ghar-web.yash38688.workers.dev' ||
+           parsed.hostname.startsWith('apna-ghar-web-') && parsed.hostname.endsWith('.yash38688.workers.dev'));
+        if (isApnaGharWorker) return callback(null, true);
       } catch {
         // Reject malformed origins below.
       }
@@ -30,16 +31,8 @@ async function bootstrap() {
     },
   });
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
   app.useGlobalFilters(new HttpExceptionFilter());
-
-  // Render and other managed hosts provide PORT; API_PORT is the local fallback.
   const port = Number(process.env.PORT ?? process.env.API_PORT ?? 4000);
   await app.listen(port);
   console.log(`Apna Ghar API listening on port ${port}`);
