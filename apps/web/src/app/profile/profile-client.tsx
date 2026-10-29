@@ -20,7 +20,7 @@ const heroPhotos = [
 ];
 const Icon = ({ children, className = "" }: { children: string; className?: string }) => <span aria-hidden="true" className={"material-symbols-outlined " + className}>{children}</span>;
 
-export default function ProfilePage() {
+function ProfileClientWithClerk() {
   const { isLoaded, isSignedIn, getToken } = useAuth();
   const { user } = useUser();
   const [profile, setProfile] = useState<Profile>(blank);
@@ -217,4 +217,28 @@ export default function ProfilePage() {
     </div>
     <SiteFooter />
   </main>;
+}
+
+
+export default function ProfilePage() {
+  // CI and local previews may build without Clerk environment variables. Do not
+  // render Clerk hooks outside ClerkProvider in that configuration.
+  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+    return (
+      <main className="interior-page profile-redesign">
+        <SiteHeader active="account" />
+        <div className="profile-redesign-shell">
+          <section className="profile-stitch-security">
+            <span className="profile-stitch-overline">ACCOUNT SETTINGS</span>
+            <h1>Profile setup is unavailable</h1>
+            <p>Account sign-in is not configured in this environment. You can still browse properties; profile features will be available when authentication is configured.</p>
+            <a className="profile-stitch-security-link" href="/search">Explore properties <Icon>arrow_outward</Icon></a>
+          </section>
+        </div>
+        <SiteFooter />
+      </main>
+    );
+  }
+
+  return <ProfileClientWithClerk />;
 }
