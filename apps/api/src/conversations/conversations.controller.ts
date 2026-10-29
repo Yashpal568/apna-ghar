@@ -34,6 +34,7 @@ export class ConversationsController {
   }
   @Get(':conversationId/messages')
   async getMessages(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string) {
+    if (!this.isObjectId(conversationId)) throw new BadRequestException('Invalid conversation ID.');
     const conversation = await this.conversations.findById(conversationId).lean().exec();
     if (!conversation) throw new NotFoundException('Conversation not found.');
     this.assertParticipant(conversation.participantIds, request.auth.userId);
@@ -41,6 +42,7 @@ export class ConversationsController {
   }
   @Post(':conversationId/messages')
   async sendMessage(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string, @Body() body: SendMessageDto) {
+    if (!this.isObjectId(conversationId)) throw new BadRequestException('Invalid conversation ID.');
     const text = body.text?.trim();
     if (!text) throw new BadRequestException('Write a message first.');
     const conversation = await this.conversations.findById(conversationId).exec();
