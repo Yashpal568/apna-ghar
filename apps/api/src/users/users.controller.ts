@@ -32,20 +32,26 @@ export class UsersController {
 
   @Get()
   async getMyProfile(@Req() request: AuthenticatedRequest) {
-    const identity = identityFromClaims(request.auth.claims);
+    const userId = request.auth.userId;
+    const fromClaims = identityFromClaims(request.auth.claims);
+    const profile = await this.users.getMyProfile(userId, fromClaims);
+    if (profile.name && profile.email) return profile;
+
     const secretKey = this.config.get<string>('CLERK_SECRET_KEY');
-    if (secretKey) {
-      try {
-        // Read canonical identity fields from Clerk server-side rather than trusting browser-supplied identity.
-        const clerk = createClerkClient({ secretKey });
-        const user = await clerk.users.getUser(request.auth.userId);
-        identity.name = [user.firstName, user.lastName].filter((part): part is string => Boolean(part?.trim())).join(' ') || identity.name;
-        identity.email = user.primaryEmailAddress?.emailAddress?.trim() || identity.email;
-      } catch {
-        // A temporary Clerk API issue should not prevent users from viewing their saved profile.
-      }
+    if (!secretKey) return profile;
+    try {
+      // Only call Clerk's server API when the persisted profile is missing identity fields.
+      const clerk = createClerkClient({ secretKey });
+      const user = await clerk.users.getUser(userId);
+      const identity = {
+        name: [user.firstName, user.lastName].filter((part): part is string => Boolean(part?.trim())).join(' ') || fromClaims.name,
+        email: user.primaryEmailAddress?.emailAddress?.trim() || fromClaims.email,
+      };
+      return this.users.getMyProfile(userId, identity);
+    } catch {
+      // A temporary Clerk API issue should not prevent users from viewing their saved profile.
+      return profile;
     }
-    return this.users.getMyProfile(request.auth.userId, identity);
   }
 
   @Put()
