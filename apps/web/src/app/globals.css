@@ -3008,3 +3008,8 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
  .interior-page .owner-listing-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
  .interior-page .owner-listing-actions .button { width:100%; }
 }
+
+.agh-market .agh-drawer-theme { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 8px 14px; margin-bottom:4px; border-bottom:1px solid var(--color-border); }
+.agh-market .agh-drawer-theme>span { color:var(--color-muted); font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+.agh-market .agh-drawer-theme .theme-trigger { min-height:36px; padding:0 10px; border-color:var(--color-border); background:var(--color-surface); color:var(--color-text); }
+.agh-market .agh-drawer-theme .theme-trigger-label { display:inline; }
