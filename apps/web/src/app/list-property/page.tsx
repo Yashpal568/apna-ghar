@@ -64,7 +64,7 @@ function ListingForm() {
           if (!token) throw new Error("Sign in to edit your listing.");
           const response = await fetch(apiBase + "/properties/mine", { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
           if (!response.ok) throw new Error("Could not load your listings. Please sign in and retry.");
-          const listings = await response.json() as Array<{ _id: string; title: string; description?: string; categoryId: string; listingType: "sale" | "rent"; priceAmount: number; location?: { state?: string; city?: string; locality?: string }; areaValue: number; bedrooms?: number; bathrooms?: number; imageUrls?: string[] }>;
+          const listings = await response.json() as Array<{ _id: string; title: string; description?: string; categoryId: string; listingType: "sale" | "rent"; priceAmount: number; location?: { state?: string; city?: string; locality?: string }; areaValue: number; bedrooms?: number; bathrooms?: number; imageUrls?: string[]; contactPhone?: string }>;
           const listing = listings.find((item) => item._id === editId);
           if (!listing) throw new Error("This listing was not found in your account.");
           if (cancelled) return;
@@ -81,7 +81,7 @@ function ListingForm() {
             baths: listing.bathrooms === undefined ? "" : String(listing.bathrooms),
             description: listing.description || "",
             name: "",
-            phone: "",
+            phone: listing.contactPhone || "",
             email: "",
             photos: (listing.imageUrls || []).join("\\n"),
           });
@@ -202,6 +202,7 @@ function ListingForm() {
           bedrooms: draft.beds ? Number(draft.beds) : undefined,
           bathrooms: draft.baths ? Number(draft.baths) : undefined,
           imageUrls: photos,
+          contactPhone: draft.phone.trim(),
         }),
       });
 
