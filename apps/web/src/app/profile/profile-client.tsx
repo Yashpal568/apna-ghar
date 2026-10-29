@@ -14,7 +14,7 @@ const api = (configuredApi || (process.env.NODE_ENV === "development"
   : "https://apna-ghar-api-j4fo.onrender.com/api/v1")).replace(/\/$/, "");
 const fallbackPhoto = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=95";
 function friendlyProfileError(detail: string) {
-  if (detail === "Authentication is not configured") return "Profile sync is unavailable because the API is missing its Clerk secret configuration. Set CLERK_SECRET_KEY in the API host to the same Clerk instance used by this website, then redeploy. Your changes are not synced yet.";
+  if (detail === "Authentication is not configured" || detail === "Authentication is not configured.") return "Profile sync is unavailable because the API is missing its Clerk secret configuration. Set CLERK_SECRET_KEY in the API host to the same Clerk instance used by this website, then redeploy. Your changes are not synced yet.";
   if (detail === "Invalid or expired authentication token") return "The API could not verify this sign-in session. Confirm the website and API use the same Clerk instance, then sign in again.";
   if (detail === "Failed to fetch") return "We couldn't reach the Apna Ghar API. Check the API deployment and CORS configuration, then retry.";
   return detail || "Could not load your account profile.";
