@@ -2088,3 +2088,7 @@ select option { color: var(--color-text); background: var(--color-surface); }
 @media (prefers-reduced-motion: reduce) {
   .ag-mobile-backdrop,.ag-mobile-menu,.profile-stitch-slide { animation:none !important; transition:none !important; }
 }
+
+
+.profile-stitch-security-link:is(button) { width:100%; border:0; font:inherit; text-align:left; cursor:pointer; }
+.profile-stitch-security-link:is(button):focus-visible { outline:3px solid #005bea; outline-offset:3px; }
