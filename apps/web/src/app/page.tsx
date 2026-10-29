@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import FeaturedProperties from "./components/FeaturedProperties";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
+import MarketplaceSearchForm from "./components/MarketplaceSearchForm";
 
 export const metadata: Metadata = {
   title: "Apna Ghar — Buy, rent and discover property",
@@ -31,22 +32,7 @@ export default function HomePage() {
           <h1>Find a home that fits <em>your life.</em></h1>
           <p>Buy, rent or list a property — all in one place.</p>
         </div>
-        <div className="ag-marketplace-search-card">
-          <div className="ag-marketplace-transaction-tabs" aria-label="Property transaction">
-            <a className="is-selected" href="/search?transaction=buy">Buy</a>
-            <a href="/search?transaction=rent">Rent</a>
-            <a href="/search?type=plot">Plots &amp; land</a>
-            <a href="/search?type=commercial">Commercial</a>
-          </div>
-          <form action="/search" className="ag-marketplace-search-form" role="search">
-            <label><span>City or locality</span><input name="location" placeholder="Enter city, neighbourhood or PIN code" /></label>
-            <label><span>Property type</span><select name="type" defaultValue="all property types"><option value="all property types">All property types</option><option value="house">Independent house</option><option value="apartment">Apartment</option><option value="villa">Villa</option><option value="plot">Plot / land</option></select></label>
-            <label><span>Maximum budget</span><select name="maxPrice" defaultValue=""><option value="">Any budget</option><option value="2500000">Up to ₹25 lakh</option><option value="5000000">Up to ₹50 lakh</option><option value="10000000">Up to ₹1 crore</option><option value="50000000">Up to ₹5 crore</option></select></label>
-            <input type="hidden" name="transaction" value="buy" />
-            <button className="button button-primary" type="submit"><span aria-hidden="true">⌕</span> Search properties</button>
-          </form>
-          <div className="ag-marketplace-search-foot"><span><b>✓</b> Browse at your pace</span><span><b>✓</b> Save listings you like</span><span><b>✓</b> Post your property</span></div>
-        </div>
+        <MarketplaceSearchForm />
       </div>
     </section>
 
