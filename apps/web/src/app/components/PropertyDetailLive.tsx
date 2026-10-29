@@ -28,14 +28,12 @@ function AuthenticatedSaveButton({ property, identifier, saved, onSaved, onNotic
     return () => controller.abort();
   }, [getToken, isSignedIn, onSaved, property._id]);
   async function toggle() {
-    const exists = (() => {
-      try { return (JSON.parse(localStorage.getItem("apna-ghar-saved-homes") || "[]") as Property[]).some((home) => home._id === property._id || home.slug === property.slug || home.slug === identifier); }
-      catch { return false; }
-    })();
-    const nextSaved = !exists;
+    const nextSaved = !saved;
     try {
       const homes = JSON.parse(localStorage.getItem("apna-ghar-saved-homes") || "[]") as Property[];
-      const next = nextSaved ? [{ ...property, slug: property.slug || identifier }, ...homes.filter((home) => home._id !== property._id && home.slug !== property.slug && home.slug !== identifier)] : homes.filter((home) => home._id !== property._id && home.slug !== property.slug && home.slug !== identifier);
+      const next = nextSaved
+        ? [{ ...property, slug: property.slug || identifier }, ...homes.filter((home) => home._id !== property._id && home.slug !== property.slug && home.slug !== identifier)]
+        : homes.filter((home) => home._id !== property._id && home.slug !== property.slug && home.slug !== identifier);
       localStorage.setItem("apna-ghar-saved-homes", JSON.stringify(next));
       window.dispatchEvent(new Event("apna-ghar-saved-change"));
       onSaved(nextSaved);
