@@ -3077,3 +3077,23 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
  .agh-market .agh-header-main>.agh-brand .brand-symbol { width:31px !important; height:27px !important; flex-basis:31px !important; }
  .agh-market .agh-header-main>.agh-brand .brand-wordmark { display:inline-flex !important; flex:0 0 auto !important; font-size:16px !important; white-space:nowrap !important; word-break:keep-all !important; }
 }
+
+
+/* Prevent the legacy wordmark's two flex items from wrapping on narrow phones. */
+.agh-market .agh-header-main>.agh-brand .brand-wordmark {
+  display:block !important;
+  width:max-content !important;
+  min-width:max-content !important;
+  max-width:none !important;
+  white-space:nowrap !important;
+  overflow-wrap:normal !important;
+  word-break:keep-all !important;
+  flex:0 0 auto !important;
+}
+.agh-market .agh-header-main>.agh-brand>.brand {
+  flex-wrap:nowrap !important;
+}
+@media(max-width:380px) {
+  .agh-market .agh-header-main>.agh-brand .brand-symbol { width:29px !important; flex-basis:29px !important; }
+  .agh-market .agh-header-main>.agh-brand .brand-wordmark { font-size:15px !important; }
+}
