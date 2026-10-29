@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import Script from 'next/script';
 import './globals.css';
+import MobileBottomNav from './components/MobileBottomNav';
 
 export const metadata: Metadata = {
   title: {
