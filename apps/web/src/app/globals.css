@@ -3474,3 +3474,9 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
   .ag-bottom-nav a.ag-bottom-nav-post svg{width:27px;height:27px;padding:5px;border-radius:999px;background:#064CC0;color:#fff;stroke-width:2.2}
   .ag-bottom-nav a.ag-bottom-nav-post.is-active{color:#064CC0;background:color-mix(in srgb,#064CC0 8%,transparent)}
 }
+
+/* Review-before-publish media gallery */
+.listing-review-media-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 18px}
+.listing-review-media-grid .listing-review-cover{display:block;width:100%;height:clamp(150px,24vw,280px);min-width:0;object-fit:cover;border-radius:12px;background:#eef2ff}
+.listing-review-media-grid .listing-review-video{display:block;width:100%;max-height:280px;min-width:0;object-fit:contain;border-radius:12px;background:#101828}
+@media(max-width:560px){.listing-review-media-grid{grid-template-columns:1fr}.listing-review-media-grid .listing-review-cover{height:220px}}
