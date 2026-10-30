@@ -18,7 +18,7 @@
 
 ## Current checkpoint — continue here
 
-**Active milestone:** M3 — Backend domain and identity. PR #11 CI recovery is complete and green at commit `da1b4c68cb12f1135bb30ea62626e5eb39a9adc4`. M2 authenticated live listing lifecycle acceptance remains open and must be closed before release sign-off.
+**Active milestone:** M3 — Backend domain and identity. PR #11 CI recovery is green for code commit `7a92da4bbbf5386f0a6e797b43004d8041d5901c`: CI run `41028988316` and Quality Checks run `41028988364` both passed. The subsequent documentation-only checklist commit is `00cf15ddef9022aee49a2f0a05f26e52483028d6`; no code changed after the verified green commit. M2 authenticated live listing lifecycle acceptance remains open and must be closed before release sign-off.
 
 **Last known completed work**
 - [x] Reframed the homepage as a property marketplace rather than a generic agency/portfolio landing page.
