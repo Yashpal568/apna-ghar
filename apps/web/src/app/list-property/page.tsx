@@ -314,7 +314,7 @@ function ListingForm() {
           bedrooms: draft.beds ? Number(draft.beds) : undefined,
           bathrooms: draft.baths ? Number(draft.baths) : undefined,
           imageUrls: photos,
-          videoUrls: videos,
+          ...(videos.length > 0 ? { videoUrls: videos } : {}),
           contactName: draft.name.trim(),
           contactPhone: draft.phone.trim(),
         }),
