@@ -128,6 +128,9 @@
 
 ## Session log
 
+| 2026-10-30 | Follow-up correction: restored newline delimiters for the media URL list when saving successful Cloudinary uploads, on both the deploy and feature branches. Commits: 278ce1848f0dcdceed7e6d3f190dd531375b6a87 (feature), 7bf9cf23954bda1601cb46295b78840285cb8eb2 (deployment). CI has been triggered on the feature branch; status not yet confirmed. | 278ce1848f0dcdceed7e6d3f190dd531375b6a87 | Confirm CI and align Render Clerk development secret with the frontend Clerk instance before another upload attempt. |
+
+
 | 2026-10-30 | Media upload diagnosis: user screenshot shows POST /properties/images returning HTTP 401, so request is rejected by Clerk authentication before Cloudinary is reached. Updated listing form to render local image/video previews immediately, retain previews on failed upload, refresh the Clerk session token once on 401, and show a specific safe diagnostic explaining that the Render CLERK_SECRET_KEY must match the same Clerk development instance indicated by the browser warning. Local blob previews are not included in publish payload; publishing is disabled while failed local files remain. Commits: abab3e9401cf5de8d5c3d04cfe9da6db2366b41f, 26f2a34137b5d246041f3e5a1da7457c83a7fe70, d53e4321636fbcd1a590794f739ed06077f377f3, d4b39892473e9e5e511fd3d90ae540a4e81896e0, 222668e08c6878b21060921205738eff324d3f66. Not verified: successful Clerk verification/Cloudinary upload; likely deployment environment mismatch must be corrected in Render dashboard if fresh token still gets 401. No secret values should be shared in chat. | 222668e08c6878b21060921205738eff324d3f66 | Verify Render CLERK_SECRET_KEY belongs to same development Clerk instance as frontend publishable key; redeploy API, then retry photo/video upload and confirm Cloudinary URLs appear in preview and persisted listing. |
 
 
