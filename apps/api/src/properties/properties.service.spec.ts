@@ -83,4 +83,50 @@ describe('PropertiesService', () => {
     expect(options).toEqual({ new: true });
   });
 
+
+  it('applies keyword, category, transaction, price, room and furnishing filters to public search', async () => {
+    const findQuery = query([]);
+    model.find.mockReturnValue(findQuery);
+    model.countDocuments.mockReturnValue({ exec: jest.fn().mockResolvedValue(0) });
+    await service.list({
+      page: 1, limit: 12, sort: 'newest', q: 'North Park',
+      categoryId: 'apartment', listingType: 'rent',
+      minPrice: 10000, maxPrice: 25000,
+      minBedrooms: 2, minBathrooms: 1, furnishing: 'furnished',
+    } as never);
+    const filter = model.find.mock.calls[0][0];
+    expect(filter).toEqual(expect.objectContaining({
+      status: 'active', deletedAt: null, categoryId: 'apartment',
+      listingType: 'rent', bedrooms: { $gte: 2 }, bathrooms: { $gte: 1 },
+      furnishing: 'furnished', priceAmount: { $gte: 10000, $lte: 25000 },
+    }));
+    expect(filter.$or).toHaveLength(4);
+    expect(filter.$or[0].title).toBeInstanceOf(RegExp);
+    expect(filter.$or[0].title.test('North Park apartment')).toBe(true);
+    expect(filter.$or[0].title.test('NorthX Park apartment')).toBe(false);
+  });
+
+  it('sorts public results by ascending and descending price', async () => {
+    for (const [sort, expected] of [
+      ['price_asc', { priceAmount: 1 }],
+      ['price_desc', { priceAmount: -1 }],
+    ] as const) {
+      const findQuery = query([]);
+      model.find.mockReturnValue(findQuery);
+      model.countDocuments.mockReturnValue({ exec: jest.fn().mockResolvedValue(0) });
+      await service.list({ page: 1, limit: 12, sort } as never);
+      expect(findQuery.sort).toHaveBeenCalledWith(expected);
+    }
+  });
+
+  it('escapes user-supplied search text rather than treating it as a regular expression', async () => {
+    const findQuery = query([]);
+    model.find.mockReturnValue(findQuery);
+    model.countDocuments.mockReturnValue({ exec: jest.fn().mockResolvedValue(0) });
+    await service.list({ page: 1, limit: 12, sort: 'newest', q: '.*' } as never);
+    const expression = model.find.mock.calls[0][0].$or[0].title as RegExp;
+    expect(expression.test('anything')).toBe(false);
+    expect(expression.test('.*')).toBe(true);
+  });
+
 });
