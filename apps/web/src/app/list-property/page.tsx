@@ -197,8 +197,9 @@ function ListingForm() {
         };
         let response = await send(token);
         if (response.status === 401) {
-          token = await getToken({ skipCache: true });
-          if (token) response = await send(token);
+          const refreshedToken = await getToken({ skipCache: true });
+          if (!refreshedToken) throw new Error("Your sign-in session expired. Sign in again before uploading.");
+          response = await send(refreshedToken);
         }
         const body = await response.json().catch(() => null);
         if (!response.ok || !body?.url) {
