@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, NotFoundException, TooManyRequestsException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException, HttpException } from '@nestjs/common';
 import { ConversationsController } from './conversations.controller';
 
 function chain<T>(value: T) {
@@ -187,8 +187,9 @@ describe('ConversationsController', () => {
       .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(null) })
       .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(null) })
       .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(null) });
-    await expect(controller.sendMessage({ auth: { userId: buyer } }, 'conversation-1', { text: 'Hello' }))
-      .rejects.toBeInstanceOf(TooManyRequestsException);
+    const error = await controller.sendMessage({ auth: { userId: buyer } }, 'conversation-1', { text: 'Hello' }).catch(value => value);
+    expect(error).toBeInstanceOf(HttpException);
+    expect(error.getStatus()).toBe(429);
     expect(conversation.save).not.toHaveBeenCalled();
   });
 
