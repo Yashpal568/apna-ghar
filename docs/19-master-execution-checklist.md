@@ -1,7 +1,7 @@
 # Apna Ghar — Master Execution Checklist
 
 **Repository:** `Yashpal568/apna-ghar`  
-**Working branch:** `feat/m1-foundation-completion`  
+**Working branch:** `main` (single integration line; do not create milestone branches without explicit approval)  
 **Last updated:** 2026-10-29  
 **Purpose:** Single day-to-day source of truth. Update this file whenever work starts, finishes, is blocked, or changes scope. Do not restart from a different milestone without recording why.
 
@@ -16,7 +16,7 @@
 
 ## Current checkpoint — continue here
 
-**Active milestone:** Web marketplace (M2 / roadmap Phase 1), after marketplace-first homepage/navigation and API deployment fixes.
+**Active delivery:** Combined M1 + M2 + M3 end-to-end completion. These three milestones share one release gate; do not declare any of them signed off or start M4 until all acceptance criteria below pass against the same final `main` revision and live Cloudflare/Render deployments.
 
 **Last known completed work**
 - [x] Reframed the homepage as a property marketplace rather than a generic agency/portfolio landing page.
@@ -214,3 +214,22 @@
 
 **Mainline commits:** `8ca175c3`, `505b5272`, `e9a851e7`, `4e60a827`, `4f04732c`.
 **Current acceptance decision:** M3 implementation has been integrated on main; M3 is **not signed off** until CI, Render runtime configuration, and authenticated two-account acceptance are verified.
+
+
+## 2026-10-30 — Combined M1/M2/M3 execution reset
+
+**User direction:** Finish M1, M2 and M3 together end-to-end and provide one complete evidence-based report. Do not milestone-hop and do not start M4 until all three gates are accepted.
+
+**Execution rules**
+- [ ] Keep all integration changes on `main`; do not create feature branches.
+- [ ] Treat Cloudflare Workers as the production frontend. Vercel status is not production acceptance evidence.
+- [ ] GitHub Actions must verify API/web/mobile typechecks, API unit tests, API HTTP e2e tests, API build, Next.js build and the Cloudflare production build artifact.
+- [ ] Match the deployed Cloudflare Worker version to a known source commit; manual builds with an empty commit hash are not sufficient provenance.
+- [ ] Verify Render health/readiness, MongoDB connectivity, Clerk JWT verification and CORS from the live Cloudflare origin.
+- [ ] Complete real signed-in buyer and owner journeys: search/filter/sort/pagination, save/unsave, create/publish/edit/hide/delete listing, profile sync and Cloudinary image upload.
+- [ ] Complete real two-account buyer↔seller messaging, including pagination, unread/read receipts and rate-limit behavior.
+- [ ] Review message persistence growth and complete the dedicated message-collection migration before production sign-off.
+- [ ] Record exact commit SHA, CI run IDs, Cloudflare build/deployment/version IDs, Render verification and browser/API test evidence here.
+- [ ] M1, M2 and M3 remain open until every applicable item is evidenced. M4 is blocked until then.
+
+**First implementation change:** GitHub CI now includes a Cloudflare production-artifact build step after the Next.js build. Commit: `2a44d487969d39707e87be9cf65a14cdfe890297`. This workflow change itself is not yet CI-verified.
