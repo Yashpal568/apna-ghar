@@ -213,8 +213,8 @@ function ListingForm() {
       }
       setDraft((current) => ({
         ...current,
-        photos: [...current.photos.split("\\n").map((url) => url.trim()).filter(Boolean), ...uploaded].join("\\n"),
-        videos: [...current.videos.split("\\n").map((url) => url.trim()).filter(Boolean), ...uploadedVideos].join("\\n"),
+        photos: [...current.photos.split("\n").map((url) => url.trim()).filter(Boolean), ...uploaded].join("\n"),
+        videos: [...current.videos.split("\n").map((url) => url.trim()).filter(Boolean), ...uploadedVideos].join("\n"),
       }));
       setLocalMedia((current) => {
         current.filter((item) => pending.some((done) => done.id === item.id)).forEach((item) => URL.revokeObjectURL(item.url));
