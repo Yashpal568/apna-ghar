@@ -20,12 +20,17 @@ const clerkHandler = clerkMiddleware(async (auth, request) => {
 });
 
 /**
- * Allow CI and local builds to run without Clerk credentials.
- * Authentication middleware is enabled automatically when the public key is configured.
- * Protected routes must not be considered secured until Clerk is configured.
+ * Allow CI and local builds to compile without Clerk credentials.
+ * In production, fail closed on protected pages when Clerk is misconfigured.
  */
 export default function middleware(request: NextRequest, event: NextFetchEvent) {
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+    if (process.env.NODE_ENV === "production" && isProtectedRoute(request)) {
+      return NextResponse.json(
+        { error: "Authentication is temporarily unavailable. Please try again later." },
+        { status: 503 },
+      );
+    }
     return NextResponse.next();
   }
 
