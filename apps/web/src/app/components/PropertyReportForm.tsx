@@ -20,7 +20,7 @@ function AuthenticatedPropertyReportForm({propertyId}:{propertyId:string}) {
     event.preventDefault();setBusy(true);setNotice("");
     try {
       const token=await getToken();if(!token)throw new Error("Please sign in again.");
-      const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:4000/api/v1").replace(/\/$/,"");
+      const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/,"");
       const response=await fetch(api+"/property-reports/"+encodeURIComponent(propertyId),{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token,Accept:"application/json"},body:JSON.stringify({reason,details})});
       const body=await response.json().catch(()=>({}));
       if(!response.ok)throw new Error(typeof body.message==="string"?body.message:"Report could not be submitted.");
