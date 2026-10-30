@@ -4,7 +4,7 @@ import { verifyToken } from '@clerk/backend';
 
 @Injectable()
 export class ClerkAuthGuard implements CanActivate {
-  constructor(private readonly config: ConfigService) {}
+  constructor(protected readonly config: ConfigService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<{
