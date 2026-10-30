@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
-import { IsIn, IsOptional, IsString, MaxLength, Matches } from 'class-validator';
+import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { PropertyAuthGuard } from './property-auth.guard';
 import { PropertyReportsService } from './property-reports.service';
@@ -9,6 +9,10 @@ type AuthenticatedRequest = { authUserId?: string };
 class CreatePropertyReportDto {
   @IsIn(['misleading', 'duplicate', 'scam', 'wrong_information', 'inappropriate', 'other']) reason!: string;
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(1500) details?: string;
+}
+
+class ListPropertyReportsQueryDto {
+  @IsOptional() @IsIn(['open', 'reviewing', 'resolved', 'dismissed']) status?: 'open' | 'reviewing' | 'resolved' | 'dismissed';
 }
 
 class ModeratePropertyReportDto {
@@ -22,9 +26,9 @@ export class PropertyReportsController {
 
   @Get('admin')
   @UseGuards(AdminAuthGuard)
-  listForModeration(@Req() request: AuthenticatedRequest, @Query('status') status?: string) {
+  listForModeration(@Req() request: AuthenticatedRequest, @Query() query: ListPropertyReportsQueryDto) {
     if (!request.authUserId) throw new BadRequestException('Authenticated admin identity is missing');
-    return this.service.listForModeration(status);
+    return this.service.listForModeration(query.status);
   }
 
   @Post('admin/:reportId/status')
