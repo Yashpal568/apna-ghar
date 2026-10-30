@@ -87,80 +87,71 @@ const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-
 
 function ListingForm() {
   const { getToken } = useAuth();
-  const [draft, setDraft] = useState<Draft>(initialDraft);
-  const [step, setStep] = useState(1);
-  const [draftHydrated, setDraftHydrated] = useState(false);
+  const [draft, setDraft] = useState<Draft>(() => {
+    if (typeof window === "undefined") return initialDraft;
+    try {
+      const saved = localStorage.getItem("apna-ghar-listing-draft");
+      if (!saved) return initialDraft;
+      const parsed = JSON.parse(saved) as Partial<Draft>;
+      return Object.fromEntries(Object.keys(initialDraft).map((key) => [
+        key,
+        typeof parsed[key as keyof Draft] === "string" ? parsed[key as keyof Draft] : initialDraft[key as keyof Draft],
+      ])) as Draft;
+    } catch { return initialDraft; }
+  });
+  const [step, setStep] = useState(() => {
+    if (typeof window === "undefined") return 1;
+    try {
+      const parsed = JSON.parse(localStorage.getItem("apna-ghar-listing-draft") || "null") as { step?: number } | null;
+      return parsed && Number.isInteger(parsed.step) && parsed.step! >= 1 && parsed.step! <= 3 ? parsed.step! : 1;
+    } catch { return 1; }
+  });
   const [notice, setNotice] = useState("");
   const [publishing, setPublishing] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [localMedia, setLocalMedia] = useState<Array<{ id: string; file: File; url: string }>>([]);
-  const [editingId, setEditingId] = useState("");
+  const [editingId, setEditingId] = useState(() => typeof window === "undefined" ? "" : new URLSearchParams(window.location.search).get("edit") || "");
 
   useEffect(() => {
+    if (!editingId) return;
     let cancelled = false;
-    const editId = new URLSearchParams(window.location.search).get("edit");
-    if (editId) {
-      setEditingId(editId);
-      setNotice("Loading your listing for editing…");
-      void (async () => {
-        try {
-          const token = await getToken();
-          if (!token) throw new Error("Sign in to edit your listing.");
-          const response = await fetch(apiBase + "/properties/mine", { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
-          if (!response.ok) throw new Error("Could not load your listings. Please sign in and retry.");
-          const listings = await response.json() as Array<{ _id: string; title: string; description?: string; categoryId: string; listingType: "sale" | "rent"; priceAmount: number; location?: { state?: string; city?: string; locality?: string }; areaValue: number; bedrooms?: number; bathrooms?: number; imageUrls?: string[]; videoUrls?: string[]; contactName?: string; contactPhone?: string }>;
-          const listing = listings.find((item) => item._id === editId);
-          if (!listing) throw new Error("This listing was not found in your account.");
-          if (cancelled) return;
-          setDraft({
-            purpose: listing.listingType,
-            type: listing.categoryId,
-            title: listing.title,
-            state: listing.location?.state || "",
-            city: listing.location?.city || "",
-            locality: listing.location?.locality || "",
-            price: String(listing.priceAmount),
-            area: String(listing.areaValue),
-            beds: listing.bedrooms === undefined ? "" : String(listing.bedrooms),
-            baths: listing.bathrooms === undefined ? "" : String(listing.bathrooms),
-            description: listing.description || "",
-            name: listing.contactName || "",
-            phone: listing.contactPhone || "",
-            email: "",
-            photos: (listing.imageUrls || []).join("\n"),
-            videos: (listing.videoUrls || []).join("\n"),
-          });
-          setDraftHydrated(true);
-          setNotice("Listing loaded. Review the details and save your changes.");
-        } catch (error) {
-          if (!cancelled) setNotice(error instanceof Error ? error.message : "Could not load this listing.");
-        }
-      })();
-      return () => { cancelled = true; };
-    }
-    try {
-      const saved = localStorage.getItem("apna-ghar-listing-draft");
-      if (saved) {
-        const parsed = JSON.parse(saved) as Partial<Draft> & { step?: number };
-        setDraft((current) => ({ ...current, ...Object.fromEntries(Object.keys(initialDraft).map((key) => [key, typeof parsed[key as keyof Draft] === "string" ? parsed[key as keyof Draft] : current[key as keyof Draft]])) } as Draft));
-        if (typeof parsed.step === "number" && parsed.step >= 1 && parsed.step <= 3) setStep(parsed.step);
+    setNotice("Loading your listing for editing…");
+    void (async () => {
+      try {
+        const token = await getToken();
+        if (!token) throw new Error("Sign in to edit your listing.");
+        const response = await fetch(apiBase + "/properties/mine", { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
+        if (!response.ok) throw new Error("Could not load your listings. Please sign in and retry.");
+        const listings = await response.json() as Array<{ _id: string; title: string; description?: string; categoryId: string; listingType: "sale" | "rent"; priceAmount: number; location?: { state?: string; city?: string; locality?: string }; areaValue: number; bedrooms?: number; bathrooms?: number; imageUrls?: string[]; videoUrls?: string[]; contactName?: string; contactPhone?: string }>;
+        const listing = listings.find((item) => item._id === editingId);
+        if (!listing) throw new Error("This listing was not found in your account.");
+        if (cancelled) return;
+        setDraft({
+          purpose: listing.listingType, type: listing.categoryId, title: listing.title,
+          state: listing.location?.state || "", city: listing.location?.city || "",
+          locality: listing.location?.locality || "", price: String(listing.priceAmount),
+          area: String(listing.areaValue), beds: listing.bedrooms === undefined ? "" : String(listing.bedrooms),
+          baths: listing.bathrooms === undefined ? "" : String(listing.bathrooms),
+          description: listing.description || "", name: listing.contactName || "",
+          phone: listing.contactPhone || "", email: "",
+          photos: (listing.imageUrls || []).join("\\n"), videos: (listing.videoUrls || []).join("\\n"),
+        });
+        setNotice("Listing loaded. Review the details and save your changes.");
+      } catch (error) {
+        if (!cancelled) setNotice(error instanceof Error ? error.message : "Could not load this listing.");
       }
-    } catch {
-      // Ignore an invalid or outdated local draft and let the owner start fresh.
-    } finally {
-      setDraftHydrated(true);
-    }
+    })();
     return () => { cancelled = true; };
-  }, [getToken]);
+  }, [editingId, getToken]);
 
   useEffect(() => {
-    if (!draftHydrated || editingId) return;
+    if (editingId) return;
     try {
       localStorage.setItem("apna-ghar-listing-draft", JSON.stringify({ ...draft, step, updatedAt: new Date().toISOString() }));
     } catch {
-      setNotice("Autosave is unavailable in this browser. Use Save draft to retry.");
+      setNotice("Autosave failed. Your browser may be blocking site storage; use Save draft and check browser storage settings.");
     }
-  }, [draft, step, draftHydrated, editingId]);
+  }, [draft, step, editingId]);
 
   const update = (key: keyof Draft, value: string) => {
     setDraft((current) => ({ ...current, [key]: value }));
