@@ -84,7 +84,9 @@ describe('ConversationsController', () => {
     conversations.aggregate.mockReturnValue({ exec: jest.fn().mockResolvedValue([{
       participantIds: [buyer, owner], propertyId: 'property-1', propertyTitle: 'Family home', messages,
     }]) });
-    const result = await controller.getMessages({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011', undefined, '3');
+    const result = await controller.getMessages({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011', '2026-01-04T00:00:00.000Z', '3');
+    const pipeline = conversations.aggregate.mock.calls[0][0];
+    expect(pipeline[2].$project.messages.$slice[0].$filter.cond).toEqual({ $lt: ['$message.sentAt', expect.any(Date)] });
     expect(result.messages).toHaveLength(3);
     expect(result.messages[0].text).toBe('Message 1');
     expect(result.messages[2].text).toBe('Message 3');
@@ -154,6 +156,24 @@ describe('ConversationsController', () => {
     expect(conversation.unreadCountByUser.get(owner)).toBe(2);
     expect(conversation.save).toHaveBeenCalledTimes(1);
   });
+  it('counts the first enquiry message against the sender quota and owner unread count', async () => {
+    const property = { _id: '507f1f77bcf86cd799439011', ownerId: owner, title: 'Family home', slug: 'family-home', status: 'active' };
+    const conversation = {
+      _id: 'conversation-1', propertyId: property._id, propertyTitle: property.title,
+      messages: [] as Array<{ senderId: string; text: string; sentAt: Date }>,
+      unreadCountByUser: new Map([[owner, 0], [buyer, 0]]),
+      save: jest.fn().mockResolvedValue(undefined),
+    };
+    properties.findOne.mockReturnValue(chain(property));
+    conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(null) });
+    conversations.create.mockResolvedValue(conversation);
+    await controller.startForProperty({ auth: { userId: buyer } }, property._id, { message: 'Is it available?' });
+    expect(messageRateLimits.findOneAndUpdate).toHaveBeenCalled();
+    expect(conversation.messages[0]).toEqual(expect.objectContaining({ senderId: buyer, text: 'Is it available?' }));
+    expect(conversation.unreadCountByUser.get(owner)).toBe(1);
+    expect(conversation.save).toHaveBeenCalledTimes(1);
+  });
+
   it('blocks message sends after the shared per-user minute quota is exhausted', async () => {
     const conversation = {
       participantIds: [buyer, owner], ownerId: owner, buyerId: buyer,
