@@ -15,7 +15,7 @@
     "build:api": "npm run build -w @apna-ghar/api",
     "build:web": "npm run build -w @apna-ghar/web",
     "build": "npm run build:api && npm run build:web",
-    "test:api": "npm run test -w @apna-ghar/api",
+    "test:api": "npm run test -w @apna-ghar/api -- --runInBand",
     "lint:web": "npm run lint -w @apna-ghar/web",
     "typecheck:api": "npx tsc --noEmit -p apps/api/tsconfig.json",
     "typecheck:web": "npx tsc --noEmit -p apps/web/tsconfig.json",
