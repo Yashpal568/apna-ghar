@@ -112,7 +112,7 @@ describe('ConversationsController', () => {
   });
   it('stores a message from an authenticated participant and advances the conversation timestamp', async () => {
     const conversation = {
-      _id: 'conversation-1',
+      _id: '507f1f77bcf86cd799439011',
       participantIds: [buyer, owner],
       messages: [] as Array<{ senderId: string; text: string; sentAt: Date }>,
       ownerId: owner,
