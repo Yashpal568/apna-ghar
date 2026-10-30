@@ -252,7 +252,9 @@
 
 **Commits:** `713fb9d`, `bf37f68`, `f20256a`, `7a2eeb3`, `68ce9e2`, `6e13906`, `8d01aba`, `07379cd`, `951fa33`, `c4b82c0`, `63c61b4`, `7395383`, `dd1849b`, `326d3e5`, `da7ee02`, `7f4958d`, `892112e`.
 
-**Latest inspected Cloudflare build:** build `5d46f6b1-d954-48ba-9511-aafc00ab5e13` succeeded, but its source commit is `7a2eeb3e862176f3ef07e487c079779a4f654eaf`, not the later API-only commits. The Cloudflare build trigger watches web/package files, so API-only commits do not create a new frontend artifact. This is not Render API deployment evidence.
+**Latest inspected Cloudflare build:** build `5d46f6b1-d954-48ba-9511-aafc00ab5e13` succeeded and produced the currently active Worker deployment `ffa03bd3-5ab2-49e0-8466-a34dc638b186` / version `2ce74e3a-f16a-495e-87d4-6ee0da2a68de` (100% traffic). Its source commit is `7a2eeb3e862176f3ef07e487c079779a4f654eaf`, not the later API-only commits. The Cloudflare build trigger watches web/package files, so API-only commits do not create a new frontend artifact. This is not Render API deployment evidence.
+
+**Additional production configuration finding:** Cloudflare build metadata exposes `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` as a `pk_test_...` key. This is a Clerk development/test instance, not a production live key. Confirm and configure matching live Clerk publishable/secret keys for production before accepting real customer authentication.
 
 **Acceptance decision:** M1–M3 remain open. No final green CI, current Render runtime, or authenticated live acceptance claim is made yet.
 
