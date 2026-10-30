@@ -80,7 +80,8 @@
 - [x] Inbox previews now select only the latest message rather than returning each full embedded history.
 - [x] Messages UI can load older pages and merges them with 5-second live refreshes without moving the cursor forward.
 - [ ] Verify pagination with real MongoDB data and browser scrolling; CI for the latest pagination commits is still pending.
-- [ ] Add a production-safe shared rate limiter and concurrency-safe message writes before production sign-off.
+- [x] Added a MongoDB-backed per-user message send quota (20 messages per rolling minute) with TTL cleanup and HTTP 429 responses.
+- [ ] Add concurrency-safe message persistence and migrate unbounded embedded message arrays into a dedicated message collection before production sign-off.
 
 ### M4 — Admin and moderation
 - [ ] Server-protect admin routes and every privileged API.
@@ -177,3 +178,6 @@
 
 
 | 2026-10-30 | Continued PR #13 after both workflows passed on the unread/read implementation. Added bounded cursor pagination to `GET /api/v1/conversations/:id/messages` (default 50, maximum 100), participant authorization, ISO cursor/page-size validation and aggregation-side message filtering. Inbox listing now projects only the most recent message for each conversation. Messages UI adds a Load older messages control and merges paginated history with periodic live refreshes while preserving the oldest loaded cursor. Added unit coverage for participant access, page bounds, cursor validation and hasMore/nextBefore behavior; CI has not yet been verified for these newest commits. | Latest code commit `a41238a1fc1bc25a729e730a39548c1a8aeebc6e`; prior green checks at `2406656435f3579b3d3463385120c0d3a1737e41` | Verify fresh CI for the pagination changes, then exercise cursor paging against MongoDB and the browser; implement a shared production-safe rate limiter and concurrency-safe message persistence before launch. |
+
+
+| 2026-10-30 | Added a MongoDB-backed shared per-user send quota (20 messages/minute) with atomic counter updates, one-minute windows, TTL cleanup and HTTP 429 responses; applied the same quota to first-message property enquiries and subsequent replies. Added controller coverage for quota exhaustion. Corrected the MongoDB aggregation variable used by message cursor filtering. CI was green for the pagination implementation before the rate-limit additions; the latest rate-limit follow-up still requires fresh CI. | Rate-limit schema/controller/tests commits: `fa7704e`, `8d2cf68`, `50bd6dd`, `3b75505`, `8fc708c`, `11ca708` | Run both workflows on the latest head; if green, test 20/minute enforcement, TTL behavior and pagination against live MongoDB. Before production, migrate embedded message arrays to a dedicated collection and use atomic message/unread writes. |
