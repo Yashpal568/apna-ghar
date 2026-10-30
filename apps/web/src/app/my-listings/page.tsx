@@ -1,5 +1,4 @@
 "use client";
-import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
 
@@ -125,7 +124,7 @@ function SignInRequired() {
 export default function MyListingsPage() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   return <main className="page-shell interior-page">
-    <SiteHeader active="account" />
+    
     <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>My listings</span></div>
     <section className="listing-intro"><p className="eyebrow">OWNER WORKSPACE</p><h1>Your properties,<br /><em>all in one place.</em></h1><p>Manage the homes and spaces you advertise on Apna Ghar.</p></section>
     {clerkConfigured ? <ConnectedListings /> : <SignInRequired />}
