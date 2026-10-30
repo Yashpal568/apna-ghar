@@ -249,6 +249,7 @@ function ListingForm() {
       if (failures.length) setNotice(`${successfulIds.size} file(s) uploaded; ${failures.length} failed. ${failures[0].error} Retry the remaining files.`);
       else setNotice(`Uploaded ${uploaded.length} photo(s) and ${uploadedVideos.length} video(s) to Cloudinary.`);
     } catch (error) {
+      setUploadProgress((current) => current.map((entry) => entry.status === "uploading" ? { ...entry, status: "failed" } : entry));
       setNotice(error instanceof Error ? error.message : "Could not upload property media. Your local previews are retained; retry after fixing the issue.");
     } finally { setUploadingImages(false); }
   };
