@@ -7,7 +7,7 @@ import SiteFooter from "./SiteFooter";
 type Message={_id?:string;senderId:string;text:string;sentAt:string};
 type Conversation={_id:string;propertyId:string;propertyTitle:string;propertySlug:string;ownerId:string;buyerId:string;participantIds:string[];messages:Message[];lastMessageAt:string;unreadCountByUser?:Record<string,number>};
 type ConversationDetail={conversationId:string;propertyId:string;propertyTitle:string;messages:Message[];hasMore?:boolean;nextBefore?:string|null};
-function mergeMessages(existing:Message[],incoming:Message[]){const merged=new Map<string,Message>();for(const message of [...existing,...incoming])merged.set(message._id||message.senderId+\"-\"+message.sentAt,message);return [...merged.values()].sort((a,b)=>new Date(a.sentAt).getTime()-new Date(b.sentAt).getTime())}
+function mergeMessages(existing:Message[],incoming:Message[]){const merged=new Map<string,Message>();for(const message of [...existing,...incoming])merged.set(message._id||message.senderId+"-"+message.sentAt,message);return [...merged.values()].sort((a,b)=>new Date(a.sentAt).getTime()-new Date(b.sentAt).getTime())}
 const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:4000/api/v1").replace(/\/$/,"");
 function MessagesCenterAuthenticated(){
  const {isSignedIn,getToken,isLoaded}=useAuth();const {user}=useUser();
