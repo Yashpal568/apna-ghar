@@ -149,7 +149,6 @@ export class ConversationsController {
     if (!conversation) throw new NotFoundException('Conversation not found.');
     this.assertParticipant(conversation.participantIds, request.auth.userId);
     await this.consumeMessageQuota(request.auth.userId);
-    await this.consumeMessageQuota(request.auth.userId);
     const recipientId = conversation.ownerId === request.auth.userId ? conversation.buyerId : conversation.ownerId;
     const sentAt = new Date();
     const message = { _id: new Types.ObjectId(), senderId: request.auth.userId, text, sentAt };
