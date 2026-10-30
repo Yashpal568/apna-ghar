@@ -134,7 +134,7 @@ function ListingForm() {
           baths: listing.bathrooms === undefined ? "" : String(listing.bathrooms),
           description: listing.description || "", name: listing.contactName || "",
           phone: listing.contactPhone || "", email: "",
-          photos: (listing.imageUrls || []).join("\\n"), videos: (listing.videoUrls || []).join("\\n"),
+          photos: (listing.imageUrls || []).join("\n"), videos: (listing.videoUrls || []).join("\n"),
         });
         setNotice("Listing loaded. Review the details and save your changes.");
       } catch (error) {
@@ -227,8 +227,8 @@ function ListingForm() {
       if (successfulIds.size) {
         setDraft((current) => ({
           ...current,
-          photos: [...current.photos.split("\\n").map((url) => url.trim()).filter(Boolean), ...uploaded.map((result) => result.url)].join("\\n"),
-          videos: [...current.videos.split("\\n").map((url) => url.trim()).filter(Boolean), ...uploadedVideos.map((result) => result.url)].join("\\n"),
+          photos: [...current.photos.split("\n").map((url) => url.trim()).filter(Boolean), ...uploaded.map((result) => result.url)].join("\n"),
+          videos: [...current.videos.split("\n").map((url) => url.trim()).filter(Boolean), ...uploadedVideos.map((result) => result.url)].join("\n"),
         }));
         setLocalMedia((current) => {
           current.filter((item) => successfulIds.has(item.id)).forEach((item) => URL.revokeObjectURL(item.url));
