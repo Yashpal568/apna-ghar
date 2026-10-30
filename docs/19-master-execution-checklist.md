@@ -258,3 +258,10 @@
 
 **Acceptance decision:** M1–M3 remain open. No final green CI, current Render runtime, or authenticated live acceptance claim is made yet.
 
+
+
+## 2026-10-30 — final source review follow-up
+
+- [x] Removed a stale `BadRequestException` import from the visit-request controller after its string-based exception catch was removed. Commit: `efccf37e9cb1064ce59550ef03517ff59c8d89aa`.
+- [ ] Fresh GitHub Actions result remains unverified on this commit: the available commit-status endpoint exposes only Vercel success, and the available workflow-run lookup returns no push-triggered runs. Do not treat that as a passing Actions result.
+- [ ] Live production Clerk keys, Render deployment/runtime verification, authenticated buyer/owner acceptance, and the dedicated message-collection migration remain release blockers.
