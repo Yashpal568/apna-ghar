@@ -2,7 +2,7 @@ import { BadRequestException, ForbiddenException, NotFoundException } from '@nes
 import { ConversationsController } from './conversations.controller';
 
 function chain<T>(value: T) {
-  return { lean: jest.fn().mockReturnThis(), sort: jest.fn().mockReturnThis(), limit: jest.fn().mockReturnThis(), exec: jest.fn().mockResolvedValue(value) };
+  return { lean: jest.fn().mockReturnThis(), sort: jest.fn().mockReturnThis(), limit: jest.fn().mockReturnThis(), select: jest.fn().mockReturnThis(), exec: jest.fn().mockResolvedValue(value) };
 }
 
 describe('ConversationsController', () => {
@@ -33,6 +33,7 @@ describe('ConversationsController', () => {
     expect(conversations.find).toHaveBeenCalledWith({ participantIds: buyer });
     expect(query.sort).toHaveBeenCalledWith({ lastMessageAt: -1 });
     expect(query.limit).toHaveBeenCalledWith(100);
+    expect(query.select).toHaveBeenCalledWith({ messages: { $slice: -1 } });
   });
 
   it('prevents an owner from starting a buyer chat on their own listing', async () => {
