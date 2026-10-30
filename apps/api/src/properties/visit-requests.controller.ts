@@ -25,14 +25,8 @@ export class VisitRequestsController {
   @Post(':propertyId')
   async create(@Req() request: AuthenticatedRequest, @Param('propertyId') propertyId: string, @Body() body: CreateVisitRequestDto) {
     if (!request.authUserId) throw new BadRequestException('Authenticated user identity is missing');
-    try {
-      const result = await this.service.create(request.authUserId, propertyId, body);
-      if (!result) throw new NotFoundException('Published property not found');
-      return result;
-    } catch (error) {
-      if (error instanceof NotFoundException) throw error;
-      if (error instanceof Error && error.message === 'Visit date must be today or later.') throw new BadRequestException(error.message);
-      throw error;
-    }
+    const result = await this.service.create(request.authUserId, propertyId, body);
+    if (!result) throw new NotFoundException('Published property not found');
+    return result;
   }
 }
