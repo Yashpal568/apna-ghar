@@ -27,4 +27,6 @@ jobs:
         run: npm run build:api
 
       - name: Build Next.js website and admin UI
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ZmxleGlibGUtYmlzb24tNTQ5NC5jbGVyay5hY2NvdW50cy5kZXYk
         run: npm run build:web
