@@ -122,6 +122,7 @@ function ListingForm() {
   const [notice, setNotice] = useState("");
   const [publishing, setPublishing] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<Array<{ id: string; name: string; loaded: number; total: number; status: "uploading" | "complete" | "failed" }>>([]);
   const [localMedia, setLocalMedia] = useState<Array<{ id: string; file: File; url: string }>>([]);
   const [editingId, setEditingId] = useState(() => typeof window === "undefined" ? "" : new URLSearchParams(window.location.search).get("edit") || "");
 
@@ -176,61 +177,57 @@ function ListingForm() {
     if (!selected.length) return;
     const selectedImages = selected.filter((file) => file.type.startsWith("image/"));
     const selectedVideos = selected.filter((file) => file.type.startsWith("video/"));
-    if (selected.some((file) => !file.type.startsWith("image/") && !file.type.startsWith("video/"))) {
-      setNotice("Choose image files or MP4, WebM and MOV videos.");
-      return;
-    }
+    if (selected.some((file) => !file.type.startsWith("image/") && !file.type.startsWith("video/"))) { setNotice("Choose image files or MP4, WebM and MOV videos."); return; }
     const alreadySelectedImages = retryPending ? 0 : localMedia.filter((item) => item.file.type.startsWith("image/")).length;
     const alreadySelectedVideos = retryPending ? 0 : localMedia.filter((item) => item.file.type.startsWith("video/")).length;
-    if (selectedImages.length + photos.length + alreadySelectedImages > 10 ||
-        selectedVideos.length + videos.length + alreadySelectedVideos > 1) {
-      setNotice("You can add up to 10 photos and 1 property video.");
-      return;
-    }
+    if (selectedImages.length + photos.length + alreadySelectedImages > 10 || selectedVideos.length + videos.length + alreadySelectedVideos > 1) { setNotice("You can add up to 10 photos and 1 property video."); return; }
     const invalid = selected.find((file) => file.type.startsWith("image/")
       ? (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type) || file.size > 8 * 1024 * 1024)
       : (!["video/mp4", "video/webm", "video/quicktime"].includes(file.type) || file.size > 100 * 1024 * 1024));
-    if (invalid) {
-      setNotice(invalid.type.startsWith("video/")
-        ? "Choose an MP4, WebM or MOV video under 100 MB."
-        : "Choose a JPEG, PNG, WebP or AVIF image under 8 MB.");
-      return;
-    }
-
+    if (invalid) { setNotice(invalid.type.startsWith("video/") ? "Choose an MP4, WebM or MOV video under 100 MB." : "Choose a JPEG, PNG, WebP or AVIF image under 8 MB."); return; }
     const pending = retryPending
       ? localMedia.filter((item) => selected.some((file) => file === item.file))
       : selected.map((file) => ({ id: `${file.name}-${file.size}-${file.lastModified}-${Math.random().toString(36).slice(2)}`, file, url: URL.createObjectURL(file) }));
+    if (!pending.length) return;
     if (!retryPending) setLocalMedia((current) => [...current, ...pending]);
     setUploadingImages(true);
-    setNotice("Preview ready. Uploading selected media to Cloudinary…");
+    setNotice("Uploading media securely to Cloudinary…");
+    setUploadProgress(pending.map((item) => ({ id: item.id, name: item.file.name, loaded: 0, total: item.file.size, status: "uploading" })));
     try {
-      let token = await getToken({ skipCache: true });
+      const token = await getToken({ skipCache: true });
       if (!token) throw new Error("Your sign-in session is missing. Sign in again before uploading.");
       const results = await Promise.all(pending.map(async (item) => {
-        const send = (authToken: string) => {
-          const form = new FormData();
-          form.append("file", item.file);
-          return fetch(apiBase + (item.file.type.startsWith("video/") ? "/properties/videos" : "/properties/images"), {
-            method: "POST",
-            headers: { Authorization: "Bearer " + authToken, Accept: "application/json" },
-            body: form,
-          });
-        };
+        const send = (authToken: string) => new Promise<Response>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", apiBase + (item.file.type.startsWith("video/") ? "/properties/videos" : "/properties/images"));
+          xhr.setRequestHeader("Authorization", "Bearer " + authToken);
+          xhr.setRequestHeader("Accept", "application/json");
+          xhr.upload.onprogress = (event) => {
+            const total = event.lengthComputable ? event.total : item.file.size;
+            setUploadProgress((current) => current.map((entry) => entry.id === item.id ? { ...entry, loaded: Math.min(event.loaded, total), total } : entry));
+          };
+          xhr.onload = () => resolve(new Response(xhr.responseText, { status: xhr.status, statusText: xhr.statusText }));
+          xhr.onerror = () => reject(new Error("Network error while uploading " + item.file.name + "."));
+          xhr.onabort = () => reject(new Error("Upload cancelled for " + item.file.name + "."));
+          const form = new FormData(); form.append("file", item.file); xhr.send(form);
+        });
         try {
           let response = await send(token);
           if (response.status === 401) {
-            const refreshedToken = await getToken({ skipCache: true });
-            if (!refreshedToken) throw new Error("Your sign-in session expired. Sign in again before uploading.");
-            response = await send(refreshedToken);
+            const refreshed = await getToken({ skipCache: true });
+            if (!refreshed) throw new Error("Your sign-in session expired. Sign in again before uploading.");
+            response = await send(refreshed);
           }
-          const body = await response.json().catch(() => null);
+          const body = await response.json().catch(() => null) as { url?: string; message?: string | string[] } | null;
           if (!response.ok || !body?.url) {
             if (response.status === 401) throw new Error("The API rejected your Clerk session (401). Check that Render's Clerk secret belongs to the same Clerk instance as the website.");
             const message = Array.isArray(body?.message) ? body.message.join(", ") : body?.message;
             throw new Error(message || `Media upload failed (HTTP ${response.status}).`);
           }
-          return { item, url: body.url as string, error: "" };
+          setUploadProgress((current) => current.map((entry) => entry.id === item.id ? { ...entry, loaded: entry.total, status: "complete" } : entry));
+          return { item, url: body.url, error: "" };
         } catch (error) {
+          setUploadProgress((current) => current.map((entry) => entry.id === item.id ? { ...entry, status: "failed" } : entry));
           return { item, url: "", error: error instanceof Error ? error.message : "Upload failed." };
         }
       }));
@@ -249,17 +246,11 @@ function ListingForm() {
         });
       }
       const failures = results.filter((result) => result.error);
-      if (failures.length) {
-        const firstError = failures[0].error;
-        setNotice(`${successfulIds.size} file(s) uploaded; ${failures.length} failed. ${firstError} Retry the remaining files.`);
-      } else {
-        setNotice(`Uploaded ${uploaded.length} photo(s) and ${uploadedVideos.length} video(s) to Cloudinary.`);
-      }
+      if (failures.length) setNotice(`${successfulIds.size} file(s) uploaded; ${failures.length} failed. ${failures[0].error} Retry the remaining files.`);
+      else setNotice(`Uploaded ${uploaded.length} photo(s) and ${uploadedVideos.length} video(s) to Cloudinary.`);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Could not upload property media. Your local previews are retained; retry after fixing the issue.");
-    } finally {
-      setUploadingImages(false);
-    }
+    } finally { setUploadingImages(false); }
   };
 
   const photos = parseMediaUrls(draft.photos);
@@ -288,6 +279,10 @@ function ListingForm() {
   };
 
   const publish = async () => {
+    if (localMedia.length > 0) {
+      setNotice("Wait for every selected photo/video to finish uploading, or remove files that failed. Your listing cannot be published with local-only media.");
+      return;
+    }
     if (!basicsValid || !contactValid) {
       setNotice("Complete the required property and contact fields first.");
       return;
@@ -390,7 +385,8 @@ function ListingForm() {
                 <label className="listing-dropzone"><span className="listing-upload-icon">＋</span><strong>{uploadingImages ? "Uploading media…" : "Add photos or video"}</strong><small>JPEG, PNG, WebP, AVIF · MP4, WebM, MOV</small><input type="file" accept="image/jpeg,image/png,image/webp,image/avif,video/mp4,video/webm,video/quicktime" multiple disabled={uploadingImages || (photos.length >= 10 && videos.length >= 1)} onChange={(event) => { void uploadPhotos(event.currentTarget.files); event.currentTarget.value = ""; }} /></label>
                 {(photos.length > 0 || localMedia.some((item) => item.file.type.startsWith("image/"))) && <div className="listing-photo-grid">{photos.map((url, index) => <div className="listing-photo-item" key={url}><img src={url} alt={`Property photo ${index + 1}`} loading="lazy" /><button type="button" aria-label={`Remove photo ${index + 1}`} onClick={() => update("photos", photos.filter((_, photoIndex) => photoIndex !== index).join("\n"))}>×</button></div>)}{localMedia.filter((item) => item.file.type.startsWith("image/")).map((item) => <div className="listing-photo-item" key={item.id}><img src={item.url} alt={`Selected ${item.file.name}`} /><span className="listing-local-upload-tag">{uploadingImages ? "Uploading…" : "Not uploaded"}</span><button type="button" aria-label={`Remove ${item.file.name}`} onClick={() => { URL.revokeObjectURL(item.url); setLocalMedia((current) => current.filter((entry) => entry.id !== item.id)); }}>×</button></div>)}</div>}
                 {videos.map((url,index)=><div className="listing-video-preview" key={url}><video src={url} controls preload="metadata" /><button type="button" onClick={() => update("videos", videos.filter((_,videoIndex)=>videoIndex!==index).join("\n"))}>Remove video</button></div>)}{localMedia.filter((item) => item.file.type.startsWith("video/")).map((item) => <div className="listing-video-preview" key={item.id}><video src={item.url} controls preload="metadata" /><small>{uploadingImages ? "Uploading video…" : "Video not uploaded — retry after fixing authentication."}</small><button type="button" onClick={() => { URL.revokeObjectURL(item.url); setLocalMedia((current) => current.filter((entry) => entry.id !== item.id)); }}>Remove video</button></div>)}
-                <small className="listing-upload-status">{uploadingImages ? "Uploading securely to Cloudinary…" : `${photos.length} photo(s) and ${videos.length} video(s) added.`}</small>
+                {uploadProgress.length > 0 && <div className="listing-upload-progress" role="status" aria-live="polite"><div className="listing-upload-progress-summary"><strong>{uploadProgress.every((item) => item.status === "complete") ? "Upload complete" : `Uploading ${uploadProgress.filter((item) => item.status === "complete").length}/${uploadProgress.length} files`}</strong><span>{Math.round(uploadProgress.reduce((sum, item) => sum + item.loaded, 0) / Math.max(1, uploadProgress.reduce((sum, item) => sum + item.total, 0)) * 100)}%</span></div><div className="listing-upload-progress-track"><i style={{ width: `${Math.round(uploadProgress.reduce((sum, item) => sum + item.loaded, 0) / Math.max(1, uploadProgress.reduce((sum, item) => sum + item.total, 0)) * 100)}%` }} /></div>{uploadProgress.map((item) => <div className="listing-upload-file-progress" key={item.id}><span title={item.name}>{item.name}</span><span>{item.status === "complete" ? "Uploaded" : item.status === "failed" ? "Failed" : `${Math.round(item.loaded / Math.max(1, item.total) * 100)}%`}</span><div className="listing-upload-file-track"><i className={item.status === "failed" ? "is-failed" : ""} style={{ width: `${Math.round(item.loaded / Math.max(1, item.total) * 100)}%` }} /></div></div>)}</div>}
+                <small className="listing-upload-status">{uploadingImages ? "Uploading securely to Cloudinary — progress updates live." : `${photos.length} photo(s) and ${videos.length} video(s) added.`}</small>
               </div>
               <div className="listing-field-group listing-field-full"><span className="listing-field-group-title">How can interested people reach you?</span><div className="listing-fields listing-fields-nested">
                 <label className="listing-field">Contact name {!editingId && "*"}<input required={!editingId} value={draft.name} onChange={(event) => update("name", event.target.value)} placeholder="Your name" /></label>
