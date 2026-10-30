@@ -3602,3 +3602,16 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
 .ag-home-carousel-controls button.is-active { width:26px; background:#10B981; border-color:#10B981; }
 
 .profile-stitch-logout:focus-visible { outline:3px solid #2563eb; outline-offset:3px; }
+
+/* Live property media upload feedback */
+.listing-upload-progress{margin-top:14px;padding:12px;border:1px solid var(--color-border);border-radius:12px;background:var(--color-background)}
+.listing-upload-progress-summary{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:var(--color-text)}
+.listing-upload-progress-summary span{font-variant-numeric:tabular-nums;color:var(--color-primary);font-weight:850}
+.listing-upload-progress-track,.listing-upload-file-track{height:8px;overflow:hidden;border-radius:999px;background:color-mix(in srgb,var(--color-muted) 18%,transparent)}
+.listing-upload-progress-track{margin-top:9px}
+.listing-upload-progress-track i,.listing-upload-file-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--color-primary),#10b981);transition:width .16s ease}
+.listing-upload-file-progress{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 10px;margin-top:10px;font-size:10px;color:var(--color-muted)}
+.listing-upload-file-progress>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.listing-upload-file-progress>span:nth-child(2){font-weight:750;color:var(--color-text);font-variant-numeric:tabular-nums}
+.listing-upload-file-track{grid-column:1/-1;height:5px}
+.listing-upload-file-track i.is-failed{background:#dc2626}
