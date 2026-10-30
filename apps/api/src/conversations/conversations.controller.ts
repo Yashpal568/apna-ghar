@@ -61,11 +61,17 @@ export class ConversationsController {
     }
     if (body?.message?.trim()) {
       await this.consumeMessageQuota(request.auth.userId);
-      conversation.unreadCountByUser ??= new Map<string, number>();
-      conversation.unreadCountByUser.set(property.ownerId, (conversation.unreadCountByUser.get(property.ownerId) || 0) + 1);
-      conversation.messages.push({ senderId: request.auth.userId, text: body.message.trim(), sentAt: new Date() } as never);
-      conversation.lastMessageAt = new Date();
-      await conversation.save();
+      const sentAt = new Date();
+      const message = { _id: new Types.ObjectId(), senderId: request.auth.userId, text: body.message.trim(), sentAt };
+      const result = await this.conversations.updateOne(
+        { _id: conversation._id, participantIds: request.auth.userId },
+        {
+          $push: { messages: message },
+          $set: { lastMessageAt: sentAt },
+          $inc: { [`unreadCountByUser.${property.ownerId}`]: 1 },
+        },
+      ).exec();
+      if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');
     }
     return { conversationId: String(conversation._id), propertyId: conversation.propertyId, propertyTitle: conversation.propertyTitle };
   }
@@ -126,12 +132,12 @@ export class ConversationsController {
 
   @Patch(':conversationId/read')
   async markRead(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string) {
-    const conversation = await this.conversations.findById(conversationId).exec();
-    if (!conversation) throw new NotFoundException('Conversation not found.');
-    this.assertParticipant(conversation.participantIds, request.auth.userId);
-    conversation.unreadCountByUser ??= new Map<string, number>();
-    conversation.unreadCountByUser.set(request.auth.userId, 0);
-    conversation.save && await conversation.save();
+    if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
+    const result = await this.conversations.updateOne(
+      { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId },
+      { $set: { [`unreadCountByUser.${request.auth.userId}`]: 0 } },
+    ).exec();
+    if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');
     return { success: true, unreadCount: 0 };
   }
 
@@ -143,13 +149,20 @@ export class ConversationsController {
     if (!conversation) throw new NotFoundException('Conversation not found.');
     this.assertParticipant(conversation.participantIds, request.auth.userId);
     await this.consumeMessageQuota(request.auth.userId);
-    conversation.messages.push({ senderId: request.auth.userId, text, sentAt: new Date() } as never);
-    conversation.lastMessageAt = new Date();
-    conversation.unreadCountByUser ??= new Map<string, number>();
+    await this.consumeMessageQuota(request.auth.userId);
     const recipientId = conversation.ownerId === request.auth.userId ? conversation.buyerId : conversation.ownerId;
-    conversation.unreadCountByUser.set(recipientId, (conversation.unreadCountByUser.get(recipientId) || 0) + 1);
-    await conversation.save();
-    return { success: true, message: conversation.messages[conversation.messages.length - 1] };
+    const sentAt = new Date();
+    const message = { _id: new Types.ObjectId(), senderId: request.auth.userId, text, sentAt };
+    const result = await this.conversations.updateOne(
+      { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId },
+      {
+        $push: { messages: message },
+        $set: { lastMessageAt: sentAt },
+        $inc: { [`unreadCountByUser.${recipientId}`]: 1 },
+      },
+    ).exec();
+    if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');
+    return { success: true, message };
   }
 
   private async consumeMessageQuota(userId: string) {
