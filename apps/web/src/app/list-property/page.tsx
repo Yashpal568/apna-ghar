@@ -44,8 +44,8 @@ const initialDraft: Draft = {
 
 // Recover individual Cloudinary URLs even from legacy drafts where URLs were concatenated without separators.
 const parseMediaUrls = (value: string) => value
-  .split(/(?=https?:\\/\\/)/i)
-  .map((part) => part.trim().replace(/[\\s,;\\]}]+$/g, ""))
+  .split(/(?=https?:\/\/)/i)
+  .map((part) => part.trim().replace(/[\s,;\]}]+$/g, ""))
   .filter((part) => {
     try {
       const parsed = new URL(part);
@@ -240,8 +240,8 @@ function ListingForm() {
       if (successfulIds.size) {
         setDraft((current) => ({
           ...current,
-          photos: [...current.photos.split("\n").map((url) => url.trim()).filter(Boolean), ...uploaded.map((result) => result.url)].join("\n"),
-          videos: [...current.videos.split("\n").map((url) => url.trim()).filter(Boolean), ...uploadedVideos.map((result) => result.url)].join("\n"),
+          photos: [...parseMediaUrls(current.photos), ...uploaded.map((result) => result.url)].join("\n"),
+          videos: [...parseMediaUrls(current.videos), ...uploadedVideos.map((result) => result.url)].join("\n"),
         }));
         setLocalMedia((current) => {
           current.filter((item) => successfulIds.has(item.id)).forEach((item) => URL.revokeObjectURL(item.url));
@@ -262,8 +262,8 @@ function ListingForm() {
     }
   };
 
-  const photos = draft.photos.split("\n").map((url) => url.trim()).filter((url) => /^https?:\/\//i.test(url));
-  const videos = draft.videos.split("\n").map((url) => url.trim()).filter((url) => /^https?:\/\//i.test(url));
+  const photos = parseMediaUrls(draft.photos);
+  const videos = parseMediaUrls(draft.videos);
   const localPhotos = localMedia.filter((item) => item.file.type.startsWith("image/"));
   const localVideos = localMedia.filter((item) => item.file.type.startsWith("video/"));
   const previewImage = localPhotos[0]?.url || photos[0];
