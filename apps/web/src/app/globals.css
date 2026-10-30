@@ -3336,3 +3336,104 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
  .ag-header-inner>.ag-header-actions{gap:6px}
  .ag-header-inner>.ag-post-button{padding-inline:10px}
 }
+
+
+/* Desktop header final layout: brand, navigation and account actions never share
+   an unconstrained flex row. Search occupies a dedicated second row. */
+@media (min-width: 1101px) {
+  .ag-header-inner {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1380px;
+    grid-template-columns: 168px minmax(0, 1fr) max-content;
+    grid-template-rows: 42px 38px;
+    grid-template-areas:
+      "brand nav actions"
+      "brand search actions";
+    column-gap: 18px;
+    row-gap: 7px;
+    padding: 12px 28px;
+    min-height: 112px;
+    align-items: center;
+  }
+  .ag-header-inner > .ag-brand {
+    grid-area: brand;
+    min-width: 0;
+    width: 168px;
+    overflow: visible;
+  }
+  .ag-header-inner > .ag-brand .brand {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 6px;
+    width: max-content;
+    max-width: none;
+    white-space: nowrap;
+  }
+  .ag-header-inner > .ag-brand .brand-symbol {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 30px;
+  }
+  .ag-header-inner > .ag-brand .brand-wordmark {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 20px;
+    letter-spacing: -0.7px;
+  }
+  .ag-header-inner > .ag-main-nav {
+    grid-area: nav;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: clamp(8px, .85vw, 14px);
+    min-width: 0;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  .ag-header-inner > .ag-main-nav::-webkit-scrollbar { display: none; }
+  .ag-header-inner > .ag-main-nav a {
+    flex: 0 0 auto;
+    font-size: clamp(10px, .78vw, 12px);
+    line-height: 1.2;
+  }
+  .ag-header-inner > .ag-header-search {
+    grid-area: search;
+    width: min(100%, 520px);
+    min-width: 0;
+    justify-self: start;
+    min-height: 38px;
+  }
+  .ag-header-inner > .ag-header-actions {
+    grid-area: actions;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    min-width: max-content;
+    white-space: nowrap;
+  }
+  .ag-header-inner > .ag-header-actions .ag-post-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding-inline: 12px;
+  }
+  .ag-header-inner > .ag-mobile-theme,
+  .ag-header-inner > .ag-mobile-toggle { display: none !important; }
+}
+@media (min-width: 1101px) and (max-width: 1450px) {
+  .ag-header-inner { grid-template-columns: 150px minmax(0, 1fr) max-content; column-gap: 12px; padding-inline: 20px; }
+  .ag-header-inner > .ag-brand { width: 150px; }
+  .ag-header-inner > .ag-brand .brand-symbol { flex-basis: 32px; width: 32px; }
+  .ag-header-inner > .ag-brand .brand-wordmark { font-size: 18px; }
+  .ag-header-inner > .ag-main-nav { gap: 8px; }
+  .ag-header-inner > .ag-main-nav a { font-size: 10.5px; }
+  .ag-header-inner > .ag-header-actions { gap: 5px; }
+  .ag-header-inner > .ag-header-actions .ag-post-button { padding-inline: 9px; }
+}
