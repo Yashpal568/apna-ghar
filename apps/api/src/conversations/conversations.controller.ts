@@ -60,6 +60,9 @@ export class ConversationsController {
       });
     }
     if (body?.message?.trim()) {
+      await this.consumeMessageQuota(request.auth.userId);
+      conversation.unreadCountByUser ??= new Map<string, number>();
+      conversation.unreadCountByUser.set(property.ownerId, (conversation.unreadCountByUser.get(property.ownerId) || 0) + 1);
       conversation.messages.push({ senderId: request.auth.userId, text: body.message.trim(), sentAt: new Date() } as never);
       conversation.lastMessageAt = new Date();
       await conversation.save();
