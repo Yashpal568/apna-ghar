@@ -41,7 +41,7 @@ const initialDraft: Draft = {
   photos: "",
 };
 
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
+const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
 
 function ListingForm() {
   const { getToken } = useAuth();
