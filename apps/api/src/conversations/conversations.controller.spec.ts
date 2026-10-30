@@ -20,6 +20,7 @@ describe('ConversationsController', () => {
       findOne: jest.fn(),
       findById: jest.fn(),
       aggregate: jest.fn(),
+      updateOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ matchedCount: 1 }) }),
       create: jest.fn(),
     };
     properties = { findOne: jest.fn() };
@@ -123,11 +124,14 @@ describe('ConversationsController', () => {
     conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
     const response = await controller.sendMessage({ auth: { userId: buyer } }, 'conversation-1', { text: '  Is the property available?  ' });
     expect(response.success).toBe(true);
-    expect(conversation.messages).toHaveLength(1);
-    expect(conversation.messages[0]).toEqual(expect.objectContaining({ senderId: buyer, text: 'Is the property available?' }));
-    expect(conversation.lastMessageAt).toBeInstanceOf(Date);
-    expect(conversation.unreadCountByUser.get(owner)).toBe(1);
-    expect(conversation.save).toHaveBeenCalledTimes(1);
+    expect(response.message).toEqual(expect.objectContaining({ senderId: buyer, text: 'Is the property available?' }));
+    expect(conversations.updateOne).toHaveBeenCalledWith(
+      { _id: expect.anything(), participantIds: buyer },
+      expect.objectContaining({
+        $push: { messages: expect.objectContaining({ senderId: buyer, text: 'Is the property available?' }) },
+        $inc: { [`unreadCountByUser.${owner}`]: 1 },
+      }),
+    );
   });
 
   it('does not allow a non-participant to send a message', async () => {
@@ -139,22 +143,17 @@ describe('ConversationsController', () => {
     conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
     await expect(controller.sendMessage({ auth: { userId: 'user_stranger' } }, 'conversation-1', { text: 'Hello' }))
       .rejects.toBeInstanceOf(ForbiddenException);
-    expect(conversation.save).not.toHaveBeenCalled();
+    expect(conversations.updateOne).not.toHaveBeenCalled();
   });
 
 
 
   it('clears unread count only for an authenticated participant', async () => {
-    const conversation = {
-      participantIds: [buyer, owner],
-      unreadCountByUser: new Map([[buyer, 3], [owner, 2]]),
-      save: jest.fn().mockResolvedValue(undefined),
-    };
-    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
-    await expect(controller.markRead({ auth: { userId: buyer } }, 'conversation-1')).resolves.toEqual({ success: true, unreadCount: 0 });
-    expect(conversation.unreadCountByUser.get(buyer)).toBe(0);
-    expect(conversation.unreadCountByUser.get(owner)).toBe(2);
-    expect(conversation.save).toHaveBeenCalledTimes(1);
+    await expect(controller.markRead({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011')).resolves.toEqual({ success: true, unreadCount: 0 });
+    expect(conversations.updateOne).toHaveBeenCalledWith(
+      { _id: expect.anything(), participantIds: buyer },
+      { $set: { [`unreadCountByUser.${buyer}`]: 0 } },
+    );
   });
   it('counts the first enquiry message against the sender quota and owner unread count', async () => {
     const property = { _id: '507f1f77bcf86cd799439011', ownerId: owner, title: 'Family home', slug: 'family-home', status: 'active' };
