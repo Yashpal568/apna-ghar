@@ -93,9 +93,8 @@ describe('ConversationsController', () => {
     expect(result.messages[2].text).toBe('Message 3');
     expect(result.hasMore).toBe(true);
     expect(result.nextBefore).toEqual(messages[1].sentAt);
-    expect(conversations.aggregate).toHaveBeenCalledWith(expect.arrayContaining([
-      expect.objectContaining({ $match: { _id: '507f1f77bcf86cd799439011', participantIds: buyer } }),
-    ]));
+    expect(pipeline[0].$match).toEqual({ _id: expect.anything(), participantIds: buyer });
+    expect(String(pipeline[0].$match._id)).toBe('507f1f77bcf86cd799439011');
   });
 
   it('rejects invalid message page sizes and cursors', async () => {
