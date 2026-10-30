@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import SiteHeader from "../components/SiteHeader";
 
 const pages: Record<string, { title: string; eyebrow: string; intro: string; sections: { heading: string; body: string }[] }> = {
   about: { title: "A more thoughtful way to find home.", eyebrow: "ABOUT APNA GHAR", intro: "Apna Ghar is being built to make property discovery clearer, more useful and more human.", sections: [{ heading: "Built around better decisions", body: "We want buyers, renters and property owners to understand the details that matter before they take the next step." }, { heading: "A note about this preview", body: "This page is a design placeholder. Company details, operating address and support contacts must be supplied and reviewed before public launch." }] },
@@ -9,5 +8,5 @@ const pages: Record<string, { title: string; eyebrow: string; intro: string; sec
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> { return { title: pages[params.slug]?.eyebrow ?? "Information" }; }
 export default function PublicInfoPage({ params }: { params: { slug: string } }) {
  const page = pages[params.slug] ?? pages.about;
- return <main className="page-shell interior-page"><SiteHeader active="about" /><div className="info-page"><p className="eyebrow">{page.eyebrow}</p><h1>{page.title}</h1><p className="info-intro">{page.intro}</p>{page.sections.map((section)=><section key={section.heading}><h2>{section.heading}</h2><p>{section.body}</p></section>)}<a className="button button-outline" href="/">← Back to Apna Ghar</a></div><footer className="simple-footer">Apna Ghar · {page.eyebrow} draft</footer></main>;
+ return <main className="page-shell interior-page"><div className="info-page"><p className="eyebrow">{page.eyebrow}</p><h1>{page.title}</h1><p className="info-intro">{page.intro}</p>{page.sections.map((section)=><section key={section.heading}><h2>{section.heading}</h2><p>{section.body}</p></section>)}<a className="button button-outline" href="/">← Back to Apna Ghar</a></div><footer className="simple-footer">Apna Ghar · {page.eyebrow} draft</footer></main>;
 }
