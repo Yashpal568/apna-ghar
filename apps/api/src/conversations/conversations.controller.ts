@@ -24,8 +24,14 @@ export class ConversationsController {
 
   @Get()
   async listMine(@Req() request: RequestWithAuth) {
-    return this.conversations.find({ participantIds: request.auth.userId })
+    const rows = await this.conversations.find({ participantIds: request.auth.userId })
       .sort({ lastMessageAt: -1 }).limit(100).lean().exec();
+    return rows.map((row) => ({
+      ...row,
+      unreadCountByUser: row.unreadCountByUser instanceof Map
+        ? Object.fromEntries(row.unreadCountByUser)
+        : row.unreadCountByUser || {},
+    }));
   }
 
   @Post('property/:propertyId')
