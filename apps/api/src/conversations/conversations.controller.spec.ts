@@ -108,7 +108,8 @@ describe('ConversationsController', () => {
     expect(conversation.save).not.toHaveBeenCalled();
   });
 
-});
+
+
   it('clears unread count only for an authenticated participant', async () => {
     const conversation = {
       participantIds: [buyer, owner],
@@ -121,3 +122,4 @@ describe('ConversationsController', () => {
     expect(conversation.unreadCountByUser.get(owner)).toBe(2);
     expect(conversation.save).toHaveBeenCalledTimes(1);
   });
+});
