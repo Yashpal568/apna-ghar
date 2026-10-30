@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, Req, ServiceUnavailableException, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClerkClient } from '@clerk/backend';
 import { IsEmail, IsOptional, IsString, MaxLength, ValidateIf } from 'class-validator';
@@ -25,12 +25,37 @@ function identityFromClaims(claims: Record<string, unknown> = {}) {
   return { name, email };
 }
 
-@Controller('users/me/profile')
+@Controller('users')
 @UseGuards(ClerkAuthGuard)
 export class UsersController {
   constructor(private readonly users: UsersService, private readonly config: ConfigService) {}
 
-  @Get()
+  @Get('me')
+  async getMyIdentity(@Req() request: AuthenticatedRequest) {
+    const secretKey = this.config.get<string>('CLERK_SECRET_KEY');
+    if (!secretKey) throw new UnauthorizedException('Authentication is not configured.');
+    try {
+      const clerk = createClerkClient({ secretKey });
+      const identity = await clerk.users.getUser(request.auth.userId);
+      const name = [identity.firstName, identity.lastName].filter(Boolean).join(' ').trim();
+      const email = identity.primaryEmailAddress?.emailAddress || '';
+      const profile = await this.users.syncClerkIdentity(request.auth.userId, { name, email });
+      return {
+        id: request.auth.userId,
+        name: profile.name,
+        email: profile.email,
+        phone: profile.phone,
+        city: profile.city,
+        about: profile.about,
+        imageUrl: identity.imageUrl,
+      };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) throw error;
+      throw new ServiceUnavailableException('Could not synchronize your account from the identity provider. Please retry.');
+    }
+  }
+
+  @Get('me/profile')
   async getMyProfile(@Req() request: AuthenticatedRequest) {
     const userId = request.auth.userId;
     const fromClaims = identityFromClaims(request.auth.claims);
@@ -54,7 +79,7 @@ export class UsersController {
     }
   }
 
-  @Put()
+  @Put('me/profile')
   saveMyProfile(@Body() body: UpdateProfileDto, @Req() request: AuthenticatedRequest) {
     return this.users.saveMyProfile(request.auth.userId, body);
   }
