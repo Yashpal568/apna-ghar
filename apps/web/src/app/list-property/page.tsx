@@ -152,7 +152,7 @@ function ListingForm() {
     setNotice("");
   };
 
-  const uploadPhotos = async (fileList: FileList | null) => {
+  const uploadPhotos = async (fileList: FileList | File[] | null, retryPending = false) => {
     const selected = Array.from(fileList ?? []);
     if (!selected.length) return;
     const selectedImages = selected.filter((file) => file.type.startsWith("image/"));
@@ -176,8 +176,10 @@ function ListingForm() {
       return;
     }
 
-    const pending = selected.map((file) => ({ id: `${file.name}-${file.size}-${file.lastModified}-${Math.random().toString(36).slice(2)}`, file, url: URL.createObjectURL(file) }));
-    setLocalMedia((current) => [...current, ...pending]);
+    const pending = retryPending
+      ? localMedia.filter((item) => selected.some((file) => file === item.file))
+      : selected.map((file) => ({ id: `${file.name}-${file.size}-${file.lastModified}-${Math.random().toString(36).slice(2)}`, file, url: URL.createObjectURL(file) }));
+    if (!retryPending) setLocalMedia((current) => [...current, ...pending]);
     setUploadingImages(true);
     setNotice("Preview ready. Uploading selected media to Cloudinary…");
     try {
@@ -231,7 +233,11 @@ function ListingForm() {
 
   const photos = draft.photos.split("\n").map((url) => url.trim()).filter((url) => /^https?:\/\//i.test(url));
   const videos = draft.videos.split("\n").map((url) => url.trim()).filter((url) => /^https?:\/\//i.test(url));
-  const previewImage = photos[0] || localMedia.find((item) => item.file.type.startsWith("image/"))?.url;
+  const localPhotos = localMedia.filter((item) => item.file.type.startsWith("image/"));
+  const localVideos = localMedia.filter((item) => item.file.type.startsWith("video/"));
+  const previewImage = localPhotos[0]?.url || photos[0];
+  const allPhotoCount = photos.length + localPhotos.length;
+  const allVideoCount = videos.length + localVideos.length;
   const basicsValid = Boolean(
     draft.type && draft.title.trim() && draft.state.trim() && draft.city.trim() &&
     draft.locality.trim() && Number(draft.price) > 0 && Number(draft.area) > 0
@@ -362,14 +368,14 @@ function ListingForm() {
               </div></div>
             </div>}
             {step === 3 && <div className="listing-review">
-              {photos[0] ? <img className="listing-review-cover" src={photos[0]} alt="First property photo" /> : <div className="listing-review-placeholder"><span>⌂</span><strong>No photos added yet</strong><small>You can go back and add property images.</small></div>}
-              <div className="listing-review-meta"><span>{draft.purpose === "rent" ? "FOR RENT / LEASE" : "FOR SALE"}</span><span>{draft.type || "Property"}</span></div><h3>{draft.title || "Your property title"}</h3><p className="listing-review-location">{[draft.locality, draft.city, draft.state].filter(Boolean).join(", ")}</p><strong className="listing-review-price">{formattedPrice}</strong><div className="listing-review-facts"><span>{draft.area || "—"} sq ft</span><span>{draft.beds || "—"} bedrooms</span><span>{draft.baths || "—"} bathrooms</span><span>{photos.length} photos</span><span>{videos.length} video(s)</span></div><p>{draft.description || "No description provided."}</p><div className="listing-review-contact"><strong>Contact details</strong><span>{draft.name || "—"} · {draft.phone || "—"}</span></div>
+              {previewImage ? <img className="listing-review-cover" src={previewImage} alt="First property photo" /> : <div className="listing-review-placeholder"><span>⌂</span><strong>No photos added yet</strong><small>You can go back and add property images.</small></div>}
+              <div className="listing-review-meta"><span>{draft.purpose === "rent" ? "FOR RENT / LEASE" : "FOR SALE"}</span><span>{draft.type || "Property"}</span></div><h3>{draft.title || "Your property title"}</h3><p className="listing-review-location">{[draft.locality, draft.city, draft.state].filter(Boolean).join(", ")}</p><strong className="listing-review-price">{formattedPrice}</strong><div className="listing-review-facts"><span>{draft.area || "—"} sq ft</span><span>{draft.beds || "—"} bedrooms</span><span>{draft.baths || "—"} bathrooms</span><span>{allPhotoCount} photos</span><span>{allVideoCount} video(s)</span></div><p>{draft.description || "No description provided."}</p><div className="listing-review-contact"><strong>Contact details</strong><span>{draft.name || "—"} · {draft.phone || "—"}</span></div>
             </div>}
-            {notice && <p role="status" className="form-notice">{notice}</p>}
-            <div className="listing-actions listing-actions-redesign"><button className="button button-quiet" type="button" onClick={() => step > 1 ? setStep(step - 1) : window.location.assign("/")}>{step > 1 ? "← Back" : "Cancel"}</button><button className="button button-outline" type="button" onClick={saveDraft}>Save draft</button>{step < 3 ? <button className="button button-primary" type="submit">Continue to step {step + 1} ↗</button> : <button className="button button-primary" type="button" disabled={publishing || uploadingImages || localMedia.length > 0} onClick={publish}>{publishing ? "Publishing…" : editingId ? "Save listing changes ↗" : "Publish listing ↗"}</button>}</div>
+            {localMedia.length > 0 && !uploadingImages && <div className="listing-pending-upload" role="status"><span>{localMedia.length} media file(s) are previewed locally but not uploaded yet.</span><button type="button" className="button button-outline" onClick={() => void uploadPhotos(localMedia.map((item) => item.file), true)}>Retry media upload</button></div>}{notice && <p role="status" className="form-notice">{notice}</p>}
+            <div className="listing-actions listing-actions-redesign"><button className="button button-quiet" type="button" onClick={() => step > 1 ? setStep(step - 1) : window.location.assign("/")}>{step > 1 ? "← Back" : "Cancel"}</button><button className="button button-outline" type="button" onClick={saveDraft}>Save draft</button>{step < 3 ? <button className="button button-primary" type="submit">Continue to step {step + 1} ↗</button> : <button className="button button-primary" type="button" disabled={publishing || uploadingImages || localMedia.length > 0} onClick={publish}>{publishing ? "Publishing…" : uploadingImages ? "Uploading media…" : localMedia.length > 0 ? "Upload media to continue" : editingId ? "Save listing changes ↗" : "Publish listing ↗"}</button>}</div>
           </div>
         </form>
-        <aside className="listing-sidebar listing-sidebar-redesign"><div className="listing-live-preview"><div className="listing-live-preview-head"><strong>Live post preview</strong><span>Updates as you type</span></div>{previewImage?<img src={previewImage} alt="Listing preview" />:<div className="listing-live-preview-empty">Property photos will appear here</div>}<div className="listing-live-preview-body"><span>{draft.purpose==="rent"?"FOR RENT":"FOR SALE"} · {(draft.type||"PROPERTY").toUpperCase()}</span><h4>{draft.title||"Your property title"}</h4><p>{[draft.locality,draft.city,draft.state].filter(Boolean).join(", ")||"Your property location"}</p><strong>{formattedPrice}</strong><small>{draft.area||"—"} sq ft · {draft.beds||"—"} beds · {photos.length + localMedia.filter((item) => item.file.type.startsWith("image/")).length} photos · {videos.length + localMedia.filter((item) => item.file.type.startsWith("video/")).length} video(s)</small></div></div><div className="listing-sidebar-top"><span className="sidebar-icon">⌂</span><span className="listing-sidebar-kicker">A better listing starts here</span></div><h3>Help people picture their next home.</h3><p>Clear information makes it easier for the right people to understand your property.</p><ul><li><span>✓</span> Use an accurate title and current price.</li><li><span>✓</span> Describe the property honestly.</li><li><span>✓</span> Add bright, clear photos of each space.</li><li><span>✓</span> Only share photos you have permission to use.</li></ul><a href="/safety" className="text-link">Read listing safety tips ↗</a><div className="listing-sidebar-progress"><div><span>YOUR PROGRESS</span><strong>{step} / 3</strong></div><div className="listing-sidebar-progress-track"><i style={{ width: (step / 3 * 100) + "%" }} /></div><small>Save a draft any time. Your unfinished draft stays on this device.</small></div><div className="listing-price-preview"><span>EXPECTED PRICE</span><strong>{formattedPrice}</strong><small>{priceInWords}</small></div></aside>
+        <aside className="listing-sidebar listing-sidebar-redesign"><div className="listing-live-preview"><div className="listing-live-preview-head"><strong>Live post preview</strong><span>Updates as you type</span></div>{previewImage?<img src={previewImage} alt="Listing preview" />:<div className="listing-live-preview-empty">Property photos will appear here</div>}<div className="listing-live-preview-body"><span>{draft.purpose==="rent"?"FOR RENT":"FOR SALE"} · {(draft.type||"PROPERTY").toUpperCase()}</span><h4>{draft.title||"Your property title"}</h4><p>{[draft.locality,draft.city,draft.state].filter(Boolean).join(", ")||"Your property location"}</p><strong>{formattedPrice}</strong><small>{draft.area||"—"} sq ft · {draft.beds||"—"} beds · {allPhotoCount} photos · {allVideoCount} video(s)</small></div></div><div className="listing-sidebar-top"><span className="sidebar-icon">⌂</span><span className="listing-sidebar-kicker">A better listing starts here</span></div><h3>Help people picture their next home.</h3><p>Clear information makes it easier for the right people to understand your property.</p><ul><li><span>✓</span> Use an accurate title and current price.</li><li><span>✓</span> Describe the property honestly.</li><li><span>✓</span> Add bright, clear photos of each space.</li><li><span>✓</span> Only share photos you have permission to use.</li></ul><a href="/safety" className="text-link">Read listing safety tips ↗</a><div className="listing-sidebar-progress"><div><span>YOUR PROGRESS</span><strong>{step} / 3</strong></div><div className="listing-sidebar-progress-track"><i style={{ width: (step / 3 * 100) + "%" }} /></div><small>Save a draft any time. Your unfinished draft stays on this device.</small></div><div className="listing-price-preview"><span>EXPECTED PRICE</span><strong>{formattedPrice}</strong><small>{priceInWords}</small></div></aside>
       </section>
       <SiteFooter />
     </main>
