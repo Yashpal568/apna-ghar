@@ -15,10 +15,34 @@ export type ProfileInput = {
 export class UsersService {
   constructor(@InjectModel(UserProfile.name) private readonly profiles: Model<UserProfileDocument>) {}
 
-  async getMyProfile(clerkUserId: string) {
-    const profile = await this.profiles.findOne({ clerkUserId }).lean().exec();
-    if (profile) return this.toPublicProfile(profile);
-    return { name: '', email: '', phone: '', city: '', about: '' };
+  async getMyProfile(clerkUserId: string, identity: { name?: string; email?: string } = {}) {
+    const existing = await this.profiles.findOne({ clerkUserId }).lean().exec();
+    if (existing) {
+      const backfill: Record<string, string> = {};
+      if (!String(existing.name ?? '').trim() && identity.name?.trim()) backfill.name = identity.name.trim().slice(0, 100);
+      if (!String(existing.email ?? '').trim() && identity.email?.trim()) backfill.email = identity.email.trim().toLowerCase().slice(0, 254);
+      if (!Object.keys(backfill).length) return this.toPublicProfile(existing);
+      const synced = await this.profiles.findOneAndUpdate(
+        { clerkUserId },
+        { $set: backfill },
+        { new: true, runValidators: true },
+      ).lean().exec();
+      return this.toPublicProfile(synced ?? existing);
+    }
+
+    // Only use fields from server-verified Clerk identity; never accept an identity ID from the request body.
+    const seed = {
+      clerkUserId,
+      name: (identity.name ?? '').trim().slice(0, 100),
+      email: (identity.email ?? '').trim().toLowerCase().slice(0, 254),
+    };
+    const profile = await this.profiles.findOneAndUpdate(
+      { clerkUserId },
+      { $setOnInsert: seed },
+      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+    ).lean().exec();
+    if (!profile) throw new Error('Profile could not be initialized. Please retry.');
+    return this.toPublicProfile(profile);
   }
 
   async saveMyProfile(clerkUserId: string, input: ProfileInput) {

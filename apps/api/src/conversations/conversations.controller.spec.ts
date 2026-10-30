@@ -1,0 +1,66 @@
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { ConversationsController } from './conversations.controller';
+
+function chain<T>(value: T) {
+  return { lean: jest.fn().mockReturnThis(), sort: jest.fn().mockReturnThis(), limit: jest.fn().mockReturnThis(), exec: jest.fn().mockResolvedValue(value) };
+}
+
+describe('ConversationsController', () => {
+  const buyer = 'user_buyer';
+  const owner = 'user_owner';
+  let controller: ConversationsController;
+  let conversations: Record<string, jest.Mock>;
+  let properties: Record<string, jest.Mock>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    conversations = { find: jest.fn(), findOne: jest.fn(), findById: jest.fn(), create: jest.fn() };
+    properties = { findOne: jest.fn() };
+    controller = new ConversationsController(conversations as never, properties as never);
+  });
+
+  it('lists only conversations that include the signed-in participant', async () => {
+    const rows = [{ _id: 'conversation-1', participantIds: [buyer, owner] }];
+    const query = chain(rows);
+    conversations.find.mockReturnValue(query);
+    await expect(controller.listMine({ auth: { userId: buyer } })).resolves.toBe(rows);
+    expect(conversations.find).toHaveBeenCalledWith({ participantIds: buyer });
+    expect(query.sort).toHaveBeenCalledWith({ lastMessageAt: -1 });
+    expect(query.limit).toHaveBeenCalledWith(100);
+  });
+
+  it('prevents an owner from starting a buyer chat on their own listing', async () => {
+    const property = { _id: '507f1f77bcf86cd799439011', ownerId: owner, title: 'Owner home', slug: 'owner-home', status: 'active' };
+    properties.findOne.mockReturnValue(chain(property));
+    await expect(controller.startForProperty({ auth: { userId: owner } }, property._id, {})).rejects.toBeInstanceOf(BadRequestException);
+    expect(conversations.create).not.toHaveBeenCalled();
+  });
+
+  it('creates a buyer-owner conversation for an active property', async () => {
+    const property = { _id: '507f1f77bcf86cd799439011', ownerId: owner, title: 'Family home', slug: 'family-home', status: 'active' };
+    properties.findOne.mockReturnValue(chain(property));
+    conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(null) });
+    conversations.create.mockResolvedValue({ _id: 'conversation-1', propertyId: property._id, propertyTitle: property.title });
+    await expect(controller.startForProperty({ auth: { userId: buyer } }, property._id, {})).resolves.toEqual({
+      conversationId: 'conversation-1', propertyId: property._id, propertyTitle: property.title,
+    });
+    expect(conversations.create).toHaveBeenCalledWith(expect.objectContaining({
+      propertyId: property._id, ownerId: owner, buyerId: buyer, participantIds: [owner, buyer], messages: [],
+    }));
+  });
+
+  it('does not disclose messages to a user who is not a participant', async () => {
+    conversations.findById.mockReturnValue(chain({ _id: '507f1f77bcf86cd799439012', participantIds: [buyer, owner], messages: [] }));
+    await expect(controller.getMessages({ auth: { userId: 'user_stranger' } }, '507f1f77bcf86cd799439012')).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('rejects malformed conversation ids before querying MongoDB', async () => {
+    await expect(controller.getMessages({ auth: { userId: buyer } }, 'not-an-object-id')).rejects.toBeInstanceOf(BadRequestException);
+    expect(conversations.findById).not.toHaveBeenCalled();
+  });
+
+  it('returns not found when the property is no longer active', async () => {
+    properties.findOne.mockReturnValue(chain(null));
+    await expect(controller.startForProperty({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011', {})).rejects.toBeInstanceOf(NotFoundException);
+  });
+});

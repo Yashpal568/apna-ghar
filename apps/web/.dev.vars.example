@@ -1,0 +1,3 @@
+# Copy to .dev.vars for local Workers-runtime testing.
+# Never put production secrets in this file or commit .dev.vars.
+NEXTJS_ENV=development

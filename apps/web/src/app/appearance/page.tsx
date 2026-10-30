@@ -1,6 +1,5 @@
 "use client";
 
-import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import ThemePicker from "../components/ThemePicker";
 
@@ -15,7 +14,7 @@ const themes = [
 export default function AppearancePage() {
   return (
     <>
-      <SiteHeader active="appearance" />
+      
       <main className="appearance-page">
         <section className="appearance-intro">
           <p className="appearance-eyebrow">MAKE IT YOURS</p>

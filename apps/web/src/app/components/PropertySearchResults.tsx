@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 
 type Property = {
   _id: string;
@@ -17,10 +18,11 @@ type Property = {
   bedrooms?: number;
   bathrooms?: number;
   imageUrls?: string[];
+  contactPhone?: string;
 };
 
 type Result = { items: Property[]; pagination: { page: number; limit: number; total: number; pages: number } };
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
+const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
 const money = (amount: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 
 function toggleSavedProperty(property: Property): boolean {
@@ -43,8 +45,59 @@ export default function PropertySearchResults({ location, transaction, category,
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc">(initialSort === "price_asc" || initialSort === "price_desc" ? initialSort : "newest");
+  const [savedNotice, setSavedNotice] = useState("");
+  const { isSignedIn, getToken } = useAuth();
+
+  async function contactOwner(property: Property) {
+    if (!isSignedIn) {
+      window.location.assign("/sign-in?redirect_url=" + encodeURIComponent("/property/" + (property.slug || property._id)));
+      return;
+    }
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("Please sign in again to contact the owner.");
+      const response = await fetch(apiBase + "/conversations/property/" + encodeURIComponent(property._id), {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token, "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({}),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Could not open this conversation.");
+      window.location.assign("/messages?conversation=" + encodeURIComponent(body.conversationId));
+    } catch (error) {
+      setSavedNotice(error instanceof Error ? error.message : "Could not contact this owner.");
+    }
+  }
+
+  async function changeSaved(property: Property, isSaved: boolean) {
+    const nextSaved = !isSaved;
+    const changed = toggleSavedProperty(property);
+    if (changed !== nextSaved) {
+      setSavedNotice("Could not update saved homes on this device.");
+      return;
+    }
+    setSavedIds((ids) => nextSaved ? [property._id, ...ids.filter((id) => id !== property._id)] : ids.filter((id) => id !== property._id));
+    setSavedNotice("");
+    if (!isSignedIn) {
+      setSavedNotice("Saved on this device. Sign in to sync across devices.");
+      return;
+    }
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("Your session is not ready. Sign in again.");
+      const response = await fetch(`${apiBase}/saved-properties/${encodeURIComponent(property._id)}`, {
+        method: nextSaved ? "POST" : "DELETE",
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+      });
+      if (!response.ok) throw new Error(response.status === 401 ? "Your session expired. Sign in again." : "Account sync failed. This change is saved on this device for now.");
+      setSavedNotice(nextSaved ? "Saved to your account." : "Removed from your account.");
+    } catch (error) {
+      setSavedNotice(error instanceof Error ? error.message : "Account sync failed. This change remains on this device.");
+    }
+  }
 
   useEffect(() => {
+    let cancelled = false;
     const refreshSaved = () => {
       try {
         setSavedIds((JSON.parse(localStorage.getItem("apna-ghar-saved-homes") || "[]") as Property[]).map((item) => item._id));
@@ -53,13 +106,35 @@ export default function PropertySearchResults({ location, transaction, category,
       }
     };
     refreshSaved();
+    if (isSignedIn) {
+      void (async () => {
+        try {
+          const token = await getToken();
+          if (!token) return;
+          const response = await fetch(apiBase + "/saved-properties", { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
+          if (!response.ok) return;
+          const serverHomes = await response.json() as Property[];
+          if (cancelled || !Array.isArray(serverHomes)) return;
+          const localHomes = (() => {
+            try { return JSON.parse(localStorage.getItem("apna-ghar-saved-homes") || "[]") as Property[]; }
+            catch { return []; }
+          })();
+          const merged = [...serverHomes, ...localHomes.filter((home) => !serverHomes.some((serverHome) => serverHome._id === home._id))];
+          setSavedIds(merged.map((item) => item._id));
+          localStorage.setItem("apna-ghar-saved-homes", JSON.stringify(merged));
+        } catch {
+          // Local saved state remains available when account sync is offline.
+        }
+      })();
+    }
     window.addEventListener("apna-ghar-saved-change", refreshSaved);
     window.addEventListener("storage", refreshSaved);
     return () => {
+      cancelled = true;
       window.removeEventListener("apna-ghar-saved-change", refreshSaved);
       window.removeEventListener("storage", refreshSaved);
     };
-  }, []);
+  }, [getToken, isSignedIn]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -104,7 +179,11 @@ export default function PropertySearchResults({ location, transaction, category,
             <div className="property-result-image">{property.imageUrls?.[0] ? <img src={property.imageUrls[0]} alt="" loading="lazy" /> : <span aria-hidden="true">⌂</span>}<span className="property-result-badge">{property.listingType === "rent" ? "FOR RENT" : "FOR SALE"}</span></div>
             <div className="property-result-body"><p className="property-result-location">{[property.location?.locality, property.location?.city, property.location?.state].filter(Boolean).join(", ")}</p><h3>{property.title}</h3><p className="property-result-price">{money(property.priceAmount)}{property.listingType === "rent" ? " / month" : ""}</p><p className="property-result-facts">{property.bedrooms ? `${property.bedrooms} beds · ` : ""}{property.bathrooms ? `${property.bathrooms} baths · ` : ""}{property.areaValue} {property.areaUnit}</p></div>
           </a>
-          <button className="button button-outline property-save-button" type="button" aria-pressed={isSaved} onClick={() => { toggleSavedProperty(property); setSavedIds((ids) => isSaved ? ids.filter((id) => id !== property._id) : [property._id, ...ids]); }}>{isSaved ? "♥ Saved" : "♡ Save home"}</button>
+          <div className="property-card-actions">
+            <button className="button button-outline property-save-button" type="button" aria-pressed={isSaved} onClick={() => { void changeSaved(property, isSaved); }}>{isSaved ? "♥ Saved" : "♡ Save home"}</button>
+            {property.contactPhone?.trim() ? <a className="button button-outline" href={"tel:" + property.contactPhone.replace(/[^+0-9]/g, "")}>☎ Call owner</a> : null}
+            <button className="button button-primary" type="button" onClick={() => void contactOwner(property)}>Chat owner</button>
+          </div>
         </article>;
       })}
     </div>

@@ -33,8 +33,11 @@ export class PropertiesController {
 
     const timestamp = Math.floor(Date.now() / 1000);
     const folder = 'apna-ghar/properties';
+    // Resize and compress the stored source on ingest to reduce Cloudinary storage.
+    // Delivery URLs remain normal image URLs; Cloudinary negotiates modern formats per browser.
+    const transformation = 'c_limit,w_2000,h_2000,q_auto:good';
     const signature = createHash('sha1')
-      .update(`folder=${folder}&timestamp=${timestamp}${apiSecret}`)
+      .update(`folder=${folder}&timestamp=${timestamp}&transformation=${transformation}${apiSecret}`)
       .digest('hex');
 
     const form = new FormData();
@@ -42,6 +45,7 @@ export class PropertiesController {
     form.append('api_key', apiKey);
     form.append('timestamp', String(timestamp));
     form.append('folder', folder);
+    form.append('transformation', transformation);
     form.append('signature', signature);
 
     const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/image/upload`, {
@@ -50,10 +54,34 @@ export class PropertiesController {
     });
     const result = await cloudinaryResponse.json().catch(() => null) as { secure_url?: string; public_id?: string; error?: { message?: string } } | null;
     if (!cloudinaryResponse.ok || !result?.secure_url) {
-      throw new BadRequestException(result?.error?.message || 'Cloudinary could not upload this image');
+      const cloudinaryMessage = result?.error?.message || 'Cloudinary could not upload this image';
+      if (/missing permissions|not authorized|forbidden/i.test(cloudinaryMessage)) {
+        throw new BadRequestException('Cloudinary rejected the API key: enable Upload/Create permissions for this key in Cloudinary Console → Settings → Access Keys, then redeploy/retry.');
+      }
+      throw new BadRequestException(cloudinaryMessage);
     }
 
     return { url: result.secure_url, publicId: result.public_id };
+  }
+
+  @Post('videos')
+  @UseGuards(PropertyAuthGuard)
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 100 * 1024 * 1024 } }))
+  async uploadVideo(@Req() request: AuthenticatedRequest, @UploadedFile() file?: UploadedImage) {
+    if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
+    if (!file) throw new BadRequestException('Choose a video to upload');
+    if (!['video/mp4', 'video/webm', 'video/quicktime'].includes(file.mimetype)) throw new BadRequestException('Only MP4, WebM or MOV videos are allowed');
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME, apiKey = process.env.CLOUDINARY_API_KEY, apiSecret = process.env.CLOUDINARY_API_SECRET;
+    if (!cloudName || !apiKey || !apiSecret) throw new InternalServerErrorException('Video uploads are not configured on the server');
+    const timestamp = Math.floor(Date.now() / 1000), folder = 'apna-ghar/properties';
+    const signature = createHash('sha1').update(`folder=${folder}&timestamp=${timestamp}${apiSecret}`).digest('hex');
+    const form = new FormData();
+    form.append('file', new Blob([new Uint8Array(file.buffer)], { type: file.mimetype }), 'property-video');
+    form.append('api_key', apiKey); form.append('timestamp', String(timestamp)); form.append('folder', folder); form.append('signature', signature);
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/video/upload`, { method: 'POST', body: form });
+    const result = await response.json().catch(() => null) as { secure_url?: string; error?: { message?: string } } | null;
+    if (!response.ok || !result?.secure_url) throw new BadRequestException(result?.error?.message || 'Cloudinary could not upload this video');
+    return { url: result.secure_url, resourceType: 'video' };
   }
 
   @Post()

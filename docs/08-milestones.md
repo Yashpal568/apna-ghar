@@ -19,7 +19,7 @@
 ## M2 — Web experience
 Responsive marketing/home page, property search/filter/sort, property detail pages, city/category landing pages, customer accounts, favorites, seller/broker dashboards and listing management.
 
-## M3 — Backend domain and identity
+## M3 — Backend domain and identity — IMPLEMENTATION COMPLETE; LIVE ACCEPTANCE PENDING
 Clerk server-side token verification, profile sync, roles/permissions, versioned API, property/category/user/favorite/contact/report domains, validation, consistent errors and test coverage. Design repository interfaces before database integration.
 
 ## M4 — Dedicated admin and moderation

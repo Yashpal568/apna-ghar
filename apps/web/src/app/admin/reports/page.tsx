@@ -13,7 +13,7 @@ type Report = {
   createdAt?: string;
 };
 
-const api = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
+const api = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
 const reasons: Record<string, string> = {
   misleading: "Misleading listing", duplicate: "Duplicate listing", scam: "Possible scam",
   wrong_information: "Incorrect information", inappropriate: "Inappropriate content", other: "Other",

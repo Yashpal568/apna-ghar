@@ -29,7 +29,10 @@ export default function middleware(request: NextRequest, event: NextFetchEvent) 
     return NextResponse.next();
   }
 
-  return clerkHandler(request, event);
+  // Cloudflare's build installs OpenNext at the repository root, which can resolve
+  // a second Next.js type version. The runtime request/event are still the objects
+  // provided by Next.js middleware; bridge the duplicate compile-time declarations.
+  return clerkHandler(request as any, event as any);
 }
 
 export const config = {

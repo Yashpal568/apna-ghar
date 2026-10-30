@@ -3,11 +3,11 @@
 :root,
 [data-theme="light"] {
   color-scheme: light;
-  --color-primary: #2563EB;
+  --color-primary: #064CC0;
   --color-on-primary: #FFFFFF;
-  --color-primary-hover: #1D4ED8;
-  --color-green: #10B981;
-  --color-accent: #2563EB;
+  --color-primary-hover: #0342A8;
+  --color-green: #20E890;
+  --color-accent: #064CC0;
   --color-navy: #0F172A;
   --color-bg: #F3F4F6;
   --color-surface: #FFFFFF;
@@ -19,7 +19,7 @@
   --color-border: #E5E7EB;
   --color-input: #FFFFFF;
   --color-overlay: rgb(15 23 42 / 55%);
-  --color-focus: #60A5FA;
+  --color-focus: #78A5FF;
   --radius-card: 16px;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-6: 24px; --space-8: 32px;
@@ -28,11 +28,11 @@
 /* Midnight — low-glare navy with bright blue CTAs and emerald confirmation. */
 [data-theme="midnight"] {
   color-scheme: dark;
-  --color-primary: #38BDF8;
-  --color-on-primary: #07111F;
-  --color-primary-hover: #7DD3FC;
-  --color-green: #34D399;
-  --color-accent: #38BDF8;
+  --color-primary: #064CC0;
+  --color-on-primary: #FFFFFF;
+  --color-primary-hover: #0342A8;
+  --color-green: #20E890;
+  --color-accent: #064CC0;
   --color-navy: #F8FAFC;
   --color-bg: #0B1120;
   --color-surface: #131D31;
@@ -44,17 +44,17 @@
   --color-border: #1E2C46;
   --color-input: #131D31;
   --color-overlay: rgb(0 0 0 / 68%);
-  --color-focus: #60A5FA;
+  --color-focus: #78A5FF;
 }
 
 /* Graphite — neutral architectural charcoal, no blue tint in surfaces. */
 [data-theme="graphite"] {
   color-scheme: dark;
-  --color-primary: #F3F4F6;
-  --color-on-primary: #17191D;
-  --color-primary-hover: #D1D5DB;
-  --color-green: #10B981;
-  --color-accent: #9CA3AF;
+  --color-primary: #064CC0;
+  --color-on-primary: #FFFFFF;
+  --color-primary-hover: #0342A8;
+  --color-green: #20E890;
+  --color-accent: #064CC0;
   --color-navy: #F3F4F6;
   --color-bg: #17191D;
   --color-surface: #212429;
@@ -66,17 +66,17 @@
   --color-border: #2F343B;
   --color-input: #212429;
   --color-overlay: rgb(0 0 0 / 72%);
-  --color-focus: #60A5FA;
+  --color-focus: #78A5FF;
 }
 
 /* Forest Noir — botanical green-black surfaces, blue primary CTA, mint secondary. */
 [data-theme="forest"] {
   color-scheme: dark;
-  --color-primary: #34D399;
-  --color-on-primary: #06251E;
-  --color-primary-hover: #6EE7B7;
-  --color-green: #34D399;
-  --color-accent: #34D399;
+  --color-primary: #064CC0;
+  --color-on-primary: #FFFFFF;
+  --color-primary-hover: #0342A8;
+  --color-green: #20E890;
+  --color-accent: #064CC0;
   --color-navy: #ECFDF5;
   --color-bg: #0B1715;
   --color-surface: #11221F;
@@ -94,11 +94,11 @@
 /* AMOLED Black — true black canvas with near-black cards and clear white text. */
 [data-theme="amoled"] {
   color-scheme: dark;
-  --color-primary: #FFFFFF;
-  --color-on-primary: #000000;
-  --color-primary-hover: #E5E5E5;
-  --color-green: #10B981;
-  --color-accent: #FFFFFF;
+  --color-primary: #064CC0;
+  --color-on-primary: #FFFFFF;
+  --color-primary-hover: #0342A8;
+  --color-green: #20E890;
+  --color-accent: #064CC0;
   --color-navy: #FFFFFF;
   --color-bg: #000000;
   --color-surface: #0D0D0D;
@@ -110,7 +110,7 @@
   --color-border: #222222;
   --color-input: #0D0D0D;
   --color-overlay: rgb(0 0 0 / 80%);
-  --color-focus: #60A5FA;
+  --color-focus: #78A5FF;
 }
 
 :root { --motion-fast: 140ms; --motion-normal: 220ms; }

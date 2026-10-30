@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import Script from 'next/script';
 import './globals.css';
+import MobileBottomNav from './components/MobileBottomNav';
 
 export const metadata: Metadata = {
   title: {
@@ -20,8 +21,13 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=swap" rel="stylesheet" />
+      </head>
       <body>
-        {process.env.NODE_ENV === 'production' ? (
+        {process.env.VERCEL === '1' ? (
           <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
         ) : null}
         {publishableKey ? (
@@ -47,6 +53,7 @@ export default function RootLayout({
         ) : (
           children
         )}
+        <MobileBottomNav />
       </body>
     </html>
   );

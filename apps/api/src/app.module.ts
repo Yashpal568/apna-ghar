@@ -4,6 +4,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { HealthModule } from './health/health.module';
 import { PropertiesModule } from './properties/properties.module';
 import { UsersModule } from './users/users.module';
+import { ConversationsModule } from './conversations/conversations.module';
+import { CategoriesModule } from './categories/categories.module';
 
 function validateEnvironment(config: Record<string, unknown>) {
   const port = Number(config.API_PORT ?? 4000);
@@ -31,6 +33,8 @@ function validateEnvironment(config: Record<string, unknown>) {
     HealthModule,
     PropertiesModule,
     UsersModule,
+    ConversationsModule,
+    CategoriesModule,
   ],
 })
 export class AppModule {}

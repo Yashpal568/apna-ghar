@@ -28,3 +28,8 @@ ios/build/
 Thumbs.db
 .vscode/
 .idea/
+
+# Cloudflare Workers / OpenNext
+.open-next/
+.wrangler/
+.dev.vars

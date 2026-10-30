@@ -1,5 +1,4 @@
 "use client";
-import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
 
@@ -23,7 +22,7 @@ type Listing = {
   viewsCount?: number;
 };
 
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
+const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
 const money = (amount: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 
 function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getToken: () => Promise<string | null>; onChanged: () => void }) {
@@ -64,6 +63,7 @@ function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getTo
       <div className="owner-listing-analytics"><span><strong>{(listing.viewsCount ?? 0).toLocaleString("en-IN")}</strong> listing views</span><span><strong>—</strong> enquiries <small>tracking not enabled yet</small></span><span><strong>{listing.publishedAt ? new Date(listing.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}</strong> Published</span></div>
       <div className="owner-listing-actions">
         <a className="button button-outline" href={`/property/${encodeURIComponent(listing.slug || listing._id)}`}>View listing</a>
+        <a className="button button-outline" href={`/list-property?edit=${encodeURIComponent(listing._id)}`}>Edit details</a>
         <button className="button button-outline" type="button" disabled={busy} onClick={() => void mutate("visibility")}>{busy ? "Please wait…" : listing.status === "active" ? "Hide listing" : "Publish listing"}</button>
         <button className="button button-outline owner-delete-action" type="button" disabled={busy} onClick={() => void mutate("delete")}>Delete</button>
       </div>
@@ -124,7 +124,7 @@ function SignInRequired() {
 export default function MyListingsPage() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   return <main className="page-shell interior-page">
-    <SiteHeader active="account" />
+    
     <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>My listings</span></div>
     <section className="listing-intro"><p className="eyebrow">OWNER WORKSPACE</p><h1>Your properties,<br /><em>all in one place.</em></h1><p>Manage the homes and spaces you advertise on Apna Ghar.</p></section>
     {clerkConfigured ? <ConnectedListings /> : <SignInRequired />}

@@ -12,18 +12,28 @@ async function bootstrap() {
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
+  const vercelProductionOrigins = new Set([
+    'https://web-dun-two-91.vercel.app',
+    'https://web-yashs-projects-cd385495.vercel.app',
+    'https://web-git-main-yashs-projects-cd385495.vercel.app',
+    'https://apna-ghar-web.yash38688.workers.dev',
+  ]);
   app.enableCors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      // Allow non-browser/server-to-server calls and explicitly configured origins.
+      if (!origin || allowedOrigins.includes(origin) || vercelProductionOrigins.has(origin)) {
+        return callback(null, true);
+      }
       try {
         const parsed = new URL(origin);
-        if (parsed.protocol === 'https:' && parsed.hostname.endsWith('.vercel.app')) {
+        // Permit this project's Vercel preview deployments without opening CORS to every Vercel app.
+        if (
+          parsed.protocol === 'https:' &&
+          (/^web-[a-z0-9-]+-yashs-projects-cd385495\.vercel\.app$/.test(parsed.hostname) ||
+            /^apna-ghar-web(?:-[a-z0-9-]+)?\.yash38688\.workers\.dev$/.test(parsed.hostname))
+        ) {
           return callback(null, true);
         }
-        const isApnaGharWorker = parsed.protocol === 'https:' &&
-          (parsed.hostname === 'apna-ghar-web.yash38688.workers.dev' ||
-           parsed.hostname.startsWith('apna-ghar-web-') && parsed.hostname.endsWith('.yash38688.workers.dev'));
-        if (isApnaGharWorker) return callback(null, true);
       } catch {
         // Reject malformed origins below.
       }
@@ -31,8 +41,16 @@ async function bootstrap() {
     },
   });
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  // Render and other managed hosts provide PORT; API_PORT is the local fallback.
   const port = Number(process.env.PORT ?? process.env.API_PORT ?? 4000);
   await app.listen(port);
   console.log(`Apna Ghar API listening on port ${port}`);

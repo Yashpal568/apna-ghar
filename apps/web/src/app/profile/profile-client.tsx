@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuth, useClerk, useUser } from "@clerk/nextjs";
 import AccountSettingsPanel from "../components/AccountSettingsPanel";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
@@ -13,15 +13,53 @@ const api = (configuredApi || (process.env.NODE_ENV === "development"
   ? "http://localhost:4000/api/v1"
   : "https://apna-ghar-api-j4fo.onrender.com/api/v1")).replace(/\/$/, "");
 const fallbackPhoto = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=95";
+function friendlyProfileError(detail: string) {
+  if (detail === "Authentication is not configured") return "Profile sync is unavailable because the API is missing its Clerk secret configuration. Set CLERK_SECRET_KEY in the API host to the same Clerk instance used by this website, then redeploy. Your changes are not synced yet.";
+  if (detail === "Invalid or expired authentication token") return "The API could not verify this sign-in session. Confirm the website and API use the same Clerk instance, then sign in again.";
+  if (detail === "Failed to fetch") return "We couldn't reach the Apna Ghar API. Check the API deployment and CORS configuration, then retry.";
+  return detail || "Could not load your account profile.";
+}
 const heroPhotos = [
   { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=95", alt: "Bright contemporary home with warm neutral architecture" },
   { src: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2000&q=95", alt: "Sunlit modern living room opening onto a garden" },
   { src: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2000&q=95", alt: "Modern house exterior with landscaped surroundings" },
 ];
-const Icon = ({ children, className = "" }: { children: string; className?: string }) => <span aria-hidden="true" className={"material-symbols-outlined " + className}>{children}</span>;
+const iconPaths: Record<string, string[]> = {
+  home: ["M3 10.8 12 3l9 7.8", "M5.5 9.5V21h13V9.5", "M9 21v-7h6v7"],
+  verified: ["M12 2.5 15 4l3.4-.1.8 3.3 2.3 2.5-1.5 3 0 3.4-3.3.8-2.7 2.2-3-1.5-3.4 0-.8-3.3L4.5 12l1.5-3 0-3.4 3.3-.8z", "m8.5 11.8 2.2 2.2 4.8-5"],
+  chevron_left: ["m15 18-6-6 6-6"], chevron_right: ["m9 18 6-6-6-6"],
+  token: ["M12 3 20 7.5v9L12 21l-8-4.5v-9z", "m8.5 12 2.2 2.2 4.8-5"],
+  insights: ["M4 19V5", "M4 19h17", "m7 15 4-4 3 2 5-7"],
+  favorite: ["M20.8 8.8c0 5.1-8.8 11-8.8 11s-8.8-5.9-8.8-11A4.8 4.8 0 0 1 12 6.1a4.8 4.8 0 0 1 8.8 2.7Z"],
+  real_estate_agent: ["M3 10 12 3l9 7", "M5 9v12h14V9", "M9 21v-6h6v6", "M15 5v4"],
+  search: ["M20 20l-4.5-4.5", "M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"],
+  lock: ["M5 10h14v11H5z", "M8 10V7a4 4 0 0 1 8 0v3", "M12 14v3"],
+  person: ["M20 21a8 8 0 0 0-16 0", "M12 13a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z"],
+  mail: ["M3 5h18v14H3z", "m3 6 9 7 9-7"],
+  call: ["M7 3H4a1 1 0 0 0-1 1c0 9.4 7.6 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 3a15 15 0 0 1-8-8l3-2z"],
+  location_on: ["M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z", "M12 10a2.3 2.3 0 1 0 0-4.6A2.3 2.3 0 0 0 12 10Z"],
+  edit_note: ["M4 5h11", "M4 10h8", "M4 15h6", "m14 16 5-5 2 2-5 5-3 1z"],
+  shield_lock: ["M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z", "M9 11V9a3 3 0 0 1 6 0v2", "M8 11h8v6H8z"],
+  sync: ["M20 7v5h-5", "M4 17v-5h5", "M6 9a7 7 0 0 1 12-2l2 5", "M18 15a7 7 0 0 1-12 2l-2-5"],
+  check: ["m5 12 4 4L19 6"],
+  notifications_active: ["M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9", "M10 21h4", "M21 4l-2 2", "M3 4l2 2"],
+  arrow_outward: ["M7 17 17 7", "M8 7h9v9"],
+  admin_panel_settings: ["M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z", "M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z", "M8.5 16a3.5 3.5 0 0 1 7 0"],
+  shield: ["M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"],
+  devices: ["M4 5h16v11H4z", "M2 20h20", "M9 16v4", "M15 16v4"],
+  login: ["M10 17l5-5-5-5", "M15 12H3", "M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"],
+  verified_user: ["M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z", "m8 12 2.5 2.5L16 9"],
+  home_pin: ["M3 10 12 3l9 7", "M5 9v12h14V9", "M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z", "M12 11v3"],
+};
+const Icon = ({ children, className = "" }: { children: string; className?: string }) => (
+  <svg aria-hidden="true" className={"profile-inline-icon " + className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    {(iconPaths[children] || iconPaths.home).map((d, i) => <path d={d} key={i} />)}
+  </svg>
+);
 
-export default function ProfilePage() {
+function ProfileClientWithClerk() {
   const { isLoaded, isSignedIn, getToken } = useAuth();
+  const { openUserProfile, signOut } = useClerk();
   const { user } = useUser();
   const [profile, setProfile] = useState<Profile>(blank);
   const [message, setMessage] = useState("");
@@ -58,9 +96,17 @@ export default function ProfilePage() {
       } catch (error) {
         if (!cancelled) {
           const detail = error instanceof Error ? error.message : "";
-          setMessage(detail === "Failed to fetch"
-            ? "We couldn't reach the Apna Ghar API. Check the API deployment and CORS configuration, then retry."
-            : detail || "Could not load your account profile.");
+          let local: Profile = blank;
+          try {
+            const raw = localStorage.getItem("apna-ghar-profile");
+            if (raw) local = { ...blank, ...JSON.parse(raw) };
+          } catch { /* keep a safe empty fallback */ }
+          setProfile({
+            ...local,
+            name: local.name || user?.fullName || "",
+            email: local.email || user?.primaryEmailAddress?.emailAddress || "",
+          });
+          setMessage(friendlyProfileError(detail));
         }
       } finally { if (!cancelled) setLoading(false); }
     };
@@ -93,7 +139,7 @@ export default function ProfilePage() {
           body: JSON.stringify(profile),
         });
         const body = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Profile could not be saved.");
+        if (!response.ok) throw new Error(friendlyProfileError(typeof body.message === "string" ? body.message : "Profile could not be saved."));
         const updated = { ...blank, ...body, email: body.email || profile.email };
         setProfile(updated);
         localStorage.setItem("apna-ghar-profile", JSON.stringify(updated));
@@ -176,7 +222,7 @@ export default function ProfilePage() {
               <div className="profile-stitch-field"><label htmlFor="profile-city">City / Preferred Locality</label><div className="profile-stitch-input-wrap"><Icon>location_on</Icon><input id="profile-city" value={profile.city} maxLength={100} onChange={e => set("city", e.target.value)} placeholder="City or neighbourhood" autoComplete="address-level2" /></div></div>
               <div className="profile-stitch-field"><label htmlFor="profile-about">About &amp; buyer preferences</label><div className="profile-stitch-input-wrap profile-stitch-textarea-wrap"><Icon>edit_note</Icon><textarea id="profile-about" rows={4} value={profile.about} maxLength={500} onChange={e => set("about", e.target.value)} placeholder="Tell us a little about the kind of property you're looking for..." /></div><small>{profile.about.length}/500 characters</small></div>
               {loading && <p className="profile-stitch-notice" role="status">Loading your account profile…</p>}
-              {message && <p className="profile-stitch-notice" role="status">{message}</p>}
+              {message && <p className={"profile-stitch-notice" + (/unavailable|could not|couldn.t|couldn’t|not synced|could not verify/i.test(message) ? " is-error" : "")} role="status">{message}</p>}
               <div className="profile-stitch-form-footer"><span><Icon>shield_lock</Icon> Your information stays associated with your account.</span><button type="submit" disabled={saving || loading}>{saving ? <><Icon>sync</Icon> Saving…</> : <><Icon>check</Icon> Save profile</>}</button></div>
             </form>
           </section>
@@ -202,9 +248,9 @@ export default function ProfilePage() {
               <button type="button" role="tab" aria-selected={securityTab === "security"} className={securityTab === "security" ? "is-active" : ""} onClick={() => setSecurityTab("security")}><Icon>shield</Icon> Security</button>
               <button type="button" role="tab" aria-selected={securityTab === "sessions"} className={securityTab === "sessions" ? "is-active" : ""} onClick={() => setSecurityTab("sessions")}><Icon>devices</Icon> Sessions</button>
             </div>
-            {securityTab === "security" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>lock</Icon></span><div><strong>Authentication</strong><p>{isSignedIn ? "Your sign-in is managed by your authentication provider." : "Sign in to manage account security."}</p></div></div><a className="profile-stitch-security-link" href="/sign-in"><Icon>login</Icon> Open sign-in options <Icon>arrow_outward</Icon></a></div>}
-            {securityTab === "sessions" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-session-note"><Icon>devices</Icon><p>For your security, session management is handled by your sign-in provider. Use account settings there to review active sessions.</p></div><a className="profile-stitch-security-link" href="/sign-in"><Icon>manage_accounts</Icon> Manage sign-in <Icon>arrow_outward</Icon></a></div>}
-            <div className="profile-stitch-security-foot"><Icon>verified_user</Icon> Never share your password or one-time codes.</div>
+            {securityTab === "security" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-security-row"><span className="profile-stitch-row-icon"><Icon>lock</Icon></span><div><strong>Authentication</strong><p>{isSignedIn ? "Your sign-in is managed by your authentication provider." : "Sign in to manage account security."}</p></div></div>{isSignedIn ? <button className="profile-stitch-security-link" type="button" onClick={() => openUserProfile()}><Icon>shield</Icon> Manage security settings <Icon>arrow_outward</Icon></button> : <a className="profile-stitch-security-link" href="/sign-in"><Icon>login</Icon> Sign in to secure your account <Icon>arrow_outward</Icon></a>}</div>}
+            {securityTab === "sessions" && <div className="profile-stitch-security-content" role="tabpanel"><div className="profile-stitch-session-note"><Icon>devices</Icon><p>For your security, session management is handled by your sign-in provider. Use account settings there to review active sessions.</p></div>{isSignedIn ? <button className="profile-stitch-security-link" type="button" onClick={() => openUserProfile()}><Icon>devices</Icon> Manage sessions & access <Icon>arrow_outward</Icon></button> : <a className="profile-stitch-security-link" href="/sign-in"><Icon>login</Icon> Sign in to manage access <Icon>arrow_outward</Icon></a>}</div>}
+            <div className="profile-stitch-security-foot"><Icon>verified_user</Icon> Never share your password or one-time codes.</div>{isSignedIn && <button className="profile-stitch-logout" type="button" onClick={() => void signOut({ redirectUrl: "/" })}><span aria-hidden="true">↪</span> Sign out of Apna Ghar</button>}
           </section>
 
           <section className="profile-stitch-recommendation">
@@ -217,4 +263,28 @@ export default function ProfilePage() {
     </div>
     <SiteFooter />
   </main>;
+}
+
+
+export default function ProfilePage() {
+  // CI and local previews may build without Clerk environment variables. Do not
+  // render Clerk hooks outside ClerkProvider in that configuration.
+  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+    return (
+      <main className="interior-page profile-redesign">
+        <SiteHeader active="account" />
+        <div className="profile-redesign-shell">
+          <section className="profile-stitch-security">
+            <span className="profile-stitch-overline">ACCOUNT SETTINGS</span>
+            <h1>Profile setup is unavailable</h1>
+            <p>Account sign-in is not configured in this environment. You can still browse properties; profile features will be available when authentication is configured.</p>
+            <a className="profile-stitch-security-link" href="/search">Explore properties <Icon>arrow_outward</Icon></a>
+          </section>
+        </div>
+        <SiteFooter />
+      </main>
+    );
+  }
+
+  return <ProfileClientWithClerk />;
 }
