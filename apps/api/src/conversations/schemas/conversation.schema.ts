@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+
 export type ConversationDocument = HydratedDocument<Conversation>;
+
 @Schema({ _id: true, timestamps: true })
 export class ConversationMessage {
   @Prop({ required: true, trim: true }) senderId!: string;
@@ -8,6 +10,7 @@ export class ConversationMessage {
   @Prop({ type: Date, default: Date.now }) sentAt!: Date;
 }
 export const ConversationMessageSchema = SchemaFactory.createForClass(ConversationMessage);
+
 @Schema({ timestamps: true, collection: 'conversations' })
 export class Conversation {
   @Prop({ required: true, index: true }) propertyId!: string;
@@ -17,6 +20,7 @@ export class Conversation {
   @Prop({ required: true, index: true }) buyerId!: string;
   @Prop({ type: [String], required: true, index: true }) participantIds!: string[];
   @Prop({ type: [ConversationMessageSchema], default: [] }) messages!: ConversationMessage[];
+  @Prop({ type: Map, of: Number, default: () => new Map() }) unreadCountByUser!: Map<string, number>;
   @Prop({ type: Date, default: Date.now }) lastMessageAt!: Date;
 }
 export const ConversationSchema = SchemaFactory.createForClass(Conversation);
