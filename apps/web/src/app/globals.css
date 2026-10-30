@@ -3501,3 +3501,13 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
 .agh-market-header-scope .agh-saved-icon:hover{background:#053fa3;transform:translateY(-1px);box-shadow:0 5px 13px rgba(6,76,192,.24)}
 .agh-market-header-scope .agh-saved-icon:focus-visible{outline:3px solid rgba(32,232,144,.45);outline-offset:2px}
 @media(max-width:760px){.agh-market-header-scope .agh-header-actions .agh-saved-icon{display:inline-flex!important;width:38px;height:38px;flex:0 0 38px;border-radius:11px;font-size:20px}}
+
+/* Post is the primary create-listing action on desktop and mobile bottom navigation. */
+.agh-market-header-scope .agh-sell-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:0 16px;border-radius:999px;background:#064CC0;color:#fff;text-decoration:none;font-weight:750;white-space:nowrap}
+.agh-market-header-scope .agh-sell-btn span{font-size:19px;line-height:1}
+@media(max-width:760px){
+  .agh-market-header-scope .agh-header-actions .agh-sell-btn{display:none}
+  .ag-bottom-nav a.ag-bottom-nav-post{color:var(--color-text-secondary);background:transparent}
+  .ag-bottom-nav a.ag-bottom-nav-post svg{width:27px;height:27px;padding:5px;border-radius:999px;background:#064CC0;color:#fff;stroke-width:2.2}
+  .ag-bottom-nav a.ag-bottom-nav-post.is-active{color:#064CC0;background:color-mix(in srgb,#064CC0 8%,transparent)}
+}
