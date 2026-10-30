@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
 type Home = {
@@ -120,7 +119,7 @@ export default function SavedPage() {
 
   return (
     <main className="page-shell interior-page">
-      <SiteHeader active="saved" />
+      
       <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>Saved homes</span></div>
       <section className="listing-intro">
         <p className="eyebrow">YOUR SHORTLIST</p>
