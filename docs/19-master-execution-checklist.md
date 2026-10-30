@@ -1,7 +1,7 @@
 # Apna Ghar — Master Execution Checklist
 
 **Repository:** `Yashpal568/apna-ghar`  
-**Working branch in this session:** `deploy/cloudflare-preview` (the existing mainline marketplace checkpoint is documented separately below; keep this preview branch isolated until runtime and CI are verified).  
+**Working branch in this session:** `feat/profile-theme-chat-finish` (PR #13 targets `deploy/cloudflare-preview`) (the existing mainline marketplace checkpoint is documented separately below; keep this preview branch isolated until runtime and CI are verified).  
 **Last updated:** 2026-10-30  
 **Purpose:** Single day-to-day source of truth. Update this file whenever work starts, finishes, is blocked, or changes scope. Do not restart from a different milestone without recording why.
 
@@ -76,7 +76,11 @@
 - [x] Full API/web/mobile typecheck, API unit tests, API HTTP e2e tests, API build and web build passed on CI validation branch feat/m3-end-to-end-validation at commit ae44459abc994ce46277fedfbc3d6fd4d24c02fa (CI run 40907781495; Quality Checks run 40907781485).
 - [ ] Verify profile identity sync against the deployed Clerk secret and live MongoDB; run authenticated buyer/seller conversation flow in the browser.
 - [ ] Verify Clerk profile sync and buyer/seller chat with two real signed-in accounts on the deployed environment; current automated tests use mocked identity/database services.
-- [ ] Review rate limiting and message pagination before production sign-off.
+- [x] Added cursor-based message history pagination (`before` + bounded `limit`, default 50/max 100) with participant checks and server-side filtering.
+- [x] Inbox previews now select only the latest message rather than returning each full embedded history.
+- [x] Messages UI can load older pages and merges them with 5-second live refreshes without moving the cursor forward.
+- [ ] Verify pagination with real MongoDB data and browser scrolling; CI for the latest pagination commits is still pending.
+- [ ] Add a production-safe shared rate limiter and concurrency-safe message writes before production sign-off.
 
 ### M4 — Admin and moderation
 - [ ] Server-protect admin routes and every privileged API.
@@ -170,3 +174,6 @@
 
 
 | 2026-10-30 | Follow-through branch created from `deploy/cloudflare-preview` to avoid merging diverged M3 branches directly. Preserved the existing blue/green Apna Ghar mark and made SVG gradient IDs instance-safe; finished profile avatar display using the Clerk image, added a stable profile-details anchor and tightened 320–700px/tablet profile layout behavior while retaining theme tokens. Added per-participant unread message counts to conversation persistence, an authenticated `PATCH /api/v1/conversations/:conversationId/read` endpoint, unread count serialization for inbox JSON, and UI badges/read-state clearing. Added controller tests for unread increment and participant-only read reset. Code and tests committed on `feat/profile-theme-chat-finish`; CI has not yet run for this branch. Live Clerk/Render two-account verification remains blocked until the API Clerk secret is confirmed and a published test listing is available. Message pagination, rate limiting and concurrency-safe message writes remain open before production sign-off. | Branch head `62bfbc72314240873d7ca723f68ede65597bea46` (CI pending) | Run PR CI; fix any test/type/build failures; then validate profile persistence and two-account buyer/seller unread/read flow against the deployed API. |
+
+
+| 2026-10-30 | Continued PR #13 after both workflows passed on the unread/read implementation. Added bounded cursor pagination to `GET /api/v1/conversations/:id/messages` (default 50, maximum 100), participant authorization, ISO cursor/page-size validation and aggregation-side message filtering. Inbox listing now projects only the most recent message for each conversation. Messages UI adds a Load older messages control and merges paginated history with periodic live refreshes while preserving the oldest loaded cursor. Added unit coverage for participant access, page bounds, cursor validation and hasMore/nextBefore behavior; CI has not yet been verified for these newest commits. | Latest code commit `a41238a1fc1bc25a729e730a39548c1a8aeebc6e`; prior green checks at `2406656435f3579b3d3463385120c0d3a1737e41` | Verify fresh CI for the pagination changes, then exercise cursor paging against MongoDB and the browser; implement a shared production-safe rate limiter and concurrency-safe message persistence before launch. |
