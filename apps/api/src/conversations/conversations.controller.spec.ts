@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException, TooManyRequestsException } from '@nestjs/common';
 import { ConversationsController } from './conversations.controller';
 
 function chain<T>(value: T) {
@@ -11,6 +11,7 @@ describe('ConversationsController', () => {
   let controller: ConversationsController;
   let conversations: Record<string, jest.Mock>;
   let properties: Record<string, jest.Mock>;
+  let messageRateLimits: Record<string, jest.Mock>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -22,7 +23,8 @@ describe('ConversationsController', () => {
       create: jest.fn(),
     };
     properties = { findOne: jest.fn() };
-    controller = new ConversationsController(conversations as never, properties as never);
+    messageRateLimits = { findOneAndUpdate: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ count: 1 }) }) };
+    controller = new ConversationsController(conversations as never, properties as never, messageRateLimits as never);
   });
 
   it('lists only conversations that include the signed-in participant', async () => {
@@ -152,4 +154,19 @@ describe('ConversationsController', () => {
     expect(conversation.unreadCountByUser.get(owner)).toBe(2);
     expect(conversation.save).toHaveBeenCalledTimes(1);
   });
+  it('blocks message sends after the shared per-user minute quota is exhausted', async () => {
+    const conversation = {
+      participantIds: [buyer, owner], ownerId: owner, buyerId: buyer,
+      messages: [], unreadCountByUser: new Map<string, number>(), save: jest.fn(),
+    };
+    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    messageRateLimits.findOneAndUpdate
+      .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(null) })
+      .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(null) })
+      .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(null) });
+    await expect(controller.sendMessage({ auth: { userId: buyer } }, 'conversation-1', { text: 'Hello' }))
+      .rejects.toBeInstanceOf(TooManyRequestsException);
+    expect(conversation.save).not.toHaveBeenCalled();
+  });
+
 });
