@@ -161,8 +161,10 @@ function ListingForm() {
       setNotice("Choose image files or MP4, WebM and MOV videos.");
       return;
     }
-    if (selectedImages.length + photos.length + localMedia.filter((item) => item.file.type.startsWith("image/")).length > 10 ||
-        selectedVideos.length + videos.length + localMedia.filter((item) => item.file.type.startsWith("video/")).length > 1) {
+    const alreadySelectedImages = retryPending ? 0 : localMedia.filter((item) => item.file.type.startsWith("image/")).length;
+    const alreadySelectedVideos = retryPending ? 0 : localMedia.filter((item) => item.file.type.startsWith("video/")).length;
+    if (selectedImages.length + photos.length + alreadySelectedImages > 10 ||
+        selectedVideos.length + videos.length + alreadySelectedVideos > 1) {
       setNotice("You can add up to 10 photos and 1 property video.");
       return;
     }
