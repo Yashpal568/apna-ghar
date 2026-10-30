@@ -8,6 +8,21 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api/v1');
 
+  // Do not advertise the underlying Express runtime and apply baseline browser protections.
+  const express = app.getHttpAdapter().getInstance();
+  express.disable('x-powered-by');
+  app.use((_request: unknown, response: { setHeader: (name: string, value: string) => void }, next: () => void) => {
+    response.setHeader('X-Content-Type-Options', 'nosniff');
+    response.setHeader('X-Frame-Options', 'DENY');
+    response.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    response.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    response.setHeader('Cross-Origin-Resource-Policy', 'same-site');
+    if (process.env.NODE_ENV === 'production') {
+      response.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
+    next();
+  });
+
   const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000')
     .split(',')
     .map((origin) => origin.trim())
@@ -20,13 +35,11 @@ async function bootstrap() {
   ]);
   app.enableCors({
     origin: (origin, callback) => {
-      // Allow non-browser/server-to-server calls and explicitly configured origins.
       if (!origin || allowedOrigins.includes(origin) || vercelProductionOrigins.has(origin)) {
         return callback(null, true);
       }
       try {
         const parsed = new URL(origin);
-        // Permit this project's Vercel preview deployments without opening CORS to every Vercel app.
         if (
           parsed.protocol === 'https:' &&
           (/^web-[a-z0-9-]+-yashs-projects-cd385495\.vercel\.app$/.test(parsed.hostname) ||
@@ -45,12 +58,13 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
       transform: true,
+      transformOptions: { enableImplicitConversion: false },
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  // Render and other managed hosts provide PORT; API_PORT is the local fallback.
   const port = Number(process.env.PORT ?? process.env.API_PORT ?? 4000);
   await app.listen(port);
   console.log(`Apna Ghar API listening on port ${port}`);
