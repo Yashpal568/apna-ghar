@@ -92,7 +92,7 @@ function ListingForm() {
   const [notice, setNotice] = useState("");
   const [publishing, setPublishing] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
-  const [localMedia, setLocalMedia] = useState<Array<{ id: string; file: File; url: string }>>([]);\n  const [localMedia, setLocalMedia] = useState<Array<{ id: string; file: File; url: string }>>([]);
+  const [localMedia, setLocalMedia] = useState<Array<{ id: string; file: File; url: string }>>([]);
   const [editingId, setEditingId] = useState("");
 
   useEffect(() => {
