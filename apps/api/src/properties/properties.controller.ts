@@ -15,6 +15,22 @@ class SetPropertyVisibilityDto {
 type AuthenticatedRequest = { authUserId?: string };
 type UploadedImage = { buffer: Buffer; mimetype: string; size: number };
 
+function hasValidMediaSignature(file: UploadedImage, kind: 'image' | 'video'): boolean {
+  const bytes = file.buffer;
+  if (kind === 'image') {
+    switch (file.mimetype) {
+      case 'image/jpeg': return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+      case 'image/png': return bytes.length >= 8 && bytes.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+      case 'image/webp': return bytes.length >= 12 && bytes.toString('ascii', 0, 4) === 'RIFF' && bytes.toString('ascii', 8, 12) === 'WEBP';
+      case 'image/avif': return bytes.length >= 12 && bytes.toString('ascii', 4, 8) === 'ftyp' && /^(avif|avis)$/.test(bytes.toString('ascii', 8, 12));
+      default: return false;
+    }
+  }
+  if (file.mimetype === 'video/webm') return bytes.length >= 4 && bytes.subarray(0, 4).equals(Buffer.from([0x1a, 0x45, 0xdf, 0xa3]));
+  if (file.mimetype === 'video/mp4' || file.mimetype === 'video/quicktime') return bytes.length >= 12 && bytes.toString('ascii', 4, 8) === 'ftyp';
+  return false;
+}
+
 @Controller('properties')
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
@@ -25,7 +41,7 @@ export class PropertiesController {
   async uploadImage(@Req() request: AuthenticatedRequest, @UploadedFile() file?: UploadedImage) {
     if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
     if (!file) throw new BadRequestException('Choose an image to upload');
-    if (!['image/jpeg', 'image/png', 'image/webp', 'image/avif'].includes(file.mimetype)) {
+    if (!['image/jpeg', 'image/png', 'image/webp', 'image/avif'].includes(file.mimetype) || !hasValidMediaSignature(file, 'image')) {
       throw new BadRequestException('Only JPEG, PNG, WebP or AVIF images are allowed');
     }
 
@@ -75,7 +91,7 @@ export class PropertiesController {
   async uploadVideo(@Req() request: AuthenticatedRequest, @UploadedFile() file?: UploadedImage) {
     if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
     if (!file) throw new BadRequestException('Choose a video to upload');
-    if (!['video/mp4', 'video/webm', 'video/quicktime'].includes(file.mimetype)) throw new BadRequestException('Only MP4, WebM or MOV videos are allowed');
+    if (!['video/mp4', 'video/webm', 'video/quicktime'].includes(file.mimetype) || !hasValidMediaSignature(file, 'video')) throw new BadRequestException('Only valid MP4, WebM or MOV videos are allowed');
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME, apiKey = process.env.CLOUDINARY_API_KEY, apiSecret = process.env.CLOUDINARY_API_SECRET;
     if (!cloudName || !apiKey || !apiSecret) throw new InternalServerErrorException('Video uploads are not configured on the server');
     const timestamp = Math.floor(Date.now() / 1000), folder = 'apna-ghar/properties';
