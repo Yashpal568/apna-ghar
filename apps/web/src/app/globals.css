@@ -3483,3 +3483,21 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
 
 /* Local media is previewed immediately while the authenticated Cloudinary upload runs */
 .listing-photo-item{position:relative;min-width:0}.listing-photo-item>img{display:block;width:100%;height:120px;object-fit:cover;border-radius:10px}.listing-local-upload-tag{position:absolute;left:7px;bottom:7px;padding:4px 7px;border-radius:6px;background:rgba(8,20,40,.78);color:#fff;font-size:9px;font-weight:750}.listing-video-preview small{color:var(--color-muted);font-size:10px}
+
+
+/* Mobile listing page: align the form and preview flush to one shared content edge */
+@media(max-width:600px){
+  .page-shell.listing-page-redesign{width:100%;max-width:100%;margin:0;padding-left:12px!important;padding-right:12px!important;box-sizing:border-box;}
+  .listing-page-redesign .breadcrumb{margin:16px 0 18px;padding:0;}
+  .listing-page-redesign .listing-workspace-heading{width:100%;margin:0 0 14px;padding:12px 0 16px;}
+  .listing-page-redesign .listing-layout-redesign{width:100%;margin:0;padding:0 0 36px;display:flex;flex-direction:column;gap:14px;align-items:stretch;}
+  .listing-page-redesign .listing-form-redesign,.listing-page-redesign .listing-step-card,.listing-page-redesign .listing-sidebar-redesign{width:100%;max-width:none;min-width:0;margin:0;box-sizing:border-box;}
+  .listing-page-redesign .listing-step-card{padding:16px 14px!important;border-radius:16px!important;}
+  .listing-page-redesign .listing-sidebar-redesign{padding:14px!important;border-radius:16px!important;}
+  .listing-page-redesign .listing-live-preview{width:100%;margin:0 0 16px;}
+}
+/* Saved homes is the only compact action in the header; no competing Post CTA */
+.agh-market-header-scope .agh-saved-icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex:0 0 40px;border:0;border-radius:12px;background:#064cc0;color:#fff!important;font-size:21px;line-height:1;text-decoration:none;box-shadow:0 3px 9px rgba(6,76,192,.18);transition:background .16s ease,transform .16s ease,box-shadow .16s ease}
+.agh-market-header-scope .agh-saved-icon:hover{background:#053fa3;transform:translateY(-1px);box-shadow:0 5px 13px rgba(6,76,192,.24)}
+.agh-market-header-scope .agh-saved-icon:focus-visible{outline:3px solid rgba(32,232,144,.45);outline-offset:2px}
+@media(max-width:760px){.agh-market-header-scope .agh-header-actions .agh-saved-icon{display:inline-flex!important;width:38px;height:38px;flex:0 0 38px;border-radius:11px;font-size:20px}}
