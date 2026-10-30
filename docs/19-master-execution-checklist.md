@@ -128,6 +128,9 @@
 
 ## Session log
 
+| 2026-10-30 | Mobile listing/header refinement: removed the `Post` CTA from the shared desktop/mobile header and mobile drawer; retained Saved homes as a compact blue icon-only button. Mobile listing content now uses a single consistent 12px viewport gutter, full-width form/card/sidebar containers, and aligned left/right edges. Commits: 7e5a57b8d434d09c12276ed1c205047714867436, 246a4ad964cea6cea6631eefadef637251e9c51a, 59457efe2cf09a058f79654555381ce7ef13363c. No workflow runs were triggered for the deployment branch; no build or live visual verification claimed. | 59457efe2cf09a058f79654555381ce7ef13363c | Run the Cloudflare Worker deployment build and visually inspect mobile header and listing layout at 360px and 440px. |
+
+
 | 2026-10-30 | Responsive listing UX: marketplace header now switches to a compact mobile top row with a full-width search row, hides desktop-only navigation/account links at narrow widths, retains drawer navigation, and uses a blue shadcn-style `Post` action instead of `Sell property`. Listing wizard now collapses to one column on tablet/mobile, constrains fields/media/previews to viewport width, and adapts step/action controls for narrow screens. Commits: ade49b5bcb981d4046cac6bfd55ee8f5c3f52af4, 907d7a1cfbf8003b0e2c37d79b798514bd283fde. No `components/ui/button` or ShadCN button package exists in this branch, so button styling is implemented with the existing anchor and CSS rather than claiming a library component was imported. Not yet verified: production build, actual 320/360/390/440px rendering, and Cloudflare deployment. | 907d7a1cfbf8003b0e2c37d79b798514bd283fde | Run the Cloudflare build, deploy through the existing Worker pipeline, then retest listing form at mobile widths before continuing M2 acceptance. |
 
 
