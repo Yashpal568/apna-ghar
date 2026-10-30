@@ -6,6 +6,11 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 import { PropertyAuthGuard } from './property-auth.guard';
 import { ListPropertiesQueryDto } from './dto/list-properties-query.dto';
 import { PropertiesService } from './properties.service';
+import { IsBoolean } from 'class-validator';
+
+class SetPropertyVisibilityDto {
+  @IsBoolean() visible!: boolean;
+}
 
 type AuthenticatedRequest = { authUserId?: string };
 type UploadedImage = { buffer: Buffer; mimetype: string; size: number };
@@ -109,9 +114,8 @@ export class PropertiesController {
 
   @Patch(':id/visibility')
   @UseGuards(PropertyAuthGuard)
-  async setVisibilityMine(@Req() request: AuthenticatedRequest, @Param('id') id: string, @Body() body: { visible?: boolean }) {
+  async setVisibilityMine(@Req() request: AuthenticatedRequest, @Param('id') id: string, @Body() body: SetPropertyVisibilityDto) {
     if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
-    if (typeof body.visible !== 'boolean') throw new BadRequestException('visible must be a boolean');
     const property = await this.propertiesService.setVisibilityMine(request.authUserId, id, body.visible);
     if (!property) throw new NotFoundException('Property not found or not owned by this account');
     return property;
