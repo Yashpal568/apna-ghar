@@ -1,6 +1,7 @@
 import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { Model, Types } from 'mongoose';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { Property } from '../properties/schemas/property.schema';
@@ -9,10 +10,10 @@ import { MessageRateLimit } from './schemas/message-rate-limit.schema';
 
 type RequestWithAuth = { auth: { userId: string } };
 class SendMessageDto {
-  @IsString() @MinLength(1) @MaxLength(4000) text!: string;
+  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MinLength(1) @MaxLength(4000) text!: string;
 }
 class StartConversationDto {
-  @IsOptional() @IsString() @MaxLength(4000) message?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(4000) message?: string;
 }
 
 @Controller('conversations')
