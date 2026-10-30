@@ -42,6 +42,19 @@ const initialDraft: Draft = {
   videos: "",
 };
 
+// Recover individual Cloudinary URLs even from legacy drafts where URLs were concatenated without separators.
+const parseMediaUrls = (value: string) => value
+  .split(/(?=https?:\\/\\/)/i)
+  .map((part) => part.trim().replace(/[\\s,;\\]}]+$/g, ""))
+  .filter((part) => {
+    try {
+      const parsed = new URL(part);
+      return (parsed.protocol === "https:" || parsed.protocol === "http:") && parsed.hostname === "res.cloudinary.com";
+    } catch {
+      return false;
+    }
+  });
+
 const INDIA_CITIES: Record<string, string[]> = {
   "Andhra Pradesh":["Visakhapatnam","Vijayawada","Guntur","Tirupati","Nellore","Kurnool"],
   "Arunachal Pradesh":["Itanagar","Naharlagun","Pasighat","Tawang"],
