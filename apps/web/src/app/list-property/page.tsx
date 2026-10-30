@@ -89,6 +89,7 @@ function ListingForm() {
   const { getToken } = useAuth();
   const [draft, setDraft] = useState<Draft>(initialDraft);
   const [step, setStep] = useState(1);
+  const [draftHydrated, setDraftHydrated] = useState(false);
   const [notice, setNotice] = useState("");
   const [publishing, setPublishing] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
@@ -129,6 +130,7 @@ function ListingForm() {
             photos: (listing.imageUrls || []).join("\n"),
             videos: (listing.videoUrls || []).join("\n"),
           });
+          setDraftHydrated(true);
           setNotice("Listing loaded. Review the details and save your changes.");
         } catch (error) {
           if (!cancelled) setNotice(error instanceof Error ? error.message : "Could not load this listing.");
@@ -138,14 +140,27 @@ function ListingForm() {
     }
     try {
       const saved = localStorage.getItem("apna-ghar-listing-draft");
-      if (!saved) return;
-      const parsed = JSON.parse(saved) as Partial<Draft>;
-      setDraft((current) => ({ ...current, ...Object.fromEntries(Object.keys(initialDraft).map((key) => [key, typeof parsed[key as keyof Draft] === "string" ? parsed[key as keyof Draft] : current[key as keyof Draft]])) } as Draft));
+      if (saved) {
+        const parsed = JSON.parse(saved) as Partial<Draft> & { step?: number };
+        setDraft((current) => ({ ...current, ...Object.fromEntries(Object.keys(initialDraft).map((key) => [key, typeof parsed[key as keyof Draft] === "string" ? parsed[key as keyof Draft] : current[key as keyof Draft]])) } as Draft));
+        if (typeof parsed.step === "number" && parsed.step >= 1 && parsed.step <= 3) setStep(parsed.step);
+      }
     } catch {
       // Ignore an invalid or outdated local draft and let the owner start fresh.
+    } finally {
+      setDraftHydrated(true);
     }
     return () => { cancelled = true; };
   }, [getToken]);
+
+  useEffect(() => {
+    if (!draftHydrated || editingId) return;
+    try {
+      localStorage.setItem("apna-ghar-listing-draft", JSON.stringify({ ...draft, step, updatedAt: new Date().toISOString() }));
+    } catch {
+      setNotice("Autosave is unavailable in this browser. Use Save draft to retry.");
+    }
+  }, [draft, step, draftHydrated, editingId]);
 
   const update = (key: keyof Draft, value: string) => {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -251,7 +266,7 @@ function ListingForm() {
 
   const saveDraft = () => {
     try {
-      localStorage.setItem("apna-ghar-listing-draft", JSON.stringify({ ...draft, updatedAt: new Date().toISOString() }));
+      localStorage.setItem("apna-ghar-listing-draft", JSON.stringify({ ...draft, step, updatedAt: new Date().toISOString() }));
       setNotice("Draft saved on this device.");
     } catch {
       setNotice("Could not save draft in this browser.");
