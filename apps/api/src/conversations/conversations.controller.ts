@@ -1,10 +1,11 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, TooManyRequestsException, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { Model, Types } from 'mongoose';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { Property } from '../properties/schemas/property.schema';
 import { Conversation } from './schemas/conversation.schema';
+import { MessageRateLimit } from './schemas/message-rate-limit.schema';
 
 type RequestWithAuth = { auth: { userId: string } };
 class SendMessageDto {
@@ -20,6 +21,7 @@ export class ConversationsController {
   constructor(
     @InjectModel(Conversation.name) private readonly conversations: Model<Conversation>,
     @InjectModel(Property.name) private readonly properties: Model<Property>,
+    @InjectModel(MessageRateLimit.name) private readonly messageRateLimits: Model<MessageRateLimit>,
   ) {}
 
   @Get()
@@ -137,6 +139,7 @@ export class ConversationsController {
     const conversation = await this.conversations.findById(conversationId).exec();
     if (!conversation) throw new NotFoundException('Conversation not found.');
     this.assertParticipant(conversation.participantIds, request.auth.userId);
+    await this.consumeMessageQuota(request.auth.userId);
     conversation.messages.push({ senderId: request.auth.userId, text, sentAt: new Date() } as never);
     conversation.lastMessageAt = new Date();
     conversation.unreadCountByUser ??= new Map<string, number>();
@@ -144,6 +147,33 @@ export class ConversationsController {
     conversation.unreadCountByUser.set(recipientId, (conversation.unreadCountByUser.get(recipientId) || 0) + 1);
     await conversation.save();
     return { success: true, message: conversation.messages[conversation.messages.length - 1] };
+  }
+
+  private async consumeMessageQuota(userId: string) {
+    const now = new Date();
+    const windowStart = new Date(now.getTime() - 60_000);
+    const expiresAt = new Date(now.getTime() + 120_000);
+    const increment = () => this.messageRateLimits.findOneAndUpdate(
+      { _id: userId, windowStartedAt: { $gte: windowStart }, count: { $lt: 20 } },
+      { $inc: { count: 1 }, $set: { expiresAt } },
+      { new: true },
+    ).exec();
+
+    if (await increment()) return;
+
+    try {
+      const reset = await this.messageRateLimits.findOneAndUpdate(
+        { _id: userId, $or: [{ windowStartedAt: { $lt: windowStart } }, { windowStartedAt: { $exists: false } }] },
+        { $set: { windowStartedAt: now, count: 1, expiresAt } },
+        { new: true, upsert: true },
+      ).exec();
+      if (reset) return;
+    } catch (error) {
+      if ((error as { code?: number })?.code !== 11000) throw error;
+    }
+
+    if (await increment()) return;
+    throw new TooManyRequestsException('You are sending messages too quickly. Try again in a minute.');
   }
 
   private assertParticipant(participants: string[], userId: string) {
