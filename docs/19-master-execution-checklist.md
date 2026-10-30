@@ -188,3 +188,6 @@
 
 
 | 2026-10-30 | Replaced read-receipt and send-message document saves with atomic MongoDB updates. Message append + recipient unread increment now happen in one update; read reset touches only the signed-in participant's unread key. Initial enquiry messages use the same atomic write path and quota. Added assertions for atomic message/unread update payloads and first-enquiry persistence. This closes the stale full-document save race for those operations, but embedded array storage remains unbounded and still requires a dedicated message collection migration. Latest CI remains pending for this newest head. | Atomic update commits `34aa79a`, `1c3994b`, `96dd3b8`, `448daca` | Confirm both GitHub workflows pass, then test the MongoDB-backed rate limiter, cursor pagination, unread badges and two-account chat against the deployed API. |
+
+
+| 2026-10-30 | Latest CI exposed an unsupported NestJS 10 exception import in the new rate limiter. Replaced it with `HttpException(..., HttpStatus.TOO_MANY_REQUESTS)` and updated the test to assert status 429. The previous CI failure was a real compile failure, not a flaky check; rerun both workflows on the new head before merging. | Fix commits `65438af8`, `37fc65af` | Confirm fresh API typecheck/build/unit/e2e and Next.js build; only then continue live MongoDB/Clerk verification. |
