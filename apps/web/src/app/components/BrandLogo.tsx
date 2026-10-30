@@ -16,9 +16,9 @@ export default function BrandLogo({ compact = false }: { compact?: boolean }) {
             <stop offset="1" stopColor="#078e54" />
           </linearGradient>
         </defs>
-        <path d="M35 118 210 4l91 70V35h38v69l28 25h-51L210 55 82 138H35Z" fill="url(#${gradientId}-blue)" />
+        <path d="M35 118 210 4l91 70V35h38v69l28 25h-51L210 55 82 138H35Z" fill={`url(#${gradientId}-blue)`} />
         <path d="M180 104h19v19h-19zM205 104h19v19h-19zM180 129h19v19h-19zM205 129h19v19h-19z" fill="#0644a8" />
-        <path d="M22 164c49-39 90-48 135-27 31 14 58 34 89 35 31 1 57-12 82-29-21 32-53 53-87 54-44 2-77-22-110-32-38-12-73-8-109-1Z" fill="url(#${gradientId}-green)" />
+        <path d="M22 164c49-39 90-48 135-27 31 14 58 34 89 35 31 1 57-12 82-29-21 32-53 53-87 54-44 2-77-22-110-32-38-12-73-8-109-1Z" fill={`url(#${gradientId}-green)`} />
         <path d="M77 186c42-15 74-5 111 16 22 12 41 21 65 20-36 17-71 12-105-5-26-13-47-27-71-31Z" fill="url(#agh-blue)" />
       </svg>
       <span className="brand-wordmark"><span>Apna</span> <b>Ghar</b></span>
