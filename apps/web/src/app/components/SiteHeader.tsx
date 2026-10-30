@@ -1,5 +1,6 @@
 "use client";
 import { useAuth, useClerk } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 import MarketplaceHeader from "./MarketplaceHeader";
 export default function SiteHeader({active="home"}:{active?:string}) {
  const {isSignedIn}=useAuth(); const {signOut}=useClerk(); const pathname=usePathname();
