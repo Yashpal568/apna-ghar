@@ -72,3 +72,7 @@ Website: http://localhost:3000
 - `docs/09-technical-decisions.md` — confirmed technology decisions
 - `docs/12-m1-implementation-checklist.md` — M1 acceptance criteria and progress
 - `docs/17-web-design-implementation-status.md` — what is UI-only versus production-gated
+
+## Production API environment
+
+Configure these on the Render API service (never in the browser or Git): `MONGODB_URI`, `CLERK_SECRET_KEY`, `CORS_ORIGIN`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET`. The Cloudinary API secret must remain server-side. The root `.env.example` lists the variable names with blank placeholders. Set the frontend `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` to the publishable key from the same Clerk instance as the Render `CLERK_SECRET_KEY`; use live keys for production. Do not paste secret values into issues, commits, or chat.
