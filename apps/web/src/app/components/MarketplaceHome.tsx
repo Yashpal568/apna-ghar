@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth, useClerk } from "@clerk/nextjs";
+import BrandLogo from "./BrandLogo";
 import ThemePicker from "./ThemePicker";
 type Property={_id:string;slug:string;title:string;description?:string;listingType:"sale"|"rent";priceAmount:number;currency?:string;categoryId:string;location?:{city?:string;state?:string;locality?:string};areaValue:number;areaUnit:string;bedrooms?:number;bathrooms?:number;imageUrls?:string[];contactName?:string;contactPhone?:string;furnishing?:string};
 type Result={items:Property[];pagination:{total:number;pages:number;page:number}};
