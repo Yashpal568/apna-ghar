@@ -1,7 +1,7 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { Property } from '../properties/schemas/property.schema';
 import { Conversation } from './schemas/conversation.schema';
@@ -66,11 +66,57 @@ export class ConversationsController {
   }
 
   @Get(':conversationId/messages')
-  async getMessages(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string) {
-    const conversation = await this.conversations.findById(conversationId).lean().exec();
+  async getMessages(
+    @Req() request: RequestWithAuth,
+    @Param('conversationId') conversationId: string,
+    @Query('before') before?: string,
+    @Query('limit') rawLimit?: string,
+  ) {
+    if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
+    const limit = rawLimit === undefined ? 50 : Number(rawLimit);
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+      throw new BadRequestException('Message page size must be between 1 and 100.');
+    }
+    const beforeDate = before === undefined ? null : new Date(before);
+    if (before !== undefined && (!Number.isFinite(beforeDate?.getTime()))) {
+      throw new BadRequestException('Message cursor must be a valid ISO date.');
+    }
+    const rows = await this.conversations.aggregate([
+      { $match: { _id: new Types.ObjectId(conversationId) } },
+      { $project: { propertyId: 1, propertyTitle: 1, participantIds: 1, messages: 1 } },
+      {
+        $project: {
+          propertyId: 1,
+          propertyTitle: 1,
+          participantIds: 1,
+          messages: {
+            $slice: [
+              {
+                $filter: {
+                  input: '$messages',
+                  as: 'message',
+                  cond: beforeDate ? { $lt: ['$message.sentAt', beforeDate] } : true,
+                },
+              },
+              -(limit + 1),
+            ],
+          },
+        },
+      },
+    ]).exec();
+    const conversation = rows[0];
     if (!conversation) throw new NotFoundException('Conversation not found.');
     this.assertParticipant(conversation.participantIds, request.auth.userId);
-    return { conversationId: String(conversation._id), propertyId: conversation.propertyId, propertyTitle: conversation.propertyTitle, messages: conversation.messages };
+    const hasMore = conversation.messages.length > limit;
+    const messages = hasMore ? conversation.messages.slice(-limit) : conversation.messages;
+    return {
+      conversationId,
+      propertyId: conversation.propertyId,
+      propertyTitle: conversation.propertyTitle,
+      messages,
+      hasMore,
+      nextBefore: hasMore && messages.length ? messages[0].sentAt : null,
+    };
   }
 
   @Patch(':conversationId/read')
