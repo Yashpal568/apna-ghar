@@ -100,7 +100,7 @@ export class ConversationsController {
                 $filter: {
                   input: '$messages',
                   as: 'message',
-                  cond: beforeDate ? { $lt: ['$message.sentAt', beforeDate] } : true,
+                  cond: beforeDate ? { $lt: ['$$message.sentAt', beforeDate] } : true,
                 },
               },
               -(limit + 1),
