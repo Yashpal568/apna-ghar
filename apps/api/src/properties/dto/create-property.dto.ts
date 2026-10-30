@@ -26,4 +26,5 @@ export class CreatePropertyDto {
   @IsOptional() @IsArray() @IsString({ each: true }) amenities?: string[];
   @IsOptional() @IsBoolean() isNegotiable?: boolean;
   @IsOptional() @IsArray() @IsString({ each: true }) imageUrls?: string[];
+  @IsOptional() @IsArray() @IsString({ each: true }) videoUrls?: string[];
 }
