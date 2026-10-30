@@ -61,4 +61,26 @@ describe('PropertiesService', () => {
       { new: true, runValidators: true },
     );
   });
+
+  it('scopes visibility changes to the owner and maps hidden state server-side', async () => {
+    const row = { _id: '507f1f77bcf86cd799439011', ownerId: 'user_owner', status: 'hidden_by_owner' };
+    model.findOneAndUpdate.mockReturnValue(query(row));
+    await expect(service.setVisibilityMine('user_owner', '507f1f77bcf86cd799439011', false)).resolves.toBe(row);
+    expect(model.findOneAndUpdate).toHaveBeenCalledWith(
+      { _id: '507f1f77bcf86cd799439011', ownerId: 'user_owner', deletedAt: null },
+      { $set: { status: 'hidden_by_owner' } },
+      { new: true, runValidators: true },
+    );
+  });
+
+  it('soft-deletes only the requesting owner\'s listing', async () => {
+    model.findOneAndUpdate.mockReturnValue(query({ _id: '507f1f77bcf86cd799439011' }));
+    await service.removeMine('user_owner', '507f1f77bcf86cd799439011');
+    const [filter, update, options] = model.findOneAndUpdate.mock.calls[0];
+    expect(filter).toEqual({ _id: '507f1f77bcf86cd799439011', ownerId: 'user_owner', deletedAt: null });
+    expect(update.$set.status).toBe('deleted');
+    expect(update.$set.deletedAt).toBeInstanceOf(Date);
+    expect(options).toEqual({ new: true });
+  });
+
 });
