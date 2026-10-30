@@ -6,7 +6,7 @@ import PropertyReportForm from "./PropertyReportForm";
 import { useEffect,useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 type Property={_id:string;title:string;slug?:string;description?:string;contactName?:string;contactPhone?:string;listingType:"sale"|"rent";priceAmount:number;areaValue:number;areaUnit:string;bedrooms?:number;bathrooms?:number;imageUrls?:string[];amenities?:string[];categoryId?:string;location?:{locality?:string;city?:string;state?:string;addressText?:string}};
-const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:4000/api/v1").replace(/\/$/,"");
+const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/,"");
 
 function AuthenticatedSaveButton({ property, identifier, saved, onSaved, onNotice }: { property: Property; identifier: string; saved: boolean; onSaved: (value: boolean) => void; onNotice: (value: string) => void }) {
   const { isSignedIn, getToken } = useAuth();
