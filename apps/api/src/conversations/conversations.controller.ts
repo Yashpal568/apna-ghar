@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, TooManyRequestsException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { Model, Types } from 'mongoose';
@@ -188,7 +188,7 @@ export class ConversationsController {
     }
 
     if (await increment()) return;
-    throw new TooManyRequestsException('You are sending messages too quickly. Try again in a minute.');
+    throw new HttpException('You are sending messages too quickly. Try again in a minute.', HttpStatus.TOO_MANY_REQUESTS);
   }
 
   private assertParticipant(participants: string[], userId: string) {
