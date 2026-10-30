@@ -3,6 +3,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import Script from 'next/script';
 import './globals.css';
 import MobileBottomNav from './components/MobileBottomNav';
+import SiteHeader from './components/SiteHeader';
 
 export const metadata: Metadata = {
   title: {
@@ -48,6 +49,7 @@ export default function RootLayout({
               },
             }}
           >
+            <SiteHeader />
             {children}
           </ClerkProvider>
         ) : (
