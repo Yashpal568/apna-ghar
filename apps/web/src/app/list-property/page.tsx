@@ -91,7 +91,7 @@ function ListingForm() {
   const [step, setStep] = useState(1);
   const [notice, setNotice] = useState("");
   const [publishing, setPublishing] = useState(false);
-  const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);\n  const [localMedia, setLocalMedia] = useState<Array<{ id: string; file: File; url: string }>>([]);
   const [editingId, setEditingId] = useState("");
 
   useEffect(() => {
@@ -156,46 +156,72 @@ function ListingForm() {
     if (!selected.length) return;
     const selectedImages = selected.filter((file) => file.type.startsWith("image/"));
     const selectedVideos = selected.filter((file) => file.type.startsWith("video/"));
-    if (selected.some((file) => !file.type.startsWith("image/") && !file.type.startsWith("video/"))) { setNotice("Choose image files or MP4, WebM and MOV videos."); return; }
-    if (selectedImages.length + photos.length > 10 || selectedVideos.length + videos.length > 1) {
+    if (selected.some((file) => !file.type.startsWith("image/") && !file.type.startsWith("video/"))) {
+      setNotice("Choose image files or MP4, WebM and MOV videos.");
+      return;
+    }
+    if (selectedImages.length + photos.length + localMedia.filter((item) => item.file.type.startsWith("image/")).length > 10 ||
+        selectedVideos.length + videos.length + localMedia.filter((item) => item.file.type.startsWith("video/")).length > 1) {
       setNotice("You can add up to 10 photos and 1 property video.");
       return;
     }
-    const invalid = selected.find((file) => file.type.startsWith("image/") ? (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type) || file.size > 8 * 1024 * 1024) : (!["video/mp4", "video/webm", "video/quicktime"].includes(file.type) || file.size > 100 * 1024 * 1024));
+    const invalid = selected.find((file) => file.type.startsWith("image/")
+      ? (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type) || file.size > 8 * 1024 * 1024)
+      : (!["video/mp4", "video/webm", "video/quicktime"].includes(file.type) || file.size > 100 * 1024 * 1024));
     if (invalid) {
-      setNotice("Choose JPEG, PNG, WebP or AVIF images under 8 MB each.");
+      setNotice(invalid.type.startsWith("video/")
+        ? "Choose an MP4, WebM or MOV video under 100 MB."
+        : "Choose a JPEG, PNG, WebP or AVIF image under 8 MB.");
       return;
     }
+
+    const pending = selected.map((file) => ({ id: `${file.name}-${file.size}-${file.lastModified}-${Math.random().toString(36).slice(2)}`, file, url: URL.createObjectURL(file) }));
+    setLocalMedia((current) => [...current, ...pending]);
     setUploadingImages(true);
-    setNotice("");
+    setNotice("Preview ready. Uploading selected media to Cloudinary…");
     try {
-      const token = await getToken();
-      if (!token) throw new Error("Sign in before uploading property photos.");
+      let token = await getToken({ skipCache: true });
+      if (!token) throw new Error("Your sign-in session is missing. Sign in again before uploading.");
       const uploaded: string[] = [];
       const uploadedVideos: string[] = [];
-      for (const file of selected) {
-        const form = new FormData();
-        form.append("file", file);
-        const isVideo = file.type.startsWith("video/");
-        const response = await fetch(apiBase + (isVideo ? "/properties/videos" : "/properties/images"), {
-          method: "POST",
-          headers: { Authorization: "Bearer " + token, Accept: "application/json" },
-          body: form,
-        });
+      for (const item of pending) {
+        const send = (authToken: string) => {
+          const form = new FormData();
+          form.append("file", item.file);
+          return fetch(apiBase + (item.file.type.startsWith("video/") ? "/properties/videos" : "/properties/images"), {
+            method: "POST",
+            headers: { Authorization: "Bearer " + authToken, Accept: "application/json" },
+            body: form,
+          });
+        };
+        let response = await send(token);
+        if (response.status === 401) {
+          token = await getToken({ skipCache: true });
+          if (token) response = await send(token);
+        }
         const body = await response.json().catch(() => null);
         if (!response.ok || !body?.url) {
-          throw new Error(typeof body?.message === "string" ? body.message : "Could not upload a property photo.");
+          if (response.status === 401) {
+            throw new Error("The API rejected your Clerk session (401). The website is using Clerk development keys; Render's CLERK_SECRET_KEY must belong to that same Clerk development instance. Check the Render key configuration—do not paste secret keys here.");
+          }
+          const message = Array.isArray(body?.message) ? body.message.join(", ") : body?.message;
+          throw new Error(message || `Media upload failed (HTTP ${response.status}).`);
         }
-        if (isVideo) uploadedVideos.push(body.url as string); else uploaded.push(body.url as string);
+        if (item.file.type.startsWith("video/")) uploadedVideos.push(body.url as string);
+        else uploaded.push(body.url as string);
       }
       setDraft((current) => ({
         ...current,
-        photos: [...current.photos.split("\n").map((url) => url.trim()).filter(Boolean), ...uploaded].join("\n"),
-        videos: [...current.videos.split("\n").map((url) => url.trim()).filter(Boolean), ...uploadedVideos].join("\n"),
+        photos: [...current.photos.split("\\n").map((url) => url.trim()).filter(Boolean), ...uploaded].join("\\n"),
+        videos: [...current.videos.split("\\n").map((url) => url.trim()).filter(Boolean), ...uploadedVideos].join("\\n"),
       }));
+      setLocalMedia((current) => {
+        current.filter((item) => pending.some((done) => done.id === item.id)).forEach((item) => URL.revokeObjectURL(item.url));
+        return current.filter((item) => !pending.some((done) => done.id === item.id));
+      });
       setNotice(`Uploaded ${uploaded.length} photo(s) and ${uploadedVideos.length} video(s) to Cloudinary.`);
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Could not upload property photos.");
+      setNotice(error instanceof Error ? error.message : "Could not upload property media. Your local previews are retained; retry after fixing the issue.");
     } finally {
       setUploadingImages(false);
     }
@@ -320,10 +346,10 @@ function ListingForm() {
               <fieldset className="listing-fieldset listing-field-full"><legend>Apartment configuration</legend><div className="listing-bhk-options">{["1","2","3","4","5"].map((value) => <button key={value} type="button" className={draft.beds === value ? "is-selected" : ""} onClick={() => update("beds", value)}>{value === "5" ? "5+" : value} BHK</button>)}<button type="button" className={!draft.beds ? "is-selected" : ""} onClick={() => update("beds", "")}>Not applicable</button></div></fieldset>
               <label className="listing-field">Bathrooms<input type="number" min="0" value={draft.baths} onChange={(event) => update("baths", event.target.value)} placeholder="Number of bathrooms" /></label>
               <label className="listing-field listing-field-full">Property description<textarea rows={5} maxLength={3000} value={draft.description} onChange={(event) => update("description", event.target.value)} placeholder="Describe the layout, condition, amenities, nearby facilities and anything a buyer or tenant should know." /><small>{draft.description.length}/3000 characters</small></label>
-              <div className="listing-upload-panel listing-field-full"><div className="listing-upload-heading"><div><strong>Photos & property video</strong><small>Choose multiple photos and one walkthrough video. Images: 8 MB max each · Video: 100 MB max.</small></div><span>{photos.length}/10 photos · {videos.length}/1 video</span></div>
+              <div className="listing-upload-panel listing-field-full"><div className="listing-upload-heading"><div><strong>Photos & property video</strong><small>Choose multiple photos and one walkthrough video. Images: 8 MB max each · Video: 100 MB max.</small></div><span>{photos.length + localMedia.filter((item) => item.file.type.startsWith("image/")).length}/10 photos · {videos.length + localMedia.filter((item) => item.file.type.startsWith("video/")).length}/1 video</span></div>
                 <label className="listing-dropzone"><span className="listing-upload-icon">＋</span><strong>{uploadingImages ? "Uploading media…" : "Add photos or video"}</strong><small>JPEG, PNG, WebP, AVIF · MP4, WebM, MOV</small><input type="file" accept="image/jpeg,image/png,image/webp,image/avif,video/mp4,video/webm,video/quicktime" multiple disabled={uploadingImages || (photos.length >= 10 && videos.length >= 1)} onChange={(event) => { void uploadPhotos(event.currentTarget.files); event.currentTarget.value = ""; }} /></label>
-                {photos.length > 0 && <div className="listing-photo-grid">{photos.map((url, index) => <div className="listing-photo-item" key={url}><img src={url} alt={`Property photo ${index + 1}`} loading="lazy" /><button type="button" aria-label={`Remove photo ${index + 1}`} onClick={() => update("photos", photos.filter((_, photoIndex) => photoIndex !== index).join("\n"))}>×</button></div>)}</div>}
-                {videos.map((url,index)=><div className="listing-video-preview" key={url}><video src={url} controls preload="metadata" /><button type="button" onClick={() => update("videos", videos.filter((_,videoIndex)=>videoIndex!==index).join("\n"))}>Remove video</button></div>)}
+                {(photos.length > 0 || localMedia.some((item) => item.file.type.startsWith("image/"))) && <div className="listing-photo-grid">{photos.map((url, index) => <div className="listing-photo-item" key={url}><img src={url} alt={`Property photo ${index + 1}`} loading="lazy" /><button type="button" aria-label={`Remove photo ${index + 1}`} onClick={() => update("photos", photos.filter((_, photoIndex) => photoIndex !== index).join("\n"))}>×</button></div>)}{localMedia.filter((item) => item.file.type.startsWith("image/")).map((item) => <div className="listing-photo-item" key={item.id}><img src={item.url} alt={`Selected ${item.file.name}`} /><span className="listing-local-upload-tag">{uploadingImages ? "Uploading…" : "Not uploaded"}</span><button type="button" aria-label={`Remove ${item.file.name}`} onClick={() => { URL.revokeObjectURL(item.url); setLocalMedia((current) => current.filter((entry) => entry.id !== item.id)); }}>×</button></div>)}</div>}
+                {videos.map((url,index)=><div className="listing-video-preview" key={url}><video src={url} controls preload="metadata" /><button type="button" onClick={() => update("videos", videos.filter((_,videoIndex)=>videoIndex!==index).join("\n"))}>Remove video</button></div>)}{localMedia.filter((item) => item.file.type.startsWith("video/")).map((item) => <div className="listing-video-preview" key={item.id}><video src={item.url} controls preload="metadata" /><small>{uploadingImages ? "Uploading video…" : "Video not uploaded — retry after fixing authentication."}</small><button type="button" onClick={() => { URL.revokeObjectURL(item.url); setLocalMedia((current) => current.filter((entry) => entry.id !== item.id)); }}>Remove video</button></div>)}
                 <small className="listing-upload-status">{uploadingImages ? "Uploading securely to Cloudinary…" : `${photos.length} photo(s) and ${videos.length} video(s) added.`}</small>
               </div>
               <div className="listing-field-group listing-field-full"><span className="listing-field-group-title">How can interested people reach you?</span><div className="listing-fields listing-fields-nested">
@@ -337,7 +363,7 @@ function ListingForm() {
               <div className="listing-review-meta"><span>{draft.purpose === "rent" ? "FOR RENT / LEASE" : "FOR SALE"}</span><span>{draft.type || "Property"}</span></div><h3>{draft.title || "Your property title"}</h3><p className="listing-review-location">{[draft.locality, draft.city, draft.state].filter(Boolean).join(", ")}</p><strong className="listing-review-price">{formattedPrice}</strong><div className="listing-review-facts"><span>{draft.area || "—"} sq ft</span><span>{draft.beds || "—"} bedrooms</span><span>{draft.baths || "—"} bathrooms</span><span>{photos.length} photos</span><span>{videos.length} video(s)</span></div><p>{draft.description || "No description provided."}</p><div className="listing-review-contact"><strong>Contact details</strong><span>{draft.name || "—"} · {draft.phone || "—"}</span></div>
             </div>}
             {notice && <p role="status" className="form-notice">{notice}</p>}
-            <div className="listing-actions listing-actions-redesign"><button className="button button-quiet" type="button" onClick={() => step > 1 ? setStep(step - 1) : window.location.assign("/")}>{step > 1 ? "← Back" : "Cancel"}</button><button className="button button-outline" type="button" onClick={saveDraft}>Save draft</button>{step < 3 ? <button className="button button-primary" type="submit">Continue to step {step + 1} ↗</button> : <button className="button button-primary" type="button" disabled={publishing || uploadingImages} onClick={publish}>{publishing ? "Publishing…" : editingId ? "Save listing changes ↗" : "Publish listing ↗"}</button>}</div>
+            <div className="listing-actions listing-actions-redesign"><button className="button button-quiet" type="button" onClick={() => step > 1 ? setStep(step - 1) : window.location.assign("/")}>{step > 1 ? "← Back" : "Cancel"}</button><button className="button button-outline" type="button" onClick={saveDraft}>Save draft</button>{step < 3 ? <button className="button button-primary" type="submit">Continue to step {step + 1} ↗</button> : <button className="button button-primary" type="button" disabled={publishing || uploadingImages || localMedia.length > 0} onClick={publish}>{publishing ? "Publishing…" : editingId ? "Save listing changes ↗" : "Publish listing ↗"}</button>}</div>
           </div>
         </form>
         <aside className="listing-sidebar listing-sidebar-redesign"><div className="listing-live-preview"><div className="listing-live-preview-head"><strong>Live post preview</strong><span>Updates as you type</span></div>{photos[0]?<img src={photos[0]} alt="Listing preview" />:<div className="listing-live-preview-empty">Property photos will appear here</div>}<div className="listing-live-preview-body"><span>{draft.purpose==="rent"?"FOR RENT":"FOR SALE"} · {(draft.type||"PROPERTY").toUpperCase()}</span><h4>{draft.title||"Your property title"}</h4><p>{[draft.locality,draft.city,draft.state].filter(Boolean).join(", ")||"Your property location"}</p><strong>{formattedPrice}</strong><small>{draft.area||"—"} sq ft · {draft.beds||"—"} beds · {photos.length} photos · {videos.length} video(s)</small></div></div><div className="listing-sidebar-top"><span className="sidebar-icon">⌂</span><span className="listing-sidebar-kicker">A better listing starts here</span></div><h3>Help people picture their next home.</h3><p>Clear information makes it easier for the right people to understand your property.</p><ul><li><span>✓</span> Use an accurate title and current price.</li><li><span>✓</span> Describe the property honestly.</li><li><span>✓</span> Add bright, clear photos of each space.</li><li><span>✓</span> Only share photos you have permission to use.</li></ul><a href="/safety" className="text-link">Read listing safety tips ↗</a><div className="listing-sidebar-progress"><div><span>YOUR PROGRESS</span><strong>{step} / 3</strong></div><div className="listing-sidebar-progress-track"><i style={{ width: (step / 3 * 100) + "%" }} /></div><small>Save a draft any time. Your unfinished draft stays on this device.</small></div><div className="listing-price-preview"><span>EXPECTED PRICE</span><strong>{formattedPrice}</strong><small>{priceInWords}</small></div></aside>
