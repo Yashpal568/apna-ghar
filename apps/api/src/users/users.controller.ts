@@ -2,15 +2,16 @@ import { Body, Controller, Get, Put, Req, ServiceUnavailableException, Unauthori
 import { ConfigService } from '@nestjs/config';
 import { createClerkClient } from '@clerk/backend';
 import { IsEmail, IsOptional, IsString, MaxLength, ValidateIf } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { UsersService } from './users.service';
 
 class UpdateProfileDto {
-  @IsOptional() @IsString() @MaxLength(100) name?: string;
-  @IsOptional() @ValidateIf((_object, value) => value !== '') @IsEmail() @MaxLength(254) email?: string;
-  @IsOptional() @IsString() @MaxLength(30) phone?: string;
-  @IsOptional() @IsString() @MaxLength(100) city?: string;
-  @IsOptional() @IsString() @MaxLength(500) about?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(100) name?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @ValidateIf((_object, value) => value !== '') @IsEmail() @MaxLength(254) email?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(30) phone?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(100) city?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(500) about?: string;
 }
 
 type AuthenticatedRequest = { auth: { userId: string; claims?: Record<string, unknown> } };
