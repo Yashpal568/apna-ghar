@@ -265,3 +265,32 @@
 - [x] Removed a stale `BadRequestException` import from the visit-request controller after its string-based exception catch was removed. Commit: `efccf37e9cb1064ce59550ef03517ff59c8d89aa`.
 - [ ] Fresh GitHub Actions result remains unverified on this commit: the available commit-status endpoint exposes only Vercel success, and the available workflow-run lookup returns no push-triggered runs. Do not treat that as a passing Actions result.
 - [ ] Live production Clerk keys, Render deployment/runtime verification, authenticated buyer/owner acceptance, and the dedicated message-collection migration remain release blockers.
+
+
+## 2026-10-30 — Current execution status after CI recovery
+
+**Latest code/documentation commits**
+- CI test correction: `42403a100152713ca332ffbe8697a43eaf76e56b`.
+- Cloudinary environment template: `e5e329aa513e54034fe553fdb94245cef0e687a0`.
+- Production configuration documentation: `2b353a4a5619fd0b9f4342ef6015252f584a7820`.
+- CI and Quality Checks both passed on `42403a1` (CI run `41071566568`; Quality Checks run `41071566573`). The two documentation commits after that SHA have new runs queued and must be rechecked before treating the current HEAD as green.
+
+**Current milestone assessment — do not close**
+- M1: workspace/typecheck/build/CI and health/readiness implementation exist. Current HEAD CI is pending. Live Render liveness/readiness and environment correctness have not been reverified in this session. The API health controller correctly distinguishes liveness from MongoDB readiness. Local environment docs now list Cloudinary server-side variables.
+- M2: marketplace routes and API-backed search/listing/saved/profile/chat implementations exist. Real signed-in buyer and owner acceptance is still not evidenced: publish/edit/hide/delete, saved-property cross-device persistence, profile persistence, Cloudinary upload and actual inventory-backed filters/sort/pagination remain open. Existing inventory was previously reported empty, so use a dedicated test listing and two test accounts.
+- M3: Clerk JWT guard, user identity sync, ownership/participant checks, DTO validation, reporting, visits, saved properties, messaging pagination, unread receipts and MongoDB-backed message quota are implemented and covered by CI tests. Live Clerk JWT + Render MongoDB verification is not evidenced on the current deployment. Message documents remain embedded in `conversations.messages`; dedicated message collection migration/backfill is still a pre-production blocker.
+
+**Live verification attempts**
+- Cloudflare account API reports active Worker deployment `ffa03bd3-5ab2-49e0-8466-a34dc638b186`, version `2ce74e3a-f16a-495e-87d4-6ee0da2a68de`, created `2026-10-30T13:50:04Z`, 100% traffic. This is deployment metadata only; its source commit has not been matched to the current `main` head.
+- Attempted live API checks for `/api/v1/health`, `/api/v1/health/ready`, categories and property search through Cloudflare Browser Rendering; Cloudflare returned HTTP 429 rate limit before a page result. Direct runtime requests from the execution container could not resolve external DNS. Neither is counted as a pass or an application failure.
+- No Render account connector is available in this session to inspect Render environment variables or force a deploy. Do not claim Render deployment or runtime readiness without new evidence.
+
+**Remaining exact release gates**
+1. Recheck CI and Quality Checks for the current `main` SHA after the documentation commits.
+2. Match/deploy the web artifact from a known source commit and verify the Worker serves that release.
+3. Verify Render `/api/v1/health` and `/api/v1/health/ready` return 200; readiness must report MongoDB connected.
+4. Confirm matching production Clerk live publishable/secret keys and Render CORS origin; do not disable auth to make tests pass.
+5. Run a real buyer/owner journey using test accounts and a test listing, including Cloudinary photo upload and two-account messaging.
+6. Implement and test a safe migration from embedded messages to a dedicated messages collection before production-scale sign-off.
+
+**Acceptance decision:** M1, M2 and M3 remain open. CI green is necessary but not equivalent to milestone completion. M4 remains blocked.
