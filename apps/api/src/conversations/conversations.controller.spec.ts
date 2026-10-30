@@ -58,6 +58,7 @@ describe('ConversationsController', () => {
       buyerId: buyer,
       participantIds: [owner, buyer],
       messages: [],
+      unreadCountByUser: expect.any(Map),
     }));
   });
 
@@ -79,6 +80,9 @@ describe('ConversationsController', () => {
       _id: 'conversation-1',
       participantIds: [buyer, owner],
       messages: [] as Array<{ senderId: string; text: string; sentAt: Date }>,
+      ownerId: owner,
+      buyerId: buyer,
+      unreadCountByUser: new Map<string, number>(),
       lastMessageAt: new Date('2026-01-01T00:00:00.000Z'),
       save: jest.fn().mockResolvedValue(undefined),
     };
@@ -88,6 +92,7 @@ describe('ConversationsController', () => {
     expect(conversation.messages).toHaveLength(1);
     expect(conversation.messages[0]).toEqual(expect.objectContaining({ senderId: buyer, text: 'Is the property available?' }));
     expect(conversation.lastMessageAt).toBeInstanceOf(Date);
+    expect(conversation.unreadCountByUser.get(owner)).toBe(1);
     expect(conversation.save).toHaveBeenCalledTimes(1);
   });
 
@@ -104,3 +109,15 @@ describe('ConversationsController', () => {
   });
 
 });
+  it('clears unread count only for an authenticated participant', async () => {
+    const conversation = {
+      participantIds: [buyer, owner],
+      unreadCountByUser: new Map([[buyer, 3], [owner, 2]]),
+      save: jest.fn().mockResolvedValue(undefined),
+    };
+    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    await expect(controller.markRead({ auth: { userId: buyer } }, 'conversation-1')).resolves.toEqual({ success: true, unreadCount: 0 });
+    expect(conversation.unreadCountByUser.get(buyer)).toBe(0);
+    expect(conversation.unreadCountByUser.get(owner)).toBe(2);
+    expect(conversation.save).toHaveBeenCalledTimes(1);
+  });
