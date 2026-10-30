@@ -1,10 +1,11 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { Property } from '../properties/schemas/property.schema';
 import { Conversation } from './schemas/conversation.schema';
+import { MessageRateLimit } from './schemas/message-rate-limit.schema';
 
 type RequestWithAuth = { auth: { userId: string } };
 class SendMessageDto {
@@ -20,12 +21,19 @@ export class ConversationsController {
   constructor(
     @InjectModel(Conversation.name) private readonly conversations: Model<Conversation>,
     @InjectModel(Property.name) private readonly properties: Model<Property>,
+    @InjectModel(MessageRateLimit.name) private readonly messageRateLimits: Model<MessageRateLimit>,
   ) {}
 
   @Get()
   async listMine(@Req() request: RequestWithAuth) {
-    return this.conversations.find({ participantIds: request.auth.userId })
-      .sort({ lastMessageAt: -1 }).limit(100).lean().exec();
+    const rows = await this.conversations.find({ participantIds: request.auth.userId })
+      .sort({ lastMessageAt: -1 }).limit(100).select({ messages: { $slice: -1 } }).lean().exec();
+    return rows.map((row) => ({
+      ...row,
+      unreadCountByUser: row.unreadCountByUser instanceof Map
+        ? Object.fromEntries(row.unreadCountByUser)
+        : row.unreadCountByUser || {},
+    }));
   }
 
   @Post('property/:propertyId')
@@ -47,23 +55,90 @@ export class ConversationsController {
         buyerId: request.auth.userId,
         participantIds: [property.ownerId, request.auth.userId],
         messages: [],
+        unreadCountByUser: new Map([[property.ownerId, 0], [request.auth.userId, 0]]),
         lastMessageAt: new Date(),
       });
     }
     if (body?.message?.trim()) {
-      conversation.messages.push({ senderId: request.auth.userId, text: body.message.trim(), sentAt: new Date() } as never);
-      conversation.lastMessageAt = new Date();
-      await conversation.save();
+      await this.consumeMessageQuota(request.auth.userId);
+      const sentAt = new Date();
+      const message = { _id: new Types.ObjectId(), senderId: request.auth.userId, text: body.message.trim(), sentAt };
+      const result = await this.conversations.updateOne(
+        { _id: conversation._id, participantIds: request.auth.userId },
+        {
+          $push: { messages: message },
+          $set: { lastMessageAt: sentAt },
+          $inc: { [`unreadCountByUser.${property.ownerId}`]: 1 },
+        },
+      ).exec();
+      if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');
     }
     return { conversationId: String(conversation._id), propertyId: conversation.propertyId, propertyTitle: conversation.propertyTitle };
   }
 
   @Get(':conversationId/messages')
-  async getMessages(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string) {
-    const conversation = await this.conversations.findById(conversationId).lean().exec();
+  async getMessages(
+    @Req() request: RequestWithAuth,
+    @Param('conversationId') conversationId: string,
+    @Query('before') before?: string,
+    @Query('limit') rawLimit?: string,
+  ) {
+    if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
+    const limit = rawLimit === undefined ? 50 : Number(rawLimit);
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+      throw new BadRequestException('Message page size must be between 1 and 100.');
+    }
+    const beforeDate = before === undefined ? null : new Date(before);
+    if (before !== undefined && (!Number.isFinite(beforeDate?.getTime()))) {
+      throw new BadRequestException('Message cursor must be a valid ISO date.');
+    }
+    const rows = await this.conversations.aggregate([
+      { $match: { _id: new Types.ObjectId(conversationId) } },
+      { $project: { propertyId: 1, propertyTitle: 1, participantIds: 1, messages: 1 } },
+      {
+        $project: {
+          propertyId: 1,
+          propertyTitle: 1,
+          participantIds: 1,
+          messages: {
+            $slice: [
+              {
+                $filter: {
+                  input: '$messages',
+                  as: 'message',
+                  cond: beforeDate ? { $lt: ['$$message.sentAt', beforeDate] } : true,
+                },
+              },
+              -(limit + 1),
+            ],
+          },
+        },
+      },
+    ]).exec();
+    const conversation = rows[0];
     if (!conversation) throw new NotFoundException('Conversation not found.');
     this.assertParticipant(conversation.participantIds, request.auth.userId);
-    return { conversationId: String(conversation._id), propertyId: conversation.propertyId, propertyTitle: conversation.propertyTitle, messages: conversation.messages };
+    const hasMore = conversation.messages.length > limit;
+    const messages = hasMore ? conversation.messages.slice(-limit) : conversation.messages;
+    return {
+      conversationId,
+      propertyId: conversation.propertyId,
+      propertyTitle: conversation.propertyTitle,
+      messages,
+      hasMore,
+      nextBefore: hasMore && messages.length ? messages[0].sentAt : null,
+    };
+  }
+
+  @Patch(':conversationId/read')
+  async markRead(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string) {
+    if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
+    const result = await this.conversations.updateOne(
+      { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId },
+      { $set: { [`unreadCountByUser.${request.auth.userId}`]: 0 } },
+    ).exec();
+    if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');
+    return { success: true, unreadCount: 0 };
   }
 
   @Post(':conversationId/messages')
@@ -73,10 +148,47 @@ export class ConversationsController {
     const conversation = await this.conversations.findById(conversationId).exec();
     if (!conversation) throw new NotFoundException('Conversation not found.');
     this.assertParticipant(conversation.participantIds, request.auth.userId);
-    conversation.messages.push({ senderId: request.auth.userId, text, sentAt: new Date() } as never);
-    conversation.lastMessageAt = new Date();
-    await conversation.save();
-    return { success: true, message: conversation.messages[conversation.messages.length - 1] };
+    await this.consumeMessageQuota(request.auth.userId);
+    const recipientId = conversation.ownerId === request.auth.userId ? conversation.buyerId : conversation.ownerId;
+    const sentAt = new Date();
+    const message = { _id: new Types.ObjectId(), senderId: request.auth.userId, text, sentAt };
+    const result = await this.conversations.updateOne(
+      { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId },
+      {
+        $push: { messages: message },
+        $set: { lastMessageAt: sentAt },
+        $inc: { [`unreadCountByUser.${recipientId}`]: 1 },
+      },
+    ).exec();
+    if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');
+    return { success: true, message };
+  }
+
+  private async consumeMessageQuota(userId: string) {
+    const now = new Date();
+    const windowStart = new Date(now.getTime() - 60_000);
+    const expiresAt = new Date(now.getTime() + 120_000);
+    const increment = () => this.messageRateLimits.findOneAndUpdate(
+      { _id: userId, windowStartedAt: { $gte: windowStart }, count: { $lt: 20 } },
+      { $inc: { count: 1 }, $set: { expiresAt } },
+      { new: true },
+    ).exec();
+
+    if (await increment()) return;
+
+    try {
+      const reset = await this.messageRateLimits.findOneAndUpdate(
+        { _id: userId, $or: [{ windowStartedAt: { $lt: windowStart } }, { windowStartedAt: { $exists: false } }] },
+        { $set: { windowStartedAt: now, count: 1, expiresAt } },
+        { new: true, upsert: true },
+      ).exec();
+      if (reset) return;
+    } catch (error) {
+      if ((error as { code?: number })?.code !== 11000) throw error;
+    }
+
+    if (await increment()) return;
+    throw new HttpException('You are sending messages too quickly. Try again in a minute.', HttpStatus.TOO_MANY_REQUESTS);
   }
 
   private assertParticipant(participants: string[], userId: string) {

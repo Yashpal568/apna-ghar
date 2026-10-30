@@ -3178,3 +3178,68 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
  .messages-composer { grid-template-columns:minmax(0,1fr); }
  .messages-composer button { width:100%; }
 }
+
+
+/* Final responsive and accessibility pass for the account/profile experience. */
+.profile-stitch-avatar{overflow:hidden}
+.profile-stitch-avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.profile-redesign .profile-stitch-form-card,
+.profile-redesign .profile-stitch-security-card,
+.profile-redesign .profile-stitch-notification-card,
+.profile-redesign .profile-stitch-shortcuts,
+.profile-redesign .profile-stitch-recommendation,
+.profile-redesign .profile-stitch-owner-cta{min-width:0}
+.profile-redesign .profile-stitch-field input,
+.profile-redesign .profile-stitch-field textarea{min-width:0}
+.profile-redesign .profile-stitch-notice.is-error{border-color:#dc8d8d;background:color-mix(in srgb,#dc2626 9%,var(--color-surface));color:var(--color-text)}
+.profile-redesign .profile-stitch-notice{overflow-wrap:anywhere}
+.profile-redesign .profile-stitch-form-footer>button{min-width:148px}
+.profile-redesign .profile-stitch-hero-insights{min-width:0}
+.profile-redesign .profile-stitch-insight-links>a{min-width:0}
+@media(max-width:1000px){
+  .profile-redesign-shell{max-width:100%;width:calc(100% - 32px)}
+  .profile-stitch-grid{grid-template-columns:minmax(0,1fr)}
+  .profile-stitch-side-column{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .profile-stitch-security-card{grid-row:auto}
+}
+@media(max-width:700px){
+  .profile-redesign-shell{width:calc(100% - 24px);padding:14px 0 34px}
+  .profile-stitch-hero,.profile-stitch-hero-content{min-height:0}
+  .profile-stitch-hero-content{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;padding:70px 16px 18px;gap:15px}
+  .profile-stitch-hero-copy,.profile-stitch-hero-insights{grid-column:1;grid-row:auto}
+  .profile-stitch-hero h1{font-size:clamp(32px,9vw,42px);letter-spacing:-1.4px}
+  .profile-stitch-hero-insights{padding:13px}
+  .profile-stitch-insight-links{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .profile-stitch-insight-links>a{min-height:84px;padding:8px 5px;overflow-wrap:anywhere}
+  .profile-stitch-insight-links strong{font-size:10px;line-height:1.3}
+  .profile-stitch-completeness{grid-column:1;grid-row:auto;margin-top:0}
+  .profile-stitch-side-column{grid-template-columns:minmax(0,1fr)}
+  .profile-stitch-form-card,.profile-stitch-security-card{padding:16px}
+  .profile-stitch-form-footer{align-items:stretch;flex-direction:column}
+  .profile-stitch-form-footer>button{width:100%;min-height:46px}
+  .profile-stitch-notification-card{align-items:flex-start}
+  .profile-stitch-switch{margin-left:auto}
+  .profile-stitch-security-heading{gap:8px}
+  .profile-stitch-tabs button{min-height:42px}
+  .profile-stitch-owner-cta{grid-template-columns:40px minmax(0,1fr);padding:15px}
+  .profile-stitch-owner-icon{width:40px;height:40px;flex-basis:40px}
+}
+@media(max-width:380px){
+  .profile-redesign-shell{width:calc(100% - 20px)}
+  .profile-stitch-hero-content{padding-left:13px;padding-right:13px}
+  .profile-stitch-hero h1{font-size:31px}
+  .profile-stitch-insight-links>a{min-height:78px;padding:7px 4px}
+  .profile-stitch-insight-links strong{font-size:9px}
+  .profile-stitch-badges>span{font-size:8px;padding:7px 8px}
+  .profile-stitch-notification-card{gap:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  .profile-stitch-slide img,.profile-stitch-progress>span{transition:none!important}
+}
+
+/* Conversation unread state. */
+.messages-thread{position:relative}
+.messages-unread-badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--color-green);color:#052b1b;font-size:10px;font-weight:850;line-height:1}
+@media(max-width:700px){.messages-unread-badge{min-width:18px;height:18px;font-size:9px}}
+
+.messages-load-older{display:block;margin:14px auto;padding:9px 15px;border:1px solid var(--color-border);border-radius:999px;background:var(--color-surface);color:var(--color-text);font:inherit;font-size:12px;font-weight:700;cursor:pointer}.messages-load-older:disabled{opacity:.6;cursor:wait}

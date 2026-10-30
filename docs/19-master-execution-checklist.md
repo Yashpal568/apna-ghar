@@ -1,8 +1,8 @@
 # Apna Ghar — Master Execution Checklist
 
 **Repository:** `Yashpal568/apna-ghar`  
-**Working branch in this session:** `deploy/cloudflare-preview` (the existing mainline marketplace checkpoint is documented separately below; keep this preview branch isolated until runtime and CI are verified).  
-**Last updated:** 2026-10-29  
+**Working branch in this session:** `feat/profile-theme-chat-finish` (PR #13 targets `deploy/cloudflare-preview`) (the existing mainline marketplace checkpoint is documented separately below; keep this preview branch isolated until runtime and CI are verified).  
+**Last updated:** 2026-10-30  
 **Purpose:** Single day-to-day source of truth. Update this file whenever work starts, finishes, is blocked, or changes scope. Do not restart from a different milestone without recording why.
 
 ## Rules for every work session
@@ -76,7 +76,13 @@
 - [x] Full API/web/mobile typecheck, API unit tests, API HTTP e2e tests, API build and web build passed on CI validation branch feat/m3-end-to-end-validation at commit ae44459abc994ce46277fedfbc3d6fd4d24c02fa (CI run 40907781495; Quality Checks run 40907781485).
 - [ ] Verify profile identity sync against the deployed Clerk secret and live MongoDB; run authenticated buyer/seller conversation flow in the browser.
 - [ ] Verify Clerk profile sync and buyer/seller chat with two real signed-in accounts on the deployed environment; current automated tests use mocked identity/database services.
-- [ ] Review rate limiting and message pagination before production sign-off.
+- [x] Added cursor-based message history pagination (`before` + bounded `limit`, default 50/max 100) with participant checks and server-side filtering.
+- [x] Inbox previews now select only the latest message rather than returning each full embedded history.
+- [x] Messages UI can load older pages and merges them with 5-second live refreshes without moving the cursor forward.
+- [ ] Verify pagination with real MongoDB data and browser scrolling; CI for the latest pagination commits is still pending.
+- [x] Added a MongoDB-backed per-user message send quota (20 messages per rolling minute) with TTL cleanup and HTTP 429 responses.
+- [x] Message appends, unread increments and read resets now use atomic MongoDB updates to avoid stale document-save overwrites.
+- [ ] Migrate unbounded embedded message arrays into a dedicated message collection before production sign-off.
 
 ### M4 — Admin and moderation
 - [ ] Server-protect admin routes and every privileged API.
@@ -167,3 +173,21 @@
 | 2026-10-29 | Final palette sweep removed remaining hard-coded cobalt/mint accents from shared CSS (commits 06d1f6c, 43a3b82, b93e939). Ported the new contactName field to the actual Render-connected API branch feat/m1-foundation-completion (schema commit eb77d9e, DTO commit fc38b77) so the live API accepts and persists the owner name sent by the redesigned listing form. Render-branch Quality Checks passed at fc38b778; CI passed typecheck, API unit/e2e suites, API build and web build. Live Render API health and public property search both return HTTP 200; current inventory reports total=0. | CSS: 06d1f6c, 43a3b82, b93e939; Render API: eb77d9e, fc38b77; CI: fc38b778 | Wait for latest Cloudflare build e26ee1b7 to finish, then smoke-test the final theme palette; keep authenticated owner lifecycle and two-account chat acceptance pending because no published listings or authenticated browser session are available. |
 
 | 2026-10-29 | Final shared CSS palette cleanup deployed successfully to Cloudflare build e26ee1b7-6e87-413c-b2bd-296c62aede49, Worker version ddba3e10-8a65-4f6e-98dd-435f81f7cc9a. Latest color changes were CSS-only; prior DOM/layout smoke tests at 320×740, 390×844 and 1440×900 confirmed the horizontal original logo, mobile hamburger/search, seller CTA and responsive layout. A second scrape immediately after final deploy was rate-limited by Browser Rendering, so no new final-screenshot claim is made. Render-connected API branch CI at fc38b778 passed. | Cloudflare build e26ee1b7, version ddba3e10; Render CI fc38b778 | M3 implementation and CI gates are green; live authenticated buyer/seller acceptance is still pending because public inventory is empty and no signed-in browser session is available. |
+
+
+| 2026-10-30 | Follow-through branch created from `deploy/cloudflare-preview` to avoid merging diverged M3 branches directly. Preserved the existing blue/green Apna Ghar mark and made SVG gradient IDs instance-safe; finished profile avatar display using the Clerk image, added a stable profile-details anchor and tightened 320–700px/tablet profile layout behavior while retaining theme tokens. Added per-participant unread message counts to conversation persistence, an authenticated `PATCH /api/v1/conversations/:conversationId/read` endpoint, unread count serialization for inbox JSON, and UI badges/read-state clearing. Added controller tests for unread increment and participant-only read reset. Code and tests committed on `feat/profile-theme-chat-finish`; CI has not yet run for this branch. Live Clerk/Render two-account verification remains blocked until the API Clerk secret is confirmed and a published test listing is available. Message pagination, rate limiting and concurrency-safe message writes remain open before production sign-off. | Branch head `62bfbc72314240873d7ca723f68ede65597bea46` (CI pending) | Run PR CI; fix any test/type/build failures; then validate profile persistence and two-account buyer/seller unread/read flow against the deployed API. |
+
+
+| 2026-10-30 | Continued PR #13 after both workflows passed on the unread/read implementation. Added bounded cursor pagination to `GET /api/v1/conversations/:id/messages` (default 50, maximum 100), participant authorization, ISO cursor/page-size validation and aggregation-side message filtering. Inbox listing now projects only the most recent message for each conversation. Messages UI adds a Load older messages control and merges paginated history with periodic live refreshes while preserving the oldest loaded cursor. Added unit coverage for participant access, page bounds, cursor validation and hasMore/nextBefore behavior; CI has not yet been verified for these newest commits. | Latest code commit `a41238a1fc1bc25a729e730a39548c1a8aeebc6e`; prior green checks at `2406656435f3579b3d3463385120c0d3a1737e41` | Verify fresh CI for the pagination changes, then exercise cursor paging against MongoDB and the browser; implement a shared production-safe rate limiter and concurrency-safe message persistence before launch. |
+
+
+| 2026-10-30 | Added a MongoDB-backed shared per-user send quota (20 messages/minute) with atomic counter updates, one-minute windows, TTL cleanup and HTTP 429 responses; applied the same quota to first-message property enquiries and subsequent replies. Added controller coverage for quota exhaustion. Corrected the MongoDB aggregation variable used by message cursor filtering. CI was green for the pagination implementation before the rate-limit additions; the latest rate-limit follow-up still requires fresh CI. | Rate-limit schema/controller/tests commits: `fa7704e`, `8d2cf68`, `50bd6dd`, `3b75505`, `8fc708c`, `11ca708` | Run both workflows on the latest head; if green, test 20/minute enforcement, TTL behavior and pagination against live MongoDB. Before production, migrate embedded message arrays to a dedicated collection and use atomic message/unread writes. |
+
+
+| 2026-10-30 | Completed the follow-up rate-limit wiring across first-contact enquiries and replies; added explicit coverage that a first enquiry increments the owner's unread count and consumes the sender's shared quota. Strengthened the pagination test to assert the MongoDB aggregation uses the correct scoped `$$message.sentAt` cursor expression. The newest test/code commits are pushed to PR #13. Fresh CI for this final head has not yet been observed; do not merge until both workflows pass. | Latest test commit `3b922adc1a26d2f5de2ba1d1e4303f0c5a386ebb` | Confirm CI and run authenticated MongoDB-backed browser checks; then migrate embedded message arrays to a dedicated collection and make message/unread updates atomic before production. |
+
+
+| 2026-10-30 | Replaced read-receipt and send-message document saves with atomic MongoDB updates. Message append + recipient unread increment now happen in one update; read reset touches only the signed-in participant's unread key. Initial enquiry messages use the same atomic write path and quota. Added assertions for atomic message/unread update payloads and first-enquiry persistence. This closes the stale full-document save race for those operations, but embedded array storage remains unbounded and still requires a dedicated message collection migration. Latest CI remains pending for this newest head. | Atomic update commits `34aa79a`, `1c3994b`, `96dd3b8`, `448daca` | Confirm both GitHub workflows pass, then test the MongoDB-backed rate limiter, cursor pagination, unread badges and two-account chat against the deployed API. |
+
+
+| 2026-10-30 | Latest CI exposed an unsupported NestJS 10 exception import in the new rate limiter. Replaced it with `HttpException(..., HttpStatus.TOO_MANY_REQUESTS)` and updated the test to assert status 429. The previous CI failure was a real compile failure, not a flaky check; rerun both workflows on the new head before merging. | Fix commits `65438af8`, `37fc65af` | Confirm fresh API typecheck/build/unit/e2e and Next.js build; only then continue live MongoDB/Clerk verification. |

@@ -20,6 +20,7 @@ export class Conversation {
   @Prop({ required: true, index: true }) buyerId!: string;
   @Prop({ type: [String], required: true, index: true }) participantIds!: string[];
   @Prop({ type: [ConversationMessageSchema], default: [] }) messages!: ConversationMessage[];
+  @Prop({ type: Map, of: Number, default: () => new Map() }) unreadCountByUser!: Map<string, number>;
   @Prop({ type: Date, default: Date.now }) lastMessageAt!: Date;
 }
 export const ConversationSchema = SchemaFactory.createForClass(Conversation);

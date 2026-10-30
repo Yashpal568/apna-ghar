@@ -216,9 +216,9 @@ function ProfileClientWithClerk() {
 
       <div className="profile-stitch-grid">
         <div className="profile-stitch-main-column">
-          <section className="profile-stitch-card profile-stitch-form-card">
+          <section className="profile-stitch-card profile-stitch-form-card" id="profile-details">
             <div className="profile-stitch-card-heading">
-              <div className="profile-stitch-avatar">{initials}</div>
+              <div className="profile-stitch-avatar">{user?.imageUrl ? <img src={user.imageUrl} alt="" /> : initials}</div>
               <div><span className="profile-stitch-overline">YOUR ACCOUNT</span><h2>Profile details</h2><p>Keep your contact information up to date.</p></div>
             </div>
             <form id="profileForm" className="profile-stitch-form" onSubmit={save}>
