@@ -1,5 +1,4 @@
 "use client";
-import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
 
@@ -23,7 +22,7 @@ type Listing = {
   viewsCount?: number;
 };
 
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
+const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
 const money = (amount: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 
 function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getToken: () => Promise<string | null>; onChanged: () => void }) {
@@ -125,7 +124,7 @@ function SignInRequired() {
 export default function MyListingsPage() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   return <main className="page-shell interior-page">
-    <SiteHeader active="account" />
+    
     <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>My listings</span></div>
     <section className="listing-intro"><p className="eyebrow">OWNER WORKSPACE</p><h1>Your properties,<br /><em>all in one place.</em></h1><p>Manage the homes and spaces you advertise on Apna Ghar.</p></section>
     {clerkConfigured ? <ConnectedListings /> : <SignInRequired />}

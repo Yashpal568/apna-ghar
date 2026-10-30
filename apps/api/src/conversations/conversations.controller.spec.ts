@@ -87,7 +87,7 @@ describe('ConversationsController', () => {
     }]) });
     const result = await controller.getMessages({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011', '2026-01-04T00:00:00.000Z', '3');
     const pipeline = conversations.aggregate.mock.calls[0][0];
-    expect(pipeline[2].$project.messages.$slice[0].$filter.cond).toEqual({ $lt: ['$message.sentAt', expect.any(Date)] });
+    expect(pipeline[2].$project.messages.$slice[0].$filter.cond).toEqual({ $lt: ['$$message.sentAt', expect.any(Date)] });
     expect(result.messages).toHaveLength(3);
     expect(result.messages[0].text).toBe('Message 1');
     expect(result.messages[2].text).toBe('Message 3');

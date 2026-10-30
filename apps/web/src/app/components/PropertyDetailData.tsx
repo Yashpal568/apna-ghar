@@ -8,7 +8,7 @@ type Property = {
   areaValue: number; areaUnit: string; bedrooms?: number; bathrooms?: number; parkingCount?: number;
   furnishing?: string; amenities?: string[]; imageUrls?: string[]; publishedAt?: string;
 };
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
+const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
 const money = (amount: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 
 export default function PropertyDetailData({ identifier }: { identifier: string }) {

@@ -34,6 +34,7 @@ export class Property {
   @Prop({ type: [String], default: [] }) amenities!: string[];
   @Prop({ default: false }) isNegotiable!: boolean;
   @Prop({ type: [String], default: [] }) imageUrls!: string[];
+  @Prop({ type: [String], default: [] }) videoUrls!: string[];
   @Prop({ required: true, enum: ['active', 'hidden_by_owner', 'removed_by_admin', 'deleted'], default: 'active', index: true }) status!: string;
   @Prop({ default: 0, min: 0 }) viewsCount!: number;
   @Prop({ type: Date, default: Date.now, index: true }) publishedAt!: Date;

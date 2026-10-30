@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
 type Home = {
@@ -20,7 +19,7 @@ type Home = {
   location?: { city?: string; state?: string; locality?: string };
 };
 
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api/v1").replace(/\/$/, "");
+const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
 const money = (n: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n);
 
 function readLocalHomes(): Home[] {
@@ -120,7 +119,7 @@ export default function SavedPage() {
 
   return (
     <main className="page-shell interior-page">
-      <SiteHeader active="saved" />
+      
       <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>Saved homes</span></div>
       <section className="listing-intro">
         <p className="eyebrow">YOUR SHORTLIST</p>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 
-const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:4000/api/v1").replace(/\/$/,"");
+const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/,"");
 
 export default function VisitRequestForm({propertyId}:{propertyId:string}) {
   if(!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) return <a className="button button-outline button-full" href={"/sign-in?redirect_url="+encodeURIComponent("/property/"+propertyId)}>Sign in to request a visit</a>;

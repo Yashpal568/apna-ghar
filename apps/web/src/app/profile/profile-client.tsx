@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useAuth, useClerk, useUser } from "@clerk/nextjs";
 import AccountSettingsPanel from "../components/AccountSettingsPanel";
-import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
 type Profile = { name: string; email: string; phone: string; city: string; about: string };
@@ -165,7 +164,7 @@ function ProfileClientWithClerk() {
   const initials = displayName === "Your Apna Ghar profile" ? "AG" : displayName.split(/\s+/).slice(0, 2).map(x => x[0]?.toUpperCase()).join("");
 
   return <main className="interior-page profile-redesign">
-    <SiteHeader active="account" />
+    
     <div className="profile-redesign-shell">
       <div className="profile-design-breadcrumb">
         <div><a href="/"><Icon>home</Icon> Home</a><Icon className="crumb-separator">chevron_right</Icon><span>My profile</span></div>
@@ -278,7 +277,7 @@ export default function ProfilePage() {
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
     return (
       <main className="interior-page profile-redesign">
-        <SiteHeader active="account" />
+        
         <div className="profile-redesign-shell">
           <section className="profile-stitch-security">
             <span className="profile-stitch-overline">ACCOUNT SETTINGS</span>
