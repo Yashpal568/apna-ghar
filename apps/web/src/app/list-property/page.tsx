@@ -43,6 +43,47 @@ const initialDraft: Draft = {
   videos: "",
 };
 
+const INDIA_CITIES: Record<string, string[]> = {
+  "Andhra Pradesh":["Visakhapatnam","Vijayawada","Guntur","Tirupati","Nellore","Kurnool"],
+  "Arunachal Pradesh":["Itanagar","Naharlagun","Pasighat","Tawang"],
+  "Assam":["Guwahati","Silchar","Dibrugarh","Jorhat","Tezpur"],
+  "Bihar":["Patna","Gaya","Bhagalpur","Muzaffarpur","Darbhanga"],
+  "Chhattisgarh":["Raipur","Bhilai","Bilaspur","Korba","Durg"],
+  "Goa":["Panaji","Margao","Vasco da Gama","Mapusa"],
+  "Gujarat":["Ahmedabad","Surat","Vadodara","Rajkot","Gandhinagar","Bhavnagar"],
+  "Haryana":["Gurugram","Faridabad","Panipat","Ambala","Karnal","Hisar"],
+  "Himachal Pradesh":["Shimla","Dharamshala","Manali","Solan","Mandi"],
+  "Jharkhand":["Ranchi","Jamshedpur","Dhanbad","Bokaro","Deoghar"],
+  "Karnataka":["Bengaluru","Mysuru","Mangaluru","Hubballi","Belagavi","Shivamogga"],
+  "Kerala":["Thiruvananthapuram","Kochi","Kozhikode","Thrissur","Kollam"],
+  "Madhya Pradesh":["Bhopal","Indore","Jabalpur","Gwalior","Ujjain","Sagar"],
+  "Maharashtra":["Mumbai","Pune","Nagpur","Nashik","Thane","Navi Mumbai","Chhatrapati Sambhajinagar"],
+  "Manipur":["Imphal","Thoubal","Churachandpur"],
+  "Meghalaya":["Shillong","Tura","Jowai"],
+  "Mizoram":["Aizawl","Lunglei","Champhai"],
+  "Nagaland":["Kohima","Dimapur","Mokokchung"],
+  "Odisha":["Bhubaneswar","Cuttack","Rourkela","Puri","Sambalpur"],
+  "Punjab":["Ludhiana","Amritsar","Jalandhar","Patiala","Mohali","Bathinda"],
+  "Rajasthan":["Jaipur","Jodhpur","Udaipur","Kota","Ajmer","Bikaner"],
+  "Sikkim":["Gangtok","Namchi","Gyalshing"],
+  "Tamil Nadu":["Chennai","Coimbatore","Madurai","Tiruchirappalli","Salem","Tirunelveli"],
+  "Telangana":["Hyderabad","Warangal","Karimnagar","Nizamabad","Khammam"],
+  "Tripura":["Agartala","Udaipur","Dharmanagar"],
+  "Uttar Pradesh":["Lucknow","Noida","Ghaziabad","Kanpur","Agra","Varanasi","Prayagraj","Meerut","Bareilly","Rudrapur"],
+  "Uttarakhand":["Dehradun","Haridwar","Rishikesh","Haldwani","Rudrapur","Kashipur","Roorkee"],
+  "West Bengal":["Kolkata","Howrah","Durgapur","Siliguri","Asansol"],
+  "Andaman and Nicobar Islands":["Port Blair"],
+  "Chandigarh":["Chandigarh"],
+  "Dadra and Nagar Haveli and Daman and Diu":["Daman","Silvassa","Diu"],
+  "Delhi":["New Delhi","Delhi"],
+  "Jammu and Kashmir":["Srinagar","Jammu","Anantnag","Baramulla"],
+  "Ladakh":["Leh","Kargil"],
+  "Lakshadweep":["Kavaratti"],
+  "Puducherry":["Puducherry","Karaikal","Yanam","Mahe"],
+  "Other":["Other"]
+};
+const INDIA_STATES = Object.keys(INDIA_CITIES);
+const LOCALITY_SUGGESTIONS = ["Civil Lines","Model Town","Shastri Nagar","Gandhi Nagar","Subhash Nagar","Sector 1","Sector 2","Main Market","Indira Nagar","Rajendra Nagar","Old Town","New Town","Industrial Area","Airport Road","Station Road","Green Park","Vasant Vihar","Ashok Nagar"];
 const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
 
 function ListingForm() {
@@ -267,9 +308,9 @@ function ListingForm() {
               <label className="listing-field listing-field-full">Property category *<select required value={draft.type} onChange={(event) => update("type", event.target.value)}><option value="">Choose a property type</option><option value="apartment">Apartment / flat</option><option value="house">Independent house</option><option value="villa">Villa</option><option value="plot">Plot / land</option><option value="commercial">Commercial property</option></select></label>
               <label className="listing-field listing-field-full">Listing title *<input required maxLength={100} value={draft.title} onChange={(event) => update("title", event.target.value)} placeholder="Example: Bright 3 BHK apartment near the metro" /><small>Keep it clear and specific. You can refine it later.</small></label>
               <div className="listing-field-group listing-field-full"><span className="listing-field-group-title">Where is your property?</span><div className="listing-fields listing-fields-nested">
-                <label className="listing-field">State *<input required value={draft.state} onChange={(event) => update("state", event.target.value)} placeholder="Uttarakhand" /></label>
-                <label className="listing-field">City *<input required value={draft.city} onChange={(event) => update("city", event.target.value)} placeholder="Rudrapur" /></label>
-                <label className="listing-field listing-field-full">Locality / neighbourhood *<input required value={draft.locality} onChange={(event) => update("locality", event.target.value)} placeholder="Enter area or neighbourhood" /></label>
+                <label className="listing-field">State / UT *<select required value={draft.state} onChange={(event) => { update("state", event.target.value); update("city", ""); update("locality", ""); }}><option value="">Select state or UT</option>{INDIA_STATES.map((state) => <option key={state} value={state}>{state}</option>)}</select></label>
+                <label className="listing-field">City *<select required value={draft.city} disabled={!draft.state} onChange={(event) => { update("city", event.target.value); update("locality", ""); }}><option value="">Select city</option>{(INDIA_CITIES[draft.state] || []).map((city) => <option key={city} value={city}>{city}</option>)}</select><small>Choose “Other” if your city is not listed.</small></label>
+                <label className="listing-field listing-field-full">Locality / neighbourhood *<input required list="india-locality-suggestions" value={draft.locality} onChange={(event) => update("locality", event.target.value)} placeholder="Select a suggestion or type your locality" /><datalist id="india-locality-suggestions">{LOCALITY_SUGGESTIONS.map((locality) => <option key={locality} value={locality} />)}</datalist><small>Locality suggestions are editable; enter the exact neighbourhood if it is not listed.</small></label>
               </div></div>
               <div className="listing-field-group listing-field-full"><span className="listing-field-group-title">Price and area</span><div className="listing-fields listing-fields-nested">
                 <label className="listing-field">Expected price (₹) *<input required type="number" min="1" value={draft.price} onChange={(event) => update("price", event.target.value)} placeholder="e.g. 8500000" /><small>{priceInWords}</small></label>
