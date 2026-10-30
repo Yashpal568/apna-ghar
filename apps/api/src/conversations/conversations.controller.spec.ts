@@ -122,7 +122,7 @@ describe('ConversationsController', () => {
       save: jest.fn().mockResolvedValue(undefined),
     };
     conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
-    const response = await controller.sendMessage({ auth: { userId: buyer } }, 'conversation-1', { text: '  Is the property available?  ' });
+    const response = await controller.sendMessage({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011', { text: '  Is the property available?  ' });
     expect(response.success).toBe(true);
     expect(response.message).toEqual(expect.objectContaining({ senderId: buyer, text: 'Is the property available?' }));
     expect(conversations.updateOne).toHaveBeenCalledWith(
@@ -141,7 +141,7 @@ describe('ConversationsController', () => {
       save: jest.fn(),
     };
     conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
-    await expect(controller.sendMessage({ auth: { userId: 'user_stranger' } }, 'conversation-1', { text: 'Hello' }))
+    await expect(controller.sendMessage({ auth: { userId: 'user_stranger' } }, '507f1f77bcf86cd799439011', { text: 'Hello' }))
       .rejects.toBeInstanceOf(ForbiddenException);
     expect(conversations.updateOne).not.toHaveBeenCalled();
   });
@@ -187,7 +187,7 @@ describe('ConversationsController', () => {
       .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(null) })
       .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(null) })
       .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(null) });
-    const error = await controller.sendMessage({ auth: { userId: buyer } }, 'conversation-1', { text: 'Hello' }).catch(value => value);
+    const error = await controller.sendMessage({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011', { text: 'Hello' }).catch(value => value);
     expect(error).toBeInstanceOf(HttpException);
     expect(error.getStatus()).toBe(429);
     expect(conversation.save).not.toHaveBeenCalled();
