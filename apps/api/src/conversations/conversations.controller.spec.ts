@@ -94,7 +94,7 @@ describe('ConversationsController', () => {
     expect(result.hasMore).toBe(true);
     expect(result.nextBefore).toEqual(messages[1].sentAt);
     expect(conversations.aggregate).toHaveBeenCalledWith(expect.arrayContaining([
-      expect.objectContaining({ $match: { _id: expect.anything() } }),
+      expect.objectContaining({ $match: { _id: '507f1f77bcf86cd799439011', participantIds: buyer } }),
     ]));
   });
 
