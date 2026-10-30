@@ -28,11 +28,20 @@ const money = (amount: number) => new Intl.NumberFormat("en-IN", { style: "curre
 function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getToken: () => Promise<string | null>; onChanged: () => void }) {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
-  async function mutate(action: "visibility" | "delete") {
-    const message = action === "delete"
-      ? "Delete this listing? It will no longer appear in your workspace."
-      : listing.status === "active" ? "Hide this listing from public search?" : "Publish this listing immediately?";
-    if (!window.confirm(message)) return;
+  const [confirmAction, setConfirmAction] = useState<"visibility" | "delete" | null>(null);
+
+  useEffect(() => {
+    if (!confirmAction) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !busy) setConfirmAction(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [confirmAction, busy]);
+
+  async function confirmMutation() {
+    if (!confirmAction || busy) return;
+    const action = confirmAction;
     setBusy(true);
     setNotice("");
     try {
@@ -43,17 +52,26 @@ function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getTo
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json", ...(action === "visibility" ? { "Content-Type": "application/json" } : {}) },
         body: action === "visibility" ? JSON.stringify({ visible: listing.status !== "active" }) : undefined,
       });
-      if (!response.ok) throw new Error(response.status === 401 ? "Your session expired. Sign in again." : response.status === 404 ? "Listing not found." : "Could not update this listing. Please retry.");
-      setNotice(action === "delete" ? "Listing deleted." : listing.status === "active" ? "Listing hidden." : "Listing published.");
+      const body = await response.json().catch(() => null);
+      if (!response.ok) {
+        const message = Array.isArray(body?.message) ? body.message.join(", ") : body?.message;
+        throw new Error(message || (response.status === 401 ? "Your session expired. Sign in again." : response.status === 404 ? "Listing not found. Refresh your workspace and retry." : "Could not update this listing. Please retry."));
+      }
+      setConfirmAction(null);
+      setNotice(action === "delete" ? "Listing deleted successfully." : listing.status === "active" ? "Your listing is now hidden from public search." : "Your listing is live in public search again.");
       onChanged();
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Something went wrong.");
+      setNotice(error instanceof Error ? error.message : "Something went wrong. Please try again.");
+      setConfirmAction(null);
     } finally {
       setBusy(false);
     }
   }
+
+  const hiding = confirmAction === "visibility" && listing.status === "active";
+  const deleting = confirmAction === "delete";
   return <article className="owner-listing-card">
-    <div className="owner-listing-image">{listing.imageUrls?.[0] ? <img src={listing.imageUrls[0]} alt="" loading="lazy" /> : <span aria-hidden="true">⌂</span>}</div>
+    <div className="owner-listing-image">{listing.imageUrls?.[0] ? <img src={listing.imageUrls[0]} alt={listing.title} loading="lazy" /> : <span aria-hidden="true">⌂</span>}</div>
     <div className="owner-listing-details">
       <div className="owner-listing-meta"><span className={`owner-status owner-status-${listing.status || "active"}`}>{(listing.status || "active").replaceAll("_", " ")}</span><span>{listing.listingType === "rent" ? "For rent" : "For sale"}</span></div>
       <h3>{listing.title}</h3>
@@ -64,27 +82,26 @@ function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getTo
       <div className="owner-listing-actions">
         <a className="button button-outline" href={`/property/${encodeURIComponent(listing._id)}`}>View listing</a>
         <a className="button button-outline" href={`/list-property?edit=${encodeURIComponent(listing._id)}`}>Edit details</a>
-        <button className="button button-outline" type="button" disabled={busy} onClick={() => void mutate("visibility")}>{busy ? "Please wait…" : listing.status === "active" ? "Hide listing" : "Publish listing"}</button>
-        <button className="button button-outline owner-delete-action" type="button" disabled={busy} onClick={() => void mutate("delete")}>Delete</button>
+        <button className="button button-outline" type="button" disabled={busy} onClick={() => setConfirmAction("visibility")}>{listing.status === "active" ? "Hide listing" : "Publish listing"}</button>
+        <button className="button button-outline owner-delete-action" type="button" disabled={busy} onClick={() => setConfirmAction("delete")}>Delete</button>
       </div>
       {notice && <p className="form-help" role="status">{notice}</p>}
       {confirmAction && <div className="owner-confirm-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !busy) setConfirmAction(null); }}>
         <section className="owner-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby={`owner-confirm-title-${listing._id}`} aria-describedby={`owner-confirm-copy-${listing._id}`}>
-          <div className={`owner-confirm-icon owner-confirm-icon-${confirmAction}`} aria-hidden="true">{confirmAction === "delete" ? "!" : listing.status === "active" ? "−" : "↗"}</div>
-          <p className="eyebrow">{confirmAction === "delete" ? "PERMANENT ACTION" : "LISTING VISIBILITY"}</p>
-          <h3 id={`owner-confirm-title-${listing._id}`}>{confirmAction === "delete" ? "Delete this listing?" : listing.status === "active" ? "Hide this listing?" : "Publish this listing?"}</h3>
-          <p id={`owner-confirm-copy-${listing._id}`}>{confirmAction === "delete" ? "This property will be removed from your owner workspace and public search. This action cannot be undone." : listing.status === "active" ? "Your property will be removed from public search. You can publish it again at any time from My listings." : "Your property will become visible in public search again so interested buyers and tenants can discover it."}</p>
+          <div className={`owner-confirm-icon ${deleting ? "is-danger" : hiding ? "is-warning" : "is-success"}`} aria-hidden="true">{deleting ? "!" : hiding ? "−" : "✓"}</div>
+          <p className="eyebrow">{deleting ? "DELETE PROPERTY" : "LISTING VISIBILITY"}</p>
+          <h3 id={`owner-confirm-title-${listing._id}`}>{deleting ? "Delete this listing?" : hiding ? "Hide this listing?" : "Publish this listing again?"}</h3>
+          <p id={`owner-confirm-copy-${listing._id}`}>{deleting ? "This permanently removes the listing from your owner workspace and public search. You cannot undo this action." : hiding ? "Your property will disappear from public search and buyers will no longer be able to discover it. You can make it visible again whenever you're ready." : "Your property will become visible in public search again, so buyers and tenants can discover and contact you."}</p>
           <div className="owner-confirm-summary"><strong>{listing.title}</strong><span>{[listing.location?.city, listing.location?.state].filter(Boolean).join(", ") || "Property listing"}</span></div>
           <div className="owner-confirm-actions">
             <button className="button button-outline" type="button" disabled={busy} onClick={() => setConfirmAction(null)}>Cancel</button>
-            <button className={`button ${confirmAction === "delete" ? "owner-confirm-danger" : "button-primary"}`} type="button" disabled={busy} onClick={() => void confirmMutation()}>{busy ? "Please wait…" : confirmAction === "delete" ? "Delete listing" : listing.status === "active" ? "Yes, hide listing" : "Publish listing"}</button>
+            <button className={`button ${deleting ? "owner-confirm-danger" : "button-primary"}`} type="button" disabled={busy} onClick={() => void confirmMutation()}>{busy ? "Updating…" : deleting ? "Delete listing" : hiding ? "Yes, hide listing" : "Publish listing"}</button>
           </div>
         </section>
       </div>}
     </div>
   </article>;
 }
-
 function ConnectedListings() {
   const { getToken } = useAuth();
   const [listings, setListings] = useState<Listing[]>([]);
