@@ -1,5 +1,6 @@
 import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
-import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsIn, IsOptional, IsString, MaxLength, Matches } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { PropertyAuthGuard } from './property-auth.guard';
 import { PropertyReportsService } from './property-reports.service';
 import { AdminAuthGuard } from './admin-auth.guard';
@@ -7,7 +8,11 @@ import { AdminAuthGuard } from './admin-auth.guard';
 type AuthenticatedRequest = { authUserId?: string };
 class CreatePropertyReportDto {
   @IsIn(['misleading', 'duplicate', 'scam', 'wrong_information', 'inappropriate', 'other']) reason!: string;
-  @IsOptional() @IsString() @MaxLength(1500) details?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(1500) details?: string;
+}
+
+class ModeratePropertyReportDto {
+  @IsIn(['open', 'reviewing', 'resolved', 'dismissed']) status!: 'open' | 'reviewing' | 'resolved' | 'dismissed';
 }
 
 @Controller('property-reports')
@@ -24,9 +29,8 @@ export class PropertyReportsController {
 
   @Post('admin/:reportId/status')
   @UseGuards(AdminAuthGuard)
-  async moderate(@Req() request: AuthenticatedRequest, @Param('reportId') reportId: string, @Body() body: { status?: string }) {
+  async moderate(@Req() request: AuthenticatedRequest, @Param('reportId') reportId: string, @Body() body: ModeratePropertyReportDto) {
     if (!request.authUserId) throw new BadRequestException('Authenticated admin identity is missing');
-    if (!body.status || !['open', 'reviewing', 'resolved', 'dismissed'].includes(body.status)) throw new BadRequestException('A valid report status is required');
     const report = await this.service.moderate(reportId, body.status);
     if (!report) throw new NotFoundException('Report not found');
     return report;
