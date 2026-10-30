@@ -62,12 +62,25 @@ function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getTo
       <p className="owner-listing-facts">{listing.bedrooms ? `${listing.bedrooms} beds · ` : ""}{listing.bathrooms ? `${listing.bathrooms} baths · ` : ""}{listing.areaValue} {listing.areaUnit}</p>
       <div className="owner-listing-analytics"><span><strong>{(listing.viewsCount ?? 0).toLocaleString("en-IN")}</strong> listing views</span><span><strong>—</strong> enquiries <small>tracking not enabled yet</small></span><span><strong>{listing.publishedAt ? new Date(listing.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}</strong> Published</span></div>
       <div className="owner-listing-actions">
-        <a className="button button-outline" href={`/property/${encodeURIComponent(listing.slug || listing._id)}`}>View listing</a>
+        <a className="button button-outline" href={`/property/${encodeURIComponent(listing._id)}`}>View listing</a>
         <a className="button button-outline" href={`/list-property?edit=${encodeURIComponent(listing._id)}`}>Edit details</a>
         <button className="button button-outline" type="button" disabled={busy} onClick={() => void mutate("visibility")}>{busy ? "Please wait…" : listing.status === "active" ? "Hide listing" : "Publish listing"}</button>
         <button className="button button-outline owner-delete-action" type="button" disabled={busy} onClick={() => void mutate("delete")}>Delete</button>
       </div>
       {notice && <p className="form-help" role="status">{notice}</p>}
+      {confirmAction && <div className="owner-confirm-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !busy) setConfirmAction(null); }}>
+        <section className="owner-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby={`owner-confirm-title-${listing._id}`} aria-describedby={`owner-confirm-copy-${listing._id}`}>
+          <div className={`owner-confirm-icon owner-confirm-icon-${confirmAction}`} aria-hidden="true">{confirmAction === "delete" ? "!" : listing.status === "active" ? "−" : "↗"}</div>
+          <p className="eyebrow">{confirmAction === "delete" ? "PERMANENT ACTION" : "LISTING VISIBILITY"}</p>
+          <h3 id={`owner-confirm-title-${listing._id}`}>{confirmAction === "delete" ? "Delete this listing?" : listing.status === "active" ? "Hide this listing?" : "Publish this listing?"}</h3>
+          <p id={`owner-confirm-copy-${listing._id}`}>{confirmAction === "delete" ? "This property will be removed from your owner workspace and public search. This action cannot be undone." : listing.status === "active" ? "Your property will be removed from public search. You can publish it again at any time from My listings." : "Your property will become visible in public search again so interested buyers and tenants can discover it."}</p>
+          <div className="owner-confirm-summary"><strong>{listing.title}</strong><span>{[listing.location?.city, listing.location?.state].filter(Boolean).join(", ") || "Property listing"}</span></div>
+          <div className="owner-confirm-actions">
+            <button className="button button-outline" type="button" disabled={busy} onClick={() => setConfirmAction(null)}>Cancel</button>
+            <button className={`button ${confirmAction === "delete" ? "owner-confirm-danger" : "button-primary"}`} type="button" disabled={busy} onClick={() => void confirmMutation()}>{busy ? "Please wait…" : confirmAction === "delete" ? "Delete listing" : listing.status === "active" ? "Yes, hide listing" : "Publish listing"}</button>
+          </div>
+        </section>
+      </div>}
     </div>
   </article>;
 }
