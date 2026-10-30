@@ -233,3 +233,26 @@
 - [ ] M1, M2 and M3 remain open until every applicable item is evidenced. M4 is blocked until then.
 
 **First implementation change:** GitHub CI now includes a Cloudflare production-artifact build step after the Next.js build. Commit: `2a44d487969d39707e87be9cf65a14cdfe890297`. This workflow change itself is not yet CI-verified.
+
+## 2026-10-30 — Backend hardening follow-through
+
+**All code changes below were committed directly to `main`; implementation is not equivalent to production acceptance.**
+
+- [x] Added baseline API security headers, disabled Express `x-powered-by`, and enabled strict global DTO whitelist/unknown-field rejection.
+- [x] Added typed validation for listing visibility and admin report moderation payloads and report-status filters.
+- [x] Added bounded listing payload arrays, numeric limits, HTTPS-only media URL validation, and normalized listing/profile/chat/visit text inputs.
+- [x] Added image/video file-signature checks in addition to MIME allowlists and upload size limits.
+- [x] Scoped message-history aggregation to the authenticated conversation participant before reading messages.
+- [x] Handled concurrent first-contact conversation creation against the unique property/buyer index.
+- [x] Bounded search page numbers and numeric price filters; validated visit date/time and compared visit dates in Asia/Kolkata local time.
+- [ ] Run fresh API typecheck, API unit/e2e tests, API build and full web/mobile/Cloudflare CI on the exact current `main` head. No fresh GitHub Actions result is currently visible through the available connector; do not infer a pass from Vercel.
+- [ ] Deploy the current API head to Render and verify liveness/readiness, configured Clerk secret, MongoDB indexes/TTL and authenticated two-account flows. The prior live API probe returned 401 because authentication was not configured; no bypass is permitted.
+- [ ] Complete a real signed-in buyer/owner journey for search, saved listings, create/edit/hide/delete, profile persistence and Cloudinary uploads.
+- [ ] Migrate embedded conversation message arrays to a dedicated messages collection before production-scale acceptance; implement and test a safe backfill/dual-read or cutover plan.
+
+**Commits:** `713fb9d`, `bf37f68`, `f20256a`, `7a2eeb3`, `68ce9e2`, `6e13906`, `8d01aba`, `07379cd`, `951fa33`, `c4b82c0`, `63c61b4`, `7395383`, `dd1849b`, `326d3e5`, `da7ee02`, `7f4958d`, `892112e`.
+
+**Latest inspected Cloudflare build:** build `5d46f6b1-d954-48ba-9511-aafc00ab5e13` succeeded, but its source commit is `7a2eeb3e862176f3ef07e487c079779a4f654eaf`, not the later API-only commits. The Cloudflare build trigger watches web/package files, so API-only commits do not create a new frontend artifact. This is not Render API deployment evidence.
+
+**Acceptance decision:** M1–M3 remain open. No final green CI, current Render runtime, or authenticated live acceptance claim is made yet.
+
