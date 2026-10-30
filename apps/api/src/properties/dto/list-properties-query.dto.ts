@@ -6,15 +6,15 @@ export class ListPropertiesQueryDto {
   @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
   q?: string;
 
-  @IsOptional() @IsString() @MaxLength(80) city?: string;
-  @IsOptional() @IsString() @MaxLength(80) locality?: string;
-  @IsOptional() @IsString() @MaxLength(80) categoryId?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(80) city?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(80) locality?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(80) categoryId?: string;
   @IsOptional() @IsIn(['sale', 'rent']) listingType?: 'sale' | 'rent';
 
-  @IsOptional() @Type(() => Number) @IsNumber() @Min(0)
+  @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(100000000000)
   minPrice?: number;
 
-  @IsOptional() @Type(() => Number) @IsNumber() @Min(0)
+  @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(100000000000)
   maxPrice?: number;
 
   @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(20)
@@ -32,6 +32,6 @@ export class ListPropertiesQueryDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(50)
   limit = 20;
 
-  @IsOptional() @Type(() => Number) @IsInt() @Min(1)
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(1000)
   page = 1;
 }
