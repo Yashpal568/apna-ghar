@@ -7,7 +7,7 @@
 
 ## Rules for every work session
 
-- [ ] Read this checklist and `docs/18-phase-wise-delivery-roadmap.md` before changing code.
+- [x] Read this checklist and `docs/18-phase-wise-delivery-plan.md` before changing code; this is the actual roadmap filename.
 - [ ] Continue from **Current checkpoint** below; do not silently jump to mobile, marketing extras, or another milestone.
 - [ ] Keep the five themes (Light, Midnight, Graphite, Forest, AMOLED Black) and System default intact.
 - [ ] Preserve existing working routes and features; inspect code and contracts before changing them.
