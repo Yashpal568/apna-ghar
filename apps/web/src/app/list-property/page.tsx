@@ -193,9 +193,7 @@ function ListingForm() {
     try {
       let token = await getToken({ skipCache: true });
       if (!token) throw new Error("Your sign-in session is missing. Sign in again before uploading.");
-      const uploaded: string[] = [];
-      const uploadedVideos: string[] = [];
-      for (const item of pending) {
+      const results = await Promise.all(pending.map(async (item) => {
         const send = (authToken: string) => {
           const form = new FormData();
           form.append("file", item.file);
@@ -205,33 +203,45 @@ function ListingForm() {
             body: form,
           });
         };
-        let response = await send(token);
-        if (response.status === 401) {
-          const refreshedToken = await getToken({ skipCache: true });
-          if (!refreshedToken) throw new Error("Your sign-in session expired. Sign in again before uploading.");
-          response = await send(refreshedToken);
-        }
-        const body = await response.json().catch(() => null);
-        if (!response.ok || !body?.url) {
+        try {
+          let response = await send(token);
           if (response.status === 401) {
-            throw new Error("The API rejected your Clerk session (401). The website is using Clerk development keys; Render's CLERK_SECRET_KEY must belong to that same Clerk development instance. Check the Render key configuration—do not paste secret keys here.");
+            const refreshedToken = await getToken({ skipCache: true });
+            if (!refreshedToken) throw new Error("Your sign-in session expired. Sign in again before uploading.");
+            response = await send(refreshedToken);
           }
-          const message = Array.isArray(body?.message) ? body.message.join(", ") : body?.message;
-          throw new Error(message || `Media upload failed (HTTP ${response.status}).`);
+          const body = await response.json().catch(() => null);
+          if (!response.ok || !body?.url) {
+            if (response.status === 401) throw new Error("The API rejected your Clerk session (401). Check that Render's Clerk secret belongs to the same Clerk instance as the website.");
+            const message = Array.isArray(body?.message) ? body.message.join(", ") : body?.message;
+            throw new Error(message || `Media upload failed (HTTP ${response.status}).`);
+          }
+          return { item, url: body.url as string, error: "" };
+        } catch (error) {
+          return { item, url: "", error: error instanceof Error ? error.message : "Upload failed." };
         }
-        if (item.file.type.startsWith("video/")) uploadedVideos.push(body.url as string);
-        else uploaded.push(body.url as string);
-      }
-      setDraft((current) => ({
-        ...current,
-        photos: [...current.photos.split("\n").map((url) => url.trim()).filter(Boolean), ...uploaded].join("\n"),
-        videos: [...current.videos.split("\n").map((url) => url.trim()).filter(Boolean), ...uploadedVideos].join("\n"),
       }));
-      setLocalMedia((current) => {
-        current.filter((item) => pending.some((done) => done.id === item.id)).forEach((item) => URL.revokeObjectURL(item.url));
-        return current.filter((item) => !pending.some((done) => done.id === item.id));
-      });
-      setNotice(`Uploaded ${uploaded.length} photo(s) and ${uploadedVideos.length} video(s) to Cloudinary.`);
+      const uploaded = results.filter((result) => result.url && result.item.file.type.startsWith("image/"));
+      const uploadedVideos = results.filter((result) => result.url && result.item.file.type.startsWith("video/"));
+      const successfulIds = new Set([...uploaded, ...uploadedVideos].map((result) => result.item.id));
+      if (successfulIds.size) {
+        setDraft((current) => ({
+          ...current,
+          photos: [...current.photos.split("\\n").map((url) => url.trim()).filter(Boolean), ...uploaded.map((result) => result.url)].join("\\n"),
+          videos: [...current.videos.split("\\n").map((url) => url.trim()).filter(Boolean), ...uploadedVideos.map((result) => result.url)].join("\\n"),
+        }));
+        setLocalMedia((current) => {
+          current.filter((item) => successfulIds.has(item.id)).forEach((item) => URL.revokeObjectURL(item.url));
+          return current.filter((item) => !successfulIds.has(item.id));
+        });
+      }
+      const failures = results.filter((result) => result.error);
+      if (failures.length) {
+        const firstError = failures[0].error;
+        setNotice(`${successfulIds.size} file(s) uploaded; ${failures.length} failed. ${firstError} Retry the remaining files.`);
+      } else {
+        setNotice(`Uploaded ${uploaded.length} photo(s) and ${uploadedVideos.length} video(s) to Cloudinary.`);
+      }
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Could not upload property media. Your local previews are retained; retry after fixing the issue.");
     } finally {
