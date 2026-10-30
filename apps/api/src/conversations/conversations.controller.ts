@@ -95,7 +95,7 @@ export class ConversationsController {
       throw new BadRequestException('Message cursor must be a valid ISO date.');
     }
     const rows = await this.conversations.aggregate([
-      { $match: { _id: new Types.ObjectId(conversationId) } },
+      { $match: { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId } },
       { $project: { propertyId: 1, propertyTitle: 1, participantIds: 1, messages: 1 } },
       {
         $project: {
