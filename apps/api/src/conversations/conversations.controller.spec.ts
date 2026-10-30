@@ -168,9 +168,13 @@ describe('ConversationsController', () => {
     conversations.create.mockResolvedValue(conversation);
     await controller.startForProperty({ auth: { userId: buyer } }, property._id, { message: 'Is it available?' });
     expect(messageRateLimits.findOneAndUpdate).toHaveBeenCalled();
-    expect(conversation.messages[0]).toEqual(expect.objectContaining({ senderId: buyer, text: 'Is it available?' }));
-    expect(conversation.unreadCountByUser.get(owner)).toBe(1);
-    expect(conversation.save).toHaveBeenCalledTimes(1);
+    expect(conversations.updateOne).toHaveBeenCalledWith(
+      { _id: conversation._id, participantIds: buyer },
+      expect.objectContaining({
+        $push: { messages: expect.objectContaining({ senderId: buyer, text: 'Is it available?' }) },
+        $inc: { [`unreadCountByUser.${owner}`]: 1 },
+      }),
+    );
   });
 
   it('blocks message sends after the shared per-user minute quota is exhausted', async () => {
