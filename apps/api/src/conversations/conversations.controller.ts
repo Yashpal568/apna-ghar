@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { Model } from 'mongoose';
@@ -47,6 +47,7 @@ export class ConversationsController {
         buyerId: request.auth.userId,
         participantIds: [property.ownerId, request.auth.userId],
         messages: [],
+        unreadCountByUser: new Map([[property.ownerId, 0], [request.auth.userId, 0]]),
         lastMessageAt: new Date(),
       });
     }
@@ -66,6 +67,17 @@ export class ConversationsController {
     return { conversationId: String(conversation._id), propertyId: conversation.propertyId, propertyTitle: conversation.propertyTitle, messages: conversation.messages };
   }
 
+  @Patch(':conversationId/read')
+  async markRead(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string) {
+    const conversation = await this.conversations.findById(conversationId).exec();
+    if (!conversation) throw new NotFoundException('Conversation not found.');
+    this.assertParticipant(conversation.participantIds, request.auth.userId);
+    conversation.unreadCountByUser ??= new Map<string, number>();
+    conversation.unreadCountByUser.set(request.auth.userId, 0);
+    conversation.save && await conversation.save();
+    return { success: true, unreadCount: 0 };
+  }
+
   @Post(':conversationId/messages')
   async sendMessage(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string, @Body() body: SendMessageDto) {
     const text = body.text?.trim();
@@ -75,6 +87,9 @@ export class ConversationsController {
     this.assertParticipant(conversation.participantIds, request.auth.userId);
     conversation.messages.push({ senderId: request.auth.userId, text, sentAt: new Date() } as never);
     conversation.lastMessageAt = new Date();
+    conversation.unreadCountByUser ??= new Map<string, number>();
+    const recipientId = conversation.ownerId === request.auth.userId ? conversation.buyerId : conversation.ownerId;
+    conversation.unreadCountByUser.set(recipientId, (conversation.unreadCountByUser.get(recipientId) || 0) + 1);
     await conversation.save();
     return { success: true, message: conversation.messages[conversation.messages.length - 1] };
   }
