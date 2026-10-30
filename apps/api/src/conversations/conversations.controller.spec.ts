@@ -18,6 +18,7 @@ describe('ConversationsController', () => {
       find: jest.fn(),
       findOne: jest.fn(),
       findById: jest.fn(),
+      aggregate: jest.fn(),
       create: jest.fn(),
     };
     properties = { findOne: jest.fn() };
@@ -62,13 +63,41 @@ describe('ConversationsController', () => {
     }));
   });
 
-  it('does not disclose messages to a user who is not a participant', async () => {
-    conversations.findById.mockReturnValue(chain({
-      _id: 'conversation-1',
+  it('does not disclose paginated messages to a user who is not a participant', async () => {
+    conversations.aggregate.mockReturnValue({ exec: jest.fn().mockResolvedValue([{
+      _id: '507f1f77bcf86cd799439011',
       participantIds: [buyer, owner],
-      messages: [{ senderId: buyer, text: 'Hello' }],
+      propertyId: 'property-1',
+      propertyTitle: 'Family home',
+      messages: [{ senderId: buyer, text: 'Hello', sentAt: new Date() }],
+    }]) });
+    await expect(controller.getMessages({ auth: { userId: 'user_stranger' } }, '507f1f77bcf86cd799439011')).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('returns the newest page and a cursor when older messages exist', async () => {
+    const messages = Array.from({ length: 4 }, (_, index) => ({
+      senderId: buyer, text: 'Message ' + index, sentAt: new Date(2026, 0, index + 1),
     }));
-    await expect(controller.getMessages({ auth: { userId: 'user_stranger' } }, 'conversation-1')).rejects.toBeInstanceOf(ForbiddenException);
+    conversations.aggregate.mockReturnValue({ exec: jest.fn().mockResolvedValue([{
+      participantIds: [buyer, owner], propertyId: 'property-1', propertyTitle: 'Family home', messages,
+    }]) });
+    const result = await controller.getMessages({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011', undefined, '3');
+    expect(result.messages).toHaveLength(3);
+    expect(result.messages[0].text).toBe('Message 1');
+    expect(result.messages[2].text).toBe('Message 3');
+    expect(result.hasMore).toBe(true);
+    expect(result.nextBefore).toEqual(messages[1].sentAt);
+    expect(conversations.aggregate).toHaveBeenCalledWith(expect.arrayContaining([
+      expect.objectContaining({ $match: { _id: expect.anything() } }),
+    ]));
+  });
+
+  it('rejects invalid message page sizes and cursors', async () => {
+    await expect(controller.getMessages({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011', undefined, '101'))
+      .rejects.toBeInstanceOf(BadRequestException);
+    await expect(controller.getMessages({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011', 'not-a-date', '50'))
+      .rejects.toBeInstanceOf(BadRequestException);
+    expect(conversations.aggregate).not.toHaveBeenCalled();
   });
 
   it('returns not found when the property is no longer active', async () => {
