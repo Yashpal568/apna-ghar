@@ -1,22 +1,24 @@
 # Apna Ghar — Master Execution Checklist
 
 **Repository:** `Yashpal568/apna-ghar`  
-**Working branch in this session:** `feat/profile-theme-chat-finish` (PR #13 targets `deploy/cloudflare-preview`) (the existing mainline marketplace checkpoint is documented separately below; keep this preview branch isolated until runtime and CI are verified).  
+**Working branch:** `feat/m3-backend-identity` (PR #11 targets `deploy/cloudflare-preview`). This is the sole authoritative milestone status and handoff file.  
 **Last updated:** 2026-10-30  
 **Purpose:** Single day-to-day source of truth. Update this file whenever work starts, finishes, is blocked, or changes scope. Do not restart from a different milestone without recording why.
 
-## Rules for every work session
+## Locked execution rules (single source of truth)
 
-- [ ] Read this checklist and `docs/18-phase-wise-delivery-roadmap.md` before changing code.
-- [ ] Continue from **Current checkpoint** below; do not silently jump to mobile, marketing extras, or another milestone.
-- [ ] Keep the five themes (Light, Midnight, Graphite, Forest, AMOLED Black) and System default intact.
-- [ ] Preserve existing working routes and features; inspect code and contracts before changing them.
-- [ ] Do not call a feature complete until implementation, tests, and applicable browser/API verification support that claim.
-- [ ] After each meaningful task, update this file with commit SHA, checks actually run, remaining blockers, and the next exact task.
+- This file is the sole authoritative project status and handoff record; other phase docs are references only.
+- Every completed task requires a Git commit SHA, actual passing test evidence, and an updated checklist entry. No evidence means not complete.
+- Record exact workflow/run IDs and outcomes. Pending, skipped, mocked, unavailable, or failed checks are never passes.
+- Update this checklist after each meaningful implementation task with commit SHA, tests run, blockers, and next exact task.
+- Read this checklist and inspect the current PR/head/latest CI before each session.
+- Preserve approved branding and themes. No cosmetic redesign until functional milestones are accepted.
+- Web-first order: M2, M3, M4 admin, M5 SEO, M6 security, M7 entitlements, M8 data/media, M9 release QA, then M10 mobile LAST.
+- Free launch; payments stay disabled unless explicitly approved. Do not merge/deploy before CI and acceptance gates pass.
 
 ## Current checkpoint — continue here
 
-**Active milestone:** M3 — Backend domain and identity (started after the requested homepage/page redesign). M2 implementation is present, but authenticated live listing lifecycle acceptance remains outstanding and must be closed before release sign-off.
+**Active milestone:** M3 — Backend domain and identity. PR #11 CI recovery is complete and green at commit `da1b4c68cb12f1135bb30ea62626e5eb39a9adc4`. M2 authenticated live listing lifecycle acceptance remains open and must be closed before release sign-off.
 
 **Last known completed work**
 - [x] Reframed the homepage as a property marketplace rather than a generic agency/portfolio landing page.
@@ -191,3 +193,6 @@
 
 
 | 2026-10-30 | Latest CI exposed an unsupported NestJS 10 exception import in the new rate limiter. Replaced it with `HttpException(..., HttpStatus.TOO_MANY_REQUESTS)` and updated the test to assert status 429. The previous CI failure was a real compile failure, not a flaky check; rerun both workflows on the new head before merging. | Fix commits `65438af8`, `37fc65af` | Confirm fresh API typecheck/build/unit/e2e and Next.js build; only then continue live MongoDB/Clerk verification. |
+
+
+| 2026-10-30 | Locked execution governance and fixed the failing pagination unit-test assertion: the controller filters with MongoDB variable `$$message.sentAt`, and the test now asserts the same expression. Latest CI run `41028988316` passed: API/web/mobile typecheck, API unit suite, API HTTP e2e suite, API build, web build. Latest Quality Checks run `41028988364` passed: API build and Next.js web/admin build. Governance documentation committed at `da1b4c68cb12f1135bb30ea62626e5eb39a9adc4`; code fix committed at `7a92da4bbbf5386f0a6e797b43004d8041d5901c`. | `7a92da4`, `da1b4c6` | CI recovery gate is complete. Next: close M2 end-to-end authenticated listing lifecycle acceptance; do not claim M2 complete until a real signed-in owner can publish/edit/hide/delete and buyer search/save flows are verified against live API data. |
