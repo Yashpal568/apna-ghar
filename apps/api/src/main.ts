@@ -23,6 +23,14 @@ async function bootstrap() {
         if (parsed.protocol === 'https:' && parsed.hostname.endsWith('.vercel.app')) {
           return callback(null, true);
         }
+        // The production web app is deployed to Cloudflare Workers. Allow its exact
+        // workers.dev hostname and versioned preview hostnames for this Worker only.
+        const isApnaGharWorker =
+          parsed.protocol === 'https:' &&
+          (parsed.hostname === 'apna-ghar-web.yash38688.workers.dev' ||
+            (parsed.hostname.startsWith('apna-ghar-web-') &&
+              parsed.hostname.endsWith('.yash38688.workers.dev')));
+        if (isApnaGharWorker) return callback(null, true);
       } catch {
         // Reject malformed origins below.
       }
