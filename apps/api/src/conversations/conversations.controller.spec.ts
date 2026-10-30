@@ -28,7 +28,7 @@ describe('ConversationsController', () => {
     const rows = [{ _id: 'conversation-1', participantIds: [buyer, owner] }];
     const query = chain(rows);
     conversations.find.mockReturnValue(query);
-    await expect(controller.listMine({ auth: { userId: buyer } })).resolves.toBe(rows);
+    await expect(controller.listMine({ auth: { userId: buyer } })).resolves.toEqual([{ ...rows[0], unreadCountByUser: {} }]);
     expect(conversations.find).toHaveBeenCalledWith({ participantIds: buyer });
     expect(query.sort).toHaveBeenCalledWith({ lastMessageAt: -1 });
     expect(query.limit).toHaveBeenCalledWith(100);
