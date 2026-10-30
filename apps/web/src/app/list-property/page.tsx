@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
 type Draft = {
@@ -286,7 +285,7 @@ function ListingForm() {
 
   return (
     <main className="page-shell interior-page listing-page-redesign">
-      <SiteHeader active="account" />
+      
       <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>{editingId ? "Edit listing" : "Post property"}</span></div>
       <section className="listing-workspace-heading">
         <div className="listing-heading-copy"><p className="eyebrow">OWNER LISTING PORTAL</p><h1>{editingId ? "Update your property" : "Your property. Your next chapter."}</h1><p>{editingId ? "Make your changes, review the details and save your listing." : "Share the details buyers need. Review everything before your property goes live."}</p></div>
