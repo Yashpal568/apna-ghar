@@ -49,17 +49,24 @@ export class ConversationsController {
 
     let conversation = await this.conversations.findOne({ propertyId: String(property._id), buyerId: request.auth.userId }).exec();
     if (!conversation) {
-      conversation = await this.conversations.create({
-        propertyId: String(property._id),
-        propertyTitle: property.title,
-        propertySlug: property.slug,
-        ownerId: property.ownerId,
-        buyerId: request.auth.userId,
-        participantIds: [property.ownerId, request.auth.userId],
-        messages: [],
-        unreadCountByUser: new Map([[property.ownerId, 0], [request.auth.userId, 0]]),
-        lastMessageAt: new Date(),
-      });
+      try {
+        conversation = await this.conversations.create({
+          propertyId: String(property._id),
+          propertyTitle: property.title,
+          propertySlug: property.slug,
+          ownerId: property.ownerId,
+          buyerId: request.auth.userId,
+          participantIds: [property.ownerId, request.auth.userId],
+          messages: [],
+          unreadCountByUser: new Map([[property.ownerId, 0], [request.auth.userId, 0]]),
+          lastMessageAt: new Date(),
+        });
+      } catch (error) {
+        // Two first-contact requests can race against the unique property/buyer index.
+        if ((error as { code?: number })?.code !== 11000) throw error;
+        conversation = await this.conversations.findOne({ propertyId: String(property._id), buyerId: request.auth.userId }).exec();
+        if (!conversation) throw error;
+      }
     }
     if (body?.message?.trim()) {
       await this.consumeMessageQuota(request.auth.userId);
