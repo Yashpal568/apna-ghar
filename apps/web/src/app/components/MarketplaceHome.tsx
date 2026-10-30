@@ -1,7 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth, useClerk } from "@clerk/nextjs";
-import MarketplaceHeader from "./MarketplaceHeader";
 import ThemePicker from "./ThemePicker";
 type Property={_id:string;slug:string;title:string;description?:string;listingType:"sale"|"rent";priceAmount:number;currency?:string;categoryId:string;location?:{city?:string;state?:string;locality?:string};areaValue:number;areaUnit:string;bedrooms?:number;bathrooms?:number;imageUrls?:string[];contactName?:string;contactPhone?:string;furnishing?:string};
 type Result={items:Property[];pagination:{total:number;pages:number;page:number}};
@@ -19,7 +18,6 @@ function MarketplaceHomeContent({ isSignedIn, getToken, signOut }: { isSignedIn:
  const searchUrl="/search?transaction="+transaction+(location.trim()?"&location="+encodeURIComponent(location.trim()):"")+(category!=="all"?"&type="+encodeURIComponent(category):"");
  const contactOwner=useCallback(async(p:Property)=>{if(!isSignedIn){window.location.assign("/sign-in?redirect_url="+encodeURIComponent("/property/"+(p.slug||p._id)));return}setContactBusy(p._id);setNotice("");try{const token=await getToken();if(!token)throw new Error("Please sign in again to contact the owner.");const r=await fetch(api+"/conversations/property/"+encodeURIComponent(p._id),{method:"POST",headers:{Authorization:"Bearer "+token,"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({})});const body=await r.json().catch(()=>({}));if(!r.ok)throw new Error(typeof body.message==="string"?body.message:"Couldn't open this conversation.");window.location.assign("/messages?conversation="+encodeURIComponent(body.conversationId))}catch(e){setNotice(e instanceof Error?e.message:"Couldn't open this conversation.");setContactBusy("")}},[getToken,isSignedIn]);
  return <main className="agh-market">
- <MarketplaceHeader active="home" isSignedIn={isSignedIn} signOut={signOut} searchValue={location} onSearchChange={setLocation}/>
  <div className="agh-transaction-rail"><button className={transaction==="buy"?"chosen":""} onClick={()=>setTransaction("buy")}>Buy</button><button className={transaction==="rent"?"chosen":""} onClick={()=>setTransaction("rent")}>Rent</button></div>
  <div className="agh-category-rail" aria-label="Property categories">{[{key:"all",label:"All categories",icon:"▦"},...categoryOptions].map(({icon,label,key})=><button key={key} className={category===key?"selected":""} onClick={()=>setCategory(key)}><span>{icon}</span>{label}{key==="all"&&<b>All</b>}</button>)}</div>
  <div className="agh-filter-rail"><span className="agh-filter-label">Quick filters</span>{["Price range","2+ bedrooms","Furnished"].map(item=><button className={filter===item?"chosen":""} onClick={()=>setFilter(filter===item?"All":item)} key={item}>{item==="Verified owner"?"✓ ":""}{item}</button>)}<button className="agh-clear-filter" onClick={()=>{setFilter("All");setCategory("all")}}>Clear all</button></div>
