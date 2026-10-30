@@ -2,6 +2,7 @@
 import { useAuth, useClerk } from "@clerk/nextjs";
 import MarketplaceHeader from "./MarketplaceHeader";
 export default function SiteHeader({active="home"}:{active?:string}) {
- const {isSignedIn}=useAuth(); const {signOut}=useClerk();
- return <MarketplaceHeader active={active} isSignedIn={Boolean(isSignedIn)} signOut={signOut}/>;
+ const {isSignedIn}=useAuth(); const {signOut}=useClerk(); const pathname=usePathname();
+ const current = active !== "home" ? active : pathname === "/" ? "home" : pathname.startsWith("/messages") ? "messages" : pathname.startsWith("/saved") ? "saved" : pathname.startsWith("/search") || pathname.startsWith("/property/") ? "search" : pathname.startsWith("/list-property") || pathname.startsWith("/my-listings") || pathname.startsWith("/profile") ? "account" : "home";
+ return <MarketplaceHeader active={current} isSignedIn={Boolean(isSignedIn)} signOut={signOut}/>;
 }
