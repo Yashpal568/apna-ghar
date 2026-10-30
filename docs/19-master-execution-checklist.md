@@ -81,7 +81,8 @@
 - [x] Messages UI can load older pages and merges them with 5-second live refreshes without moving the cursor forward.
 - [ ] Verify pagination with real MongoDB data and browser scrolling; CI for the latest pagination commits is still pending.
 - [x] Added a MongoDB-backed per-user message send quota (20 messages per rolling minute) with TTL cleanup and HTTP 429 responses.
-- [ ] Add concurrency-safe message persistence and migrate unbounded embedded message arrays into a dedicated message collection before production sign-off.
+- [x] Message appends, unread increments and read resets now use atomic MongoDB updates to avoid stale document-save overwrites.
+- [ ] Migrate unbounded embedded message arrays into a dedicated message collection before production sign-off.
 
 ### M4 — Admin and moderation
 - [ ] Server-protect admin routes and every privileged API.
@@ -184,3 +185,6 @@
 
 
 | 2026-10-30 | Completed the follow-up rate-limit wiring across first-contact enquiries and replies; added explicit coverage that a first enquiry increments the owner's unread count and consumes the sender's shared quota. Strengthened the pagination test to assert the MongoDB aggregation uses the correct scoped `$$message.sentAt` cursor expression. The newest test/code commits are pushed to PR #13. Fresh CI for this final head has not yet been observed; do not merge until both workflows pass. | Latest test commit `3b922adc1a26d2f5de2ba1d1e4303f0c5a386ebb` | Confirm CI and run authenticated MongoDB-backed browser checks; then migrate embedded message arrays to a dedicated collection and make message/unread updates atomic before production. |
+
+
+| 2026-10-30 | Replaced read-receipt and send-message document saves with atomic MongoDB updates. Message append + recipient unread increment now happen in one update; read reset touches only the signed-in participant's unread key. Initial enquiry messages use the same atomic write path and quota. Added assertions for atomic message/unread update payloads and first-enquiry persistence. This closes the stale full-document save race for those operations, but embedded array storage remains unbounded and still requires a dedicated message collection migration. Latest CI remains pending for this newest head. | Atomic update commits `34aa79a`, `1c3994b`, `96dd3b8`, `448daca` | Confirm both GitHub workflows pass, then test the MongoDB-backed rate limiter, cursor pagination, unread badges and two-account chat against the deployed API. |
