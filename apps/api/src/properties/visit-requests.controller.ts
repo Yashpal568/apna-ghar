@@ -1,13 +1,14 @@
 import { Body, BadRequestException, Controller, Get, NotFoundException, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { PropertyAuthGuard } from './property-auth.guard';
 import { VisitRequestsService } from './visit-requests.service';
 
 type AuthenticatedRequest = { authUserId?: string };
 class CreateVisitRequestDto {
   @IsString() @Matches(/^\d{4}-\d{2}-\d{2}$/) preferredDate!: string;
-  @IsString() @MaxLength(20) preferredTime!: string;
-  @IsOptional() @IsString() @MaxLength(1000) message?: string;
+  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(20) preferredTime!: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(1000) message?: string;
 }
 
 @Controller('visit-requests')
