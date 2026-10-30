@@ -25,7 +25,7 @@ export class ConversationsController {
   @Get()
   async listMine(@Req() request: RequestWithAuth) {
     const rows = await this.conversations.find({ participantIds: request.auth.userId })
-      .sort({ lastMessageAt: -1 }).limit(100).lean().exec();
+      .sort({ lastMessageAt: -1 }).limit(100).select({ messages: { $slice: -1 } }).lean().exec();
     return rows.map((row) => ({
       ...row,
       unreadCountByUser: row.unreadCountByUser instanceof Map
