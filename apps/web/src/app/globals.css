@@ -3688,3 +3688,154 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
 @media(max-width:600px){.messages-layout.has-selected .messages-sidebar{display:none}.messages-layout.has-selected .messages-chat{min-height:calc(100dvh - 170px)}.messages-layout.has-selected .messages-mobile-back{display:inline-flex}.messages-chat-head{flex-wrap:wrap}.messages-chat-head .messages-avatar{flex:0 0 38px}.messages-chat-head-actions{margin-left:auto}}
 
 .negotiation-asking-price{display:block;margin-top:3px;color:var(--color-muted);font-size:9px}
+
+
+/* --------------------------------------------------------------------------
+   Apna Ghar messaging desk — supplied Stitch reference alignment
+   -------------------------------------------------------------------------- */
+.messages-page{width:100%;max-width:1440px;margin:0 auto;padding:24px 24px 48px}
+.messages-heading{margin-bottom:16px}
+.messages-heading .eyebrow{letter-spacing:.16em;font-size:10px;font-weight:850;color:var(--color-primary)}
+.messages-heading h1{font-size:clamp(30px,3.2vw,42px);letter-spacing:-1.7px;font-weight:800}
+.messages-desk-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:42px;margin:0 0 14px;padding:0 14px;border:1px solid var(--color-border);border-radius:11px;background:var(--color-surface);color:var(--color-muted);font-size:10px}
+.messages-desk-bar>div,.messages-desk-status{display:flex;align-items:center;gap:9px;min-width:0}
+.messages-desk-bar strong{color:var(--color-text);font-size:10px;letter-spacing:.08em}
+.messages-live-dot{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:#10b981;box-shadow:0 0 0 3px #10b98120}
+.messages-desk-divider{color:var(--color-border)}
+.messages-desk-status{font-size:9px;font-weight:700;white-space:nowrap}
+.messages-desk-status span:first-child{color:#0b9a68}
+.messages-desk-status span:last-child{color:var(--color-muted)}
+.messages-layout{grid-template-columns:minmax(245px,290px) minmax(0,1fr) minmax(235px,285px);min-height:720px;border:1px solid var(--color-border);border-radius:15px;background:var(--color-surface);box-shadow:0 14px 40px #122b4a0b}
+.messages-sidebar{padding:17px 12px 14px;background:var(--color-surface);border-right:1px solid var(--color-border);overflow:auto}
+.messages-sidebar-head{display:flex;align-items:center;justify-content:space-between;padding:0 7px}
+.messages-sidebar-head>div{display:grid;gap:3px}
+.messages-sidebar-head strong{font-size:13px;letter-spacing:-.2px}
+.messages-sidebar-head small{font-size:9px;color:var(--color-muted)}
+.messages-sidebar-head>span{background:color-mix(in srgb,var(--color-primary) 12%,var(--color-surface));color:var(--color-primary);font-weight:800}
+.messages-search{width:100%;margin:13px 0 12px;padding:11px 12px;border-radius:10px;background:var(--color-surface-subtle);font-size:10px}
+.messages-thread{position:relative;align-items:flex-start;gap:9px;padding:12px 8px;border-radius:10px;border-bottom:1px solid color-mix(in srgb,var(--color-border) 65%,transparent)}
+.messages-thread.is-active{background:color-mix(in srgb,var(--color-primary) 8%,var(--color-surface));border-color:color-mix(in srgb,var(--color-primary) 25%,var(--color-border))}
+.messages-avatar{display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border-radius:11px;background:var(--color-primary);color:#fff;font-size:12px;font-weight:850}
+.messages-thread-copy{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 6px}
+.messages-thread-copy b{font-size:10px;line-height:1.35}
+.messages-thread-copy small{grid-column:1/-1;display:-webkit-box;overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;line-height:1.45;font-size:9px}
+.messages-thread-copy time{font-size:8px}
+.messages-unread-badge{grid-column:2;grid-row:2}
+.messages-no-items{padding:44px 10px 24px;text-align:center}
+.messages-no-items>span{font-size:24px;color:var(--color-primary)}
+.messages-no-items b{font-size:11px}
+.messages-no-items p{font-size:10px;line-height:1.55}
+.messages-no-items a{font-size:10px;font-weight:800;color:var(--color-primary)}
+.messages-chat{min-height:720px;background:var(--color-bg);border-right:1px solid var(--color-border)}
+.messages-chat-head{min-height:65px;padding:12px 16px;background:var(--color-surface);border-bottom:1px solid var(--color-border)}
+.messages-chat-head>div:not(.messages-chat-head-actions){display:grid;gap:4px}
+.messages-chat-head strong{font-size:11px}
+.messages-chat-head small{font-size:9px;color:var(--color-muted)}
+.messages-chat-head-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:31px;padding:0 10px;border:1px solid var(--color-border);border-radius:8px;background:var(--color-surface);color:var(--color-primary);font-size:9px;font-weight:800;text-decoration:none}
+.messages-conversation-context{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 14px 0;padding:11px 13px;border:1px solid var(--color-border);border-radius:10px;background:var(--color-surface)}
+.messages-conversation-context>div{display:grid;gap:4px;min-width:0}
+.messages-context-label{font-size:8px;letter-spacing:.12em;font-weight:850;color:var(--color-primary)}
+.messages-conversation-context strong{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.messages-conversation-context small{font-size:9px;color:var(--color-muted)}
+.messages-conversation-context>a{white-space:nowrap;color:var(--color-primary);font-size:9px;font-weight:800}
+.negotiation-panel{margin:10px 14px 0;border:1px solid var(--color-border);border-radius:11px;background:var(--color-surface);overflow:hidden}
+.negotiation-panel-heading{min-height:42px;padding:9px 12px;background:var(--color-surface-subtle)}
+.negotiation-panel-heading strong{font-size:10px}
+.negotiation-panel-heading small{font-size:8px}
+.negotiation-history{display:grid;gap:8px;padding:10px}
+.negotiation-offer{padding:11px;border:1px solid var(--color-border);border-radius:9px;background:var(--color-surface-subtle)}
+.negotiation-offer-top{font-size:8px}
+.negotiation-amount{display:block;margin-top:7px;font-size:20px;letter-spacing:-.7px;color:var(--color-primary)}
+.negotiation-offer p{font-size:10px;line-height:1.5}
+.negotiation-offer time{font-size:8px}
+.negotiation-actions{display:flex;gap:6px;margin-top:9px}
+.negotiation-actions button{min-height:31px;padding:0 10px;border-radius:7px;font-size:9px}
+.negotiation-form{padding:12px;border-top:1px solid var(--color-border);background:var(--color-surface)}
+.negotiation-form label{font-size:9px}
+.negotiation-form input,.negotiation-form textarea{font-size:10px}
+.negotiation-form>button{min-height:37px;font-size:10px}
+.messages-stream{display:flex;flex:1;min-height:220px;max-height:360px;flex-direction:column;gap:12px;padding:16px 17px;overflow:auto;background:var(--color-bg)}
+.messages-bubble-row{display:flex;align-items:flex-end;gap:7px}
+.messages-bubble-row.is-mine{justify-content:flex-end}
+.messages-bubble{max-width:min(78%,510px);padding:10px 12px 7px;border:1px solid var(--color-border);border-radius:12px 12px 12px 4px;background:var(--color-surface);box-shadow:0 2px 6px #10274708}
+.messages-bubble p{font-size:10px;line-height:1.6}
+.messages-bubble time{font-size:8px}
+.messages-bubble-row.is-mine .messages-bubble{border-color:var(--color-primary);border-radius:12px 12px 4px 12px;background:var(--color-primary);color:#fff}
+.messages-bubble-row.is-mine .messages-bubble time{color:#ffffffb8}
+.messages-quick-prompts{display:flex;flex-wrap:wrap;gap:6px;padding:8px 13px;background:var(--color-surface);border-top:1px solid var(--color-border)}
+.messages-quick-prompts button{min-height:27px;padding:0 9px;border:1px solid var(--color-border);border-radius:999px;background:var(--color-surface);color:var(--color-text-secondary);font-size:8px}
+.messages-composer{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:11px 13px 9px;border-top:1px solid var(--color-border);background:var(--color-surface)}
+.messages-composer textarea{min-height:42px;padding:10px;border:1px solid var(--color-border);border-radius:9px;background:var(--color-surface-subtle);font-size:10px}
+.messages-composer button{min-width:80px;min-height:40px;padding:0 13px;border:0;border-radius:8px;background:var(--color-primary);color:#fff;font-size:9px;font-weight:850}
+.messages-composer small{grid-column:1/-1;font-size:8px;color:var(--color-muted)}
+.messages-chat-empty{min-height:500px;padding:30px;display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.messages-chat-empty>span{display:grid;place-items:center;width:45px;height:45px;border-radius:13px;background:color-mix(in srgb,var(--color-primary) 10%,var(--color-surface));color:var(--color-primary);font-size:23px}
+.messages-chat-empty h2{margin:12px 0 4px;font-size:15px}
+.messages-chat-empty p{max-width:300px;font-size:10px;line-height:1.55;color:var(--color-muted)}
+.messages-chat-empty a{font-size:10px;font-weight:800;color:var(--color-primary)}
+.messages-property-panel{display:block;min-width:0;padding:15px 13px;border-left:0;background:var(--color-surface)}
+.messages-property-panel>.eyebrow{margin:3px 0 10px;font-size:8px;letter-spacing:.13em;font-weight:850}
+.messages-property-card{border-radius:11px}
+.messages-property-card>img,.messages-property-placeholder{height:145px}
+.messages-property-copy{gap:7px;padding:11px}
+.messages-property-copy strong{font-size:11px}
+.messages-property-copy>b{font-size:19px;color:var(--color-text)}
+.messages-property-copy small{font-size:9px}
+.messages-property-meta{font-size:8px}
+.messages-property-copy>a{font-size:9px}
+.messages-property-safety{margin-top:11px;padding:11px;border:1px solid color-mix(in srgb,var(--color-green) 35%,var(--color-border));background:color-mix(in srgb,var(--color-green) 7%,var(--color-surface))}
+.messages-property-safety strong{font-size:9px;color:var(--color-green)}
+.messages-property-safety p{font-size:9px}
+@media(min-width:1101px){.messages-layout{grid-template-columns:minmax(245px,285px) minmax(0,1fr) minmax(235px,275px)}}
+@media(max-width:1100px){.messages-layout{grid-template-columns:minmax(230px,290px) minmax(0,1fr)}.messages-property-panel{display:none}}
+@media(max-width:700px){
+ .interior-page:has(.messages-page)>.agh-market-header-scope{display:none}
+ .messages-page{padding:0 0 20px;max-width:none}
+ .messages-heading,.messages-desk-bar,.messages-property-panel{display:none}
+ .messages-layout{display:flex;min-height:calc(100dvh - 12px);border:0;border-radius:0;overflow:visible;box-shadow:none;background:var(--color-bg)}
+ .messages-layout:not(.has-selected) .messages-sidebar{display:block}
+ .messages-sidebar{width:100%;padding:14px 12px;border:0;background:var(--color-bg)}
+ .messages-sidebar-head{padding:7px 5px 10px}
+ .messages-sidebar-head strong{font-size:16px}
+ .messages-search{min-height:42px;margin:8px 0 12px;font-size:12px}
+ .messages-thread{padding:13px 8px;gap:10px}
+ .messages-avatar{width:42px;height:42px;flex-basis:42px;border-radius:50%}
+ .messages-thread-copy b{font-size:12px}
+ .messages-thread-copy small{font-size:10px}
+ .messages-thread-copy time{font-size:9px}
+ .messages-chat{display:none;min-height:calc(100dvh - 12px);width:100%;border:0;background:var(--color-bg)}
+ .messages-layout.has-selected .messages-sidebar{display:none}
+ .messages-layout.has-selected .messages-chat{display:flex}
+ .messages-chat-head{position:sticky;top:0;z-index:5;min-height:62px;padding:9px 10px;gap:8px;box-shadow:0 2px 8px #1027470a}
+ .messages-chat-head .messages-avatar{width:36px;height:36px;flex-basis:36px}
+ .messages-chat-head>div:not(.messages-chat-head-actions){flex:1;min-width:0}
+ .messages-chat-head strong{font-size:10px}
+ .messages-chat-head small{font-size:8px}
+ .messages-mobile-back{display:inline-flex}
+ .messages-chat-head-actions{gap:5px}
+ .messages-chat-head-actions a{min-height:29px;padding:0 7px;font-size:8px}
+ .messages-conversation-context{margin:8px 9px 0;padding:9px 10px}
+ .messages-context-label{font-size:7px}
+ .messages-conversation-context strong{font-size:10px}
+ .messages-conversation-context small{font-size:8px}
+ .negotiation-panel{margin:8px 9px 0;border-radius:10px}
+ .negotiation-panel-heading{min-height:38px}
+ .negotiation-history{gap:7px;padding:8px}
+ .negotiation-offer{padding:9px}
+ .negotiation-amount{font-size:18px}
+ .negotiation-form{padding:9px}
+ .messages-stream{flex:1;min-height:180px;max-height:none;padding:12px 10px 16px;gap:10px}
+ .messages-bubble{max-width:88%;padding:9px 11px}
+ .messages-bubble p{font-size:11px}
+ .messages-quick-prompts{flex-wrap:nowrap;overflow-x:auto;padding:8px 9px}
+ .messages-quick-prompts button{flex:0 0 auto;font-size:8px}
+ .messages-composer{position:sticky;bottom:0;z-index:5;grid-template-columns:minmax(0,1fr) auto;padding:9px;background:var(--color-surface);padding-bottom:max(9px,env(safe-area-inset-bottom))}
+ .messages-composer textarea{min-height:42px;font-size:11px}
+ .messages-composer button{min-width:66px;font-size:9px}
+ .messages-composer small{font-size:7px}
+ .messages-chat-empty{min-height:220px}
+}
+@media(max-width:380px){
+ .messages-chat-head-actions a[aria-label="Open property"]{display:none}
+ .messages-mobile-back{padding:6px 7px;font-size:9px}
+}
