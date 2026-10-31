@@ -153,7 +153,7 @@ export default function SavedPage() {
                     <p className="property-result-price">{money(home.priceAmount)}{home.listingType === "rent" ? " / month" : ""}</p>
                     <p className="property-result-facts">{home.bedrooms ? home.bedrooms + " beds · " : ""}{home.bathrooms ? home.bathrooms + " baths · " : ""}{home.areaValue} {home.areaUnit}</p>
                   </div>
-                </a>
+                </div>
                 <button className="button button-outline saved-toggle" type="button" disabled={removingId === home._id} onClick={() => void remove(home)}>{removingId === home._id ? "Removing…" : "Remove from saved"}</button>
               </article>
             ))}
