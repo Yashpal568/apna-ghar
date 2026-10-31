@@ -56,7 +56,7 @@ function locationText(property: Property) {
 }
 
 async function resolveProperty(identifier: string, signal: AbortSignal): Promise<Property> {
-  const headers = { Accept: "application/json", "Cache-Control": "no-cache" };
+  const headers = { Accept: "application/json" };
   const direct = await fetch(API_BASE + "/properties/" + encodeURIComponent(identifier), { signal, cache: "no-store", headers });
   if (direct.ok) {
     const property = unwrapProperty(await direct.json());
