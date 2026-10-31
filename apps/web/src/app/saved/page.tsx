@@ -145,7 +145,7 @@ export default function SavedPage() {
           <div className="property-results-grid">
             {homes.map((home) => (
               <article className="property-result-card" key={home._id}>
-                <div className="property-result-link">
+                <a className="property-result-link" href={"/property/" + encodeURIComponent(home.slug || home._id)}>
                   <div className="property-result-image">{home.imageUrls?.[0] ? <img src={home.imageUrls[0]} alt="" loading="lazy" /> : <span aria-hidden="true">⌂</span>}<span className="property-result-badge">{home.listingType === "rent" ? "FOR RENT" : "FOR SALE"}</span></div>
                   <div className="property-result-body">
                     <p className="property-result-location">{[home.location?.locality, home.location?.city, home.location?.state].filter(Boolean).join(", ")}</p>
@@ -153,7 +153,7 @@ export default function SavedPage() {
                     <p className="property-result-price">{money(home.priceAmount)}{home.listingType === "rent" ? " / month" : ""}</p>
                     <p className="property-result-facts">{home.bedrooms ? home.bedrooms + " beds · " : ""}{home.bathrooms ? home.bathrooms + " baths · " : ""}{home.areaValue} {home.areaUnit}</p>
                   </div>
-                </div>
+                </a>
                 <button className="button button-outline saved-toggle" type="button" disabled={removingId === home._id} onClick={() => void remove(home)}>{removingId === home._id ? "Removing…" : "Remove from saved"}</button>
               </article>
             ))}
