@@ -21,7 +21,7 @@ export default function SiteHeader({ active = "home", searchValue, onSearchChang
         ? "messages"
         : pathname.startsWith("/saved")
           ? "saved"
-          : pathname.startsWith("/search") || pathname.startsWith("/property/")
+          : pathname.startsWith("/search")
             ? "search"
             : pathname.startsWith("/list-property") || pathname.startsWith("/my-listings") || pathname.startsWith("/profile")
               ? "account"
