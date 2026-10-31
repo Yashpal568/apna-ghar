@@ -3922,3 +3922,26 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
  .messages-layout.is-empty .messages-sidebar,.messages-layout.is-empty .messages-chat{min-height:600px}
  .messages-layout.is-empty .messages-chat-empty{padding:25px}
 }
+
+
+.messages-empty-search-wrap{position:relative;min-width:0}
+.messages-empty-search-wrap>span{display:none}
+.messages-mobile-bottom-nav{display:none}
+@media(max-width:700px){
+ .page-shell.interior-page:has(.messages-page){max-width:none;padding-left:0;padding-right:0}
+ .page-shell.interior-page:has(.messages-page)>.agh-market-header-scope{display:none}
+ .page-shell.interior-page:has(.messages-page)>.site-footer{display:none}
+ .messages-empty-search-wrap>span{position:absolute;z-index:1;left:15px;top:50%;display:block;transform:translateY(-54%);color:var(--color-muted);font-size:25px;line-height:1;pointer-events:none}
+ .messages-layout.is-empty .messages-empty-search-wrap{width:100%}
+ .messages-layout.is-empty .messages-search{width:100%;padding-left:44px}
+ .messages-mobile-bottom-nav{position:fixed;z-index:30;right:0;bottom:0;left:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;min-height:72px;padding:7px 10px max(8px,env(safe-area-inset-bottom));border-top:1px solid var(--color-border);background:color-mix(in srgb,var(--color-surface) 96%,transparent);box-shadow:0 -8px 28px rgb(15 23 42 / 4%);backdrop-filter:blur(14px)}
+ .messages-mobile-bottom-nav>a{display:flex;min-width:0;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--color-muted);text-decoration:none}
+ .messages-mobile-bottom-nav>a>span{display:grid;place-items:center;min-height:29px;font-size:24px;line-height:1}
+ .messages-mobile-bottom-nav>a>small{font-size:10px;font-weight:600;white-space:nowrap}
+ .messages-mobile-bottom-nav>a.messages-mobile-post{position:relative;top:-17px;gap:1px;color:var(--color-primary)}
+ .messages-mobile-bottom-nav>a.messages-mobile-post>span{width:54px;height:54px;min-height:54px;border-radius:50%;background:var(--color-primary);color:#fff;font-size:39px;font-weight:400;line-height:1;box-shadow:0 8px 18px color-mix(in srgb,var(--color-primary) 28%,transparent)}
+ .messages-mobile-bottom-nav>a.messages-mobile-post>small{font-size:12px;font-weight:700}
+ .messages-page{padding-bottom:88px}
+ .messages-layout.is-empty{min-height:calc(100dvh - 245px)}
+ .messages-layout.is-empty .messages-chat-empty{min-height:calc(100dvh - 430px);padding-bottom:65px}
+}
