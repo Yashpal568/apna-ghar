@@ -13,6 +13,7 @@ describe('ConversationsController', () => {
   let properties: Record<string, jest.Mock>;
   let messageRateLimits: Record<string, jest.Mock>;
   let messageDocuments: Record<string, jest.Mock>;
+  let offers: Record<string, jest.Mock>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -24,13 +25,19 @@ describe('ConversationsController', () => {
       updateOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ matchedCount: 1 }) }),
       create: jest.fn(),
     };
-    properties = { findOne: jest.fn() };
+    properties = { findOne: jest.fn(), findById: jest.fn() };
+    offers = {
+      create: jest.fn(), find: jest.fn().mockReturnValue(chain([])), findOne: jest.fn(),
+      findOneAndUpdate: jest.fn().mockReturnValue({ lean: jest.fn().mockReturnThis(), exec: jest.fn().mockResolvedValue(null) }),
+      updateOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ matchedCount: 1 }) }),
+      deleteOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ deletedCount: 1 }) }),
+    };
     messageRateLimits = { findOneAndUpdate: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ count: 1 }) }) };
     messageDocuments = {
       find: jest.fn().mockReturnValue(chain([])),
       updateOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ upsertedCount: 1 }) }),
     };
-    controller = new ConversationsController(conversations as never, properties as never, messageRateLimits as never, messageDocuments as never);
+    controller = new ConversationsController(conversations as never, properties as never, messageRateLimits as never, messageDocuments as never, offers as never);
   });
 
   it('lists only conversations that include the signed-in participant', async () => {
