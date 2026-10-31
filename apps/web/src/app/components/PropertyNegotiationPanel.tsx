@@ -117,7 +117,7 @@ export default function PropertyNegotiationPanel({ conversationId, buyerId, owne
             const mine = offer.senderId === userId;
             return <article className={"negotiation-offer " + (mine ? "is-mine" : "")} key={offer._id}>
               <div className="negotiation-offer-top"><span>{mine ? "Your proposal" : "Received proposal"} · #{index + 1}</span><span className={"negotiation-status status-" + offer.status}>{statusLabel[offer.status]}</span></div>
-              <strong className="negotiation-amount">{money(offer.amount)}</strong>
+              <strong className="negotiation-amount">{money(offer.amount)}</strong><small className="negotiation-asking-price">Asking price at proposal: {money(offer.askingPriceAtOffer)}</small>
               {offer.message && <p>{offer.message}</p>}
               <time>{offer.createdAt ? new Date(offer.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : ""}</time>
               {canRespond && latest?._id === offer._id && <div className="negotiation-actions">
