@@ -3839,3 +3839,28 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
  .messages-chat-head-actions a[aria-label="Open property"]{display:none}
  .messages-mobile-back{padding:6px 7px;font-size:9px}
 }
+
+.messages-property-facts{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+.messages-property-facts span{padding:4px 6px;border-radius:6px;background:var(--color-surface-subtle);color:var(--color-text-secondary);font-size:8px;font-weight:700}
+.messages-owner-dossier{display:flex;align-items:center;gap:9px;margin-top:11px;padding:10px;border:1px solid var(--color-border);border-radius:10px;background:var(--color-surface)}
+.messages-owner-avatar{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:color-mix(in srgb,var(--color-primary) 14%,var(--color-surface));color:var(--color-primary);font-size:12px;font-weight:850}
+.messages-owner-dossier>div{display:grid;gap:3px;min-width:0}
+.messages-owner-dossier strong{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.messages-owner-dossier small{font-size:8px;color:var(--color-muted)}
+.messages-bubble-avatar{display:grid;place-items:center;width:25px;height:25px;flex:0 0 25px;border-radius:50%;background:color-mix(in srgb,var(--color-primary) 14%,var(--color-surface));color:var(--color-primary);font-size:9px;font-weight:850}
+.messages-bubble-sender{display:block;margin-bottom:4px;color:var(--color-primary);font-size:8px;font-weight:850}
+.messages-bubble-row.is-mine .messages-bubble-sender{color:#ffffffc9}
+@media(max-width:700px){
+ .messages-layout.has-selected .messages-property-panel{display:block;order:-1;width:100%;padding:8px 10px 0;border:0;background:var(--color-bg)}
+ .messages-layout.has-selected .messages-property-panel>.eyebrow{display:none}
+ .messages-layout.has-selected .messages-property-card{display:flex;align-items:stretch;min-height:94px}
+ .messages-layout.has-selected .messages-property-card>img,.messages-layout.has-selected .messages-property-placeholder{width:108px;height:auto;min-height:94px;flex:0 0 108px;object-fit:cover}
+ .messages-layout.has-selected .messages-property-copy{display:flex;flex:1;min-width:0;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;padding:8px}
+ .messages-layout.has-selected .messages-property-copy strong{font-size:10px}
+ .messages-layout.has-selected .messages-property-copy>b{font-size:15px}
+ .messages-layout.has-selected .messages-property-copy small{font-size:8px}
+ .messages-layout.has-selected .messages-property-meta,.messages-layout.has-selected .messages-property-facts{display:none}
+ .messages-layout.has-selected .messages-property-copy>a{padding:5px 8px;font-size:8px}
+ .messages-layout.has-selected .messages-owner-dossier,.messages-layout.has-selected .messages-property-safety{display:none}
+ .messages-bubble-avatar{width:22px;height:22px;flex-basis:22px}
+}
