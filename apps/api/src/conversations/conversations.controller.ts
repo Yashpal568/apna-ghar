@@ -7,6 +7,7 @@ import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { Property } from '../properties/schemas/property.schema';
 import { Conversation } from './schemas/conversation.schema';
 import { MessageRateLimit } from './schemas/message-rate-limit.schema';
+import { Message } from './schemas/message.schema';
 
 type RequestWithAuth = { auth: { userId: string } };
 class SendMessageDto {
@@ -23,6 +24,7 @@ export class ConversationsController {
     @InjectModel(Conversation.name) private readonly conversations: Model<Conversation>,
     @InjectModel(Property.name) private readonly properties: Model<Property>,
     @InjectModel(MessageRateLimit.name) private readonly messageRateLimits: Model<MessageRateLimit>,
+    @InjectModel(Message.name) private readonly messages: Model<Message>,
   ) {}
 
   @Get()
@@ -80,6 +82,11 @@ export class ConversationsController {
           $inc: { [`unreadCountByUser.${property.ownerId}`]: 1 },
         },
       ).exec();
+      await this.messages.updateOne(
+        { _id: message._id },
+        { $setOnInsert: { conversationId: new Types.ObjectId(String(property._id)), senderId: message.senderId, text: message.text, sentAt } },
+        { upsert: true },
+      ).exec();
       if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');
     }
     return { conversationId: String(conversation._id), propertyId: conversation.propertyId, propertyTitle: conversation.propertyTitle };
@@ -101,41 +108,53 @@ export class ConversationsController {
     if (before !== undefined && (!Number.isFinite(beforeDate?.getTime()))) {
       throw new BadRequestException('Message cursor must be a valid ISO date.');
     }
-    const rows = await this.conversations.aggregate([
-      { $match: { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId } },
-      { $project: { propertyId: 1, propertyTitle: 1, participantIds: 1, messages: 1 } },
-      {
-        $project: {
-          propertyId: 1,
-          propertyTitle: 1,
-          participantIds: 1,
-          messages: {
-            $slice: [
-              {
-                $filter: {
-                  input: '$messages',
-                  as: 'message',
-                  cond: beforeDate ? { $lt: ['$$message.sentAt', beforeDate] } : true,
-                },
-              },
-              -(limit + 1),
-            ],
-          },
-        },
-      },
-    ]).exec();
-    const conversation = rows[0];
+    const conversation = await this.conversations.findOne({
+      _id: new Types.ObjectId(conversationId),
+      participantIds: request.auth.userId,
+    }).select({ propertyId: 1, propertyTitle: 1, participantIds: 1 }).lean().exec();
     if (!conversation) throw new NotFoundException('Conversation not found.');
     this.assertParticipant(conversation.participantIds, request.auth.userId);
-    const hasMore = conversation.messages.length > limit;
-    const messages = hasMore ? conversation.messages.slice(-limit) : conversation.messages;
+
+    // Read from the dedicated collection first. Older conversations remain readable
+    // until the idempotent backfill has copied their embedded messages.
+    const messageFilter: Record<string, unknown> = { conversationId: new Types.ObjectId(conversationId) };
+    if (beforeDate) messageFilter.sentAt = { $lt: beforeDate };
+    let messages = await this.messages.find(messageFilter)
+      .sort({ sentAt: -1, _id: -1 }).limit(limit + 1).lean().exec();
+
+    if (messages.length === 0) {
+      const legacyRows = await this.conversations.aggregate([
+        { $match: { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId } },
+        { $project: { messages: 1 } },
+        {
+          $project: {
+            messages: {
+              $slice: [
+                {
+                  $filter: {
+                    input: '$messages',
+                    as: 'message',
+                    cond: beforeDate ? { $lt: ['$$message.sentAt', beforeDate] } : true,
+                  },
+                },
+                -(limit + 1),
+              ],
+            },
+          },
+        },
+      ]).exec();
+      messages = (legacyRows[0]?.messages || []).slice().reverse();
+    }
+
+    const hasMore = messages.length > limit;
+    const page = (hasMore ? messages.slice(0, limit) : messages).reverse();
     return {
       conversationId,
       propertyId: conversation.propertyId,
       propertyTitle: conversation.propertyTitle,
-      messages,
+      messages: page,
       hasMore,
-      nextBefore: hasMore && messages.length ? messages[0].sentAt : null,
+      nextBefore: hasMore && page.length ? page[0].sentAt : null,
     };
   }
 
@@ -169,6 +188,11 @@ export class ConversationsController {
         $set: { lastMessageAt: sentAt },
         $inc: { [`unreadCountByUser.${recipientId}`]: 1 },
       },
+    ).exec();
+    await this.messages.updateOne(
+      { _id: message._id },
+      { $setOnInsert: { conversationId: new Types.ObjectId(conversationId), senderId: message.senderId, text: message.text, sentAt } },
+      { upsert: true },
     ).exec();
     if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');
     return { success: true, message };
