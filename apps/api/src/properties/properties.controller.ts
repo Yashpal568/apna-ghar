@@ -156,6 +156,9 @@ export class PropertiesController {
 
   @Get(':slugOrId')
   async findOne(@Param('slugOrId') slugOrId: string) {
+    if (!slugOrId || typeof slugOrId !== 'string' || !slugOrId.trim() || slugOrId.toLowerCase() === 'undefined' || slugOrId.toLowerCase() === 'null') {
+      throw new NotFoundException('Property not found');
+    }
     const property = await this.propertiesService.findPublicBySlugOrId(slugOrId);
     if (!property) throw new NotFoundException('Property not found');
     return property;

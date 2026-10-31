@@ -129,4 +129,57 @@ describe('PropertiesService', () => {
     expect(expression.test('.*')).toBe(true);
   });
 
+  describe('findPublicBySlugOrId', () => {
+    it('returns null safely without database query when identifier is missing, null, or empty', async () => {
+      await expect(service.findPublicBySlugOrId(undefined as never)).resolves.toBeNull();
+      await expect(service.findPublicBySlugOrId(null as never)).resolves.toBeNull();
+      await expect(service.findPublicBySlugOrId('')).resolves.toBeNull();
+      await expect(service.findPublicBySlugOrId('   ')).resolves.toBeNull();
+      expect(model.findOneAndUpdate).not.toHaveBeenCalled();
+    });
+
+    it('returns null safely when identifier is literal "undefined" or "null"', async () => {
+      await expect(service.findPublicBySlugOrId('undefined')).resolves.toBeNull();
+      await expect(service.findPublicBySlugOrId('null')).resolves.toBeNull();
+      await expect(service.findPublicBySlugOrId('Undefined')).resolves.toBeNull();
+      expect(model.findOneAndUpdate).not.toHaveBeenCalled();
+    });
+
+    it('looks up active property by slug and increments viewsCount', async () => {
+      const property = { _id: '507f1f77bcf86cd799439011', slug: 'werwtw-mvuzhfat', title: 'plot for sale', viewsCount: 8 };
+      model.findOneAndUpdate.mockReturnValue(query(property));
+
+      const result = await service.findPublicBySlugOrId('WERWTW-MVUZHFAT');
+      expect(result).toBe(property);
+      expect(model.findOneAndUpdate).toHaveBeenCalledWith(
+        { status: 'active', deletedAt: null, slug: 'werwtw-mvuzhfat' },
+        { $inc: { viewsCount: 1 } },
+        { new: true }
+      );
+    });
+
+    it('looks up active property by valid MongoDB ObjectId using $or for _id and slug', async () => {
+      const property = { _id: '6ae495c723896cb331116519', slug: 'werwtw-mvuzhfat', title: 'plot for sale' };
+      model.findOneAndUpdate.mockReturnValue(query(property));
+
+      const result = await service.findPublicBySlugOrId('6ae495c723896cb331116519');
+      expect(result).toBe(property);
+      expect(model.findOneAndUpdate).toHaveBeenCalledWith(
+        {
+          status: 'active',
+          deletedAt: null,
+          $or: [{ _id: '6ae495c723896cb331116519' }, { slug: '6ae495c723896cb331116519' }],
+        },
+        { $inc: { viewsCount: 1 } },
+        { new: true }
+      );
+    });
+
+    it('returns null when property is not found or is inactive/deleted', async () => {
+      model.findOneAndUpdate.mockReturnValue(query(null));
+
+      const result = await service.findPublicBySlugOrId('non-existent-slug');
+      expect(result).toBeNull();
+    });
+  });
 });

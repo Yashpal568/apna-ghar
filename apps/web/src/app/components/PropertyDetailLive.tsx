@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import "./property-detail.css";
 
 type Property = {
@@ -19,11 +19,23 @@ const initials = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((par
 function unwrap(value: unknown, depth = 0): Property | null {
   if (!value || typeof value !== "object" || depth > 4) return null;
   const item = value as Record<string, unknown>;
-  const priceAmount = Number(item.priceAmount);
-  if (typeof item._id === "string" && typeof item.title === "string" && item.priceAmount !== undefined && item.priceAmount !== null && Number.isFinite(priceAmount)) {
+  const rawPrice = item.priceAmount !== undefined && item.priceAmount !== null ? item.priceAmount : item.price;
+  const priceAmount = typeof rawPrice === "number" ? rawPrice : Number(rawPrice);
+  if (
+    typeof item._id === "string" &&
+    item._id.trim() !== "" &&
+    typeof item.title === "string" &&
+    item.title.trim() !== "" &&
+    Number.isFinite(priceAmount)
+  ) {
     return { ...item, priceAmount } as unknown as Property;
   }
-  for (const key of ["data", "result", "property", "item"]) { const found = unwrap(item[key], depth + 1); if (found) return found; }
+  for (const key of ["data", "result", "property", "item"]) {
+    if (key in item && item[key]) {
+      const found = unwrap(item[key], depth + 1);
+      if (found) return found;
+    }
+  }
   return null;
 }
 type ListingPage = { items: Property[]; pages?: number; total?: number; pagination?: { pages?: number; total?: number } };
@@ -50,28 +62,37 @@ function unwrapListing(value: unknown, depth = 0): ListingPage {
   return { items: [] };
 }
 async function findInPublicListings(identifier: string, signal: AbortSignal): Promise<Property | null> {
-  const first = await fetch(API + "/properties?page=1&limit=50&sort=newest", {
-    signal, cache: "no-store", headers: { Accept: "application/json" },
-  });
-  if (!first.ok) throw new Error("The property lookup failed (" + first.status + ").");
-  const initial = unwrapListing(await first.json());
   const normalizedIdentifier = typeof identifier === "string" ? identifier.trim().toLowerCase() : "";
-  if (!normalizedIdentifier) throw new Error("The property URL is missing its listing identifier.");
-  const matches = (items: Property[]) => items.find((item) =>
-    item._id === identifier || (typeof item.slug === "string" && item.slug.toLowerCase() === normalizedIdentifier)
-  ) || null;
-  const found = matches(initial.items);
-  if (found) return found;
-  const pages = Math.min(1000, Math.max(1, initial.pages || (initial.total ? Math.ceil(initial.total / 50) : 1)));
-  for (let page = 2; page <= pages; page += 1) {
-    const response = await fetch(API + "/properties?page=" + page + "&limit=50&sort=newest", {
+  if (!normalizedIdentifier || normalizedIdentifier === "undefined" || normalizedIdentifier === "null") {
+    return null;
+  }
+  try {
+    const first = await fetch(API + "/properties?page=1&limit=50&sort=newest", {
       signal, cache: "no-store", headers: { Accept: "application/json" },
     });
-    if (!response.ok) break;
-    const listingPage = unwrapListing(await response.json());
-    const match = matches(listingPage.items);
-    if (match) return match;
-    if (!listingPage.items.length) break;
+    if (!first.ok) return null;
+    const initial = unwrapListing(await first.json());
+    const matches = (items: Property[]) => items.find((item) => {
+      if (!item || typeof item !== "object") return false;
+      if (typeof item._id === "string" && item._id === identifier) return true;
+      if (typeof item.slug === "string" && item.slug.toLowerCase() === normalizedIdentifier) return true;
+      return false;
+    }) || null;
+    const found = matches(initial.items);
+    if (found) return found;
+    const pages = Math.min(10, Math.max(1, initial.pages || (initial.total ? Math.ceil(initial.total / 50) : 1)));
+    for (let page = 2; page <= pages; page += 1) {
+      const response = await fetch(API + "/properties?page=" + page + "&limit=50&sort=newest", {
+        signal, cache: "no-store", headers: { Accept: "application/json" },
+      });
+      if (!response.ok) break;
+      const listingPage = unwrapListing(await response.json());
+      const match = matches(listingPage.items);
+      if (match) return match;
+      if (!listingPage.items.length) break;
+    }
+  } catch {
+    return null;
   }
   return null;
 }
@@ -90,21 +111,38 @@ function Detail({ id, signedIn, getToken }: { id: string; signedIn: boolean; get
   const [years, setYears] = useState(20);
 
   useEffect(() => {
+    const cleanId = typeof id === "string" ? id.trim() : "";
+    if (!cleanId || cleanId.toLowerCase() === "undefined" || cleanId.toLowerCase() === "null") {
+      setError("This property link is missing a valid listing identifier.");
+      setLoading(false);
+      return;
+    }
     const controller = new AbortController();
     async function load() {
       setLoading(true); setError("");
       try {
-        const response = await fetch(API + "/properties/" + encodeURIComponent(id), { signal: controller.signal, cache: "no-store", headers: { Accept: "application/json" } });
+        const response = await fetch(API + "/properties/" + encodeURIComponent(cleanId), {
+          signal: controller.signal,
+          cache: "no-store",
+          headers: { Accept: "application/json" }
+        });
         if (response.ok) {
           const result = unwrap(await response.json());
           if (result) { setProperty(result); return; }
-        } else if (response.status !== 404) {
-          throw new Error("We couldn't load this property (API " + response.status + "). Please try again.");
+          throw new Error("Unable to parse listing details from the server response.");
+        } else if (response.status === 404) {
+          // A public listing can still be available even if the slug-based detail endpoint returns 404.
+          const fallback = await findInPublicListings(cleanId, controller.signal);
+          if (fallback) {
+            setProperty(fallback);
+            return;
+          }
+          throw new Error("This property could not be found. It may have been removed or is no longer active.");
+        } else {
+          const body = await response.json().catch(() => null);
+          const serverMessage = body && typeof body === "object" && "message" in body && typeof body.message === "string" ? body.message : null;
+          throw new Error(serverMessage || ("We couldn't load this property (API " + response.status + "). Please try again."));
         }
-        // A public listing can still be available even if the slug-based detail endpoint returns 404.
-        const fallback = await findInPublicListings(id, controller.signal);
-        if (!fallback) throw new Error("This property could not be found in the published listings. Please check that it is still active.");
-        setProperty(fallback);
       } catch (e) {
         if (e instanceof Error && e.name === "AbortError") return;
         setError(e instanceof Error ? e.message : "We couldn't load this property.");
@@ -202,12 +240,50 @@ function Detail({ id, signedIn, getToken }: { id: string; signedIn: boolean; get
 function WithClerk({ id }: { id: string }) { const { isSignedIn, getToken } = useAuth(); return <Detail id={id} signedIn={Boolean(isSignedIn)} getToken={getToken} />; }
 function WithoutClerk({ id }: { id: string }) { return <Detail id={id} signedIn={false} getToken={async () => null} />; }
 export default function PropertyDetailLive({ id }: { id?: string }) {
-  // Defensive fallback: some deployed App Router builds can pass an empty route param.
-  // The browser URL is the source of truth for /property/:id and prevents /properties/undefined.
-  const routeId = (typeof id === "string" ? id.trim() : "") ||
-    (typeof window !== "undefined" ? decodeURIComponent(window.location.pathname.split("/").filter(Boolean).pop() || "") : "");
+  const params = useParams();
+  const routeParam = params?.id;
+  const paramId = typeof routeParam === "string"
+    ? routeParam.trim()
+    : Array.isArray(routeParam)
+      ? (typeof routeParam[0] === "string" ? routeParam[0].trim() : "")
+      : "";
+
+  const propId = typeof id === "string" && id.trim() !== "" && id.trim().toLowerCase() !== "undefined" && id.trim().toLowerCase() !== "null"
+    ? id.trim()
+    : "";
+
+  const windowId = typeof window !== "undefined"
+    ? (() => {
+        try {
+          const segments = window.location.pathname.split("/").filter(Boolean);
+          const last = segments.pop() || "";
+          const decoded = decodeURIComponent(last).trim();
+          return decoded && decoded.toLowerCase() !== "undefined" && decoded.toLowerCase() !== "null"
+            ? decoded
+            : "";
+        } catch {
+          return "";
+        }
+      })()
+    : "";
+
+  const routeId = propId || (paramId && paramId.toLowerCase() !== "undefined" && paramId.toLowerCase() !== "null" ? paramId : "") || windowId;
+
   if (!routeId) {
-    return <main className="pd-page"><div className="pd-state"><h1>Property link is incomplete</h1><p>Open this listing from the property search page.</p><a href="/search">Browse properties</a></div></main>;
+    return (
+      <main className="pd-page" data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}>
+        <div className="pd-state">
+          <span className="pd-state-icon">⌂</span>
+          <p className="pd-eyebrow">APNA GHAR · PROPERTY DETAILS</p>
+          <h1>Property link is incomplete</h1>
+          <p>This property link does not contain a listing identifier. Please browse our search page to find active homes.</p>
+          <div className="pd-state-actions">
+            <a href="/search">Browse properties</a>
+          </div>
+        </div>
+      </main>
+    );
   }
+
   return process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? <WithClerk id={routeId} /> : <WithoutClerk id={routeId} />;
 }

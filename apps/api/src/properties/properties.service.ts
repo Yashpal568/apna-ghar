@@ -90,13 +90,20 @@ export class PropertiesService {
     return { items, pagination: { page, limit, total, pages: Math.ceil(total / limit) } };
   }
 
-  async findPublicBySlugOrId(identifier: string) {
+  async findPublicBySlugOrId(identifier?: string | null) {
+    if (!identifier || typeof identifier !== 'string') {
+      return null;
+    }
+    const clean = identifier.trim();
+    if (!clean || clean.toLowerCase() === 'undefined' || clean.toLowerCase() === 'null') {
+      return null;
+    }
     const mongoose = await import('mongoose');
     const filter: FilterQuery<PropertyDocument> = { status: 'active', deletedAt: null };
-    if (mongoose.isValidObjectId(identifier)) {
-      filter.$or = [{ _id: identifier }, { slug: identifier.toLowerCase() }];
+    if (mongoose.isValidObjectId(clean)) {
+      filter.$or = [{ _id: clean }, { slug: clean.toLowerCase() }];
     } else {
-      filter.slug = identifier.toLowerCase();
+      filter.slug = clean.toLowerCase();
     }
     return this.properties.findOneAndUpdate(filter, { $inc: { viewsCount: 1 } }, { new: true }).select('-__v').lean().exec();
   }
