@@ -182,12 +182,15 @@ const VERIFIED_PROPERTIES: Record<string, unknown> = {
   },
 };
 
-export async function OPTIONS() {
+export async function OPTIONS(
+  _request: Request,
+  _context: { params: { id: string } }
+) {
   return new NextResponse(null, { status: 204, headers: corsHeaders });
 }
 
 export async function GET(
-  _request: NextRequest,
+  _request: Request,
   { params }: { params: { id: string } }
 ) {
   const id = params?.id?.trim().toLowerCase();
@@ -222,7 +225,7 @@ export async function GET(
 }
 
 export async function PATCH(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -248,7 +251,7 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
