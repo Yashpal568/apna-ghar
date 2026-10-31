@@ -16,7 +16,7 @@ async function bootstrap() {
     response.setHeader('X-Frame-Options', 'DENY');
     response.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-    response.setHeader('Cross-Origin-Resource-Policy', 'same-site');
+    response.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
     if (process.env.NODE_ENV === 'production') {
       response.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     }
@@ -41,17 +41,24 @@ async function bootstrap() {
       try {
         const parsed = new URL(origin);
         if (
-          parsed.protocol === 'https:' &&
-          (/^web-[a-z0-9-]+-yashs-projects-cd385495\.vercel\.app$/.test(parsed.hostname) ||
-            /^apna-ghar-web(?:-[a-z0-9-]+)?\.yash38688\.workers\.dev$/.test(parsed.hostname))
+          (parsed.protocol === 'https:' || parsed.protocol === 'http:') &&
+          (parsed.hostname === 'localhost' ||
+            parsed.hostname === '127.0.0.1' ||
+            /^web-[a-z0-9-]+-yashs-projects-cd385495\.vercel\.app$/.test(parsed.hostname) ||
+            /^apna-ghar-web(?:-[a-z0-9-]+)?\.yash38688\.workers\.dev$/.test(parsed.hostname) ||
+            parsed.hostname.endsWith('.workers.dev') ||
+            parsed.hostname.endsWith('.vercel.app'))
         ) {
           return callback(null, true);
         }
       } catch {
-        // Reject malformed origins below.
+        // Reject below
       }
-      return callback(new Error('Origin is not allowed by CORS'), false);
+      return callback(null, false);
     },
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
   });
 
   app.useGlobalPipes(

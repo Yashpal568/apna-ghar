@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { fetchApi } from "../utils/api";
 
 type Property = {
   _id: string; slug?: string; title: string; description?: string;
@@ -8,7 +9,6 @@ type Property = {
   bedrooms?: number; bathrooms?: number; imageUrls?: string[];
   location?: { city?: string; state?: string; locality?: string };
 };
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
 const photoFallbacks = [
   "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1100&q=85",
   "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1100&q=85",
@@ -33,7 +33,7 @@ export default function FeaturedProperties() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(apiBase + "/properties?page=1&limit=9&sort=newest", { signal: controller.signal, headers: { Accept: "application/json" } })
+    fetchApi("/properties?page=1&limit=9&sort=newest", { signal: controller.signal, headers: { Accept: "application/json" } })
       .then(async (response) => {
         if (!response.ok) throw new Error("Could not load properties");
         const data = await response.json() as { items?: Property[] };

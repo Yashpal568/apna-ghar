@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
+import { fetchApi } from "../utils/api";
 
 type Property = {
   _id: string;
@@ -22,7 +23,6 @@ type Property = {
 };
 
 type Result = { items: Property[]; pagination: { page: number; limit: number; total: number; pages: number } };
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
 const money = (amount: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 
 function toggleSavedProperty(property: Property): boolean {
@@ -56,7 +56,7 @@ export default function PropertySearchResults({ location, transaction, category,
     try {
       const token = await getToken();
       if (!token) throw new Error("Please sign in again to contact the owner.");
-      const response = await fetch(apiBase + "/conversations/property/" + encodeURIComponent(property._id), {
+      const response = await fetchApi("/conversations/property/" + encodeURIComponent(property._id), {
         method: "POST",
         headers: { Authorization: "Bearer " + token, "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({}),
@@ -85,7 +85,7 @@ export default function PropertySearchResults({ location, transaction, category,
     try {
       const token = await getToken();
       if (!token) throw new Error("Your session is not ready. Sign in again.");
-      const response = await fetch(`${apiBase}/saved-properties/${encodeURIComponent(property._id)}`, {
+      const response = await fetchApi(`/saved-properties/${encodeURIComponent(property._id)}`, {
         method: nextSaved ? "POST" : "DELETE",
         headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
       });
@@ -111,7 +111,7 @@ export default function PropertySearchResults({ location, transaction, category,
         try {
           const token = await getToken();
           if (!token) return;
-          const response = await fetch(apiBase + "/saved-properties", { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
+          const response = await fetchApi("/saved-properties", { headers: { Authorization: "Bearer " + token, Accept: "application/json" } });
           if (!response.ok) return;
           const serverHomes = await response.json() as Property[];
           if (cancelled || !Array.isArray(serverHomes)) return;
@@ -151,7 +151,7 @@ export default function PropertySearchResults({ location, transaction, category,
       if (transaction === "rent" || transaction === "sale" || transaction === "buy") params.set("listingType", transaction === "buy" ? "sale" : transaction);
       if (category && category !== "all property types") params.set("categoryId", category);
       try {
-        const response = await fetch(`${apiBase}/properties?${params.toString()}`, { signal: controller.signal, headers: { Accept: "application/json" } });
+        const response = await fetchApi(`/properties?${params.toString()}`, { signal: controller.signal, headers: { Accept: "application/json" } });
         if (!response.ok) throw new Error(`Property search failed (${response.status}).`);
         setResult(await response.json() as Result);
       } catch (e) {

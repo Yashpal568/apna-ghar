@@ -5,6 +5,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useParams, useRouter } from "next/navigation";
 import SiteHeader from "./SiteHeader";
 import SiteFooter from "./SiteFooter";
+import { fetchApi } from "../utils/api";
 import "./property-detail.css";
 
 type Property = {
@@ -220,8 +221,8 @@ async function findInPublicListings(
     return null;
   }
   try {
-    const first = await fetch(
-      API + "/properties?page=1&limit=50&sort=newest",
+    const first = await fetchApi(
+      "/properties?page=1&limit=50&sort=newest",
       {
         signal,
         cache: "no-store",
@@ -242,8 +243,8 @@ async function findInPublicListings(
 
     const totalPages = Math.min(firstPage.pages ?? 1, 5);
     for (let page = 2; page <= totalPages; page++) {
-      const resp = await fetch(
-        API + `/properties?page=${page}&limit=50&sort=newest`,
+      const resp = await fetchApi(
+        `/properties?page=${page}&limit=50&sort=newest`,
         {
           signal,
           cache: "no-store",
@@ -307,8 +308,8 @@ function Detail({
       setLoading(true);
       setError("");
       try {
-        const response = await fetch(
-          API + "/properties/" + encodeURIComponent(cleanId),
+        const response = await fetchApi(
+          "/properties/" + encodeURIComponent(cleanId),
           {
             signal: controller.signal,
             cache: "no-store",
@@ -455,8 +456,8 @@ function Detail({
       if (signedIn && property?._id) {
         const token = await getToken();
         if (token) {
-          await fetch(
-            API + "/saved-properties/" + encodeURIComponent(property._id),
+          await fetchApi(
+            "/saved-properties/" + encodeURIComponent(property._id),
             {
               method: nextSaved ? "POST" : "DELETE",
               headers: {
@@ -493,8 +494,8 @@ function Detail({
       const token = await getToken();
       if (!token) throw new Error("Please sign in again.");
       const propId = property?._id || id;
-      const response = await fetch(
-        API + "/conversations/property/" + encodeURIComponent(propId),
+      const response = await fetchApi(
+        "/conversations/property/" + encodeURIComponent(propId),
         {
           method: "POST",
           headers: {
