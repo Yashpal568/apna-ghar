@@ -106,7 +106,59 @@ function PropertyContactActions({ propertyId, slug, phone }: { propertyId: strin
   return <AuthenticatedPropertyContactActions propertyId={propertyId} slug={slug} phone={phone} />;
 }
 export default function PropertyDetailLive({id}:{id:string}){const [p,setP]=useState<Property|null>(null);const [error,setError]=useState("");const [loading,setLoading]=useState(true);const [saved,setSaved]=useState(false);const [notice,setNotice]=useState("");const [retryKey,setRetryKey]=useState(0);const [activeImage,setActiveImage]=useState(0);
-useEffect(()=>{try{const savedHomes=JSON.parse(localStorage.getItem("apna-ghar-saved-homes")||"[]") as Property[];setSaved(savedHomes.some(home=>home._id===id||home.slug===id));}catch{setSaved(false)}const c=new AbortController();fetch(api+"/properties/"+encodeURIComponent(id),{signal:c.signal,cache:"no-store",headers:{Accept:"application/json"}}).then(async r=>{if(!r.ok)throw new Error(r.status===404?"This property is not available.":"Could not load property details.");return r.json() as Promise<Property>}).then(setP).catch(e=>{if(e.name!=="AbortError")setError(e.message||"Could not load property details.")}).finally(()=>{if(!c.signal.aborted)setLoading(false)});return()=>c.abort()},[id,retryKey]);
+useEffect(() => {
+  const controller = new AbortController();
+
+  // Reset all route-specific state before loading a new property. Without this,
+  // an earlier 404/error can remain visible even after a later request succeeds.
+  setP(null);
+  setError("");
+  setLoading(true);
+  setActiveImage(0);
+
+  try {
+    const savedHomes = JSON.parse(localStorage.getItem("apna-ghar-saved-homes") || "[]") as Property[];
+    setSaved(savedHomes.some((home) => home._id === id || home.slug === id));
+  } catch {
+    setSaved(false);
+  }
+
+  async function loadProperty() {
+    try {
+      const response = await fetch(api + "/properties/" + encodeURIComponent(id), {
+        signal: controller.signal,
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error("This property is not available.");
+        }
+        throw new Error(`Could not load property details (HTTP ${response.status}).`);
+      }
+
+      const property = await response.json() as Property;
+      if (!property || typeof property._id !== "string" || typeof property.title !== "string") {
+        throw new Error("The property service returned an invalid listing.");
+      }
+
+      if (controller.signal.aborted) return;
+      setP(property);
+      setError("");
+    } catch (cause) {
+      if (controller.signal.aborted) return;
+      const message = cause instanceof Error ? cause.message : "Could not load property details.";
+      setP(null);
+      setError(message);
+    } finally {
+      if (!controller.signal.aborted) setLoading(false);
+    }
+  }
+
+  void loadProperty();
+  return () => controller.abort();
+}, [id, retryKey]);
 if(loading)return <main className="page-shell interior-page"><SiteHeader active="search" /><div className="detail-skeleton" role="status" aria-label="Loading property details"><div className="skeleton skeleton-heading"/><div className="skeleton skeleton-copy"/><div className="skeleton skeleton-image"/><div className="skeleton skeleton-heading"/><div className="skeleton skeleton-copy"/><span className="sr-only">Loading property details…</span></div></main>;
 if(error||!p)return <main className="page-shell interior-page"><SiteHeader active="search" /><div className="breadcrumb"><a href="/">Home</a><span>/</span><a href="/search">Explore</a><span>/</span><span>Property details</span></div><div className="search-empty property-unavailable" role="alert"><div className="empty-illustration" aria-hidden="true">⌂</div><h1>{error.includes("not available")?"This listing is no longer available":"We couldn’t load this property"}</h1><p>{error||"This property could not be found. It may have been removed or its link may have changed."}</p><div className="property-unavailable-actions"><button className="button button-outline" type="button" onClick={()=>{setError("");setLoading(true);setRetryKey(value=>value+1);}}>Try again</button><a className="button button-primary" href="/search">Browse available properties</a></div></div><SiteFooter /></main>;
 const price=new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(p.priceAmount);
