@@ -12,6 +12,7 @@ const items = [
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
+  if (pathname.startsWith("/property/")) return null;
   return (
     <nav className="ag-bottom-nav" aria-label="Mobile navigation">
       {items.map((item) => {
