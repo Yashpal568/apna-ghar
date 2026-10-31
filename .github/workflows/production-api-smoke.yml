@@ -27,3 +27,11 @@ jobs:
           node -e 'const x=require("/tmp/health.json"); if(x.status!=="ok"||x.service!=="apna-ghar-api") { console.error(x); process.exit(1); } console.log("Liveness OK:", x.service, x.timestamp)'
           curl --retry 10 --retry-all-errors --retry-delay 12 --max-time 25 -fsS "$API_BASE_URL/health/ready" -o /tmp/readiness.json
           node -e 'const x=require("/tmp/readiness.json"); if(x.status!=="ready"||x.checks?.database!=="connected") { console.error(x); process.exit(1); } console.log("Readiness OK: MongoDB", x.checks.database, x.timestamp)'
+          curl --retry 3 --retry-all-errors --retry-delay 8 --max-time 25 -fsS "$API_BASE_URL/properties?limit=5&page=1&sort=newest" -o /tmp/listings.json
+          PROPERTY_SLUG="$(node -e 'const x=require("/tmp/listings.json"); const p=x.items?.[0]; if(!p){console.log(""); process.exit(0)} console.log(encodeURIComponent(p.slug||p._id))')"
+          if [ -n "$PROPERTY_SLUG" ]; then
+            curl --retry 3 --retry-all-errors --retry-delay 8 --max-time 25 -fsS "$API_BASE_URL/properties/$PROPERTY_SLUG" -o /tmp/property.json
+            node -e 'const x=require("/tmp/property.json"); if(!x._id||!x.title) { console.error(x); process.exit(1); } console.log("Property detail OK:", x.slug||x._id, "|", x.title, "| images:", x.imageUrls?.length||0)'
+          else
+            echo "No active public listings are currently returned by the marketplace API."
+          fi
