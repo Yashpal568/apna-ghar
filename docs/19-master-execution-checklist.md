@@ -328,3 +328,19 @@
 ### Current decision
 
 The implementation and CI quality gates have materially advanced, but **M1, M2 and M3 are not fully signed off**. The latest frontend has not been proven live on Cloudflare, production identity/database workflows have not been exercised with real accounts, and the messages backfill has not been run. M4 remains blocked.
+
+
+## 2026-10-31 — production API smoke and frontend diagnosis
+
+- [x] Added a GitHub Actions production smoke workflow for Render liveness, MongoDB readiness, live property search and a real listing detail endpoint.
+- [x] Production smoke passed: liveness returned `ok`; readiness returned `ready` with MongoDB `connected`; live property detail returned slug `werwtw-mvuzhfat`, title `plot for sale`, and 5 images. Run: https://github.com/Yashpal568/apna-ghar/actions/runs/41176279409
+- [x] Browser-rendered production property page now shows the updated shared header with the Post action in the top navigation and bottom navigation.
+- [x] Diagnosed a stale property-detail frontend bundle: the active Worker bundle still contains the old `Cache-Control: no-cache` request header. The latest source removes that custom header and uses Fetch `cache: "no-store"` instead, avoiding unnecessary cross-origin preflight. Commit: `2744492b`.
+- [x] Simplified the manual Cloudflare deploy workflow: only `CLOUDFLARE_API_TOKEN` (GitHub Actions secret) and `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (GitHub Actions variable containing the matching `pk_live_` key) are required. Account ID is already configured in the workflow. Commit: `052a5395`.
+- [ ] Publish the latest web build after configuring those two GitHub Actions values, then verify the live property route loads the real listing instead of the unavailable state.
+- [ ] Verify the latest source commit matches the active Cloudflare Worker version; the Cloudflare deployment API does not expose source SHA in the returned deployment metadata.
+- [ ] Run the non-destructive MongoDB message backfill with production `MONGODB_URI`, then complete buyer/owner two-account messaging acceptance.
+- [ ] Complete authenticated buyer/owner listing, saved-property, profile, Cloudinary upload, visit-request and Clerk acceptance. The public API smoke does not authenticate users and does not substitute for those tests.
+- [ ] Manual message-rate-limit acceptance remains with the user, as requested.
+
+**Updated acceptance decision:** Render liveness, MongoDB readiness and a real public property detail API request are now verified. M1/M2/M3 still remain open pending latest Cloudflare frontend deployment, production Clerk authentication and real buyer/owner acceptance, plus the message backfill. M4 remains blocked.
