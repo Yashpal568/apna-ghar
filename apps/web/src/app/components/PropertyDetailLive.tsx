@@ -23,6 +23,53 @@ function unwrap(value: unknown, depth = 0): Property | null {
   for (const key of ["data", "result", "property", "item"]) { const found = unwrap(item[key], depth + 1); if (found) return found; }
   return null;
 }
+type ListingPage = { items: Property[]; pages?: number; total?: number; pagination?: { pages?: number; total?: number } };
+function unwrapListing(value: unknown, depth = 0): ListingPage {
+  if (Array.isArray(value)) return { items: value.filter((item) => item && typeof item === "object") as Property[] };
+  if (!value || typeof value !== "object" || depth > 5) return { items: [] };
+  const record = value as Record<string, unknown>;
+  const pagination = (record.pagination && typeof record.pagination === "object" ? record.pagination : {}) as Record<string, unknown>;
+  if (Array.isArray(record.items)) return {
+    items: record.items as Property[],
+    pages: Number(record.pages ?? pagination.pages) || undefined,
+    total: Number(record.total ?? pagination.total) || undefined,
+  };
+  for (const key of ["data", "result", "properties", "results"]) {
+    if (key in record) {
+      const nested = unwrapListing(record[key], depth + 1);
+      if (nested.items.length) return {
+        ...nested,
+        pages: nested.pages ?? (Number(record.pages ?? pagination.pages) || undefined),
+        total: nested.total ?? (Number(record.total ?? pagination.total) || undefined),
+      };
+    }
+  }
+  return { items: [] };
+}
+async function findInPublicListings(identifier: string, signal: AbortSignal): Promise<Property | null> {
+  const first = await fetch(API + "/properties?page=1&limit=50&sort=newest", {
+    signal, cache: "no-store", headers: { Accept: "application/json" },
+  });
+  if (!first.ok) throw new Error("The property lookup failed (" + first.status + ").");
+  const initial = unwrapListing(await first.json());
+  const matches = (items: Property[]) => items.find((item) =>
+    item._id === identifier || (typeof item.slug === "string" && item.slug.toLowerCase() === identifier.toLowerCase())
+  ) || null;
+  const found = matches(initial.items);
+  if (found) return found;
+  const pages = Math.min(1000, Math.max(1, initial.pages || (initial.total ? Math.ceil(initial.total / 50) : 1)));
+  for (let page = 2; page <= pages; page += 1) {
+    const response = await fetch(API + "/properties?page=" + page + "&limit=50&sort=newest", {
+      signal, cache: "no-store", headers: { Accept: "application/json" },
+    });
+    if (!response.ok) break;
+    const listingPage = unwrapListing(await response.json());
+    const match = matches(listingPage.items);
+    if (match) return match;
+    if (!listingPage.items.length) break;
+  }
+  return null;
+}
 
 function Detail({ id, signedIn, getToken }: { id: string; signedIn: boolean; getToken: () => Promise<string | null> }) {
   const router = useRouter();
@@ -43,10 +90,16 @@ function Detail({ id, signedIn, getToken }: { id: string; signedIn: boolean; get
       setLoading(true); setError("");
       try {
         const response = await fetch(API + "/properties/" + encodeURIComponent(id), { signal: controller.signal, cache: "no-store", headers: { Accept: "application/json" } });
-        if (!response.ok) throw new Error(response.status === 404 ? "This property is no longer published or the link is incorrect." : "We couldn't load this property. Please try again.");
-        const result = unwrap(await response.json());
-        if (!result) throw new Error("The property response was incomplete. Please try again.");
-        setProperty(result);
+        if (response.ok) {
+          const result = unwrap(await response.json());
+          if (result) { setProperty(result); return; }
+        } else if (response.status !== 404) {
+          throw new Error("We couldn't load this property (API " + response.status + "). Please try again.");
+        }
+        // A public listing can still be available even if the slug-based detail endpoint returns 404.
+        const fallback = await findInPublicListings(id, controller.signal);
+        if (!fallback) throw new Error("This property could not be found in the published listings. Please check that it is still active.");
+        setProperty(fallback);
       } catch (e) {
         if (e instanceof Error && e.name === "AbortError") return;
         setError(e instanceof Error ? e.message : "We couldn't load this property.");
