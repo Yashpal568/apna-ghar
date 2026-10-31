@@ -3680,3 +3680,9 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
 .messages-property-safety p{margin:6px 0 0;color:var(--color-muted);font-size:9px;line-height:1.55}
 @media(min-width:601px) and (max-width:1100px){.messages-layout{grid-template-columns:minmax(230px,300px) minmax(0,1fr)}.messages-property-panel{display:none}}
 @media(max-width:600px){.messages-property-panel{display:none}.messages-page{padding-inline:12px}.messages-heading{align-items:flex-start;flex-direction:column}.messages-chat{min-width:0}.messages-chat-head{padding:12px}.messages-chat-head-actions{display:flex;flex-wrap:wrap;gap:8px}.messages-stream{min-height:260px;max-height:52vh;overflow:auto}}
+
+
+.messages-search{display:block;width:calc(100% - 12px);margin:12px 6px 14px;padding:10px 12px;border:1px solid var(--color-border);border-radius:10px;background:var(--color-surface-subtle);color:var(--color-text);font-size:11px;outline:none}
+.messages-search:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--color-primary) 13%,transparent)}
+.messages-mobile-back{display:none;align-items:center;gap:5px;padding:7px 9px;border:1px solid var(--color-border);border-radius:9px;background:var(--color-surface);color:var(--color-primary);font-size:10px;font-weight:800;white-space:nowrap}
+@media(max-width:600px){.messages-layout.has-selected .messages-sidebar{display:none}.messages-layout.has-selected .messages-chat{min-height:calc(100dvh - 170px)}.messages-layout.has-selected .messages-mobile-back{display:inline-flex}.messages-chat-head{flex-wrap:wrap}.messages-chat-head .messages-avatar{flex:0 0 38px}.messages-chat-head-actions{margin-left:auto}}
