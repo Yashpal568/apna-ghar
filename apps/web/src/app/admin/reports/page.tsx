@@ -97,7 +97,7 @@ function AuthenticatedAdminReportsPage() {
           <div className="admin-report-heading"><div><span className={"report-status report-status-"+report.status}>{report.status.replace("_"," ")}</span><h3>{reasons[report.reason]||report.reason}</h3></div><time>{report.createdAt?new Date(report.createdAt).toLocaleString():"Date unavailable"}</time></div>
           <dl><div><dt>Property ID</dt><dd>{report.propertyId}</dd></div><div><dt>Report ID</dt><dd>{report._id}</dd></div><div><dt>Reporter ID</dt><dd>{report.reporterId}</dd></div></dl>
           {report.details&&<p className="admin-report-details">{report.details}</p>}
-          <div className="admin-report-actions"><label>Update status <select value={report.status} disabled={busyId===report._id} onChange={e=>void updateStatus(report._id,e.target.value as Report["status"])}><option value="open">Open</option><option value="reviewing">Reviewing</option><option value="resolved">Resolved</option><option value="dismissed">Dismissed</option></select></label><a className="text-link" href={"/property/"+encodeURIComponent(report.propertyId)} target="_blank" rel="noreferrer">Open property ↗</a></div>
+          <div className="admin-report-actions"><label>Update status <select value={report.status} disabled={busyId===report._id} onChange={e=>void updateStatus(report._id,e.target.value as Report["status"])}><option value="open">Open</option><option value="reviewing">Reviewing</option><option value="resolved">Resolved</option><option value="dismissed">Dismissed</option></select></label><span className="text-muted">Property details page is being redesigned.</span></div>
         </article>)}</div>}
       </div>
       <footer className="admin-footer">Apna Ghar Admin · Queue data loaded from the API.</footer>
