@@ -3686,3 +3686,5 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
 .messages-search:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--color-primary) 13%,transparent)}
 .messages-mobile-back{display:none;align-items:center;gap:5px;padding:7px 9px;border:1px solid var(--color-border);border-radius:9px;background:var(--color-surface);color:var(--color-primary);font-size:10px;font-weight:800;white-space:nowrap}
 @media(max-width:600px){.messages-layout.has-selected .messages-sidebar{display:none}.messages-layout.has-selected .messages-chat{min-height:calc(100dvh - 170px)}.messages-layout.has-selected .messages-mobile-back{display:inline-flex}.messages-chat-head{flex-wrap:wrap}.messages-chat-head .messages-avatar{flex:0 0 38px}.messages-chat-head-actions{margin-left:auto}}
+
+.negotiation-asking-price{display:block;margin-top:3px;color:var(--color-muted);font-size:9px}
