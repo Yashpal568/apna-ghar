@@ -486,7 +486,8 @@ function MessagesCenterAuthenticated() {
           </div>
         </div>
       <SiteFooter />
-      </main>
+        <SiteFooter />
+    </main>
     );
   }
 
@@ -536,7 +537,8 @@ function MessagesCenterAuthenticated() {
           </div>
         </div>
       <SiteFooter />
-      </main>
+        <SiteFooter />
+    </main>
     );
   }
 
@@ -1013,6 +1015,7 @@ function MessagesCenterAuthenticated() {
             </aside>
           )}
       </div>
+      <SiteFooter />
     </main>
   );
 }
@@ -1047,6 +1050,7 @@ function MessagesCenterWithoutClerk() {
           </a>
         </div>
       </div>
+      <SiteFooter />
     </main>
   );
 }
