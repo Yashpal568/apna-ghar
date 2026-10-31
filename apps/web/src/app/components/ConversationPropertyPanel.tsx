@@ -10,6 +10,11 @@ type PropertySummary = {
   location?: { locality?: string; city?: string; state?: string };
   listingType?: string;
   categoryId?: string;
+  contactName?: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  parkingCount?: number;
+  status?: string;
   areaValue?: number;
   areaUnit?: string;
 };
@@ -42,17 +47,17 @@ export default function ConversationPropertyPanel({ propertyId, propertySlug, fa
   const location = [property?.location?.locality, property?.location?.city, property?.location?.state].filter(Boolean).join(", ");
   const image = property?.imageUrls?.find(url => /^https?:\/\//i.test(url));
   return <aside className="messages-property-panel">
-    <p className="eyebrow">PROPERTY CONTEXT</p>
+    <p className="eyebrow">PROPERTY DOSSIER</p>
     <div className="messages-property-card">
       {image ? <img src={image} alt={property?.title || fallbackTitle}/> : <div className="messages-property-placeholder">⌂</div>}
       <div className="messages-property-copy">
         <strong>{property?.title || fallbackTitle}</strong>
         <b>{money(property?.priceAmount)}</b>
         {location && <small>{location}</small>}
-        <div className="messages-property-meta">{property?.listingType === "rent" ? "For rent" : property?.listingType === "sale" ? "For sale" : "Property listing"}{property?.areaValue ? " · " + property.areaValue + " " + (property.areaUnit || "sqft") : ""}</div>
+        <div className="messages-property-meta">{property?.listingType === "rent" ? "For rent" : property?.listingType === "sale" ? "For sale" : "Property listing"}{property?.areaValue ? " · " + property.areaValue + " " + (property.areaUnit || "sqft") : ""}</div><div className="messages-property-facts">{property?.bedrooms ? <span>{property.bedrooms} beds</span> : null}{property?.bathrooms ? <span>{property.bathrooms} baths</span> : null}{property?.parkingCount ? <span>{property.parkingCount} parking</span> : null}</div>
         <a href={"/property/" + encodeURIComponent(propertySlug || propertyId)}>View property ↗</a>
       </div>
     </div>
-    <div className="messages-property-safety"><strong>Stay safe</strong><p>Verify the property and owner independently. Do not send deposits or sensitive documents before verification.</p></div>
+    <div className="messages-owner-dossier"><span className="messages-owner-avatar">{(property?.contactName||"O").slice(0,1).toUpperCase()}</span><div><strong>{property?.contactName||"Property owner"}</strong><small>Listing contact · Owner details</small></div></div><div className="messages-property-safety"><strong>Buyer safety</strong><p>Verify ownership documents and property details independently. Do not transfer deposits before verification.</p></div>
   </aside>;
 }
