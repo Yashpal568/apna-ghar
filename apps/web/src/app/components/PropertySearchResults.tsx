@@ -50,7 +50,7 @@ export default function PropertySearchResults({ location, transaction, category,
 
   async function contactOwner(property: Property) {
     if (!isSignedIn) {
-      window.location.assign("/sign-in?redirect_url=" + encodeURIComponent("/property/" + (property.slug || property._id)));
+      window.location.assign("/sign-in?redirect_url=" + encodeURIComponent("/search"));
       return;
     }
     try {
@@ -175,7 +175,7 @@ export default function PropertySearchResults({ location, transaction, category,
       {result.items.map((property) => {
         const isSaved = savedIds.includes(property._id);
         return <article className="property-result-card" key={property._id}>
-          <a className="property-result-link" href={`/property/${encodeURIComponent(property.slug || property._id)}`}>
+          <div className="property-result-link">
             <div className="property-result-image">{property.imageUrls?.[0] ? <img src={property.imageUrls[0]} alt="" loading="lazy" /> : <span aria-hidden="true">⌂</span>}<span className="property-result-badge">{property.listingType === "rent" ? "FOR RENT" : "FOR SALE"}</span></div>
             <div className="property-result-body"><p className="property-result-location">{[property.location?.locality, property.location?.city, property.location?.state].filter(Boolean).join(", ")}</p><h3>{property.title}</h3><p className="property-result-price">{money(property.priceAmount)}{property.listingType === "rent" ? " / month" : ""}</p><p className="property-result-facts">{property.bedrooms ? `${property.bedrooms} beds · ` : ""}{property.bathrooms ? `${property.bathrooms} baths · ` : ""}{property.areaValue} {property.areaUnit}</p></div>
           </a>
