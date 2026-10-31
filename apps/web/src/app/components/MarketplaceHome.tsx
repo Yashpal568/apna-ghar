@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { useAuth, useClerk } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import BrandLogo from "./BrandLogo";
 import SiteHeader from "./SiteHeader";
 type Property={_id:string;slug:string;title:string;description?:string;listingType:"sale"|"rent";priceAmount:number;currency?:string;categoryId:string;location?:{city?:string;state?:string;locality?:string};areaValue:number;areaUnit:string;bedrooms?:number;bathrooms?:number;imageUrls?:string[];contactName?:string;contactPhone?:string;furnishing?:string};
@@ -9,7 +9,7 @@ const api=(process.env.NEXT_PUBLIC_API_BASE_URL||"https://apna-ghar-api-j4fo.onr
 type Category={key:string;label:string;icon:string};
 const money=(v:number)=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(v);
 const photos=["https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=85","https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=85","https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=85"];
-function MarketplaceHomeContent({ isSignedIn, getToken, signOut }: { isSignedIn: boolean; getToken: () => Promise<string | null>; signOut: (options: { redirectUrl: string }) => Promise<void> }){
+function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean; getToken: () => Promise<string | null> }){
  const [transaction,setTransaction]=useState<"buy"|"rent">("buy"),[category,setCategory]=useState("all"),[location,setLocation]=useState(""),[sort,setSort]=useState("newest"),[filter,setFilter]=useState("All"),[slide,setSlide]=useState(0),[result,setResult]=useState<Result|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(""),[contactBusy,setContactBusy]=useState(""),[notice,setNotice]=useState(""),[retry,setRetry]=useState(0),[categoryOptions,setCategoryOptions]=useState<Category[]>([]);
 
  useEffect(()=>{const controller=new AbortController();void fetch(api+"/categories",{signal:controller.signal,headers:{Accept:"application/json"}}).then(async r=>{if(!r.ok)throw new Error("Categories unavailable");const data=await r.json() as Category[];if(Array.isArray(data))setCategoryOptions(data)}).catch(()=>{});return()=>controller.abort()},[]);
@@ -40,11 +40,10 @@ function MarketplaceHomeContent({ isSignedIn, getToken, signOut }: { isSignedIn:
 
 function MarketplaceHomeWithClerk() {
   const { isSignedIn, getToken } = useAuth();
-  const { signOut } = useClerk();
-  return <MarketplaceHomeContent isSignedIn={Boolean(isSignedIn)} getToken={getToken} signOut={signOut} />;
+  return <MarketplaceHomeContent isSignedIn={Boolean(isSignedIn)} getToken={getToken} />;
 }
 function MarketplaceHomeWithoutClerk() {
-  return <MarketplaceHomeContent isSignedIn={false} getToken={async () => null} signOut={async () => undefined} />;
+  return <MarketplaceHomeContent isSignedIn={false} getToken={async () => null} />;
 }
 export default function MarketplaceHome() {
   return process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? <MarketplaceHomeWithClerk /> : <MarketplaceHomeWithoutClerk />;
