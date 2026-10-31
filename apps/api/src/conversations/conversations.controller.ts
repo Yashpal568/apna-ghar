@@ -115,39 +115,46 @@ export class ConversationsController {
     if (!conversation) throw new NotFoundException('Conversation not found.');
     this.assertParticipant(conversation.participantIds, request.auth.userId);
 
-    // Read from the dedicated collection first. Older conversations remain readable
-    // until the idempotent backfill has copied their embedded messages.
+    // Read both stores during migration and merge by message id. This keeps older
+    // embedded history visible even while the backfill is being run in production.
     const messageFilter: Record<string, unknown> = { conversationId: new Types.ObjectId(conversationId) };
     if (beforeDate) messageFilter.sentAt = { $lt: beforeDate };
-    let messages = await this.messages.find(messageFilter)
+    const dedicatedMessages = await this.messages.find(messageFilter)
       .sort({ sentAt: -1, _id: -1 }).limit(limit + 1).lean().exec();
 
-    if (messages.length === 0) {
-      const legacyRows = await this.conversations.aggregate([
-        { $match: { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId } },
-        { $project: { messages: 1 } },
-        {
-          $project: {
-            messages: {
-              $slice: [
-                {
-                  $filter: {
-                    input: '$messages',
-                    as: 'message',
-                    cond: beforeDate ? { $lt: ['$$message.sentAt', beforeDate] } : true,
-                  },
+    const legacyRows = await this.conversations.aggregate([
+      { $match: { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId } },
+      { $project: { messages: 1 } },
+      {
+        $project: {
+          messages: {
+            $slice: [
+              {
+                $filter: {
+                  input: '$messages',
+                  as: 'message',
+                  cond: beforeDate ? { $lt: ['$$message.sentAt', beforeDate] } : true,
                 },
-                -(limit + 1),
-              ],
-            },
+              },
+              -(limit + 1),
+            ],
           },
         },
-      ]).exec();
-      messages = (legacyRows[0]?.messages || []).slice().reverse();
-    }
+      },
+    ]).exec();
+    const legacyMessages = legacyRows[0]?.messages || [];
+    const seenMessageIds = new Set<string>();
+    const combinedMessages = [...dedicatedMessages, ...legacyMessages]
+      .filter((message) => {
+        const id = String(message._id);
+        if (seenMessageIds.has(id)) return false;
+        seenMessageIds.add(id);
+        return true;
+      })
+      .sort((left, right) => new Date(left.sentAt).getTime() - new Date(right.sentAt).getTime());
 
-    const hasMore = messages.length > limit;
-    const page = (hasMore ? messages.slice(0, limit) : messages).reverse();
+    const hasMore = combinedMessages.length > limit;
+    const page = hasMore ? combinedMessages.slice(-limit) : combinedMessages;
     return {
       conversationId,
       propertyId: conversation.propertyId,
