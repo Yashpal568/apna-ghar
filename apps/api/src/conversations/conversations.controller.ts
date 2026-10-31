@@ -259,6 +259,10 @@ export class ConversationsController {
       previousOfferId: null,
       status: 'pending',
     });
+    await this.conversations.updateOne(
+      { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId },
+      { $set: { lastMessageAt: new Date() }, $inc: { [`unreadCountByUser.${conversation.ownerId}`]: 1 } },
+    ).exec();
     return { success: true, offer };
   }
 
@@ -306,6 +310,10 @@ export class ConversationsController {
       await this.offers.deleteOne({ _id: counter._id }).exec();
       throw new BadRequestException('This offer has already been answered.');
     }
+    await this.conversations.updateOne(
+      { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId },
+      { $set: { lastMessageAt: new Date() }, $inc: { [`unreadCountByUser.${previous.senderId}`]: 1 } },
+    ).exec();
     return { success: true, offer: counter };
   }
 
@@ -334,6 +342,10 @@ export class ConversationsController {
       { new: true },
     ).lean().exec();
     if (!offer) throw new BadRequestException('This offer is no longer pending or you cannot respond to it.');
+    await this.conversations.updateOne(
+      { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId },
+      { $set: { lastMessageAt: new Date() }, $inc: { [`unreadCountByUser.${offer.senderId}`]: 1 } },
+    ).exec();
     return { success: true, offer };
   }
 
