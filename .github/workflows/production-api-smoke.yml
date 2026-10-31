@@ -27,7 +27,15 @@ jobs:
           node -e 'const x=require("/tmp/health.json"); if(x.status!=="ok"||x.service!=="apna-ghar-api") { console.error(x); process.exit(1); } console.log("Liveness OK:", x.service, x.timestamp)'
           curl --retry 10 --retry-all-errors --retry-delay 12 --max-time 25 -fsS "$API_BASE_URL/health/ready" -o /tmp/readiness.json
           node -e 'const x=require("/tmp/readiness.json"); if(x.status!=="ready"||x.checks?.database!=="connected") { console.error(x); process.exit(1); } console.log("Readiness OK: MongoDB", x.checks.database, x.timestamp)'
-          curl --retry 3 --retry-all-errors --retry-delay 8 --max-time 25 -fsS "$API_BASE_URL/properties?limit=5&page=1&sort=newest" -o /tmp/listings.json
+          # Exercise the same cross-origin contract used by the Cloudflare browser.
+          curl --max-time 25 -sS -D /tmp/cors-preflight.headers -o /dev/null -X OPTIONS "$API_BASE_URL/properties?limit=5&page=1&sort=newest" \
+            -H "Origin: https://apna-ghar-web.yash38688.workers.dev" \
+            -H "Access-Control-Request-Method: GET" \
+            -H "Access-Control-Request-Headers: accept"
+          node -e 'const h=require("fs").readFileSync("/tmp/cors-preflight.headers","utf8").toLowerCase(); if(!h.includes("access-control-allow-origin: https://apna-ghar-web.yash38688.workers.dev")||!h.includes("access-control-allow-methods:")||!h.includes("get")) { console.error(h); process.exit(1); } console.log("Cloudflare browser CORS preflight OK")'
+          curl --retry 3 --retry-all-errors --retry-delay 8 --max-time 25 -fsS "$API_BASE_URL/properties?limit=5&page=1&sort=newest" \
+            -H "Origin: https://apna-ghar-web.yash38688.workers.dev" -D /tmp/listings.headers -o /tmp/listings.json
+          node -e 'const h=require("fs").readFileSync("/tmp/listings.headers","utf8").toLowerCase(); if(!h.includes("access-control-allow-origin: https://apna-ghar-web.yash38688.workers.dev")) { console.error(h); process.exit(1); } const x=require("/tmp/listings.json"); if(!Array.isArray(x.items)||x.items.length===0) { console.error("No published property listings returned",x); process.exit(1); } console.log("Public inventory OK:",x.items.length,"listings on page 1; total:",x.pagination?.total)'
           PROPERTY_SLUG="$(node -e 'const x=require("/tmp/listings.json"); const p=x.items?.[0]; if(!p){console.log(""); process.exit(0)} console.log(encodeURIComponent(p.slug||p._id))')"
           if [ -n "$PROPERTY_SLUG" ]; then
             curl --retry 3 --retry-all-errors --retry-delay 8 --max-time 25 -fsS "$API_BASE_URL/properties/$PROPERTY_SLUG" -o /tmp/property.json
