@@ -241,4 +241,42 @@ describe('ConversationsController', () => {
   });
 
 
+
+  it('lets only the pending offer recipient create a counter-offer', async () => {
+    const conversation = {
+      propertyId: '507f1f77bcf86cd799439011',
+      buyerId: buyer,
+      ownerId: owner,
+      participantIds: [buyer, owner],
+    };
+    conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    offers.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue({
+      _id: '507f1f77bcf86cd799439013',
+      senderId: buyer,
+      recipientId: owner,
+      askingPriceAtOffer: 5000000,
+      status: 'pending',
+    }) });
+    offers.create.mockResolvedValue({ _id: '507f1f77bcf86cd799439014', amount: 4800000, status: 'pending' });
+    const result = await controller.counterOffer(
+      { auth: { userId: owner } },
+      '507f1f77bcf86cd799439012',
+      '507f1f77bcf86cd799439013',
+      { amount: 4800000, message: 'My best price.' },
+    );
+    expect(result.success).toBe(true);
+    expect(offers.create).toHaveBeenCalledWith(expect.objectContaining({
+      amount: 4800000,
+      senderId: owner,
+      recipientId: buyer,
+      previousOfferId: '507f1f77bcf86cd799439013',
+      status: 'pending',
+    }));
+    expect(offers.updateOne).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'pending', recipientId: owner }),
+      expect.objectContaining({ $set: expect.objectContaining({ status: 'countered' }) }),
+    );
+  });
+
+
 });
