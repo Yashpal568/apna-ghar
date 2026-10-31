@@ -623,7 +623,7 @@ function MessagesCenterAuthenticated() {
             <div className="messages-sidebar-header">
               <div className="messages-sidebar-heading-copy">
                 <h2>Conversations</h2>
-                <span>{items.length} active threads</span>
+                <span>{activeItems.length} active threads</span>
               </div>
               <span className="messages-sidebar-count">{items.length}</span>
             </div>
