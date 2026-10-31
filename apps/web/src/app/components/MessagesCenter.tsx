@@ -3,7 +3,6 @@
 import { FormEvent, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import SiteHeader from "./SiteHeader";
-import SiteFooter from "./SiteFooter";
 import PropertyNegotiationPanel from "./PropertyNegotiationPanel";
 import "./messages-workspace.css";
 
@@ -485,8 +484,7 @@ function MessagesCenterAuthenticated() {
             <p>Fetching your direct buyer and owner conversations from secure storage…</p>
           </div>
         </div>
-        <SiteFooter />
-    </main>
+</main>
     );
   }
 
@@ -535,8 +533,7 @@ function MessagesCenterAuthenticated() {
             </a>
           </div>
         </div>
-        <SiteFooter />
-    </main>
+</main>
     );
   }
 
@@ -558,26 +555,40 @@ function MessagesCenterAuthenticated() {
     <main className="messages-workspace-shell">
       <SiteHeader active="messages" />
 
-      {/* Compact Workspace Top Toolbar */}
-      <div className="messages-top-toolbar">
-        <div className="messages-top-toolbar-left">
-          <h1>Direct Owner Desk</h1>
-          <span className="messages-top-toolbar-badge">
-            <span className="status-dot" /> Live sync
-          </span>
-          {totalUnread > 0 && (
-            <span className="messages-unread-pill">{totalUnread} new</span>
-          )}
-          <span className="messages-top-toolbar-desc">
-            Private buyer &amp; seller negotiations
-          </span>
+      <section className="messages-page-intro" aria-labelledby="messages-page-title">
+        <div className="messages-breadcrumb">
+          <a href="/">APNA GHAR</a><span aria-hidden="true">•</span><span>MESSAGING WORKSPACE</span>
         </div>
-        <div className="messages-top-toolbar-right">
-          <a className="messages-browse-btn" href="/search">
-            <span>⌕</span> Browse listings
-          </a>
+        <div className="messages-page-intro-row">
+          <div>
+            <h1 id="messages-page-title">Your conversations</h1>
+            <p>Talk directly with buyers and property owners. Messages refresh automatically.</p>
+          </div>
+          <a className="messages-intro-browse-btn" href="/search">Browse properties</a>
         </div>
-      </div>
+      </section>
+      <section className="messages-status-bar" aria-label="Messaging status and filters">
+        <div className="messages-status-brand">
+          <span className="messages-status-live-dot" />
+          <strong>DIRECT OWNER DESK</strong>
+          <span className="messages-status-divider">·</span>
+          <span>Private buyer &amp; seller conversations</span>
+        </div>
+        <div className="messages-status-filters" role="tablist" aria-label="Conversation filters">
+          <span className="messages-status-filter-label">Inbox</span>
+          <button type="button" role="tab" aria-selected={conversationView === "all"} className={conversationView === "all" ? "is-active" : ""} onClick={() => setConversationView("all")}>
+            {items.length} conversations
+          </button>
+          <button type="button" role="tab" aria-selected={conversationView === "active"} className={conversationView === "active" ? "is-active" : ""} onClick={() => setConversationView("active")}>
+            Active conversations <span className="messages-status-active-dot" /> <span className="messages-status-filter-count">{activeItems.length}</span>
+          </button>
+        </div>
+        <div className="messages-status-meta">
+          <span className="messages-status-sync"><i /> Live inbox sync</span>
+          <span className="messages-status-divider">·</span>
+          <span className="messages-status-secure"><span aria-hidden="true">♙</span> Secure session</span>
+        </div>
+      </section>
 
       {error && (
         <div
@@ -599,6 +610,7 @@ function MessagesCenterAuthenticated() {
       )}
 
       {/* Full-width inbox and chat workspace. Empty states stay inside the same layout. */}
+      <div className="messages-workspace-card">
       <div
         className={`messages-main-grid ${selected ? "has-active-chat" : "is-empty"} ${
           mobileTab === "dossier" ? "show-mobile-dossier" : ""
@@ -616,29 +628,7 @@ function MessagesCenterAuthenticated() {
               <span className="messages-sidebar-count">{items.length}</span>
             </div>
 
-            <div className="messages-sidebar-tabs" role="tablist" aria-label="Conversation filters">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={conversationView === "all"}
-                className={conversationView === "all" ? "is-active" : ""}
-                onClick={() => setConversationView("all")}
-              >
-                <span className="messages-tab-dot is-muted" />
-                {items.length} conversations
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={conversationView === "active"}
-                className={conversationView === "active" ? "is-active" : ""}
-                onClick={() => setConversationView("active")}
-              >
-                <span className="messages-tab-dot" />
-                Active conversations
-                <span className="messages-tab-count">{activeItems.length}</span>
-              </button>
-            </div>
+
 
             <div className="messages-sidebar-search-box">
               <span className="search-icon" aria-hidden="true">
@@ -1013,8 +1003,8 @@ function MessagesCenterAuthenticated() {
             </aside>
           )}
       </div>
-      <SiteFooter />
-    </main>
+      </div>
+</main>
   );
 }
 
@@ -1048,8 +1038,7 @@ function MessagesCenterWithoutClerk() {
           </a>
         </div>
       </div>
-      <SiteFooter />
-    </main>
+</main>
   );
 }
 
