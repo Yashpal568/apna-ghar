@@ -55,7 +55,7 @@ describe('ConversationsController', () => {
     const property = { _id: '507f1f77bcf86cd799439011', ownerId: owner, title: 'Family home', slug: 'family-home', status: 'active' };
     properties.findOne.mockReturnValue(chain(property));
     conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(null) });
-    const created = { _id: 'conversation-1', propertyId: property._id, propertyTitle: property.title };
+    const created = { _id: '507f1f77bcf86cd799439012', propertyId: property._id, propertyTitle: property.title };
     conversations.create.mockResolvedValue(created);
     await expect(controller.startForProperty({ auth: { userId: buyer } }, property._id, {})).resolves.toEqual({
       conversationId: '507f1f77bcf86cd799439012',
