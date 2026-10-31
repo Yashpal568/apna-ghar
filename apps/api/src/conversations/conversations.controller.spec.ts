@@ -206,4 +206,39 @@ describe('ConversationsController', () => {
     expect(conversation.save).not.toHaveBeenCalled();
   });
 
+
+  it('creates a buyer proposal using the live property asking price', async () => {
+    const conversation = { _id: '507f1f77bcf86cd799439012', propertyId: '507f1f77bcf86cd799439011', buyerId: buyer, ownerId: owner, participantIds: [buyer, owner] };
+    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    properties.findById.mockReturnValue(chain({ status: 'active', deletedAt: null, priceAmount: 5000000 }));
+    offers.create.mockResolvedValue({ _id: '507f1f77bcf86cd799439013', amount: 4500000, status: 'pending' });
+    const result = await controller.createOffer({ auth: { userId: buyer } }, '507f1f77bcf86cd799439012', { amount: 4500000, message: 'Can we close this week?' });
+    expect(result.success).toBe(true);
+    expect(offers.create).toHaveBeenCalledWith(expect.objectContaining({
+      amount: 4500000, askingPriceAtOffer: 5000000, senderId: buyer, recipientId: owner, status: 'pending',
+    }));
+  });
+
+  it('does not allow a seller to create the buyer initial proposal', async () => {
+    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue({
+      propertyId: '507f1f77bcf86cd799439011', buyerId: buyer, ownerId: owner, participantIds: [buyer, owner],
+    }) });
+    await expect(controller.createOffer({ auth: { userId: owner } }, '507f1f77bcf86cd799439012', { amount: 4000000 }))
+      .rejects.toBeInstanceOf(ForbiddenException);
+    expect(offers.create).not.toHaveBeenCalled();
+  });
+
+  it('does not accept an offer for a user who is not its recipient', async () => {
+    conversations.findOne.mockReturnValue(chain({ participantIds: [buyer, owner] }));
+    offers.findOneAndUpdate.mockReturnValue({ lean: jest.fn().mockReturnThis(), exec: jest.fn().mockResolvedValue(null) });
+    await expect(controller.respondToOffer({ auth: { userId: buyer } }, '507f1f77bcf86cd799439012', '507f1f77bcf86cd799439013', { action: 'accept' }))
+      .rejects.toBeInstanceOf(BadRequestException);
+    expect(offers.findOneAndUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ recipientId: buyer, status: 'pending' }),
+      expect.anything(),
+      expect.anything(),
+    );
+  });
+
+
 });
