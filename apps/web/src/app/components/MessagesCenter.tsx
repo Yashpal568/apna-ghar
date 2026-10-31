@@ -333,7 +333,7 @@ function MessagesCenterAuthenticated() {
   }, [detail?.messages?.length, selected]);
 
   const activeItems = useMemo(
-    () => items.filter((c) => Boolean(c.lastMessageAt || c.messages?.length)),
+    () => items.filter((c) => Boolean(c.messages?.length)),
     [items]
   );
 
