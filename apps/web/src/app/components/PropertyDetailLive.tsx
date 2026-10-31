@@ -171,7 +171,7 @@ function Detail({ id, signedIn, getToken }: { id: string; signedIn: boolean; get
   const map = encodeURIComponent([property.location?.addressText, location].filter(Boolean).join(", ") || location);
   const facts = [["⌂", "Bedrooms", property.bedrooms ? String(property.bedrooms) : "—"], ["♨", "Bathrooms", property.bathrooms ? String(property.bathrooms) : "—"], ["▱", "Area", area], ["▣", "Parking", property.parkingCount ? String(property.parkingCount) : "—"], ["⌑", "Furnishing", property.furnishing && property.furnishing !== "unknown" ? property.furnishing.replace(/-/g, " ") : "—"]];
 
-  return <main className="pd-page">
+  return <main className="pd-page" data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}>
     <header className="pd-topbar"><div className="pd-topbar-inner"><button className="pd-back" type="button" onClick={() => router.back()} aria-label="Go back">← <span>Back</span></button><div className="pd-topbar-title">Property details</div><div className="pd-top-actions"><button type="button" onClick={() => void share()}>↗ <span>Share</span></button><button type="button" onClick={() => void toggleSave()} className={saved ? "is-saved" : ""}>{saved ? "♥" : "♡"} <span>{saved ? "Saved" : "Save"}</span></button></div></div></header>
     <div className="pd-container">
       <section className="pd-gallery" aria-label="Property photo gallery"><div className="pd-gallery-main">
