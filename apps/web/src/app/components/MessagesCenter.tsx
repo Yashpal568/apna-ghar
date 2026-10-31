@@ -485,7 +485,6 @@ function MessagesCenterAuthenticated() {
             <p>Fetching your direct buyer and owner conversations from secure storage…</p>
           </div>
         </div>
-      <SiteFooter />
         <SiteFooter />
     </main>
     );
@@ -536,7 +535,6 @@ function MessagesCenterAuthenticated() {
             </a>
           </div>
         </div>
-      <SiteFooter />
         <SiteFooter />
     </main>
     );
