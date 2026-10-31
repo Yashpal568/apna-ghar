@@ -494,7 +494,10 @@ function Detail({
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-on-surface">
+      <main
+        className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-on-surface"
+        data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
+      >
         <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
         <h1 className="font-headline-sm text-headline-sm font-bold">
           Loading Property Listing
@@ -508,7 +511,10 @@ function Detail({
 
   if (error || !property) {
     return (
-      <main className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-center">
+      <main
+        className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-center"
+        data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
+      >
         <div className="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary mb-4 shadow-sm">
           <span className="material-symbols-outlined text-[32px]">
             home_work
@@ -543,7 +549,10 @@ function Detail({
   }
 
   return (
-    <div className="property-detail-scope bg-surface font-body-md text-on-surface antialiased">
+    <div
+      className="property-detail-scope bg-surface font-body-md text-on-surface antialiased"
+      data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
+    >
       {/* Configure dynamic Tailwind in runtime */}
       <Script
         src="https://cdn.tailwindcss.com"
@@ -2350,7 +2359,10 @@ export default function PropertyDetailLive({ id }: { id?: string }) {
 
   if (!routeId) {
     return (
-      <main className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-center">
+      <main
+        className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-center"
+        data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
+      >
         <h1 className="font-headline-md font-bold">Property link is incomplete</h1>
         <p className="font-body-md text-on-surface-variant max-w-sm mt-2 mb-4">
           This property link does not contain a valid listing identifier.
