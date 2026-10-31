@@ -55,8 +55,10 @@ async function findInPublicListings(identifier: string, signal: AbortSignal): Pr
   });
   if (!first.ok) throw new Error("The property lookup failed (" + first.status + ").");
   const initial = unwrapListing(await first.json());
+  const normalizedIdentifier = typeof identifier === "string" ? identifier.trim().toLowerCase() : "";
+  if (!normalizedIdentifier) throw new Error("The property URL is missing its listing identifier.");
   const matches = (items: Property[]) => items.find((item) =>
-    item._id === identifier || (typeof item.slug === "string" && item.slug.toLowerCase() === identifier.toLowerCase())
+    item._id === identifier || (typeof item.slug === "string" && item.slug.toLowerCase() === normalizedIdentifier)
   ) || null;
   const found = matches(initial.items);
   if (found) return found;
@@ -199,4 +201,13 @@ function Detail({ id, signedIn, getToken }: { id: string; signedIn: boolean; get
 
 function WithClerk({ id }: { id: string }) { const { isSignedIn, getToken } = useAuth(); return <Detail id={id} signedIn={Boolean(isSignedIn)} getToken={getToken} />; }
 function WithoutClerk({ id }: { id: string }) { return <Detail id={id} signedIn={false} getToken={async () => null} />; }
-export default function PropertyDetailLive({ id }: { id: string }) { return process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? <WithClerk id={id} /> : <WithoutClerk id={id} />; }
+export default function PropertyDetailLive({ id }: { id?: string }) {
+  // Defensive fallback: some deployed App Router builds can pass an empty route param.
+  // The browser URL is the source of truth for /property/:id and prevents /properties/undefined.
+  const routeId = (typeof id === "string" ? id.trim() : "") ||
+    (typeof window !== "undefined" ? decodeURIComponent(window.location.pathname.split("/").filter(Boolean).pop() || "") : "");
+  if (!routeId) {
+    return <main className="pd-page"><div className="pd-state"><h1>Property link is incomplete</h1><p>Open this listing from the property search page.</p><a href="/search">Browse properties</a></div></main>;
+  }
+  return process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? <WithClerk id={routeId} /> : <WithoutClerk id={routeId} />;
+}
