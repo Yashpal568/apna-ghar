@@ -1710,14 +1710,18 @@
 }
 
 
-/* Messages route polish: full-width header, clear nav states and restored footer. */
+
+/* Messages route-only header and footer layout corrections. */
 .messages-workspace-shell {
   width: 100%;
-  height: auto;
+  max-width: 100%;
+  height: auto !important;
   min-height: 100dvh;
-  overflow: visible;
+  margin: 0;
+  overflow: visible !important;
 }
 .messages-workspace-shell > .agh-market-header-scope {
+  display: block;
   width: 100%;
   flex: 0 0 auto;
 }
@@ -1725,70 +1729,136 @@
   width: 100%;
 }
 .messages-workspace-shell .agh-header-main {
+  display: flex;
   width: 100%;
-  max-width: none;
-  padding-inline: clamp(22px, 4.5vw, 88px);
-  gap: clamp(12px, 1.5vw, 26px);
+  max-width: none !important;
+  min-width: 0;
+  margin: 0;
+  padding: 12px clamp(18px, 2.6vw, 48px);
+  gap: clamp(10px, 1.1vw, 20px);
+  box-sizing: border-box;
+}
+.messages-workspace-shell .agh-brand {
+  flex: 0 0 auto;
 }
 .messages-workspace-shell .agh-top-search {
-  flex: 1 1 300px;
-  max-width: min(30vw, 430px);
+  flex: 0 1 clamp(250px, 27vw, 410px);
+  width: auto;
+  min-width: 220px;
+  max-width: 410px;
 }
 .messages-workspace-shell .agh-desktop-nav {
-  flex: 1 1 auto;
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  align-items: center;
   justify-content: center;
-  gap: clamp(2px, .45vw, 8px);
+  gap: clamp(1px, .35vw, 7px);
+  margin-inline: auto;
+  white-space: nowrap;
 }
-.messages-workspace-shell .agh-desktop-nav a,
-.messages-workspace-shell .agh-desktop-nav a:hover,
-.messages-workspace-shell .agh-desktop-nav a.active {
+.messages-workspace-shell .agh-market-header-scope a,
+.messages-workspace-shell .agh-market-header-scope a:hover,
+.messages-workspace-shell .agh-market-header-scope a:focus,
+.messages-workspace-shell .agh-market-header-scope a:active {
   text-decoration: none !important;
-  border-bottom: 0 !important;
-  outline: 0;
 }
 .messages-workspace-shell .agh-desktop-nav a {
   position: relative;
-  padding: 11px clamp(9px, .85vw, 15px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px clamp(7px, .65vw, 12px);
+  border: 0 !important;
+  border-bottom: 0 !important;
   border-radius: 999px;
-  transition: color .18s ease, background .18s ease, box-shadow .18s ease, transform .18s ease;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none !important;
+  transition: color .18s ease, background-color .18s ease, box-shadow .18s ease;
 }
 .messages-workspace-shell .agh-desktop-nav a:hover {
   color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
-  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface));
 }
 .messages-workspace-shell .agh-desktop-nav a[href="/messages"] {
   color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 5%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 11%, var(--color-surface));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 6%, transparent);
   font-weight: 800;
+}
+.messages-workspace-shell .agh-desktop-nav a[href="/messages"]::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-left: 7px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--color-green, #10b981);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-green, #10b981) 14%, transparent);
 }
 .messages-workspace-shell .agh-desktop-nav a:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
 }
+.messages-workspace-shell .agh-header-actions {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+.messages-workspace-shell .agh-post-btn,
+.messages-workspace-shell .agh-post-btn:hover,
+.messages-workspace-shell .agh-post-btn:focus,
+.messages-workspace-shell .agh-post-btn:active {
+  text-decoration: none !important;
+}
+.messages-workspace-shell .agh-post-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+.messages-workspace-shell .agh-post-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--color-primary) 24%, transparent);
+}
 .messages-workspace-shell .messages-main-grid {
-  flex: 1 0 auto;
+  flex: 0 0 auto;
   min-height: min(720px, calc(100dvh - 128px));
 }
 .messages-workspace-shell > .ag-site-footer {
+  display: block;
   flex: 0 0 auto;
   width: 100%;
   margin-top: 0;
 }
-@media (max-width: 980px) {
+@media (max-width: 1180px) and (min-width: 769px) {
   .messages-workspace-shell .agh-header-main {
+    gap: 10px;
     padding-inline: 18px;
+  }
+  .messages-workspace-shell .agh-top-search {
+    flex-basis: 250px;
+    min-width: 190px;
+  }
+  .messages-workspace-shell .agh-desktop-nav a {
+    padding-inline: 6px;
+    font-size: 11px;
   }
 }
 @media (max-width: 768px) {
+  .messages-workspace-shell > .agh-market-header-scope {
+    display: none !important;
+  }
   .messages-workspace-shell {
     min-height: calc(100dvh - 70px - env(safe-area-inset-bottom));
-    height: auto;
+    height: auto !important;
   }
   .messages-workspace-shell .messages-main-grid,
   .messages-workspace-shell .messages-main-grid.is-empty {
-    flex: 1 0 auto;
+    flex: 0 0 auto;
     min-height: calc(100dvh - 122px - env(safe-area-inset-bottom));
   }
   .messages-workspace-shell > .ag-site-footer {
