@@ -344,3 +344,12 @@ The implementation and CI quality gates have materially advanced, but **M1, M2 a
 - [ ] Manual message-rate-limit acceptance remains with the user, as requested.
 
 **Updated acceptance decision:** Render liveness, MongoDB readiness and a real public property detail API request are now verified. M1/M2/M3 still remain open pending latest Cloudflare frontend deployment, production Clerk authentication and real buyer/owner acceptance, plus the message backfill. M4 remains blocked.
+
+
+## 2026-10-31 — property detail CORS regression fix
+
+- [x] Confirmed the production smoke run `41176279409` had already returned the real MongoDB-backed property slug `werwtw-mvuzhfat`, title `plot for sale`, and five image URLs; the record exists in the live API and the identifier is a valid slug.
+- [x] Root cause of the browser 404: `PropertyDetailLive.tsx` sent a non-safelisted custom `Cache-Control: no-cache` request header. This forces a cross-origin OPTIONS preflight; the API does not accept that unnecessary preflight on this GET path. The header had been reintroduced during the property-page rebuild, regressing the earlier fix from `2744492b`.
+- [x] Removed the custom header from the property detail request (including inventory fallback requests, which share the same headers object). Kept `cache: "no-store"` for browser cache control without triggering the custom-header preflight.
+- [ ] CI and Quality Checks for `485f9ccf` are queued; wait for both to finish.
+- [ ] Deploy this exact web source to the active Cloudflare Worker and verify `/property/werwtw-mvuzhfat` renders the real `plot for sale` record and five images. Source commit alone is not a production deployment.
