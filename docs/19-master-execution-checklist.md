@@ -294,3 +294,37 @@
 6. Implement and test a safe migration from embedded messages to a dedicated messages collection before production-scale sign-off.
 
 **Acceptance decision:** M1, M2 and M3 remain open. CI green is necessary but not equivalent to milestone completion. M4 remains blocked.
+
+
+## 2026-10-31 — latest M1/M2/M3 execution pass
+
+**Latest verified source before this checklist update:** `81f101246efd023235973834dee475df24bef2ca` on `main`.
+
+### Implemented in this pass
+
+- [x] Property detail uses the production Render API fallback when no explicit API base URL is injected.
+- [x] Property detail includes retryable unavailable state and an interactive responsive image gallery.
+- [x] Home and detail pages now share the same `SiteHeader` / `MarketplaceHeader` implementation.
+- [x] Mobile bottom navigation replaces Saved with Post and applies the dedicated Post action style.
+- [x] Marketplace home uses the shared header and keeps its live search state connected.
+- [x] Header can render when Clerk is not configured, without calling Clerk hooks outside `ClerkProvider`.
+- [x] Added dedicated MongoDB `messages` collection schema and indexes.
+- [x] New chat messages dual-write to the dedicated collection while preserving the embedded legacy copy.
+- [x] Message history merges and deduplicates legacy embedded and dedicated records during migration.
+- [x] Added idempotent, non-destructive `npm run migrate:messages` backfill and documented the migration/cutover procedure.
+- [x] GitHub CI passed on `81f1012`: typechecks (API/web/mobile), API unit tests, HTTP E2E tests, API build, web build and Cloudflare artifact build. Run: https://github.com/Yashpal568/apna-ghar/actions/runs/41175948098
+- [x] Quality Checks passed on `81f1012`: API and web production builds. Run: https://github.com/Yashpal568/apna-ghar/actions/runs/41175948181
+
+### Remaining release gates (not waived)
+
+- [ ] **Cloudflare source/deployment parity:** active Worker deployment `e7e3b031-8e75-4596-85b4-4e0425f8c997`, version `84d1d62c-123d-40dd-8fa6-b2fa81250a65`, created `2026-10-31T06:16:34Z`. Cloudflare does not expose the source commit in the returned deployment metadata. Inspection of the active Worker bundle still found the legacy `agh-sell-btn` header and no `agh-post-btn` class, so do not treat it as matching the latest shared-header source. Publish the latest `main` web artifact and verify the live property page and bottom navigation.
+- [ ] **Live property availability:** the deployed property page for `/property/werwtw-mvuzhfat` currently renders the new unavailable state. A fresh API response could not be confirmed because the Browser Rendering request was rate-limited. Earlier API probing had returned a property record; recheck the slug and listing status when live API access is available.
+- [ ] **Render/Clerk runtime:** confirm Render liveness/readiness and MongoDB readiness, matching production Clerk publishable/secret keys, and allowed Cloudflare origin. Do not infer this from a successful build.
+- [ ] **M2 authenticated acceptance:** run buyer and owner test accounts through listing create/publish/edit/hide/delete, search/filter/sort/pagination, save/unsave sync, profile persistence, Cloudinary upload, call/chat and visit requests.
+- [ ] **M3 chat acceptance:** run two-account messaging, pagination, unread counters and read receipts against production after the message backfill. The backfill script is implemented but has not been run against production MongoDB.
+- [ ] **Admin operations:** overview/listings/users/settings pages remain design/preview surfaces; only the safety-report API path has protected live integration. Do not use the placeholder admin panels for real operations.
+- [ ] **Manual rate-limit check:** explicitly left to the user, as requested.
+
+### Current decision
+
+The implementation and CI quality gates have materially advanced, but **M1, M2 and M3 are not fully signed off**. The latest frontend has not been proven live on Cloudflare, production identity/database workflows have not been exercised with real accounts, and the messages backfill has not been run. M4 remains blocked.
