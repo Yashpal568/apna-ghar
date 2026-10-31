@@ -84,7 +84,7 @@ export class ConversationsController {
       ).exec();
       await this.messages.updateOne(
         { _id: message._id },
-        { $setOnInsert: { conversationId: new Types.ObjectId(String(property._id)), senderId: message.senderId, text: message.text, sentAt } },
+        { $setOnInsert: { conversationId: new Types.ObjectId(String(conversation._id)), senderId: message.senderId, text: message.text, sentAt } },
         { upsert: true },
       ).exec();
       if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');
