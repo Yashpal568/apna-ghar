@@ -19,7 +19,10 @@ const initials = (name: string) => name.trim().split(/\s+/).slice(0, 2).map((par
 function unwrap(value: unknown, depth = 0): Property | null {
   if (!value || typeof value !== "object" || depth > 4) return null;
   const item = value as Record<string, unknown>;
-  if (typeof item._id === "string" && typeof item.title === "string" && typeof item.priceAmount === "number") return item as unknown as Property;
+  const priceAmount = Number(item.priceAmount);
+  if (typeof item._id === "string" && typeof item.title === "string" && item.priceAmount !== undefined && item.priceAmount !== null && Number.isFinite(priceAmount)) {
+    return { ...item, priceAmount } as unknown as Property;
+  }
   for (const key of ["data", "result", "property", "item"]) { const found = unwrap(item[key], depth + 1); if (found) return found; }
   return null;
 }
@@ -157,8 +160,8 @@ function Detail({ id, signedIn, getToken }: { id: string; signedIn: boolean; get
     } catch (e) { if (e instanceof Error && e.name !== "AbortError") setNotice("Couldn't share this link."); }
   }
 
-  if (loading) return <main className="pd-page"><div className="pd-state"><div className="pd-spinner" /><h1>Loading property details</h1><p>Fetching the latest published listing…</p></div></main>;
-  if (error || !property) return <main className="pd-page"><div className="pd-state"><span className="pd-state-icon">⌂</span><p className="pd-eyebrow">APNA GHAR · PROPERTY DETAILS</p><h1>We couldn’t load this listing</h1><p>{error || "This property is not available."}</p><div className="pd-state-actions"><button onClick={() => window.location.reload()} type="button">Try again</button><a href="/search">Browse properties</a></div></div></main>;
+  if (loading) return <main className="pd-page" data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}><div className="pd-state"><div className="pd-spinner" /><h1>Loading property details</h1><p>Fetching the latest published listing…</p></div></main>;
+  if (error || !property) return <main className="pd-page" data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}><div className="pd-state"><span className="pd-state-icon">⌂</span><p className="pd-eyebrow">APNA GHAR · PROPERTY DETAILS</p><h1>We couldn’t load this listing</h1><p>{error || "This property is not available."}</p><div className="pd-state-actions"><button onClick={() => window.location.reload()} type="button">Try again</button><a href="/search">Browse properties</a></div></div></main>;
 
   const area = property.areaValue ? property.areaValue.toLocaleString("en-IN") + " " + (property.areaUnit || "") : "Not specified";
   const perArea = property.areaValue ? money(property.priceAmount / property.areaValue) + " / " + (property.areaUnit || "unit") : "";
