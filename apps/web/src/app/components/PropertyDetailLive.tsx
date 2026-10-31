@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useParams, useRouter } from "next/navigation";
 import Script from "next/script";
+import SiteHeader from "./SiteHeader";
+import SiteFooter from "./SiteFooter";
 import "./property-detail.css";
 
 type Property = {
@@ -494,57 +496,65 @@ function Detail({
 
   if (loading) {
     return (
-      <main
-        className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-on-surface"
+      <div
+        className="property-detail-scope bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between"
         data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
       >
-        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
-        <h1 className="font-headline-sm text-headline-sm font-bold">
-          Loading Property Listing
-        </h1>
-        <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
-          Fetching authentic owner dossier and blueprints…
-        </p>
-      </main>
+        <SiteHeader active="search" />
+        <main className="flex-1 flex flex-col items-center justify-center p-6 text-on-surface">
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
+          <h1 className="font-headline-sm text-headline-sm font-bold">
+            Loading Property Listing
+          </h1>
+          <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
+            Fetching authentic owner dossier and blueprints…
+          </p>
+        </main>
+        <SiteFooter />
+      </div>
     );
   }
 
   if (error || !property) {
     return (
-      <main
-        className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-center"
+      <div
+        className="property-detail-scope bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between"
         data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
       >
-        <div className="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary mb-4 shadow-sm">
-          <span className="material-symbols-outlined text-[32px]">
-            home_work
+        <SiteHeader active="search" />
+        <main className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary mb-4 shadow-sm">
+            <span className="material-symbols-outlined text-[32px]">
+              home_work
+            </span>
+          </div>
+          <span className="font-label-sm text-label-sm text-primary uppercase font-bold tracking-widest">
+            APNA GHAR · PROPERTY DETAILS
           </span>
-        </div>
-        <span className="font-label-sm text-label-sm text-primary uppercase font-bold tracking-widest">
-          APNA GHAR · PROPERTY DETAILS
-        </span>
-        <h1 className="font-headline-md text-headline-md text-on-surface font-extrabold mt-1 mb-2">
-          We couldn’t load this listing
-        </h1>
-        <p className="font-body-md text-body-md text-on-surface-variant max-w-md mb-6">
-          {error ||
-            "This property is no longer published or the link is incorrect."}
-        </p>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-label-lg font-bold shadow-md hover:bg-primary-container transition-all"
-          >
-            Try again
-          </button>
-          <a
-            href="/search"
-            className="px-6 py-2.5 rounded-xl bg-surface-container-low text-on-surface font-label-lg font-semibold hover:bg-surface-container transition-all"
-          >
-            Browse properties
-          </a>
-        </div>
-      </main>
+          <h1 className="font-headline-md text-headline-md text-on-surface font-extrabold mt-1 mb-2">
+            We couldn’t load this listing
+          </h1>
+          <p className="font-body-md text-body-md text-on-surface-variant max-w-md mb-6">
+            {error ||
+              "This property is no longer published or the link is incorrect."}
+          </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-label-lg font-bold shadow-md hover:bg-primary-container transition-all"
+            >
+              Try again
+            </button>
+            <a
+              href="/search"
+              className="px-6 py-2.5 rounded-xl bg-surface-container-low text-on-surface font-label-lg font-semibold hover:bg-surface-container transition-all"
+            >
+              Browse properties
+            </a>
+          </div>
+        </main>
+        <SiteFooter />
+      </div>
     );
   }
 
@@ -619,182 +629,13 @@ function Detail({
         }}
       />
 
-      {/* =========================================================================
-          DESKTOP HEADER (Screens >= 1024px)
-          ========================================================================= */}
-      <header className="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(11,28,48,0.06)]">
-        <div className="h-20 max-w-[1240px] mx-auto px-gutter flex items-center justify-between gap-space-md">
-          <div className="flex items-center gap-space-md flex-shrink-0">
-            <a className="flex items-center gap-2" href="/">
-              <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-[0_4px_12px_rgba(0,69,183,0.25)]">
-                <span className="material-symbols-outlined text-on-primary text-[20px]">
-                  home_work
-                </span>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-headline-sm text-headline-sm text-on-surface leading-none tracking-tight font-bold">
-                  Apna Ghar
-                </span>
-                <span className="font-label-sm text-label-sm text-secondary uppercase leading-none tracking-wider mt-0.5 font-bold">
-                  Zero Brokerage
-                </span>
-              </div>
-            </a>
-            <div className="hidden xl:flex items-center h-10 w-72 bg-surface-container-low rounded-xl px-3 gap-2">
-              <span className="material-symbols-outlined text-outline text-[18px]">
-                search
-              </span>
-              <input
-                className="bg-transparent w-full text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none"
-                placeholder="Search locality, city, landmark..."
-                type="text"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    router.push(
-                      `/search?q=${encodeURIComponent((e.target as any).value)}`
-                    );
-                  }
-                }}
-              />
-            </div>
-          </div>
-          <nav className="flex items-center gap-1 xl:gap-2">
-            <a
-              className="px-3 py-2 transition-colors bg-surface-container text-primary font-bold rounded-lg"
-              href="/search?type=sale"
-            >
-              Buy
-            </a>
-            <a
-              className="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-3 py-2 rounded-lg transition-colors"
-              href="/search?type=rent"
-            >
-              Rent
-            </a>
-            <a
-              className="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-3 py-2 rounded-lg transition-colors"
-              href="/search?category=commercial"
-            >
-              Commercial
-            </a>
-            <a
-              className="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-3 py-2 rounded-lg transition-colors"
-              href="/search?category=plot"
-            >
-              Plots
-            </a>
-            <a
-              className="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-3 py-2 rounded-lg transition-colors"
-              href="/saved-homes"
-            >
-              Saved homes
-            </a>
-            <a
-              className="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-3 py-2 rounded-lg transition-colors"
-              href="/messages"
-            >
-              Messages
-            </a>
-          </nav>
-          <div className="flex items-center gap-space-sm flex-shrink-0">
-            <button
-              aria-label="Toggle theme"
-              onClick={() => showToast("Theme set to auto light mode")}
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
-              type="button"
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                light_mode
-              </span>
-            </button>
-            <a
-              className="inline-flex items-center gap-1.5 bg-primary-container text-on-primary hover:bg-primary px-space-md py-2.5 rounded-xl font-label-lg text-label-lg shadow-[0_8px_20px_-2px_rgba(0,91,234,0.35)] transition-all hover:scale-[1.02] active:scale-[0.98]"
-              href="/post-property"
-            >
-              <span>Post property</span>
-              <span className="material-symbols-outlined text-[16px]">
-                north_east
-              </span>
-            </a>
-            <a
-              href="/profile"
-              className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary"
-            >
-              <span className="material-symbols-outlined text-[18px]">
-                person
-              </span>
-            </a>
-          </div>
-        </div>
-      </header>
-
-      {/* =========================================================================
-          MOBILE HEADER (Screens < 1024px)
-          ========================================================================= */}
-      <header className="lg:hidden fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-        <div className="h-16 px-gutter-mobile flex items-center justify-between">
-          <div className="flex items-center gap-space-xs">
-            <button
-              aria-label="Go back"
-              className="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container-high transition-colors"
-              onClick={() => router.back()}
-            >
-              <span className="material-symbols-outlined text-[22px]">
-                arrow_back_ios_new
-              </span>
-            </button>
-            <h1 className="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate max-w-[180px]">
-              Property Details
-            </h1>
-          </div>
-          <div className="flex items-center gap-space-xs">
-            <button
-              aria-label="Share property"
-              onClick={handleShare}
-              className="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                share
-              </span>
-            </button>
-            <button
-              aria-label="Save to favorites"
-              onClick={toggleShortlist}
-              className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors ${
-                saved
-                  ? "text-error bg-surface-container-high"
-                  : "text-on-surface-variant hover:text-error hover:bg-surface-container-high"
-              }`}
-            >
-              <span
-                className="material-symbols-outlined text-[20px]"
-                style={saved ? { fontVariationSettings: "'FILL' 1" } : {}}
-              >
-                favorite
-              </span>
-            </button>
-            <button
-              aria-label="More options"
-              onClick={() => showToast("Direct Owner Verified Listing")}
-              className="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                more_vert
-              </span>
-            </button>
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1 text-on-primary">
-              <span className="material-symbols-outlined text-[18px]">
-                person
-              </span>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Shared Marketplace Header (matches home screen navbar) */}
+      <SiteHeader active="browse" />
 
       {/* =========================================================================
           MAIN CONTENT AREA
           ========================================================================= */}
-      <main className="w-full pt-16 lg:pt-20 bg-surface min-h-[calc(100vh-20rem)] pb-24 lg:pb-12">
+      <main className="w-full bg-surface min-h-[calc(100vh-20rem)] pb-24 lg:pb-12">
         <div className="flex flex-col w-full">
           {/* Top Utility Context & Trust Banner (Desktop & Tablet) */}
           <section className="hidden sm:block w-full bg-surface-container-low py-space-sm px-gutter border-b border-surface-container">
@@ -2098,143 +1939,8 @@ function Detail({
         </div>
       </aside>
 
-      {/* =========================================================================
-          FULL RESPONSIVE FOOTER (Screens >= 1024px)
-          ========================================================================= */}
-      <footer className="hidden lg:block w-full bg-surface-container-lowest shadow-[0_-1px_8px_rgba(11,28,48,0.03)] mt-space-xl border-t border-surface-container">
-        <div className="max-w-[1240px] mx-auto px-gutter py-space-xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-lg mb-space-xl">
-            <div className="lg:col-span-2 flex flex-col gap-space-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                  <span className="material-symbols-outlined text-on-primary text-[18px]">
-                    home_work
-                  </span>
-                </div>
-                <span className="font-headline-sm text-headline-sm text-on-surface font-bold">
-                  Apna Ghar
-                </span>
-              </div>
-              <p className="font-body-md text-body-md text-on-surface-variant max-w-sm mt-1">
-                India's premier zero-brokerage real estate discovery and listing
-                ecosystem. Connect directly with authentic homeowners and
-                builders with verified trust records.
-              </p>
-              <div className="inline-flex items-center gap-2 mt-2 px-3 py-1.5 rounded-full bg-secondary-container/30 w-fit">
-                <span className="material-symbols-outlined text-secondary text-[16px]">
-                  verified
-                </span>
-                <span className="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">
-                  100% Zero Brokerage Guarantee
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <span className="font-label-sm text-label-sm text-on-surface uppercase tracking-wider font-bold mb-1">
-                Discover Homes
-              </span>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/search?type=sale"
-              >
-                Buy Residential
-              </a>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/search?type=rent"
-              >
-                Rental Apartments
-              </a>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/search?category=commercial"
-              >
-                Commercial Spaces
-              </a>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/search?category=plot"
-              >
-                Gated Plots & Land
-              </a>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <span className="font-label-sm text-label-sm text-on-surface uppercase tracking-wider font-bold mb-1">
-                Account & Activity
-              </span>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/saved-homes"
-              >
-                Saved Properties
-              </a>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/messages"
-              >
-                Owner Chats
-              </a>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/post-property"
-              >
-                Post Property Free
-              </a>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/profile"
-              >
-                Buyer Dashboard
-              </a>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <span className="font-label-sm text-label-sm text-on-surface uppercase tracking-wider font-bold mb-1">
-                Trust & Legal
-              </span>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/about"
-              >
-                Trust & Safety
-              </a>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/terms"
-              >
-                Terms of Service
-              </a>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/privacy"
-              >
-                Privacy Safeguards
-              </a>
-              <a
-                className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors"
-                href="/rera"
-              >
-                RERA Compliance
-              </a>
-            </div>
-          </div>
-
-          <div className="pt-space-md flex flex-col md:flex-row items-center justify-between gap-space-sm border-t border-surface-container">
-            <p className="font-body-sm text-body-sm text-on-surface-variant">
-              © 2026 Apna Ghar Technologies Inc. All rights reserved. Direct
-              Owner-to-Buyer Protocol.
-            </p>
-            <div className="flex items-center gap-space-md">
-              <span className="font-label-sm text-label-sm text-secondary font-bold uppercase tracking-wider flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-secondary"></span>
-                Verified Listings Network
-              </span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Shared Marketplace Footer */}
+      <SiteFooter />
 
       {/* =========================================================================
           MAKE OFFER / CHAT MODAL
@@ -2359,21 +2065,25 @@ export default function PropertyDetailLive({ id }: { id?: string }) {
 
   if (!routeId) {
     return (
-      <main
-        className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-center"
+      <div
+        className="property-detail-scope bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between"
         data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
       >
-        <h1 className="font-headline-md font-bold">Property link is incomplete</h1>
-        <p className="font-body-md text-on-surface-variant max-w-sm mt-2 mb-4">
-          This property link does not contain a valid listing identifier.
-        </p>
-        <a
-          href="/search"
-          className="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-label-md font-bold"
-        >
-          Browse properties
-        </a>
-      </main>
+        <SiteHeader active="search" />
+        <main className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+          <h1 className="font-headline-md font-bold">Property link is incomplete</h1>
+          <p className="font-body-md text-on-surface-variant max-w-sm mt-2 mb-4">
+            This property link does not contain a valid listing identifier.
+          </p>
+          <a
+            href="/search"
+            className="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-label-md font-bold"
+          >
+            Browse properties
+          </a>
+        </main>
+        <SiteFooter />
+      </div>
     );
   }
 
