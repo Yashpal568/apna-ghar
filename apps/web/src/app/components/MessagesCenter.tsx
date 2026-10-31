@@ -571,6 +571,7 @@ function MessagesCenterAuthenticated() {
         <div className="messages-status-brand">
           <span className="messages-status-live-dot" />
           <strong>DIRECT OWNER DESK</strong>
+          {totalUnread > 0 && <span className="messages-total-unread">{totalUnread} unread</span>}
           <span className="messages-status-divider">·</span>
           <span>Private buyer &amp; seller conversations</span>
         </div>
@@ -586,7 +587,7 @@ function MessagesCenterAuthenticated() {
         <div className="messages-status-meta">
           <span className="messages-status-sync"><i /> Live inbox sync</span>
           <span className="messages-status-divider">·</span>
-          <span className="messages-status-secure"><span aria-hidden="true">♙</span> Secure session</span>
+          <span className="messages-status-secure"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10" width="15" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg> Secure session</span>
         </div>
       </section>
 
