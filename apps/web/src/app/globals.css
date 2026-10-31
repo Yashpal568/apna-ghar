@@ -3945,3 +3945,5 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
  .messages-layout.is-empty{min-height:calc(100dvh - 245px)}
  .messages-layout.is-empty .messages-chat-empty{min-height:calc(100dvh - 430px);padding-bottom:65px}
 }
+
+@media(max-width:700px){main:has(.messages-layout.has-selected) .messages-mobile-bottom-nav{display:none}main:has(.messages-layout.has-selected) .messages-mobile-empty-head{display:none}}
