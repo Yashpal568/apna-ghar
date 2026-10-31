@@ -28,7 +28,11 @@ jobs:
             if [ -z "${!name}" ]; then echo "::error::Missing GitHub Actions secret: $name"; missing=1; fi
           done
           if [ "$missing" -ne 0 ]; then exit 1; fi
-          case "$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" in pk_live_*) ;; *) echo "::error::Production Clerk publishable key must start with pk_live_"; exit 1 ;; esac
+          case "$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" in
+            pk_live_*) echo "Using Clerk Production publishable key." ;;
+            pk_test_*) echo "::warning::Using Clerk Development key. This deployment is for temporary testing only; do not treat it as a production-auth launch." ;;
+            *) echo "::error::Clerk publishable key must start with pk_live_ or pk_test_"; exit 1 ;;
+          esac
       - name: Install locked workspace dependencies
         run: npm ci --include=dev
       - name: Build and deploy production Worker
