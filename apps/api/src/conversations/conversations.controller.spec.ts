@@ -12,6 +12,7 @@ describe('ConversationsController', () => {
   let conversations: Record<string, jest.Mock>;
   let properties: Record<string, jest.Mock>;
   let messageRateLimits: Record<string, jest.Mock>;
+  let messageDocuments: Record<string, jest.Mock>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -25,7 +26,11 @@ describe('ConversationsController', () => {
     };
     properties = { findOne: jest.fn() };
     messageRateLimits = { findOneAndUpdate: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ count: 1 }) }) };
-    controller = new ConversationsController(conversations as never, properties as never, messageRateLimits as never);
+    messageDocuments = {
+      find: jest.fn().mockReturnValue(chain([])),
+      updateOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ upsertedCount: 1 }) }),
+    };
+    controller = new ConversationsController(conversations as never, properties as never, messageRateLimits as never, messageDocuments as never);
   });
 
   it('lists only conversations that include the signed-in participant', async () => {
@@ -53,7 +58,7 @@ describe('ConversationsController', () => {
     const created = { _id: 'conversation-1', propertyId: property._id, propertyTitle: property.title };
     conversations.create.mockResolvedValue(created);
     await expect(controller.startForProperty({ auth: { userId: buyer } }, property._id, {})).resolves.toEqual({
-      conversationId: 'conversation-1',
+      conversationId: '507f1f77bcf86cd799439012',
       propertyId: property._id,
       propertyTitle: property.title,
     });
@@ -68,6 +73,7 @@ describe('ConversationsController', () => {
   });
 
   it('does not disclose paginated messages to a user who is not a participant', async () => {
+    conversations.findOne.mockReturnValue(chain({ participantIds: [buyer, owner], propertyId: 'property-1', propertyTitle: 'Family home' }));
     conversations.aggregate.mockReturnValue({ exec: jest.fn().mockResolvedValue([{
       _id: '507f1f77bcf86cd799439011',
       participantIds: [buyer, owner],
@@ -82,6 +88,7 @@ describe('ConversationsController', () => {
     const messages = Array.from({ length: 4 }, (_, index) => ({
       senderId: buyer, text: 'Message ' + index, sentAt: new Date(2026, 0, index + 1),
     }));
+    conversations.findOne.mockReturnValue(chain({ participantIds: [buyer, owner], propertyId: 'property-1', propertyTitle: 'Family home' }));
     conversations.aggregate.mockReturnValue({ exec: jest.fn().mockResolvedValue([{
       participantIds: [buyer, owner], propertyId: 'property-1', propertyTitle: 'Family home', messages,
     }]) });
@@ -157,7 +164,7 @@ describe('ConversationsController', () => {
   it('counts the first enquiry message against the sender quota and owner unread count', async () => {
     const property = { _id: '507f1f77bcf86cd799439011', ownerId: owner, title: 'Family home', slug: 'family-home', status: 'active' };
     const conversation = {
-      _id: 'conversation-1', propertyId: property._id, propertyTitle: property.title,
+      _id: '507f1f77bcf86cd799439012', propertyId: property._id, propertyTitle: property.title,
       messages: [] as Array<{ senderId: string; text: string; sentAt: Date }>,
       unreadCountByUser: new Map([[owner, 0], [buyer, 0]]),
       save: jest.fn().mockResolvedValue(undefined),
