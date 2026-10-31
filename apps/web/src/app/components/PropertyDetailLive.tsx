@@ -485,7 +485,19 @@ function Detail({
         className="property-detail-scope bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between"
         data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
       >
-        <SiteHeader active="search" />
+        <div className="hidden lg:block">
+          <SiteHeader active="search" />
+        </div>
+        <header className="lg:hidden h-14 px-4 flex items-center border-b border-surface-container bg-surface/90 backdrop-blur-xl">
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container-high transition-colors"
+            aria-label="Go back"
+          >
+            <span className="material-symbols-outlined text-[22px]">arrow_back_ios_new</span>
+          </button>
+          <span className="font-headline-sm font-bold ml-2">Property Details</span>
+        </header>
         <main className="flex-1 flex flex-col items-center justify-center p-6 text-on-surface">
           <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
           <h1 className="font-headline-sm text-headline-sm font-bold">
@@ -506,7 +518,19 @@ function Detail({
         className="property-detail-scope bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between"
         data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
       >
-        <SiteHeader active="search" />
+        <div className="hidden lg:block">
+          <SiteHeader active="search" />
+        </div>
+        <header className="lg:hidden h-14 px-4 flex items-center border-b border-surface-container bg-surface/90 backdrop-blur-xl">
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container-high transition-colors"
+            aria-label="Go back"
+          >
+            <span className="material-symbols-outlined text-[22px]">arrow_back_ios_new</span>
+          </button>
+          <span className="font-headline-sm font-bold ml-2">Property Details</span>
+        </header>
         <main className="flex-1 flex flex-col items-center justify-center p-6 text-center">
           <div className="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary mb-4 shadow-sm">
             <span className="material-symbols-outlined text-[32px]">
@@ -614,13 +638,76 @@ function Detail({
         }}
       />
 
-      {/* Shared Marketplace Header (matches home screen navbar) */}
-      <SiteHeader active="browse" />
+      {/* Desktop Header: Shared Marketplace Header (matches home screen navbar, Screens >= 1024px) */}
+      <div className="hidden lg:block">
+        <SiteHeader active="browse" />
+      </div>
+
+      {/* Mobile Header: Earlier dedicated property detail mobile header (Screens < 1024px) */}
+      <header className="lg:hidden fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-surface-container">
+        <div className="h-16 px-gutter-mobile flex items-center justify-between">
+          <div className="flex items-center gap-space-xs">
+            <button
+              aria-label="Go back"
+              className="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container-high transition-colors"
+              onClick={() => router.back()}
+            >
+              <span className="material-symbols-outlined text-[22px]">
+                arrow_back_ios_new
+              </span>
+            </button>
+            <h1 className="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate max-w-[180px]">
+              Property Details
+            </h1>
+          </div>
+          <div className="flex items-center gap-space-xs">
+            <button
+              aria-label="Share property"
+              onClick={handleShare}
+              className="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                share
+              </span>
+            </button>
+            <button
+              aria-label="Save to favorites"
+              onClick={toggleShortlist}
+              className={`w-11 h-11 flex items-center justify-center rounded-full transition-colors ${
+                saved
+                  ? "text-error bg-surface-container-high"
+                  : "text-on-surface-variant hover:text-error hover:bg-surface-container-high"
+              }`}
+            >
+              <span
+                className="material-symbols-outlined text-[20px]"
+                style={saved ? { fontVariationSettings: "'FILL' 1" } : {}}
+              >
+                favorite
+              </span>
+            </button>
+            <button
+              aria-label="More options"
+              onClick={() => showToast("Direct Owner Verified Listing")}
+              className="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                more_vert
+              </span>
+            </button>
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1 text-on-primary">
+              <span className="material-symbols-outlined text-[18px]">
+                person
+              </span>
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* =========================================================================
           MAIN CONTENT AREA
           ========================================================================= */}
-      <main className="w-full bg-surface min-h-[calc(100vh-20rem)] pb-24 lg:pb-12">
+      <main className="w-full pt-16 lg:pt-0 bg-surface min-h-[calc(100vh-20rem)] pb-24 lg:pb-12">
         <div className="flex flex-col w-full">
           {/* Top Utility Context & Trust Banner (Desktop & Tablet) */}
           <section className="hidden sm:block w-full bg-surface-container-low py-space-sm px-gutter border-b border-surface-container">
@@ -1997,7 +2084,19 @@ export default function PropertyDetailLive({ id }: { id?: string }) {
         className="property-detail-scope bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between"
         data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
       >
-        <SiteHeader active="search" />
+        <div className="hidden lg:block">
+          <SiteHeader active="search" />
+        </div>
+        <header className="lg:hidden h-14 px-4 flex items-center border-b border-surface-container bg-surface/90 backdrop-blur-xl">
+          <a
+            href="/"
+            className="w-10 h-10 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container-high"
+            aria-label="Home"
+          >
+            <span className="material-symbols-outlined text-[22px]">arrow_back_ios_new</span>
+          </a>
+          <span className="font-headline-sm font-bold ml-2">Property Details</span>
+        </header>
         <main className="flex-1 flex flex-col items-center justify-center p-6 text-center">
           <h1 className="font-headline-md font-bold">Property link is incomplete</h1>
           <p className="font-body-md text-on-surface-variant max-w-sm mt-2 mb-4">
