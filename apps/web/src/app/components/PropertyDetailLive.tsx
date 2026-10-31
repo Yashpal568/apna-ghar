@@ -38,12 +38,15 @@ function isProperty(value: unknown): value is Property {
   const item = value as Partial<Property>;
   return typeof item._id === "string" && typeof item.title === "string";
 }
-function unwrapProperty(value: unknown): Property | null {
+function unwrapProperty(value: unknown, depth = 0): Property | null {
   if (isProperty(value)) return value;
-  if (value && typeof value === "object" && "data" in value) {
-    const data = (value as { data?: unknown }).data;
-    if (isProperty(data)) return data;
-    if (data && typeof data === "object" && "property" in data && isProperty((data as { property?: unknown }).property)) return (data as { property: Property }).property;
+  if (!value || typeof value !== "object" || depth >= 4) return null;
+  const record = value as Record<string, unknown>;
+  for (const key of ["data", "result", "property"]) {
+    if (key in record) {
+      const nested = unwrapProperty(record[key], depth + 1);
+      if (nested) return nested;
+    }
   }
   return null;
 }
