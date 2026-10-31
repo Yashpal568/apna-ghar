@@ -30,6 +30,7 @@ const money = (value?: number) => typeof value === "number" && Number.isFinite(v
 export default function ConversationPropertyPanel({ propertyId, propertySlug, fallbackTitle }: { propertyId: string; propertySlug?: string; fallbackTitle: string }) {
   const [property, setProperty] = useState<PropertySummary | null>(null);
   useEffect(() => {
+    setProperty(null);
     if (!propertyId) return;
     const controller = new AbortController();
     void fetch(API + "/properties/" + encodeURIComponent(propertyId), { signal: controller.signal, cache: "no-store", headers: { Accept: "application/json" } })
