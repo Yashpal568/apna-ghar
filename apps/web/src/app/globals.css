@@ -3864,3 +3864,6 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
  .messages-layout.has-selected .messages-owner-dossier,.messages-layout.has-selected .messages-property-safety{display:none}
  .messages-bubble-avatar{width:22px;height:22px;flex-basis:22px}
 }
+
+@media(min-width:1101px){.messages-layout:not(.has-selected){grid-template-columns:minmax(245px,290px) minmax(0,1fr)}}
+@media(max-width:700px){.messages-layout.has-selected{flex-direction:column}}
