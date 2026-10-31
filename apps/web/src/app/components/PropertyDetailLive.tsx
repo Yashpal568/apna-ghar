@@ -244,8 +244,6 @@ function Detail({
   const [blueprintTab, setBlueprintTab] = useState<"2d" | "specs">("2d");
   const [downpaymentPct, setDownpaymentPct] = useState(20);
   const [toastMessage, setToastMessage] = useState("");
-  const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
-  const [offerValue, setOfferValue] = useState("");
 
   useEffect(() => {
     const cleanId = typeof id === "string" ? id.trim() : "";
@@ -451,9 +449,7 @@ function Detail({
     if (!signedIn) {
       router.push(
         "/sign-in?redirect_url=" +
-          encodeURIComponent(
-            "/property/" + (property.slug || property._id)
-          )
+          encodeURIComponent("/property/" + (property.slug || property._id))
       );
       return;
     }
@@ -473,25 +469,14 @@ function Detail({
         }
       );
       const body = await response.json().catch(() => ({}));
-      if (body?.conversationId) {
-        router.push(
-          "/messages?conversation=" + encodeURIComponent(body.conversationId)
-        );
-      } else {
-        setIsOfferModalOpen(true);
+      if (!response.ok) {
+        throw new Error(typeof body.message === "string" ? body.message : "Could not start this conversation.");
       }
-    } catch {
-      setIsOfferModalOpen(true);
+      if (!body?.conversationId) throw new Error("The conversation was not created. Please try again.");
+      router.push("/messages?conversation=" + encodeURIComponent(body.conversationId));
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : "Could not start this conversation.");
     }
-  };
-
-  const submitOffer = () => {
-    if (!offerValue.trim()) return;
-    showToast(
-      `Offer of ${offerValue} transmitted directly to ${ownerName} via Apna Ghar Encrypted Messaging.`
-    );
-    setIsOfferModalOpen(false);
-    setOfferValue("");
   };
 
   if (loading) {
@@ -1941,63 +1926,6 @@ function Detail({
 
       {/* Shared Marketplace Footer */}
       <SiteFooter />
-
-      {/* =========================================================================
-          MAKE OFFER / CHAT MODAL
-          ========================================================================= */}
-      {isOfferModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/50 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-surface-container-lowest rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-[24px]">
-                  handshake
-                </span>
-                <h3 className="font-headline-sm font-bold text-on-surface">
-                  Make Direct Offer
-                </h3>
-              </div>
-              <button
-                onClick={() => setIsOfferModalOpen(false)}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-outline hover:bg-surface-container"
-              >
-                ✕
-              </button>
-            </div>
-            <p className="font-body-sm text-on-surface-variant">
-              Transmit your counter-offer directly to <strong>{ownerName}</strong>.
-              Your offer is non-binding and encrypted under Apna Ghar zero-brokerage
-              terms.
-            </p>
-            <div>
-              <label className="block font-label-sm text-on-surface-variant uppercase font-bold mb-1">
-                Your Offer Amount
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. ₹ 1.48 Cr or ₹ 1,48,00,000"
-                value={offerValue}
-                onChange={(e) => setOfferValue(e.target.value)}
-                className="w-full p-3 rounded-xl border border-outline-variant bg-surface-container-low text-on-surface font-headline-sm focus:outline-none focus:border-primary"
-              />
-            </div>
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                onClick={() => setIsOfferModalOpen(false)}
-                className="px-4 py-2.5 rounded-xl font-label-md text-on-surface-variant hover:bg-surface-container transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={submitOffer}
-                className="px-5 py-2.5 rounded-xl bg-primary-container text-on-primary font-label-md font-bold shadow-md hover:bg-primary transition-all"
-              >
-                Transmit Offer
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Toast popup */}
       {toastMessage && <div className="pd-toast">{toastMessage}</div>}

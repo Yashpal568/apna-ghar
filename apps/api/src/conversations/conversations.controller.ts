@@ -1,13 +1,14 @@
 import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsIn, IsNumber, IsOptional, IsString, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 import { Model, Types } from 'mongoose';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { Property } from '../properties/schemas/property.schema';
 import { Conversation } from './schemas/conversation.schema';
 import { MessageRateLimit } from './schemas/message-rate-limit.schema';
 import { Message } from './schemas/message.schema';
+import { PropertyOffer } from './schemas/property-offer.schema';
 
 type RequestWithAuth = { auth: { userId: string } };
 class SendMessageDto {
@@ -15,6 +16,13 @@ class SendMessageDto {
 }
 class StartConversationDto {
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(4000) message?: string;
+}
+class CreateOfferDto {
+  @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(1) @Max(1000000000000) amount!: number;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(1000) message?: string;
+}
+class RespondOfferDto {
+  @IsIn(['accept', 'reject']) action!: 'accept' | 'reject';
 }
 
 @Controller('conversations')
@@ -25,6 +33,7 @@ export class ConversationsController {
     @InjectModel(Property.name) private readonly properties: Model<Property>,
     @InjectModel(MessageRateLimit.name) private readonly messageRateLimits: Model<MessageRateLimit>,
     @InjectModel(Message.name) private readonly messages: Model<Message>,
+    @InjectModel(PropertyOffer.name) private readonly offers: Model<PropertyOffer>,
   ) {}
 
   @Get()
@@ -203,6 +212,141 @@ export class ConversationsController {
     ).exec();
     if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');
     return { success: true, message };
+  }
+
+
+  @Get(':conversationId/offers')
+  async listOffers(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string) {
+    if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
+    const conversation = await this.conversations.findOne({
+      _id: new Types.ObjectId(conversationId),
+      participantIds: request.auth.userId,
+    }).select({ participantIds: 1 }).lean().exec();
+    if (!conversation) throw new NotFoundException('Conversation not found.');
+    this.assertParticipant(conversation.participantIds, request.auth.userId);
+    return this.offers.find({ conversationId: new Types.ObjectId(conversationId) })
+      .sort({ createdAt: 1, _id: 1 }).lean().exec();
+  }
+
+  @Post(':conversationId/offers')
+  async createOffer(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string, @Body() body: CreateOfferDto) {
+    if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
+    const conversation = await this.conversations.findById(conversationId).exec();
+    if (!conversation) throw new NotFoundException('Conversation not found.');
+    this.assertParticipant(conversation.participantIds, request.auth.userId);
+    if (conversation.buyerId !== request.auth.userId) {
+      throw new ForbiddenException('Only the buyer can submit the initial property proposal. Use counter-offer to respond as the owner.');
+    }
+    const property = await this.properties.findById(conversation.propertyId).lean().exec();
+    if (!property || property.status !== 'active' || property.deletedAt) {
+      throw new BadRequestException('This property is no longer accepting proposals.');
+    }
+    const askingPrice = Number(property.priceAmount);
+    if (!Number.isFinite(askingPrice) || askingPrice <= 0) {
+      throw new BadRequestException('The property asking price is unavailable.');
+    }
+    await this.consumeMessageQuota(request.auth.userId);
+    const offer = await this.offers.create({
+      conversationId: new Types.ObjectId(conversationId),
+      propertyId: conversation.propertyId,
+      buyerId: conversation.buyerId,
+      ownerId: conversation.ownerId,
+      senderId: request.auth.userId,
+      recipientId: conversation.ownerId,
+      amount: body.amount,
+      askingPriceAtOffer: askingPrice,
+      message: body.message?.trim() || undefined,
+      previousOfferId: null,
+      status: 'pending',
+    });
+    await this.conversations.updateOne(
+      { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId },
+      { $set: { lastMessageAt: new Date() }, $inc: { [`unreadCountByUser.${conversation.ownerId}`]: 1 } },
+    ).exec();
+    return { success: true, offer };
+  }
+
+  @Post(':conversationId/offers/:offerId/counter')
+  async counterOffer(
+    @Req() request: RequestWithAuth,
+    @Param('conversationId') conversationId: string,
+    @Param('offerId') offerId: string,
+    @Body() body: CreateOfferDto,
+  ) {
+    if (!this.isObjectId(conversationId) || !this.isObjectId(offerId)) throw new NotFoundException('Offer not found.');
+    const conversation = await this.conversations.findOne({
+      _id: new Types.ObjectId(conversationId),
+      participantIds: request.auth.userId,
+    }).exec();
+    if (!conversation) throw new NotFoundException('Conversation not found.');
+    this.assertParticipant(conversation.participantIds, request.auth.userId);
+    const previous = await this.offers.findOne({
+      _id: new Types.ObjectId(offerId),
+      conversationId: new Types.ObjectId(conversationId),
+    }).exec();
+    if (!previous) throw new NotFoundException('Offer not found.');
+    if (previous.recipientId !== request.auth.userId || previous.status !== 'pending') {
+      throw new ForbiddenException('Only the recipient can counter a pending offer.');
+    }
+    await this.consumeMessageQuota(request.auth.userId);
+    const counter = await this.offers.create({
+      conversationId: new Types.ObjectId(conversationId),
+      propertyId: conversation.propertyId,
+      buyerId: conversation.buyerId,
+      ownerId: conversation.ownerId,
+      senderId: request.auth.userId,
+      recipientId: previous.senderId,
+      amount: body.amount,
+      askingPriceAtOffer: previous.askingPriceAtOffer,
+      message: body.message?.trim() || undefined,
+      previousOfferId: previous._id,
+      status: 'pending',
+    });
+    const claimed = await this.offers.updateOne(
+      { _id: previous._id, recipientId: request.auth.userId, status: 'pending' },
+      { $set: { status: 'countered', respondedAt: new Date() } },
+    ).exec();
+    if (claimed.matchedCount !== 1) {
+      await this.offers.deleteOne({ _id: counter._id }).exec();
+      throw new BadRequestException('This offer has already been answered.');
+    }
+    await this.conversations.updateOne(
+      { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId },
+      { $set: { lastMessageAt: new Date() }, $inc: { [`unreadCountByUser.${previous.senderId}`]: 1 } },
+    ).exec();
+    return { success: true, offer: counter };
+  }
+
+  @Patch(':conversationId/offers/:offerId/respond')
+  async respondToOffer(
+    @Req() request: RequestWithAuth,
+    @Param('conversationId') conversationId: string,
+    @Param('offerId') offerId: string,
+    @Body() body: RespondOfferDto,
+  ) {
+    if (!this.isObjectId(conversationId) || !this.isObjectId(offerId)) throw new NotFoundException('Offer not found.');
+    const conversation = await this.conversations.findOne({
+      _id: new Types.ObjectId(conversationId),
+      participantIds: request.auth.userId,
+    }).select({ participantIds: 1 }).lean().exec();
+    if (!conversation) throw new NotFoundException('Conversation not found.');
+    this.assertParticipant(conversation.participantIds, request.auth.userId);
+    const offer = await this.offers.findOneAndUpdate(
+      {
+        _id: new Types.ObjectId(offerId),
+        conversationId: new Types.ObjectId(conversationId),
+        recipientId: request.auth.userId,
+        status: 'pending',
+      },
+      { $set: { status: body.action === 'accept' ? 'accepted' : 'rejected', respondedAt: new Date() } },
+      { new: true },
+    ).lean().exec();
+    if (!offer) throw new BadRequestException('This offer is no longer pending or you cannot respond to it.');
+    await this.conversations.updateOne(
+      { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId },
+      { $set: { lastMessageAt: new Date() }, $inc: { [`unreadCountByUser.${offer.senderId}`]: 1 } },
+    ).exec();
+    return { success: true, offer };
   }
 
   private async consumeMessageQuota(userId: string) {

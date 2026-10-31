@@ -13,6 +13,7 @@ describe('ConversationsController', () => {
   let properties: Record<string, jest.Mock>;
   let messageRateLimits: Record<string, jest.Mock>;
   let messageDocuments: Record<string, jest.Mock>;
+  let offers: Record<string, jest.Mock>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -24,13 +25,19 @@ describe('ConversationsController', () => {
       updateOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ matchedCount: 1 }) }),
       create: jest.fn(),
     };
-    properties = { findOne: jest.fn() };
+    properties = { findOne: jest.fn(), findById: jest.fn() };
+    offers = {
+      create: jest.fn(), find: jest.fn().mockReturnValue(chain([])), findOne: jest.fn(),
+      findOneAndUpdate: jest.fn().mockReturnValue({ lean: jest.fn().mockReturnThis(), exec: jest.fn().mockResolvedValue(null) }),
+      updateOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ matchedCount: 1 }) }),
+      deleteOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ deletedCount: 1 }) }),
+    };
     messageRateLimits = { findOneAndUpdate: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ count: 1 }) }) };
     messageDocuments = {
       find: jest.fn().mockReturnValue(chain([])),
       updateOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ upsertedCount: 1 }) }),
     };
-    controller = new ConversationsController(conversations as never, properties as never, messageRateLimits as never, messageDocuments as never);
+    controller = new ConversationsController(conversations as never, properties as never, messageRateLimits as never, messageDocuments as never, offers as never);
   });
 
   it('lists only conversations that include the signed-in participant', async () => {
@@ -198,5 +205,78 @@ describe('ConversationsController', () => {
     expect(error.getStatus()).toBe(429);
     expect(conversation.save).not.toHaveBeenCalled();
   });
+
+
+  it('creates a buyer proposal using the live property asking price', async () => {
+    const conversation = { _id: '507f1f77bcf86cd799439012', propertyId: '507f1f77bcf86cd799439011', buyerId: buyer, ownerId: owner, participantIds: [buyer, owner] };
+    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    properties.findById.mockReturnValue(chain({ status: 'active', deletedAt: null, priceAmount: 5000000 }));
+    offers.create.mockResolvedValue({ _id: '507f1f77bcf86cd799439013', amount: 4500000, status: 'pending' });
+    const result = await controller.createOffer({ auth: { userId: buyer } }, '507f1f77bcf86cd799439012', { amount: 4500000, message: 'Can we close this week?' });
+    expect(result.success).toBe(true);
+    expect(offers.create).toHaveBeenCalledWith(expect.objectContaining({
+      amount: 4500000, askingPriceAtOffer: 5000000, senderId: buyer, recipientId: owner, status: 'pending',
+    }));
+  });
+
+  it('does not allow a seller to create the buyer initial proposal', async () => {
+    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue({
+      propertyId: '507f1f77bcf86cd799439011', buyerId: buyer, ownerId: owner, participantIds: [buyer, owner],
+    }) });
+    await expect(controller.createOffer({ auth: { userId: owner } }, '507f1f77bcf86cd799439012', { amount: 4000000 }))
+      .rejects.toBeInstanceOf(ForbiddenException);
+    expect(offers.create).not.toHaveBeenCalled();
+  });
+
+  it('does not accept an offer for a user who is not its recipient', async () => {
+    conversations.findOne.mockReturnValue(chain({ participantIds: [buyer, owner] }));
+    offers.findOneAndUpdate.mockReturnValue({ lean: jest.fn().mockReturnThis(), exec: jest.fn().mockResolvedValue(null) });
+    await expect(controller.respondToOffer({ auth: { userId: buyer } }, '507f1f77bcf86cd799439012', '507f1f77bcf86cd799439013', { action: 'accept' }))
+      .rejects.toBeInstanceOf(BadRequestException);
+    expect(offers.findOneAndUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ recipientId: buyer, status: 'pending' }),
+      expect.anything(),
+      expect.anything(),
+    );
+  });
+
+
+
+  it('lets only the pending offer recipient create a counter-offer', async () => {
+    const conversation = {
+      propertyId: '507f1f77bcf86cd799439011',
+      buyerId: buyer,
+      ownerId: owner,
+      participantIds: [buyer, owner],
+    };
+    conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    offers.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue({
+      _id: '507f1f77bcf86cd799439013',
+      senderId: buyer,
+      recipientId: owner,
+      askingPriceAtOffer: 5000000,
+      status: 'pending',
+    }) });
+    offers.create.mockResolvedValue({ _id: '507f1f77bcf86cd799439014', amount: 4800000, status: 'pending' });
+    const result = await controller.counterOffer(
+      { auth: { userId: owner } },
+      '507f1f77bcf86cd799439012',
+      '507f1f77bcf86cd799439013',
+      { amount: 4800000, message: 'My best price.' },
+    );
+    expect(result.success).toBe(true);
+    expect(offers.create).toHaveBeenCalledWith(expect.objectContaining({
+      amount: 4800000,
+      senderId: owner,
+      recipientId: buyer,
+      previousOfferId: '507f1f77bcf86cd799439013',
+      status: 'pending',
+    }));
+    expect(offers.updateOne).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'pending', recipientId: owner }),
+      expect.objectContaining({ $set: expect.objectContaining({ status: 'countered' }) }),
+    );
+  });
+
 
 });
