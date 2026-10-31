@@ -146,7 +146,7 @@ export class ConversationsController {
     const seenMessageIds = new Set<string>();
     const combinedMessages = [...dedicatedMessages, ...legacyMessages]
       .filter((message) => {
-        const id = String(message._id);
+        const id = message._id ? String(message._id) : `${message.senderId}:${new Date(message.sentAt).toISOString()}:${message.text}`;
         if (seenMessageIds.has(id)) return false;
         seenMessageIds.add(id);
         return true;
