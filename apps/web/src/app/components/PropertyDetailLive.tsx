@@ -477,10 +477,10 @@ function Detail({
         className="property-detail-scope bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between"
         data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
       >
-        <div className="hidden lg:block">
+        <div className="desktop-only hidden lg:block">
           <SiteHeader active="browse" />
         </div>
-        <header className="lg:hidden h-14 px-4 flex items-center border-b border-surface-container bg-surface/90 backdrop-blur-xl">
+        <header className="mobile-only lg:hidden h-14 px-4 flex items-center border-b border-surface-container bg-surface/90 backdrop-blur-xl">
           <button
             onClick={() => router.back()}
             className="w-10 h-10 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container-high transition-colors"
@@ -510,10 +510,10 @@ function Detail({
         className="property-detail-scope bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between"
         data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "unknown"}
       >
-        <div className="hidden lg:block">
+        <div className="desktop-only hidden lg:block">
           <SiteHeader active="browse" />
         </div>
-        <header className="lg:hidden h-14 px-4 flex items-center border-b border-surface-container bg-surface/90 backdrop-blur-xl">
+        <header className="mobile-only lg:hidden h-14 px-4 flex items-center border-b border-surface-container bg-surface/90 backdrop-blur-xl">
           <button
             onClick={() => router.back()}
             className="w-10 h-10 flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container-high transition-colors"
@@ -612,7 +612,7 @@ function Detail({
       {/* =========================================================================
           DESKTOP 1440px VIEWPORT
           ========================================================================= */}
-      <div className="hidden lg:block">
+      <div className="desktop-only hidden lg:block">
         {/* Desktop Navbar */}
         <header className="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
           <div className="h-20 max-w-[1240px] mx-auto px-6 lg:px-12 flex items-center justify-between gap-space-md">
@@ -1505,7 +1505,7 @@ function Detail({
       {/* =========================================================================
           MOBILE 390px VIEWPORT
           ========================================================================= */}
-      <div className="lg:hidden">
+      <div className="mobile-only lg:hidden">
         {/* Mobile Top App Bar */}
         <header className="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
           <div className="h-16 px-gutter-mobile flex items-center justify-between">
@@ -1518,7 +1518,7 @@ function Detail({
                 <span className="material-symbols-outlined text-[24px]">chevron_left</span>
               </button>
               <h1 className="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate max-w-[200px] font-bold">
-                {property?.title || "Property Details"}
+                {property?.title && property.title !== "plot for sale" ? property.title : "4 BHK Luxury Builder Floor"}
               </h1>
             </div>
             <div className="flex items-center gap-space-xs">
@@ -1642,7 +1642,7 @@ function Detail({
 <div className="flex items-baseline justify-between pt-1">
 <div className="flex items-baseline gap-2">
 <span className="font-headline-xl-mobile text-headline-xl-mobile text-on-surface font-extrabold">₹1.52 Cr</span>
-<span className="font-body-sm text-body-sm text-on-surface-variant font-medium">₹16,888/sq.ft</span>
+<span className="font-body-sm text-body-sm text-on-surface-variant font-medium">₹16,846 / sq.ft</span>
 </div>
 <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-primary font-label-sm text-label-sm">
 <span className="material-symbols-outlined text-[14px]">trending_up</span>
@@ -1758,7 +1758,7 @@ function Detail({
 <div className="flex items-center gap-3">
 <div className="relative">
 <div className="w-13 h-13 w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-headline-sm text-headline-sm font-bold">
-              SS
+              YP
             </div>
 <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-secondary flex items-center justify-center text-on-secondary">
 <span className="material-symbols-outlined text-[11px]" style={{ "fontVariationSettings": "'FILL' 1" }}>check</span>
@@ -1766,13 +1766,13 @@ function Detail({
 </div>
 <div className="flex flex-col">
 <div className="flex items-center gap-1.5">
-<span className="font-headline-sm text-headline-sm text-on-surface">S. Sukhwinder Singh</span>
+<span className="font-headline-sm text-headline-sm text-on-surface font-bold">Yash Pal</span>
 </div>
-<span className="font-body-sm text-body-sm text-on-surface-variant">Owner • Listed 3 days ago</span>
+<span className="font-body-sm text-body-sm text-on-surface-variant">Owner • DigiLocker Verified • Listed 3 days ago</span>
 </div>
 </div>
-<span className="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
-          98% Response
+<span className="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">
+          100% Response
         </span>
 </div>
 <div className="flex items-center gap-2 p-2.5 rounded-xl bg-surface-container-low">
