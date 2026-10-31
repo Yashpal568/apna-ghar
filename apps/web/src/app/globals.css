@@ -3630,6 +3630,3 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
 .property-unavailable p{max-width:460px;margin:0 0 10px;text-align:center;color:var(--color-muted);font-size:14px;line-height:1.75}
 .property-unavailable-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
 @media(max-width:650px){.detail-gallery{height:auto;display:flex;flex-direction:column;gap:9px;overflow:visible}.gallery-main{height:270px;border-radius:15px;overflow:hidden}.gallery-side{display:flex;gap:8px;overflow-x:auto;padding-bottom:3px}.gallery-thumb{flex:0 0 76px;height:64px}.gallery-photo-count{bottom:12px;right:12px}.gallery-main small{bottom:12px;left:12px}.property-unavailable{min-height:360px;margin:28px auto 55px;padding:34px 20px}.property-unavailable-actions{width:100%;flex-direction:column}.property-unavailable-actions .button{width:100%}}
-
-
-/* Property detail page rebuild */
