@@ -1941,3 +1941,17 @@
   .messages-workspace-card .messages-main-grid.has-active-chat.show-mobile-dossier .messages-col-chat { display:none !important; }
   .messages-workspace-card .messages-main-grid.has-active-chat.show-mobile-dossier .messages-col-dossier { display:block !important; }
 }
+
+
+/* Final sizing override: supersedes the legacy route footer sizing rules. */
+.messages-workspace-shell {
+  height: 100dvh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+@media (max-width: 768px) {
+  .messages-workspace-shell {
+    height: calc(100dvh - 70px - env(safe-area-inset-bottom)) !important;
+    min-height: 0 !important;
+  }
+}
