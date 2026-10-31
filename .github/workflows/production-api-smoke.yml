@@ -1,0 +1,29 @@
+name: Production API Smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - "package-lock.json"
+      - ".github/workflows/production-api-smoke.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: production-api-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Verify production liveness and MongoDB readiness
+        env:
+          API_BASE_URL: https://apna-ghar-api-j4fo.onrender.com/api/v1
+        run: |
+          set -euo pipefail
+          curl --retry 10 --retry-all-errors --retry-delay 12 --max-time 25 -fsS "$API_BASE_URL/health" -o /tmp/health.json
+          node -e 'const x=require("/tmp/health.json"); if(x.status!=="ok"||x.service!=="apna-ghar-api") { console.error(x); process.exit(1); } console.log("Liveness OK:", x.service, x.timestamp)'
+          curl --retry 10 --retry-all-errors --retry-delay 12 --max-time 25 -fsS "$API_BASE_URL/health/ready" -o /tmp/readiness.json
+          node -e 'const x=require("/tmp/readiness.json"); if(x.status!=="ready"||x.checks?.database!=="connected") { console.error(x); process.exit(1); } console.log("Readiness OK: MongoDB", x.checks.database, x.timestamp)'
