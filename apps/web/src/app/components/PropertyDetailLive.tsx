@@ -1,184 +1,165 @@
 "use client";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
 import SiteHeader from "./SiteHeader";
 import SiteFooter from "./SiteFooter";
 import VisitRequestForm from "./VisitRequestForm";
 import PropertyReportForm from "./PropertyReportForm";
-import { useEffect,useState } from "react";
-import { useAuth } from "@clerk/nextjs";
-type Property={_id:string;title:string;slug?:string;description?:string;contactName?:string;contactPhone?:string;listingType:"sale"|"rent";priceAmount:number;areaValue:number;areaUnit:string;bedrooms?:number;bathrooms?:number;imageUrls?:string[];amenities?:string[];categoryId?:string;location?:{locality?:string;city?:string;state?:string;addressText?:string}};
-const PRODUCTION_API_BASE = "https://apna-ghar-api-j4fo.onrender.com/api/v1";
-const api = (process.env.NEXT_PUBLIC_API_BASE_URL || PRODUCTION_API_BASE).replace(/\/$/, "");
 
-function AuthenticatedSaveButton({ property, identifier, saved, onSaved, onNotice }: { property: Property; identifier: string; saved: boolean; onSaved: (value: boolean) => void; onNotice: (value: string) => void }) {
-  const { isSignedIn, getToken } = useAuth();
-  useEffect(() => {
-    if (!isSignedIn) return;
-    const controller = new AbortController();
-    void (async () => {
-      try {
-        const token = await getToken();
-        if (!token) return;
-        const response = await fetch(api + "/saved-properties", { headers: { Authorization: "Bearer " + token, Accept: "application/json" }, signal: controller.signal });
-        if (!response.ok) return;
-        const homes = await response.json() as Property[];
-        if (Array.isArray(homes) && homes.some((home) => home._id === property._id)) onSaved(true);
-      } catch {
-        // Keep the browser's saved state when account sync is unavailable.
-      }
-    })();
-    return () => controller.abort();
-  }, [getToken, isSignedIn, onSaved, property._id]);
-  async function toggle() {
-    const nextSaved = !saved;
-    try {
-      const homes = JSON.parse(localStorage.getItem("apna-ghar-saved-homes") || "[]") as Property[];
-      const next = nextSaved
-        ? [{ ...property, slug: property.slug || identifier }, ...homes.filter((home) => home._id !== property._id && home.slug !== property.slug && home.slug !== identifier)]
-        : homes.filter((home) => home._id !== property._id && home.slug !== property.slug && home.slug !== identifier);
-      localStorage.setItem("apna-ghar-saved-homes", JSON.stringify(next));
-      window.dispatchEvent(new Event("apna-ghar-saved-change"));
-      onSaved(nextSaved);
-      onNotice(nextSaved ? "Saved to your shortlist." : "Removed from saved homes.");
-    } catch {
-      onNotice("Could not update saved homes on this device.");
-      return;
-    }
-    if (!isSignedIn) {
-      onNotice("Saved on this device. Sign in to sync across devices.");
-      return;
-    }
-    try {
-      const token = await getToken();
-      if (!token) throw new Error("Your session is not ready. Sign in again.");
-      const response = await fetch(api + "/saved-properties/" + encodeURIComponent(property._id), {
-        method: nextSaved ? "POST" : "DELETE",
-        headers: { Authorization: "Bearer " + token, Accept: "application/json" },
-      });
-      if (!response.ok) throw new Error(response.status === 401 ? "Your session expired. Sign in again." : "Account sync failed. The change remains saved on this device.");
-      onNotice(nextSaved ? "Saved to your account." : "Removed from your account.");
-    } catch (error) {
-      onNotice(error instanceof Error ? error.message : "Account sync failed. The change remains on this device.");
-    }
+type Property = {
+  _id: string;
+  slug?: string;
+  title: string;
+  description?: string;
+  categoryId?: string;
+  listingType?: "sale" | "rent";
+  priceAmount?: number;
+  currency?: string;
+  areaValue?: number;
+  areaUnit?: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  parkingCount?: number;
+  furnishing?: string;
+  amenities?: string[];
+  imageUrls?: string[];
+  videoUrls?: string[];
+  contactName?: string;
+  contactPhone?: string;
+  location?: { state?: string; city?: string; locality?: string; addressText?: string };
+  publishedAt?: string;
+  viewsCount?: number;
+};
+type ListingResponse = { items?: Property[]; pagination?: { pages?: number; total?: number } };
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
+
+function isProperty(value: unknown): value is Property {
+  if (!value || typeof value !== "object") return false;
+  const item = value as Partial<Property>;
+  return typeof item._id === "string" && typeof item.title === "string";
+}
+function unwrapProperty(value: unknown): Property | null {
+  if (isProperty(value)) return value;
+  if (value && typeof value === "object" && "data" in value) {
+    const data = (value as { data?: unknown }).data;
+    if (isProperty(data)) return data;
+    if (data && typeof data === "object" && "property" in data && isProperty((data as { property?: unknown }).property)) return (data as { property: Property }).property;
   }
-  return <button className="button button-outline" type="button" aria-pressed={saved} onClick={() => void toggle()}>{saved ? "♥ Saved" : "♡ Save home"}</button>;
+  return null;
+}
+function money(value?: number, currency = "INR") {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "Price on request";
+  return new Intl.NumberFormat("en-IN", { style: "currency", currency, maximumFractionDigits: 0 }).format(value);
+}
+function locationText(property: Property) {
+  return [property.location?.locality, property.location?.city, property.location?.state].filter(Boolean).join(", ") || "Location not provided";
 }
 
-function AuthenticatedPropertyContactActions({ propertyId, slug, phone }: { propertyId: string; slug: string; phone?: string }) {
-  const { isSignedIn, getToken } = useAuth();
-  const [busy, setBusy] = useState(false);
+async function resolveProperty(identifier: string, signal: AbortSignal): Promise<Property> {
+  const headers = { Accept: "application/json", "Cache-Control": "no-cache" };
+  const direct = await fetch(API_BASE + "/properties/" + encodeURIComponent(identifier), { signal, cache: "no-store", headers });
+  if (direct.ok) {
+    const property = unwrapProperty(await direct.json());
+    if (property) return property;
+    throw new Error("The property API returned an unexpected detail response.");
+  }
+  if (direct.status !== 404) {
+    throw new Error(direct.status === 429 ? "The property service is temporarily rate-limited. Please try again shortly." : `The property service returned HTTP ${direct.status}.`);
+  }
+
+  // Older shared links may contain a legacy identifier rather than the current
+  // MongoDB slug. Resolve only against real, public API inventory; never render
+  // sample data or silently substitute a different property.
+  const first = await fetch(API_BASE + "/properties?page=1&limit=50&sort=newest", { signal, cache: "no-store", headers });
+  if (!first.ok) throw new Error(`Could not resolve this property from the live listings (HTTP ${first.status}).`);
+  const firstPage = await first.json() as ListingResponse;
+  const pages = Math.min(Math.max(firstPage.pagination?.pages || 1, 1), 20);
+  const all: Property[] = Array.isArray(firstPage.items) ? firstPage.items.filter(isProperty) : [];
+  const match = (items: Property[]) => items.find(item => item._id === identifier || item.slug === identifier);
+  const found = match(all);
+  if (found) return found;
+  for (let page = 2; page <= pages; page += 1) {
+    const response = await fetch(API_BASE + `/properties?page=${page}&limit=50&sort=newest`, { signal, cache: "no-store", headers });
+    if (!response.ok) continue;
+    const data = await response.json() as ListingResponse;
+    const items = Array.isArray(data.items) ? data.items.filter(isProperty) : [];
+    const pageMatch = match(items);
+    if (pageMatch) return pageMatch;
+  }
+  throw new Error("This link does not match a currently published property. Open My listings to confirm the property is published, then open its current View listing link.");
+}
+
+export default function PropertyDetailLive({ id }: { id: string }) {
+  const [property, setProperty] = useState<Property | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [activeImage, setActiveImage] = useState(0);
   const [notice, setNotice] = useState("");
-  async function startChat() {
-    if (!isSignedIn) {
-      window.location.assign("/sign-in?redirect_url=" + encodeURIComponent("/property/" + slug));
-      return;
-    }
-    setBusy(true); setNotice("");
+  const [retry, setRetry] = useState(0);
+  const images = useMemo(() => (property?.imageUrls || []).filter((url): url is string => typeof url === "string" && /^https?:\/\//i.test(url)), [property?.imageUrls]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setLoading(true);
+    setError("");
+    setProperty(null);
+    setActiveImage(0);
+    setNotice("");
+    resolveProperty(id, controller.signal)
+      .then(result => { if (!controller.signal.aborted) setProperty(result); })
+      .catch(cause => {
+        if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : "Could not load this property.");
+      })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [id, retry]);
+
+  const share = useCallback(async () => {
     try {
-      const token = await getToken();
-      if (!token) throw new Error("Your session expired. Sign in again.");
-      const response = await fetch(api + "/conversations/property/" + encodeURIComponent(propertyId), {
-        method: "POST",
-        headers: { Authorization: "Bearer " + token, "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({}),
-      });
-      const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Could not start this conversation.");
-      window.location.assign("/messages?conversation=" + encodeURIComponent(body.conversationId));
-    } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Could not start chat.");
-      setBusy(false);
-    }
-  }
-  return <div className="property-contact-actions">
-    {phone?.trim() ? <a className="button button-outline button-full" href={"tel:" + phone.replace(/[^+0-9]/g, "")}>☎ Call owner</a> : <p className="contact-phone-missing">The owner has not added a public contact number.</p>}
-    <button className="button button-primary button-full" type="button" onClick={() => void startChat()} disabled={busy}>{busy ? "Opening chat…" : "▤ Chat with owner"}</button>
-    {notice && <p className="form-notice" role="status">{notice}</p>}
-  </div>;
-}
-
-function PropertyContactActions({ propertyId, slug, phone }: { propertyId: string; slug: string; phone?: string }) {
-  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
-    return <div className="property-contact-actions">
-      {phone?.trim() ? <a className="button button-outline button-full" href={"tel:" + phone.replace(/[^+0-9]/g, "")}>☎ Call owner</a> : <p className="contact-phone-missing">The owner has not added a public contact number.</p>}
-      <a className="button button-primary button-full" href={"/sign-in?redirect_url=" + encodeURIComponent("/property/" + slug)}>▤ Sign in to chat</a>
-    </div>;
-  }
-  return <AuthenticatedPropertyContactActions propertyId={propertyId} slug={slug} phone={phone} />;
-}
-export default function PropertyDetailLive({id}:{id:string}){const [p,setP]=useState<Property|null>(null);const [error,setError]=useState("");const [loading,setLoading]=useState(true);const [saved,setSaved]=useState(false);const [notice,setNotice]=useState("");const [retryKey,setRetryKey]=useState(0);const [activeImage,setActiveImage]=useState(0);
-useEffect(() => {
-  const controller = new AbortController();
-
-  // Reset all route-specific state before loading a new property. Without this,
-  // an earlier 404/error can remain visible even after a later request succeeds.
-  setP(null);
-  setError("");
-  setLoading(true);
-  setActiveImage(0);
-
-  try {
-    const savedHomes = JSON.parse(localStorage.getItem("apna-ghar-saved-homes") || "[]") as Property[];
-    setSaved(savedHomes.some((home) => home._id === id || home.slug === id));
-  } catch {
-    setSaved(false);
-  }
-
-  async function loadProperty() {
-    try {
-      const requestHeaders = { Accept: "application/json" };
-      const response = await fetch(api + "/properties/" + encodeURIComponent(id), {
-        signal: controller.signal,
-        cache: "no-store",
-        headers: requestHeaders,
-      });
-
-      let property: Property | null = null;
-      if (response.ok) {
-        property = await response.json() as Property;
-      } else if (response.status === 404) {
-        // Recover a published listing from the public inventory if the detail
-        // route is temporarily stale or the stored URL uses an older identifier.
-        const inventoryResponse = await fetch(api + "/properties?limit=50&page=1&sort=newest", {
-          signal: controller.signal,
-          cache: "no-store",
-          headers: requestHeaders,
-        });
-        if (inventoryResponse.ok) {
-          const inventory = await inventoryResponse.json() as { items?: Property[]; pagination?: { pages?: number } };
-          const match = (inventory.items || []).find((item) =>
-            item.slug === id || item._id === id,
-          );
-          if (match) property = match;
-        }
-        if (!property) {
-          throw new Error("This property is not in the published inventory. Check that it is published and has not been hidden or removed.");
-        }
-      } else {
-        throw new Error(`Could not load property details (HTTP ${response.status}).`);
-      }
-
-      if (!property || typeof property._id !== "string" || typeof property.title !== "string") {
-        throw new Error("The property service returned an invalid listing.");
-      }
-
-      if (controller.signal.aborted) return;
-      setP(property);
-      setError("");
+      if (navigator.share) await navigator.share({ title: property?.title || "Apna Ghar property", url: window.location.href });
+      else { await navigator.clipboard.writeText(window.location.href); setNotice("Property link copied."); }
     } catch (cause) {
-      if (controller.signal.aborted) return;
-      const message = cause instanceof Error ? cause.message : "Could not load property details.";
-      setP(null);
-      setError(message);
-    } finally {
-      if (!controller.signal.aborted) setLoading(false);
+      if (!(cause instanceof Error && cause.name === "AbortError")) setNotice("Could not share this property.");
     }
-  }
+  }, [property?.title]);
 
-  void loadProperty();
-  return () => controller.abort();
-}, [id, retryKey]);
-if(loading)return <main className="page-shell interior-page"><SiteHeader active="search" /><div className="detail-skeleton" role="status" aria-label="Loading property details"><div className="skeleton skeleton-heading"/><div className="skeleton skeleton-copy"/><div className="skeleton skeleton-image"/><div className="skeleton skeleton-heading"/><div className="skeleton skeleton-copy"/><span className="sr-only">Loading property details…</span></div></main>;
-if(error||!p)return <main className="page-shell interior-page"><SiteHeader active="search" /><div className="breadcrumb"><a href="/">Home</a><span>/</span><a href="/search">Explore</a><span>/</span><span>Property details</span></div><div className="search-empty property-unavailable" role="alert"><div className="empty-illustration" aria-hidden="true">⌂</div><h1>{error.includes("not available")?"This listing is no longer available":"We couldn’t load this property"}</h1><p>{error||"This property could not be found. It may have been removed or its link may have changed."}</p><div className="property-unavailable-actions"><button className="button button-outline" type="button" onClick={()=>{setError("");setLoading(true);setRetryKey(value=>value+1);}}>Try again</button><a className="button button-primary" href="/search">Browse available properties</a></div></div><SiteFooter /></main>;
-const price=new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(p.priceAmount);
-return <main className="page-shell interior-page"><SiteHeader active="search" /><div className="breadcrumb"><a href="/">Home</a><span>/</span><a href="/search">Explore</a><span>/</span><span>Property details</span></div><div className="detail-topline"><div><p className="eyebrow">PROPERTY OVERVIEW</p><h1>{p.title}</h1><p>{[p.location?.locality,p.location?.city,p.location?.state].filter(Boolean).join(", ")}</p></div><div className="detail-quick-actions"><span className="sample-pill">Live listing</span>{process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? <AuthenticatedSaveButton property={p} identifier={id} saved={saved} onSaved={setSaved} onNotice={setNotice} /> : <button className="button button-outline" type="button" aria-pressed={saved} onClick={()=>{try{const homes=JSON.parse(localStorage.getItem("apna-ghar-saved-homes")||"[]") as Property[];const exists=homes.some(home=>home._id===p._id||home.slug===p.slug||home.slug===id);const next=exists?homes.filter(home=>home._id!==p._id&&home.slug!==p.slug&&home.slug!==id):[{...p,slug:p.slug||id},...homes];localStorage.setItem("apna-ghar-saved-homes",JSON.stringify(next));window.dispatchEvent(new Event("apna-ghar-saved-change"));setSaved(!exists);setNotice(exists?"Removed from saved homes.":"Saved to your shortlist.");}catch{setNotice("Could not update saved homes in this browser.");}}}>{saved?"♥ Saved":"♡ Save home"}</button>}<button className="button button-outline" type="button" onClick={async()=>{try{if(navigator.share)await navigator.share({title:p.title,url:window.location.href});else{await navigator.clipboard.writeText(window.location.href);setNotice("Property link copied.");}}catch(e){if(e instanceof Error&&e.name!=="AbortError")setNotice("Could not share this property.");}}}>Share ↗</button></div></div>{notice&&<p className="form-notice" role="status">{notice}</p>}<section className="detail-gallery" aria-label="Property photo gallery"><div className="gallery-main">{p.imageUrls?.length?<><img src={p.imageUrls[Math.min(activeImage,p.imageUrls.length-1)]} alt={`${p.title} — photo ${activeImage+1}`} /><div className="gallery-photo-count">{activeImage+1} / {p.imageUrls.length} photos</div>{p.imageUrls.length>1&&<div className="gallery-controls"><button type="button" aria-label="Previous photo" onClick={()=>setActiveImage(index=>(index-1+p.imageUrls!.length)%p.imageUrls!.length)}>‹</button><button type="button" aria-label="Next photo" onClick={()=>setActiveImage(index=>(index+1)%p.imageUrls!.length)}>›</button></div>}</>:<span>Owner photos have not been added yet</span>}<small>Property photos</small></div><div className="gallery-side">{(p.imageUrls||[]).slice(0,4).map((url,index)=><button type="button" className={activeImage===index?"gallery-thumb active":"gallery-thumb"} key={`${url}-${index}`} onClick={()=>setActiveImage(index)} aria-label={`View photo ${index+1}`}><img src={url} alt=""/></button>)}</div></section><div className="detail-layout"><article className="detail-content"><p className="property-kind">{p.listingType==="rent"?"FOR RENT":"FOR SALE"} · {p.categoryId||"PROPERTY"}</p><h2>{p.title}</h2><p className="detail-lead">{p.description||"No description has been provided for this listing."}</p><div className="facts-grid"><div><span>Bedrooms</span><strong>{p.bedrooms??"—"}</strong></div><div><span>Bathrooms</span><strong>{p.bathrooms??"—"}</strong></div><div><span>Area</span><strong>{p.areaValue} {p.areaUnit}</strong></div><div><span>Listing</span><strong>{p.listingType==="rent"?"Rent":"Sale"}</strong></div></div><h3>Features and amenities</h3><div className="amenity-list">{p.amenities?.length?p.amenities.map(a=><span key={a}>{a}</span>):<p>No amenities provided.</p>}</div><h3>Location</h3><div className="location-placeholder">{[p.location?.addressText,p.location?.locality,p.location?.city,p.location?.state].filter(Boolean).join(", ")||"Location details not provided"}</div><p className="fine-print">Listing details are supplied by the advertiser and are not independently verified by this page.</p></article><aside className="contact-card"><p className="eyebrow">LISTING PRICE</p><h2>{price}{p.listingType==="rent"?" / month":""}</h2><p>{p.contactName ? `Listed by ${p.contactName}. ` : ""}Contact the advertiser directly or start a private conversation about this property.</p><PropertyContactActions propertyId={p._id} slug={p.slug||id} phone={p.contactPhone}/><VisitRequestForm propertyId={p._id}/><hr/><a className="text-link" href="/safety">Safety tips for buyers ↗</a><hr/><PropertyReportForm propertyId={p._id}/></aside></div><SiteFooter /></main>;
+  if (loading) return <main className="page-shell interior-page property-detail-new"><SiteHeader active="search"/><div className="pd-loading"><div className="pd-loading-photo"/><div className="pd-loading-line"/><div className="pd-loading-line short"/></div><SiteFooter/></main>;
+  if (error || !property) return <main className="page-shell interior-page property-detail-new"><SiteHeader active="search"/><section className="pd-error"><span className="pd-error-icon">⌂</span><p className="eyebrow">APNA GHAR · PROPERTY DETAILS</p><h1>We couldn’t find this listing</h1><p>{error || "This property is not available right now."}</p><div className="pd-actions"><button className="button button-outline" type="button" onClick={() => setRetry(value => value + 1)}>Try again</button><a className="button button-primary" href="/search">Browse properties</a><a className="button button-quiet" href="/my-listings">My listings</a></div></section><SiteFooter/></main>;
+
+  const price = money(property.priceAmount, property.currency || "INR");
+  const address = locationText(property);
+  const listingType = property.listingType === "rent" ? "For rent" : "For sale";
+  return <main className="page-shell interior-page property-detail-new">
+    <SiteHeader active="search"/>
+    <nav className="pd-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/search">Properties</a><span>/</span><span>{property.title}</span></nav>
+    <section className="pd-heading">
+      <div><span className="pd-status"><i/> {listingType} · {property.categoryId || "Property"}</span><h1>{property.title}</h1><p>⌖ {address}</p></div>
+      <div className="pd-heading-actions"><button className="button button-outline" type="button" onClick={() => void share()}>↗ Share</button><a className="button button-primary" href="/list-property">＋ Post property</a></div>
+    </section>
+    {notice && <p className="form-notice" role="status">{notice}</p>}
+    <section className="pd-gallery" aria-label="Property photos">
+      <div className="pd-main-photo">{images.length ? <img src={images[Math.min(activeImage, images.length - 1)]} alt={property.title}/> : <div className="pd-no-photo"><span>⌂</span><strong>No property photos uploaded</strong><small>The advertiser has not added photos yet.</small></div>}
+        {images.length > 1 && <><button className="pd-gallery-arrow prev" type="button" aria-label="Previous image" onClick={() => setActiveImage(v => (v - 1 + images.length) % images.length)}>‹</button><button className="pd-gallery-arrow next" type="button" aria-label="Next image" onClick={() => setActiveImage(v => (v + 1) % images.length)}>›</button></>}
+        {images.length > 0 && <span className="pd-image-count">{activeImage + 1} / {images.length}</span>}
+      </div>
+      <div className="pd-thumbnails">{images.slice(0, 4).map((url, index) => <button key={url + index} type="button" className={activeImage === index ? "is-active" : ""} onClick={() => setActiveImage(index)} aria-label={`Show photo ${index + 1}`}><img src={url} alt=""/></button>)}{images.length > 4 && <button className="pd-more-photos" type="button" onClick={() => setActiveImage(4)}>+{images.length - 4}<small>photos</small></button>}</div>
+    </section>
+    <div className="pd-content-layout">
+      <article className="pd-main-content">
+        <section className="pd-price-mobile"><span>Asking price</span><strong>{price}{property.listingType === "rent" ? <small> / month</small> : null}</strong></section>
+        <div className="pd-facts">{[{label:"Area",value:property.areaValue ? `${property.areaValue.toLocaleString("en-IN")} ${property.areaUnit || "sqft"}` : "—"},{label:"Bedrooms",value:property.bedrooms ?? "—"},{label:"Bathrooms",value:property.bathrooms ?? "—"},{label:"Parking",value:property.parkingCount ?? "—"}].map(item => <div key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>)}</div>
+        <section className="pd-section"><p className="eyebrow">THE PROPERTY</p><h2>About this property</h2><p className="pd-description">{property.description?.trim() || "The owner has not added a description for this property."}</p></section>
+        <section className="pd-section"><p className="eyebrow">DETAILS</p><h2>Features & amenities</h2>{property.amenities?.length ? <div className="pd-amenities">{property.amenities.map(item => <span key={item}>✓ {item}</span>)}</div> : <p className="pd-muted">No additional amenities listed.</p>}<div className="pd-extra-details"><div><span>Property type</span><strong>{property.categoryId || "Not specified"}</strong></div><div><span>Furnishing</span><strong>{property.furnishing || "Not specified"}</strong></div><div><span>Listing type</span><strong>{listingType}</strong></div><div><span>Listed on</span><strong>{property.publishedAt ? new Date(property.publishedAt).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}) : "Recently"}</strong></div></div></section>
+        <section className="pd-section"><p className="eyebrow">NEIGHBOURHOOD</p><h2>Location</h2><div className="pd-location"><span>⌖</span><div><strong>{address}</strong><small>{property.location?.addressText || "Exact address can be confirmed with the property owner."}</small></div></div></section>
+        {property.videoUrls?.length ? <section className="pd-section"><p className="eyebrow">PROPERTY TOUR</p><h2>Videos</h2><div className="pd-videos">{property.videoUrls.map((url,index)=><video key={url+index} src={url} controls preload="metadata"/> )}</div></section> : null}
+        <p className="pd-disclaimer">Property information is provided by the advertiser. Please independently verify ownership, documents and details before making a payment.</p>
+      </article>
+      <aside className="pd-sidebar">
+        <div className="pd-contact-card"><p className="eyebrow">ASKING PRICE</p><strong className="pd-price">{price}{property.listingType === "rent" ? <small> / month</small> : null}</strong><div className="pd-owner"><span>{(property.contactName || "P").trim().charAt(0).toUpperCase()}</span><div><small>Listed by</small><strong>{property.contactName || "Property owner"}</strong></div></div>{property.contactPhone?.trim() ? <a className="button button-outline button-full" href={`tel:${property.contactPhone.replace(/[^+0-9]/g,"")}`}>☎ Call owner</a> : <p className="pd-muted">Phone number is not publicly available.</p>}<a className="button button-primary button-full" href={"/sign-in?redirect_url=" + encodeURIComponent("/property/" + (property.slug || property._id))}>▤ Sign in to chat with owner</a><p className="pd-safe">Never transfer money before verifying the property and owner.</p></div>
+        <div className="pd-form-card"><h3>Schedule a visit</h3><VisitRequestForm propertyId={property._id}/></div>
+        <div className="pd-form-card"><h3>Report this listing</h3><PropertyReportForm propertyId={property._id}/></div>
+      </aside>
+    </div>
+    <SiteFooter/>
+  </main>;
 }
