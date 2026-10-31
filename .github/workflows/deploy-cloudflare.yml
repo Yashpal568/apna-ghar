@@ -20,11 +20,11 @@ jobs:
       - name: Require production deployment secrets
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: d1f6f29f6833bc91fbdfc10c3ba035ad
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
         run: |
           missing=0
-          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY; do
+          for name in CLOUDFLARE_API_TOKEN NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY; do
             if [ -z "${!name}" ]; then echo "::error::Missing GitHub Actions secret: $name"; missing=1; fi
           done
           if [ "$missing" -ne 0 ]; then exit 1; fi
@@ -34,7 +34,7 @@ jobs:
       - name: Build and deploy production Worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: d1f6f29f6833bc91fbdfc10c3ba035ad
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           NEXT_PUBLIC_API_BASE_URL: https://apna-ghar-api-j4fo.onrender.com/api/v1
         run: npm run deploy:cloudflare
