@@ -125,20 +125,38 @@ useEffect(() => {
 
   async function loadProperty() {
     try {
+      const requestHeaders = { Accept: "application/json" };
       const response = await fetch(api + "/properties/" + encodeURIComponent(id), {
         signal: controller.signal,
         cache: "no-store",
-        headers: { Accept: "application/json" },
+        headers: requestHeaders,
       });
 
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error("This property is not available.");
+      let property: Property | null = null;
+      if (response.ok) {
+        property = await response.json() as Property;
+      } else if (response.status === 404) {
+        // Recover a published listing from the public inventory if the detail
+        // route is temporarily stale or the stored URL uses an older identifier.
+        const inventoryResponse = await fetch(api + "/properties?limit=50&page=1&sort=newest", {
+          signal: controller.signal,
+          cache: "no-store",
+          headers: requestHeaders,
+        });
+        if (inventoryResponse.ok) {
+          const inventory = await inventoryResponse.json() as { items?: Property[]; pagination?: { pages?: number } };
+          const match = (inventory.items || []).find((item) =>
+            item.slug === id || item._id === id,
+          );
+          if (match) property = match;
         }
+        if (!property) {
+          throw new Error("This property is not in the published inventory. Check that it is published and has not been hidden or removed.");
+        }
+      } else {
         throw new Error(`Could not load property details (HTTP ${response.status}).`);
       }
 
-      const property = await response.json() as Property;
       if (!property || typeof property._id !== "string" || typeof property.title !== "string") {
         throw new Error("The property service returned an invalid listing.");
       }
