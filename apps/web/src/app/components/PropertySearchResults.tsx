@@ -175,10 +175,10 @@ export default function PropertySearchResults({ location, transaction, category,
       {result.items.map((property) => {
         const isSaved = savedIds.includes(property._id);
         return <article className="property-result-card" key={property._id}>
-          <div className="property-result-link">
+          <a className="property-result-link" href={"/property/" + encodeURIComponent(property.slug || property._id)}>
             <div className="property-result-image">{property.imageUrls?.[0] ? <img src={property.imageUrls[0]} alt="" loading="lazy" /> : <span aria-hidden="true">⌂</span>}<span className="property-result-badge">{property.listingType === "rent" ? "FOR RENT" : "FOR SALE"}</span></div>
             <div className="property-result-body"><p className="property-result-location">{[property.location?.locality, property.location?.city, property.location?.state].filter(Boolean).join(", ")}</p><h3>{property.title}</h3><p className="property-result-price">{money(property.priceAmount)}{property.listingType === "rent" ? " / month" : ""}</p><p className="property-result-facts">{property.bedrooms ? `${property.bedrooms} beds · ` : ""}{property.bathrooms ? `${property.bathrooms} baths · ` : ""}{property.areaValue} {property.areaUnit}</p></div>
-          </div>
+          </a>
           <div className="property-card-actions">
             <button className="button button-outline property-save-button" type="button" aria-pressed={isSaved} onClick={() => { void changeSaved(property, isSaved); }}>{isSaved ? "♥ Saved" : "♡ Save home"}</button>
             {property.contactPhone?.trim() ? <a className="button button-outline" href={"tel:" + property.contactPhone.replace(/[^+0-9]/g, "")}>☎ Call owner</a> : null}
