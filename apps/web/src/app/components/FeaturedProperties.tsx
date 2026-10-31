@@ -59,13 +59,12 @@ export default function FeaturedProperties() {
         {loading && Array.from({ length: 3 }, (_, i) => <article className="property-card skeleton-card" key={i} aria-hidden="true"><div className="skeleton skeleton-image" /><div className="property-info"><div className="skeleton skeleton-copy" /><div className="skeleton skeleton-heading" /><div className="skeleton skeleton-price" /></div></article>)}
         {!loading && items.map((home, index) => {
           const photo = home.imageUrls?.find((url) => typeof url === "string" && url.trim()) || photoFallbacks[index % photoFallbacks.length];
-          const href = "/property/" + encodeURIComponent(home.slug || home._id);
           return <article className="property-card" key={home._id}>
-            <a href={href} className="property-art" aria-label={"View " + home.title} style={{ backgroundImage: 'linear-gradient(180deg,rgba(8,15,25,.02) 30%,rgba(8,15,25,.48)),url("' + photo + '")' }}>
+            <div className="property-art" aria-label={"View " + home.title} style={{ backgroundImage: 'linear-gradient(180deg,rgba(8,15,25,.02) 30%,rgba(8,15,25,.48)),url("' + photo + '")' }}>
               <span className="property-tag">{home.listingType === "rent" ? "For rent" : "For sale"}</span>
               <span className="property-photo-count">{home.imageUrls?.length || 1} photo{(home.imageUrls?.length || 1) === 1 ? "" : "s"}</span>
-            </a>
-            <div className="property-info"><p className="property-kind">{home.listingType === "rent" ? "For rent" : "For sale"}</p><h3><a href={href}>{home.title}</a></h3><p className="property-location">⌖ {[home.location?.locality, home.location?.city, home.location?.state].filter(Boolean).join(", ") || "Location not provided"}</p><p className="property-meta">{[home.bedrooms ? home.bedrooms + " beds" : "", home.bathrooms ? home.bathrooms + " baths" : "", home.areaValue ? home.areaValue + " " + home.areaUnit : ""].filter(Boolean).join(" · ") || "Details available on listing"}</p><div className="property-bottom"><strong>{money(home.priceAmount)}{home.listingType === "rent" ? " / month" : ""}</strong><a className="round-arrow" href={href} aria-label={"View details for " + home.title}>↗</a></div></div>
+            </div>
+            <div className="property-info"><p className="property-kind">{home.listingType === "rent" ? "For rent" : "For sale"}</p><h3>{home.title}</h3><p className="property-location">⌖ {[home.location?.locality, home.location?.city, home.location?.state].filter(Boolean).join(", ") || "Location not provided"}</p><p className="property-meta">{[home.bedrooms ? home.bedrooms + " beds" : "", home.bathrooms ? home.bathrooms + " baths" : "", home.areaValue ? home.areaValue + " " + home.areaUnit : ""].filter(Boolean).join(" · ") || "Details available on listing"}</p><div className="property-bottom"><strong>{money(home.priceAmount)}{home.listingType === "rent" ? " / month" : ""}</strong></div></div>
           </article>;
         })}
       </div>
