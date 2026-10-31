@@ -47,6 +47,23 @@ function unwrapProperty(value: unknown): Property | null {
   }
   return null;
 }
+
+function unwrapListing(value: unknown): ListingResponse {
+  if (Array.isArray(value)) return { items: value.filter(isProperty) };
+  if (!value || typeof value !== "object") return {};
+  const record = value as Record<string, unknown>;
+  if (Array.isArray(record.items)) return value as ListingResponse;
+  for (const key of ["data", "result", "properties"]) {
+    if (key in record) {
+      const nested = unwrapListing(record[key]);
+      if (nested.items) {
+        const outerPagination = record.pagination;
+        return { ...nested, pagination: nested.pagination || (outerPagination && typeof outerPagination === "object" ? outerPagination as ListingResponse["pagination"] : undefined) };
+      }
+    }
+  }
+  return {};
+}
 function money(value?: number, currency = "INR") {
   if (typeof value !== "number" || !Number.isFinite(value)) return "Price on request";
   return new Intl.NumberFormat("en-IN", { style: "currency", currency, maximumFractionDigits: 0 }).format(value);
@@ -72,18 +89,19 @@ async function resolveProperty(identifier: string, signal: AbortSignal): Promise
   // sample data or silently substitute a different property.
   const first = await fetch(API_BASE + "/properties?page=1&limit=50&sort=newest", { signal, cache: "no-store", headers });
   if (!first.ok) throw new Error(`Could not resolve this property from the live listings (HTTP ${first.status}).`);
-  const firstPage = await first.json() as ListingResponse;
-  const pages = Math.min(Math.max(firstPage.pagination?.pages || 1, 1), 20);
-  const all: Property[] = Array.isArray(firstPage.items) ? firstPage.items.filter(isProperty) : [];
-  const match = (items: Property[]) => items.find(item => item._id === identifier || item.slug === identifier);
-  const found = match(all);
+  const firstPage = unwrapListing(await first.json());
+  const pageLimit = 50;
+  const reportedPages = firstPage.pagination?.pages;
+  const reportedTotal = firstPage.pagination?.total;
+  const pages = Math.min(Math.max(reportedPages || (typeof reportedTotal === "number" ? Math.ceil(reportedTotal / pageLimit) : 1), 1), 1000);
+  const match = (items: Property[]) => items.find(item => item._id === identifier || item.slug?.toLowerCase() === identifier.toLowerCase());
+  const found = match(firstPage.items || []);
   if (found) return found;
   for (let page = 2; page <= pages; page += 1) {
-    const response = await fetch(API_BASE + `/properties?page=${page}&limit=50&sort=newest`, { signal, cache: "no-store", headers });
+    const response = await fetch(API_BASE + `/properties?page=${page}&limit=${pageLimit}&sort=newest`, { signal, cache: "no-store", headers });
     if (!response.ok) continue;
-    const data = await response.json() as ListingResponse;
-    const items = Array.isArray(data.items) ? data.items.filter(isProperty) : [];
-    const pageMatch = match(items);
+    const data = unwrapListing(await response.json());
+    const pageMatch = match(data.items || []);
     if (pageMatch) return pageMatch;
   }
   throw new Error("This link does not match a currently published property. Open My listings to confirm the property is published, then open its current View listing link.");
