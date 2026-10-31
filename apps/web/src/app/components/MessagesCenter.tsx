@@ -3,6 +3,7 @@
 import { FormEvent, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import SiteHeader from "./SiteHeader";
+import SiteFooter from "./SiteFooter";
 import PropertyNegotiationPanel from "./PropertyNegotiationPanel";
 import "./messages-workspace.css";
 
@@ -484,6 +485,7 @@ function MessagesCenterAuthenticated() {
             <p>Fetching your direct buyer and owner conversations from secure storage…</p>
           </div>
         </div>
+      <SiteFooter />
       </main>
     );
   }
@@ -533,6 +535,7 @@ function MessagesCenterAuthenticated() {
             </a>
           </div>
         </div>
+      <SiteFooter />
       </main>
     );
   }
