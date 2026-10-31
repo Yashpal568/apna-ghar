@@ -1,6 +1,8 @@
 name: Deploy Cloudflare production
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -41,4 +43,23 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: d1f6f29f6833bc91fbdfc10c3ba035ad
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           NEXT_PUBLIC_API_BASE_URL: https://apna-ghar-api-j4fo.onrender.com/api/v1
+          NEXT_PUBLIC_BUILD_SHA: ${{ github.sha }}
         run: npm run deploy:cloudflare
+      - name: Verify deployed Worker serves this exact commit
+        env:
+          EXPECTED_BUILD_SHA: ${{ github.sha }}
+          PROPERTY_URL: https://apna-ghar-web.yash38688.workers.dev/property/werwtw-mvuzhfat
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 12); do
+            curl --fail --silent --show-error "$PROPERTY_URL" -o /tmp/property-page.html || true
+            if grep -Fq "data-build-sha=\\\"$EXPECTED_BUILD_SHA\\\"" /tmp/property-page.html; then
+              echo "Verified live Worker build SHA: $EXPECTED_BUILD_SHA"
+              exit 0
+            fi
+            echo "Waiting for Worker propagation ($attempt/12)..."
+            sleep 10
+          done
+          echo "::error::Live Worker did not serve expected build SHA $EXPECTED_BUILD_SHA"
+          grep -o 'data-build-sha[^ >]*' /tmp/property-page.html | head -1 || true
+          exit 1
