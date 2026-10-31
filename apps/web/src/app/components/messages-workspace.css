@@ -1958,3 +1958,57 @@
 
 .messages-total-unread { padding:3px 7px; border-radius:999px; background:color-mix(in srgb,var(--color-primary) 10%,var(--color-surface)); color:var(--color-primary); font-size:10px; font-weight:750; }
 .messages-status-secure svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; color:var(--color-muted); }
+
+
+/* Messages is a dedicated workspace: suppress the site-wide footer on this
+   route only, on both desktop and mobile. The global footer remains intact
+   everywhere else. */
+body:has(.messages-workspace-shell) footer:not(.cl-footer),
+body:has(.messages-workspace-shell) .ag-site-footer,
+body:has(.messages-workspace-shell) .agh-footer,
+body:has(.messages-workspace-shell) .site-footer {
+  display: none !important;
+}
+
+/* Keep the shared mobile Explore destination visible in the bottom nav and
+   promote the inbox empty-state Explore listings action to a clear CTA. */
+@media (max-width: 768px) {
+  .messages-workspace-shell {
+    height: calc(100dvh - 70px - env(safe-area-inset-bottom)) !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 70px - env(safe-area-inset-bottom));
+    overflow: hidden !important;
+  }
+
+  .messages-sidebar-empty > a {
+    min-height: 42px;
+    margin-top: 8px;
+    padding: 0 20px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 750;
+    text-decoration: none;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 22%, transparent);
+    transition: background .16s ease, transform .16s ease, box-shadow .16s ease;
+  }
+
+  .messages-sidebar-empty > a:hover,
+  .messages-sidebar-empty > a:focus-visible {
+    background: var(--color-primary-hover, #1d4ed8);
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--color-primary) 30%, transparent);
+  }
+
+  .messages-sidebar-empty > a:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--color-primary) 28%, transparent);
+    outline-offset: 3px;
+  }
+}
