@@ -116,6 +116,7 @@ function MessagesCenterAuthenticated() {
   const [items, setItems] = useState<Conversation[]>([]);
   const [selected, setSelected] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [conversationView, setConversationView] = useState<"all" | "active">("all");
   const [detail, setDetail] = useState<ConversationDetail | null>(null);
   const [propertyInfo, setPropertyInfo] = useState<PropertySummary | null>(null);
   const [draft, setDraft] = useState("");
@@ -331,15 +332,21 @@ function MessagesCenterAuthenticated() {
     streamBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [detail?.messages?.length, selected]);
 
+  const activeItems = useMemo(
+    () => items.filter((c) => Boolean(c.lastMessageAt || c.messages?.length)),
+    [items]
+  );
+
+  const visibleItems = conversationView === "active" ? activeItems : items;
   const filteredItems = useMemo(() => {
     const q = searchText.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter((c) =>
+    if (!q) return visibleItems;
+    return visibleItems.filter((c) =>
       [c.propertyTitle, c.propertySlug, c.messages?.[c.messages.length - 1]?.text].some((v) =>
         String(v || "").toLowerCase().includes(q)
       )
     );
-  }, [items, searchText]);
+  }, [visibleItems, searchText]);
 
   const totalUnread = useMemo(() => {
     if (!user?.id) return 0;
@@ -588,60 +595,46 @@ function MessagesCenterAuthenticated() {
         </div>
       )}
 
-      {/* When NO conversations exist across the account, show the polished empty inbox */}
-      {items.length === 0 ? (
-        <div className="messages-empty-inbox-view">
-          <div className="messages-empty-inbox-card">
-            <div className="messages-empty-icon-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
-                <path d="m3 7 9 6 9-6" />
-              </svg>
-            </div>
-            <h2>No Conversations Yet</h2>
-            <p>
-              When you contact property owners or receive enquiries on your published listings, your
-              direct chats and price proposals will appear right here.
-            </p>
-            <div className="messages-empty-features-grid">
-              <div className="messages-empty-feature-item">
-                <strong>Explore Homes</strong>
-                <span>Find verified flats, plots, and villas across India</span>
-              </div>
-              <div className="messages-empty-feature-item">
-                <strong>Chat Directly</strong>
-                <span>Click &quot;Contact Owner&quot; on any listing to start</span>
-              </div>
-              <div className="messages-empty-feature-item">
-                <strong>Negotiate Online</strong>
-                <span>Submit binding price proposals with full transparency</span>
-              </div>
-            </div>
-            <a className="messages-empty-cta-btn" href="/search">
-              Browse Properties For Sale &amp; Rent →
-            </a>
-            <div className="messages-empty-seller-link">
-              Are you a property owner?{" "}
-              <a href="/list-property">Post a property listing free</a>
-            </div>
-          </div>
-        </div>
-      ) : (
-        /* Full-Width 3-Column Workspace */
-        <div
-          className={`messages-main-grid ${selected ? "has-active-chat" : ""} ${
-            mobileTab === "dossier" ? "show-mobile-dossier" : ""
-          }`}
-        >
+      {/* Full-width inbox and chat workspace. Empty states stay inside the same layout. */}
+      <div
+        className={`messages-main-grid ${selected ? "has-active-chat" : "is-empty"} ${
+          mobileTab === "dossier" ? "show-mobile-dossier" : ""
+        }`}
+      >
           {/* =================================================================
               COLUMN 1: CONVERSATIONS SIDEBAR
               ================================================================= */}
           <aside className="messages-col-sidebar" aria-label="Conversations list">
             <div className="messages-sidebar-header">
-              <h2>
-                Conversations
-                <span className="messages-sidebar-count">{items.length}</span>
-              </h2>
+              <div className="messages-sidebar-heading-copy">
+                <h2>Conversations</h2>
+                <span>{items.length} active threads</span>
+              </div>
+              <span className="messages-sidebar-count">{items.length}</span>
+            </div>
+
+            <div className="messages-sidebar-tabs" role="tablist" aria-label="Conversation filters">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={conversationView === "all"}
+                className={conversationView === "all" ? "is-active" : ""}
+                onClick={() => setConversationView("all")}
+              >
+                <span className="messages-tab-dot is-muted" />
+                {items.length} conversations
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={conversationView === "active"}
+                className={conversationView === "active" ? "is-active" : ""}
+                onClick={() => setConversationView("active")}
+              >
+                <span className="messages-tab-dot" />
+                Active conversations
+                <span className="messages-tab-count">{activeItems.length}</span>
+              </button>
             </div>
 
             <div className="messages-sidebar-search-box">
@@ -659,10 +652,23 @@ function MessagesCenterAuthenticated() {
             </div>
 
             <div className="messages-threads-list">
-              {filteredItems.length === 0 ? (
-                <div className="p-6 text-center text-xs text-muted">
-                  <p className="font-bold text-on-surface mb-1">No matching threads</p>
-                  <p>Try searching with another keyword.</p>
+              {items.length === 0 ? (
+                <div className="messages-sidebar-empty">
+                  <div className="messages-sidebar-empty-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <circle cx="10.8" cy="10.8" r="6.8" />
+                      <path d="m16 16 4.2 4.2" />
+                    </svg>
+                  </div>
+                  <h3>No conversations yet</h3>
+                  <p>Open a property listing and choose <strong>Chat with owner</strong> to start a private conversation.</p>
+                  <a href="/search">Explore listings <span aria-hidden="true">→</span></a>
+                </div>
+              ) : filteredItems.length === 0 ? (
+                <div className="messages-sidebar-no-results">
+                  <strong>No matching conversations</strong>
+                  <span>Try another search or switch conversation filters.</span>
+                  <button type="button" onClick={() => { setSearchText(""); setConversationView("all"); }}>Reset filters</button>
                 </div>
               ) : (
                 filteredItems.map((c) => {
@@ -721,11 +727,12 @@ function MessagesCenterAuthenticated() {
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                   </svg>
                 </div>
-                <h2>Select a Conversation</h2>
+                <h2>Select a conversation</h2>
                 <p>
-                  Choose a buyer or owner thread from the left sidebar to view the discussion, price
-                  proposals, and property details.
+                  Choose a buyer or owner thread to view property details, chat history and proposals.
                 </p>
+                <a className="messages-no-chat-browse-link" href="/search">Browse properties <span aria-hidden="true">→</span></a>
+                <span className="messages-no-chat-footnote">New conversations appear here automatically.</span>
               </div>
             ) : (
               <>
@@ -1002,8 +1009,7 @@ function MessagesCenterAuthenticated() {
               </div>
             </aside>
           )}
-        </div>
-      )}
+      </div>
     </main>
   );
 }
