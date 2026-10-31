@@ -49,6 +49,9 @@ export default function PropertyNegotiationPanel({ conversationId, buyerId, owne
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
     let active = true;
+    setLoading(true);
+    setOffers([]);
+    setError("");
     const load = async () => {
       try { await refresh(); if (active) setError(""); }
       catch (e) { if (active) setError(e instanceof Error ? e.message : "Could not load proposals."); }
