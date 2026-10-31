@@ -17,7 +17,7 @@ export default function MobileBottomNav() {
       {items.map((item) => {
         const active = item.paths.some((path) => path === "/" ? pathname === "/" : pathname === path || pathname.startsWith(path + "/"));
         return (
-          <a key={item.href} href={item.href} className={active ? "is-active" : ""} aria-current={active ? "page" : undefined}>
+          <a key={item.href} href={item.href} className={[active ? "is-active" : "", item.href === "/list-property" ? "ag-bottom-nav-post" : ""].filter(Boolean).join(" ")} aria-current={active ? "page" : undefined}>
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d={item.icon} />
             </svg>
