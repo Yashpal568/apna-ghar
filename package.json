@@ -27,7 +27,8 @@
     "preview:cloudflare": "npm install --no-save --package-lock=false --workspaces=false @opennextjs/cloudflare@1.20.13 wrangler@4.154.0 && npm run preview:cloudflare -w @apna-ghar/web",
     "deploy:cloudflare": "npm install --no-save --package-lock=false --workspaces=false @opennextjs/cloudflare@1.20.13 wrangler@4.154.0 && npm run build:cloudflare -w @apna-ghar/web && npm run deploy:cloudflare -w @apna-ghar/web",
     "upload:cloudflare": "npm install --no-save --package-lock=false --workspaces=false @opennextjs/cloudflare@1.20.13 wrangler@4.154.0 && npm run upload:cloudflare -w @apna-ghar/web",
-    "build:cloudflare": "npm install --no-save --package-lock=false --workspaces=false @opennextjs/cloudflare@1.20.13 wrangler@4.154.0 && npm run build:cloudflare -w @apna-ghar/web"
+    "build:cloudflare": "npm install --no-save --package-lock=false --workspaces=false @opennextjs/cloudflare@1.20.13 wrangler@4.154.0 && npm run build:cloudflare -w @apna-ghar/web",
+    "migrate:messages": "node apps/api/scripts/migrate-embedded-messages.js"
   },
   "engines": {
     "node": ">=20.11.0"
