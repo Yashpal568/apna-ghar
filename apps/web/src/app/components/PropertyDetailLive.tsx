@@ -638,35 +638,35 @@ function Detail({
                 <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-semibold bg-surface-container-lowest rounded shadow-sm text-outline">⌘K</kbd>
               </div>
             </div>
-            <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-              <a className="px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="/search">
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-2 shrink-0">
+              <a className="whitespace-nowrap px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="/search">
                 Browse properties
               </a>
-              <a className="px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="/search?type=sale">
+              <a className="whitespace-nowrap px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="/search?type=sale">
                 Buy
               </a>
-              <a className="px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="/search?type=rent">
+              <a className="whitespace-nowrap px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="/search?type=rent">
                 Rent
               </a>
-              <a className="px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors flex items-center gap-1.5" href="/messages">
+              <a className="whitespace-nowrap px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors flex items-center gap-1.5" href="/messages">
                 <span>Messages</span>
                 <span className="px-1.5 py-0.5 rounded-full bg-primary text-white text-[10px] font-bold">3</span>
               </a>
-              <a className="px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="/saved">
+              <a className="whitespace-nowrap px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="/saved">
                 Saved
               </a>
-              <a className="px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="/appearance">
+              <a className="whitespace-nowrap px-3 py-2 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" href="/appearance">
                 Appearance
               </a>
             </nav>
             <div className="flex items-center gap-space-sm shrink-0">
               <a
-                className="inline-flex items-center justify-center px-4 sm:px-5 py-2.5 rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg shadow-[0_8px_20px_-2px_rgba(0,91,234,0.35)] hover:bg-primary transition-all active:scale-[0.98] font-bold"
+                className="whitespace-nowrap inline-flex items-center justify-center px-4 sm:px-5 py-2.5 rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg shadow-[0_8px_20px_-2px_rgba(0,91,234,0.35)] hover:bg-primary transition-all active:scale-[0.98] font-bold"
                 href="/list-property"
               >
                 Post Property ↗
               </a>
-              <div className="relative">
+              <div className="relative shrink-0">
                 <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold text-sm shadow-sm">
                   YP
                 </div>
@@ -678,7 +678,7 @@ function Detail({
 
         {/* Desktop Main Content */}
         {/*  Container  */}
-<div className="relative w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div className="relative w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
 {/*  Top Breadcrumb & Actions Bar  */}
 <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
 <nav className="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md">
