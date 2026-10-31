@@ -178,7 +178,7 @@ export default function PropertySearchResults({ location, transaction, category,
           <div className="property-result-link">
             <div className="property-result-image">{property.imageUrls?.[0] ? <img src={property.imageUrls[0]} alt="" loading="lazy" /> : <span aria-hidden="true">⌂</span>}<span className="property-result-badge">{property.listingType === "rent" ? "FOR RENT" : "FOR SALE"}</span></div>
             <div className="property-result-body"><p className="property-result-location">{[property.location?.locality, property.location?.city, property.location?.state].filter(Boolean).join(", ")}</p><h3>{property.title}</h3><p className="property-result-price">{money(property.priceAmount)}{property.listingType === "rent" ? " / month" : ""}</p><p className="property-result-facts">{property.bedrooms ? `${property.bedrooms} beds · ` : ""}{property.bathrooms ? `${property.bathrooms} baths · ` : ""}{property.areaValue} {property.areaUnit}</p></div>
-          </a>
+          </div>
           <div className="property-card-actions">
             <button className="button button-outline property-save-button" type="button" aria-pressed={isSaved} onClick={() => { void changeSaved(property, isSaved); }}>{isSaved ? "♥ Saved" : "♡ Save home"}</button>
             {property.contactPhone?.trim() ? <a className="button button-outline" href={"tel:" + property.contactPhone.replace(/[^+0-9]/g, "")}>☎ Call owner</a> : null}
