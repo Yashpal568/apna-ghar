@@ -67,6 +67,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
   const [budget, setBudget] = useState("any");
   const [sort, setSort] = useState("newest");
   const [filter, setFilter] = useState("");
+  const [searchFiltersOpen, setSearchFiltersOpen] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -148,23 +149,34 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
           <button type="button" aria-label="Next hero slide" onClick={() => setHeroIndex(index => (index + 1) % heroSlides.length)}>›</button>
         </div>
       </div>
-      <div className="agh-home-search-panel agh-glass-search">
-        <div className="agh-home-search-top">
-          <div className="agh-home-search-tabs">
-            <button type="button" aria-pressed={activeTab === "buy"} className={activeTab === "buy" ? "active" : ""} onClick={() => { setActiveTab("buy"); setCategory("all"); }}>Buy</button>
-            <button type="button" aria-pressed={activeTab === "rent"} className={activeTab === "rent" ? "active" : ""} onClick={() => { setActiveTab("rent"); setCategory("all"); }}>Rent</button>
-            <button type="button" aria-pressed={activeTab === "commercial"} className={activeTab === "commercial" ? "active" : ""} onClick={() => { setActiveTab("commercial"); setCategory("commercial"); }}>Commercial</button>
-            <button type="button" aria-pressed={activeTab === "plots"} className={activeTab === "plots" ? "active" : ""} onClick={() => { setActiveTab("plots"); setCategory("plots"); }}>Plots &amp; Land</button>
-          </div>
-          <span className="agh-home-search-assurance">♧ &nbsp; Listings from direct owners</span>
+      <div className="agh-home-search-panel agh-glass-search agh-hero-searchbar">
+        <div className="agh-hero-searchbar-main" role="search">
+          <label className="agh-hero-search-transaction" aria-label="Listing purpose">
+            <select value={activeTab === "rent" ? "rent" : "buy"} onChange={event => { const next = event.target.value; setActiveTab(next === "rent" ? "rent" : "buy"); }}>
+              <option value="buy">Buy</option>
+              <option value="rent">Rent</option>
+            </select>
+            <span aria-hidden="true">⌄</span>
+          </label>
+          <span className="agh-hero-search-divider" aria-hidden="true"/>
+          <label className="agh-hero-search-location">
+            <span aria-hidden="true">⌖</span>
+            <input aria-label="City or locality" value={location} onChange={event => setLocation(event.target.value)} placeholder="Enter city, area or landmark"/>
+          </label>
+          <span className="agh-hero-search-divider agh-hero-search-filter-divider" aria-hidden="true"/>
+          <button type="button" className={"agh-hero-search-filter"+(searchFiltersOpen?" is-open":"")} aria-label="More search filters" aria-expanded={searchFiltersOpen} onClick={() => setSearchFiltersOpen(value => !value)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M13 4v6M7 14v6" /></svg>
+          </button>
+          <button type="button" className="agh-hero-search-submit" aria-label="Search properties" onClick={() => window.location.assign(searchUrl)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
+          </button>
         </div>
-        <div className="agh-home-search-fields">
-          <label className="agh-home-field agh-home-field-location"><small>LOCATION / LOCALITY</small><span>⌖ <input aria-label="City or locality" value={location} onChange={event => setLocation(event.target.value)} placeholder="Enter city, area or landmark"/></span></label>
-          <label className="agh-home-field"><small>PROPERTY TYPE</small><select value={category} onChange={event => { const next = event.target.value; setCategory(next); if (next === "commercial") setActiveTab("commercial"); else if (next === "plots") setActiveTab("plots"); else if (activeTab === "commercial" || activeTab === "plots") setActiveTab("buy"); }}><option value="all">All property types</option>{categories.filter(item => item.key !== "all").map(item => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
-          <label className="agh-home-field"><small>BUDGET RANGE</small><select value={budget} onChange={event => setBudget(event.target.value)}><option value="any">Any budget</option><option value="50">Up to ₹50 lakh</option><option value="100">Up to ₹1 crore</option></select></label>
-          <button type="button" className="agh-home-search-button" onClick={() => window.location.assign(searchUrl)}><span className="agh-home-search-button-label">Search properties</span><span className="agh-home-search-button-icon" aria-hidden="true">↗</span></button>
-        </div>
-        <div className="agh-home-popular"><b>POPULAR FILTERS:</b>{[{label:"Ready to move",value:"ready"},{label:"3+ BHK Only",value:"beds"},{label:"Direct From Owner",value:"owner"},{label:"Furnished",value:"furnished"},{label:"Under ₹50L",value:"budget"}].map(item => <button key={item.value} className={filter === item.value ? "active" : ""} onClick={() => { setFilter(filter === item.value ? "" : item.value); if (item.value === "budget") setBudget(budget === "50" ? "any" : "50"); }}>{item.label}</button>)}</div>
+        {searchFiltersOpen && <div className="agh-hero-search-filter-popover">
+          <label><span>Property type</span><select value={category} onChange={event => { const next = event.target.value; setCategory(next); if (next === "commercial") setActiveTab("commercial"); else if (next === "plots") setActiveTab("plots"); else if (activeTab === "commercial" || activeTab === "plots") setActiveTab("buy"); }}><option value="all">All property types</option>{categories.filter(item => item.key !== "all").map(item => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
+          <label><span>Budget range</span><select value={budget} onChange={event => setBudget(event.target.value)}><option value="any">Any budget</option><option value="50">Up to ₹50 lakh</option><option value="100">Up to ₹1 crore</option></select></label>
+          <div className="agh-hero-search-quickfilters"><span>Quick filters</span>{[{label:"3+ BHK",value:"beds"},{label:"Furnished",value:"furnished"},{label:"Under ₹50L",value:"budget"}].map(item=><button key={item.value} type="button" className={filter===item.value?"active":""} onClick={()=>{setFilter(filter===item.value?"":item.value);if(item.value==="budget")setBudget(budget==="50"?"any":"50")}}>{item.label}</button>)}</div>
+          <button type="button" className="agh-hero-search-done" onClick={()=>setSearchFiltersOpen(false)}>Done</button>
+        </div>}
       </div>
       <div className="agh-stitch-stats">
         <div><strong>Direct</strong><small>OWNER CONNECTIONS</small></div>
