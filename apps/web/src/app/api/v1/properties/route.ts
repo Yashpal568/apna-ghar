@@ -153,6 +153,31 @@ export async function OPTIONS() {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+  const singleId = searchParams.get("id")?.trim().toLowerCase();
+
+  if (singleId) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 2500);
+      const res = await fetch(`${RENDER_API}/properties/${encodeURIComponent(singleId)}`, {
+        signal: controller.signal,
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      });
+      clearTimeout(timeout);
+      if (res.ok) {
+        return NextResponse.json(await res.json(), { headers: corsHeaders });
+      }
+    } catch {}
+
+    const found = VERIFIED_PROPERTIES.find(
+      (p) => p.slug.toLowerCase() === singleId || p._id.toLowerCase() === singleId
+    );
+    if (found) {
+      return NextResponse.json(found, { headers: corsHeaders });
+    }
+    return NextResponse.json({ message: "Property not found" }, { status: 404, headers: corsHeaders });
+  }
 
   try {
     const controller = new AbortController();

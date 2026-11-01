@@ -309,7 +309,7 @@ function Detail({
       setError("");
       try {
         const response = await fetchApi(
-          "/properties/" + encodeURIComponent(cleanId),
+          "/properties?id=" + encodeURIComponent(cleanId),
           {
             signal: controller.signal,
             cache: "no-store",
