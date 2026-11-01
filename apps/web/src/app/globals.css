@@ -4337,3 +4337,14 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
  .agh-home-owner-cta>a{grid-column:1/-1;width:100%;justify-content:center}
 }
 @media(prefers-reduced-motion:reduce){.agh-home-hero-slide{animation:none;opacity:.18}.agh-home-search-button,.agh-home-popular button{transition:none}}
+
+
+/* Mobile header: keep only brand + menu toggle; search and post actions live elsewhere */
+@media(max-width:760px){
+ .agh-market-header-scope .agh-mobile-search,
+ .agh-market-header-scope .agh-top-search,
+ .agh-market-header-scope .agh-header-actions{display:none!important}
+ .agh-market-header-scope .agh-header-main{display:flex!important;justify-content:space-between!important;grid-template-columns:none!important}
+ .agh-market-header-scope .agh-brand{margin-right:auto}
+ .agh-market-header-scope .agh-menu-toggle{display:grid!important;flex:0 0 42px;margin-left:auto}
+}
