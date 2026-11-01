@@ -5239,3 +5239,96 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
  .agh-home-redesign .agh-stitch-hero>.agh-home-search-panel{padding:12px!important}
  .agh-home-redesign .agh-stitch-hero .agh-home-search-fields{grid-template-columns:1fr!important}
 }
+
+
+/* HD photographic hero carousel + transparent glass search (desktop/tablet/mobile) */
+.agh-home-redesign .agh-home-hero.agh-stitch-hero.agh-image-carousel{
+  position:relative!important;isolation:isolate!important;display:flex!important;flex-direction:column!important;
+  align-items:center!important;overflow:hidden!important;min-height:690px!important;height:auto!important;
+  padding:58px 28px 26px!important;background:#071c2d!important;color:#fff!important;
+}
+.agh-home-redesign .agh-hero-media{position:absolute!important;inset:0!important;z-index:-1!important;overflow:hidden!important;background:#071c2d!important}
+.agh-home-redesign .agh-hero-background{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center 48%!important;display:block!important;animation:aghHeroFade .65s ease both}
+.agh-home-redesign .agh-hero-background-mobile{display:none!important}
+.agh-home-redesign .agh-hero-image-shade{position:absolute!important;inset:0!important;background:linear-gradient(90deg,rgba(3,16,30,.82) 0%,rgba(3,16,30,.55) 48%,rgba(3,16,30,.15) 100%),linear-gradient(0deg,rgba(2,19,32,.88) 0%,rgba(2,19,32,.04) 62%)!important}
+@keyframes aghHeroFade{from{opacity:.45;transform:scale(1.015)}to{opacity:1;transform:scale(1)}}
+.agh-home-redesign .agh-stitch-hero-inner{position:relative!important;z-index:2!important;width:min(100%,1120px)!important;margin:0 auto 28px!important;text-align:left!important;padding:12px 0 0 5%!important}
+.agh-home-redesign .agh-stitch-kicker{background:rgba(5,25,40,.44)!important;border-color:rgba(255,255,255,.28)!important;color:#f8fafc!important;backdrop-filter:blur(12px)!important}
+.agh-home-redesign .agh-stitch-hero-inner h1{max-width:720px!important;margin:22px 0 13px!important;font-size:clamp(36px,4.4vw,58px)!important;line-height:1.08!important;color:#fff!important;text-shadow:0 2px 18px rgba(0,0,0,.24)!important}
+.agh-home-redesign .agh-stitch-hero-inner p{max-width:620px!important;margin:0!important;color:#f1f5f9!important;font-size:15px!important;line-height:1.65!important;text-shadow:0 1px 10px rgba(0,0,0,.3)!important}
+.agh-home-redesign .agh-hero-carousel-controls{display:flex!important;align-items:center!important;gap:14px!important;margin-top:24px!important}
+.agh-home-redesign .agh-hero-carousel-controls>button{display:grid!important;place-items:center!important;width:36px!important;height:36px!important;border:1px solid rgba(255,255,255,.45)!important;border-radius:50%!important;background:rgba(255,255,255,.15)!important;color:#fff!important;font-size:25px!important;line-height:1!important;backdrop-filter:blur(10px)!important;cursor:pointer!important}
+.agh-home-redesign .agh-hero-carousel-dots{display:flex!important;align-items:center!important;gap:8px!important}
+.agh-home-redesign .agh-hero-carousel-dots button{width:8px!important;height:8px!important;padding:0!important;border:0!important;border-radius:20px!important;background:rgba(255,255,255,.65)!important;cursor:pointer!important}
+.agh-home-redesign .agh-hero-carousel-dots button.active{width:28px!important;background:#36e5a0!important}
+.agh-home-redesign .agh-home-hero.agh-stitch-hero>.agh-home-search-panel.agh-glass-search{
+  position:relative!important;z-index:4!important;width:min(100%,1080px)!important;max-width:1080px!important;
+  margin:0 auto!important;padding:16px 18px 14px!important;border:1px solid rgba(255,255,255,.55)!important;
+  border-radius:22px!important;background:rgba(226,239,247,.22)!important;
+  box-shadow:0 18px 55px rgba(0,0,0,.22)!important;backdrop-filter:blur(20px) saturate(145%)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(145%)!important;
+}
+.agh-home-redesign .agh-stitch-hero .agh-home-search-top{justify-content:flex-start!important;margin:0 0 12px!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-search-tabs{background:rgba(3,20,34,.3)!important;border:1px solid rgba(255,255,255,.26)!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-search-tabs button{color:#fff!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-search-tabs button[aria-pressed=true]{background:#075bea!important;color:#fff!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-search-assurance{display:inline!important;margin-left:auto!important;color:#fff!important;font-size:10px!important;font-weight:700!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-search-fields{grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr) minmax(0,.9fr) auto!important;gap:10px!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-field{min-height:58px!important;border:1px solid rgba(255,255,255,.55)!important;border-radius:11px!important;background:rgba(255,255,255,.17)!important;backdrop-filter:blur(9px)!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-field small{color:#f8fafc!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-field>span,.agh-home-redesign .agh-stitch-hero .agh-home-field input,.agh-home-redesign .agh-stitch-hero .agh-home-field select{color:#fff!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-field input::placeholder{color:rgba(255,255,255,.86)!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-field select option{color:#0f172a!important;background:#fff!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-field:focus-within{border-color:#4debb1!important;background:rgba(255,255,255,.24)!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-search-button{min-height:58px!important;border-radius:12px!important;background:#075bea!important;white-space:nowrap!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-popular{justify-content:flex-start!important;margin-top:12px!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-popular>b{color:#fff!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-popular button{background:rgba(255,255,255,.18)!important;border:1px solid rgba(255,255,255,.23)!important;color:#fff!important}
+.agh-home-redesign .agh-stitch-hero .agh-home-popular button.active{background:#075bea!important}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats{position:relative!important;z-index:2!important;width:min(100%,1050px)!important;margin:26px auto 0!important;border-color:rgba(255,255,255,.25)!important}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div{border-color:rgba(255,255,255,.2)!important}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats strong{color:#fff!important}
+@media(max-width:1050px){
+ .agh-home-redesign .agh-home-hero.agh-stitch-hero.agh-image-carousel{min-height:650px!important;padding:48px 22px 24px!important}
+ .agh-home-redesign .agh-stitch-hero-inner{padding-left:2%!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-search-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-search-button{width:100%!important}
+}
+@media(max-width:700px){
+ .agh-home-redesign .agh-home-hero.agh-stitch-hero.agh-image-carousel{min-height:0!important;padding:28px 12px 18px!important}
+ .agh-home-redesign .agh-hero-background-desktop{display:none!important}
+ .agh-home-redesign .agh-hero-background-mobile{display:block!important;object-position:58% center!important}
+ .agh-home-redesign .agh-hero-image-shade{background:linear-gradient(180deg,rgba(3,16,30,.62) 0%,rgba(3,16,30,.34) 38%,rgba(2,19,32,.78) 100%)!important}
+ .agh-home-redesign .agh-stitch-hero-inner{width:100%!important;padding:12px 8px 0!important;margin:0 auto 16px!important;text-align:center!important}
+ .agh-home-redesign .agh-stitch-kicker{font-size:8px!important;padding:6px 9px!important;gap:6px!important}
+ .agh-home-redesign .agh-stitch-hero-inner h1{max-width:440px!important;margin:13px auto 8px!important;font-size:clamp(27px,7.5vw,35px)!important;line-height:1.12!important;letter-spacing:-.9px!important}
+ .agh-home-redesign .agh-stitch-hero-inner p{max-width:370px!important;margin:0 auto!important;font-size:10px!important;line-height:1.5!important}
+ .agh-home-redesign .agh-hero-carousel-controls{justify-content:center!important;margin-top:12px!important;gap:10px!important}
+ .agh-home-redesign .agh-hero-carousel-controls>button{width:28px!important;height:28px!important;font-size:20px!important}
+ .agh-home-redesign .agh-hero-carousel-dots{gap:6px!important}
+ .agh-home-redesign .agh-hero-carousel-dots button{width:6px!important;height:6px!important}
+ .agh-home-redesign .agh-hero-carousel-dots button.active{width:20px!important}
+ .agh-home-redesign .agh-home-hero.agh-stitch-hero>.agh-home-search-panel.agh-glass-search{
+  width:100%!important;max-width:520px!important;margin:0 auto!important;padding:10px!important;border-radius:16px!important;
+  background:rgba(10,31,49,.48)!important;border-color:rgba(255,255,255,.52)!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.2)!important;backdrop-filter:blur(16px)!important;
+ }
+ .agh-home-redesign .agh-stitch-hero .agh-home-search-top{margin:0 0 8px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-search-tabs{width:100%!important;justify-content:space-between!important;padding:3px!important;gap:0!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-search-tabs button{min-height:27px!important;padding:5px 7px!important;font-size:8px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-search-assurance{display:none!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-search-fields{grid-template-columns:1fr 1fr!important;gap:6px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-field{min-height:44px!important;padding:6px 8px!important;border-radius:8px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-field small{font-size:7px!important;margin-bottom:2px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-field input,.agh-home-redesign .agh-stitch-hero .agh-home-field select{font-size:9px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-search-button{grid-column:1/-1!important;min-height:39px!important;border-radius:9px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-search-button-label{font-size:10px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-popular{gap:5px!important;margin-top:8px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-popular>b{font-size:7px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-popular button{padding:5px 7px!important;font-size:7px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-stitch-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:0!important;margin-top:15px!important;padding-top:12px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div{border-right:1px solid rgba(255,255,255,.18)!important;gap:2px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div:last-child{border:0!important}
+ .agh-home-redesign .agh-stitch-hero .agh-stitch-stats strong{font-size:12px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-stitch-stats small{font-size:5px!important;letter-spacing:0!important;text-align:center!important}
+}
