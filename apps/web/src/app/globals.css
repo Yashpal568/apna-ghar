@@ -5615,3 +5615,42 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
  .agh-hero-search-filter{flex-basis:32px!important}
  .agh-hero-search-submit{flex-basis:41px!important;height:42px!important}
 }
+
+
+/* Search filter popover must escape the hero's image clipping on every viewport. */
+.agh-home-redesign .agh-home-hero.agh-stitch-hero.agh-image-carousel{
+ overflow:visible!important;
+}
+.agh-home-redesign .agh-home-hero.agh-stitch-hero.agh-image-carousel .agh-hero-media{
+ overflow:hidden!important;border-radius:inherit!important;
+}
+.agh-home-redesign .agh-home-hero.agh-stitch-hero.has-search-filters-open{
+ z-index:80!important;
+}
+.agh-home-redesign .agh-home-hero.agh-stitch-hero.has-search-filters-open>.agh-hero-searchbar{
+ z-index:100!important;
+}
+.agh-home-redesign .agh-hero-searchbar{overflow:visible!important}
+.agh-home-redesign .agh-hero-search-filter-popover{
+ position:absolute!important;top:calc(100% + 12px)!important;right:0!important;left:auto!important;
+ z-index:200!important;max-height:min(70vh,560px)!important;overflow-y:auto!important;
+ overscroll-behavior:contain!important;
+}
+.agh-home-redesign .agh-home-hero.agh-stitch-hero.has-search-filters-open .agh-stitch-stats{
+ position:relative!important;z-index:1!important;
+}
+@media(max-width:700px){
+ .agh-home-redesign .agh-hero-search-filter-popover{
+  top:calc(100% + 8px)!important;right:0!important;left:0!important;
+  width:100%!important;max-width:none!important;grid-template-columns:1fr!important;
+  gap:11px!important;padding:14px!important;border-radius:17px!important;
+  background:rgba(250,252,255,.985)!important;
+  box-shadow:0 18px 48px rgba(0,13,32,.34)!important;
+  max-height:min(62vh,480px)!important;
+ }
+ .agh-home-redesign .agh-hero-search-filter-popover>label{min-width:0!important}
+ .agh-home-redesign .agh-hero-search-filter-popover select{height:43px!important;font-size:13px!important}
+ .agh-home-redesign .agh-hero-search-quickfilters{gap:6px!important}
+ .agh-home-redesign .agh-hero-search-quickfilters button{min-height:34px!important}
+ .agh-home-redesign .agh-hero-search-done{position:sticky!important;bottom:0!important;z-index:2!important}
+}
