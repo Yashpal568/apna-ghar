@@ -215,7 +215,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
       <div><strong>Legal &amp; Support</strong><a href="/about">About Apna Ghar</a><a href="/privacy">Privacy Protection</a><a href="/terms">Terms of Discovery</a><a href="/messages">24×7 Support via Messages</a></div>
       <div className="agh-home-footer-bottom"><span>© {new Date().getFullYear()} Apna Ghar PropTech. All rights reserved.</span><span>VERIFIED SECURITY &nbsp; ◈ &nbsp; Secure account access</span></div>
     </footer>
-    <nav className="agh-home-mobile-nav" aria-label="Mobile navigation"><a className="active" href="/">⌂<small>Home</small></a><a href="/search">⌕<small>Search</small></a><a className="post" href="/list-property">＋<small>Post</small></a><a href="/messages">▤<small>Chat</small></a><a href="/profile">◉<small>Profile</small></a></nav>
+
   </main>;
 }
 
