@@ -6141,3 +6141,17 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
     font-size:5.9px!important;line-height:12px!important;letter-spacing:-.2px!important;
   }
 }
+
+
+/* Sticky header must not live inside an overflow-hidden scrolling ancestor.
+   clip prevents horizontal bleed without creating a vertical scroll container. */
+.agh-market.agh-home-redesign{
+  overflow:visible!important;
+  overflow-x:clip!important;
+}
+.agh-home-redesign .agh-market-header-scope{
+  position:-webkit-sticky!important;
+  position:sticky!important;
+  top:0!important;
+  z-index:50000!important;
+}
