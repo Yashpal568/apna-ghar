@@ -5090,3 +5090,138 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
   }
   .agh-home-redesign .agh-home-categories{padding-top:26px!important}
 }
+
+
+/* Stitch homepage recreation — responsive desktop/tablet/mobile */
+.agh-home-redesign{background:#f7f8ff!important;color:#0f172a!important;font-family:"Plus Jakarta Sans",Inter,sans-serif!important}
+.agh-home-redesign .agh-home-hero.agh-stitch-hero{
+  height:auto!important;min-height:0!important;overflow:visible!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  padding:54px 24px 34px!important;background:#0b1c30!important;color:#fff!important;
+  isolation:isolate!important;
+}
+.agh-stitch-hero-inner{width:min(100%,1120px);text-align:center;margin:0 auto 24px}
+.agh-stitch-kicker{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:7px 13px;border:1px solid rgba(148,163,184,.2);border-radius:999px;background:rgba(148,163,184,.15);color:#e2e8f0;font-size:10px;font-weight:700;letter-spacing:.02em}
+.agh-stitch-kicker span{color:#63e6ad}
+.agh-stitch-kicker i{width:4px;height:4px;border-radius:50%;background:#cbd5e1}
+.agh-stitch-hero-inner h1{max-width:900px;margin:20px auto 12px;color:#fff;font-size:clamp(32px,4.2vw,52px);font-weight:800;line-height:1.13;letter-spacing:-1.8px}
+.agh-stitch-hero-inner h1 em{color:#37e89c;font-style:normal}
+.agh-stitch-hero-inner p{margin:0 auto;color:#cbd5e1;font-size:13px;line-height:1.65}
+.agh-home-redesign>.agh-home-search-panel{
+  width:min(100%,1060px)!important;max-width:1060px!important;margin:0 auto!important;
+  position:relative!important;z-index:3!important;padding:16px 20px 14px!important;
+  border:1px solid rgba(255,255,255,.1)!important;border-radius:18px!important;
+  background:#fff!important;box-shadow:0 16px 42px rgba(0,0,0,.22)!important;
+}
+.agh-home-redesign .agh-home-search-top{display:flex!important;align-items:center!important;justify-content:center!important;gap:14px!important;margin:0 auto 13px!important}
+.agh-home-redesign .agh-home-search-tabs{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;padding:4px!important;border:1px solid #e2e8f0!important;border-radius:999px!important;background:#f8fafc!important}
+.agh-home-redesign .agh-home-search-tabs button{min-height:30px!important;padding:6px 17px!important;border-radius:999px!important;font-size:11px!important;font-weight:700!important;color:#475569!important}
+.agh-home-redesign .agh-home-search-tabs button[aria-pressed=true]{background:#005bea!important;color:#fff!important}
+.agh-home-redesign .agh-home-search-assurance{display:none!important}
+.agh-home-redesign .agh-home-search-fields{display:grid!important;grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr) minmax(0,.9fr) auto!important;gap:9px!important;align-items:stretch!important}
+.agh-home-redesign .agh-home-field{min-width:0!important;min-height:54px!important;padding:8px 12px!important;border:1px solid #cbd5e1!important;border-radius:9px!important;background:#fff!important}
+.agh-home-redesign .agh-home-field small{display:block!important;margin-bottom:4px!important;color:#64748b!important;font-size:8px!important;font-weight:800!important;letter-spacing:.08em!important}
+.agh-home-redesign .agh-home-field>span{display:flex!important;align-items:center!important;gap:8px!important;color:#005bea!important}
+.agh-home-redesign .agh-home-field input,.agh-home-redesign .agh-home-field select{width:100%!important;min-width:0!important;border:0!important;outline:0!important;background:transparent!important;color:#0f172a!important;font-size:11px!important;font-weight:600!important}
+.agh-home-redesign .agh-home-field:focus-within{border-color:#005bea!important;box-shadow:0 0 0 3px rgba(0,91,234,.12)!important}
+.agh-home-redesign .agh-home-search-button{min-height:54px!important;padding:0 18px!important;border-radius:999px!important;background:#005bea!important;box-shadow:0 5px 13px rgba(0,91,234,.22)!important}
+.agh-home-redesign .agh-home-search-button-icon{display:none!important}
+.agh-home-redesign .agh-home-search-button-label{font-size:11px!important}
+.agh-home-redesign .agh-home-popular{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;flex-wrap:wrap!important;margin:12px 0 0!important}
+.agh-home-redesign .agh-home-popular>b{font-size:8px!important;color:#64748b!important;letter-spacing:.08em!important}
+.agh-home-redesign .agh-home-popular button{padding:6px 10px!important;border-radius:999px!important;background:#eff4ff!important;color:#334155!important;font-size:9px!important;font-weight:700!important}
+.agh-home-redesign .agh-home-popular button.active{background:#dbeafe!important;color:#005bea!important}
+.agh-stitch-stats{width:min(100%,940px);display:grid;grid-template-columns:repeat(4,1fr);margin:23px auto 0;padding-top:18px;border-top:1px solid rgba(203,213,225,.2)}
+.agh-stitch-stats>div{display:flex;flex-direction:column;align-items:center;gap:3px;border-right:1px solid rgba(203,213,225,.12)}
+.agh-stitch-stats>div:last-child{border:0}
+.agh-stitch-stats strong{color:#fff;font-size:20px;font-weight:800;letter-spacing:-.5px}
+.agh-stitch-stats>div:nth-child(2) strong{color:#37e89c}
+.agh-stitch-stats small{color:#aab8ca;font-size:8px;font-weight:800;letter-spacing:.06em}
+.agh-home-redesign .agh-home-categories,.agh-home-redesign .agh-home-listings{width:100%;max-width:1240px;margin:0 auto;padding:54px 30px!important}
+.agh-home-redesign .agh-home-section-heading{margin-bottom:24px!important;align-items:flex-end!important}
+.agh-home-redesign .agh-home-section-heading h2{font-size:clamp(23px,2.5vw,30px)!important;line-height:1.2!important;letter-spacing:-1px!important;color:#0f172a!important}
+.agh-home-redesign .agh-home-section-heading p{color:#64748b!important;font-size:11px!important}
+.agh-home-redesign .agh-home-eyebrow{color:#005bea!important;font-size:9px!important;letter-spacing:.1em!important;font-weight:800!important}
+.agh-home-redesign .agh-home-category-grid{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:13px!important}
+.agh-home-redesign .agh-home-category-grid>button{min-width:0!important;min-height:150px!important;padding:18px 15px!important;align-items:flex-start!important;border:1px solid #edf0f5!important;border-radius:16px!important;background:#fff!important;box-shadow:0 2px 8px rgba(15,23,42,.025)!important;text-align:left!important;transition:transform .2s,box-shadow .2s!important}
+.agh-home-redesign .agh-home-category-grid>button:hover{transform:translateY(-4px)!important;box-shadow:0 12px 24px rgba(15,23,42,.08)!important}
+.agh-home-redesign .agh-home-category-icon{display:grid!important;place-items:center!important;width:40px!important;height:40px!important;margin:0 0 13px!important;border-radius:11px!important;background:#e6efff!important;color:#005bea!important}
+.agh-home-redesign .agh-home-category-icon svg{width:20px!important;height:20px!important}
+.agh-home-redesign .agh-home-category-grid>button:nth-child(3n) .agh-home-category-icon{background:#d9fbea!important;color:#00864e!important}
+.agh-home-redesign .agh-home-category-grid>button strong{color:#0f172a!important;font-size:12px!important;line-height:1.4!important}
+.agh-home-redesign .agh-home-category-grid>button small{margin-top:5px!important;color:#64748b!important;font-size:9px!important}
+.agh-home-redesign .agh-home-listings{max-width:none!important;padding-left:max(30px,calc((100% - 1240px)/2))!important;padding-right:max(30px,calc((100% - 1240px)/2))!important;background:#f0f4ff!important}
+.agh-home-redesign .agh-home-listing-tools{display:flex!important;gap:9px!important;align-items:center!important}
+.agh-home-redesign .agh-home-listing-tools label,.agh-home-redesign .agh-home-listing-tools a{padding:9px 12px!important;border-radius:10px!important;background:#fff!important;color:#334155!important;font-size:9px!important;font-weight:700!important}
+.agh-home-redesign .agh-home-listing-tools select{border:0!important;background:transparent!important;color:#0f172a!important;font-size:10px!important;font-weight:700!important}
+.agh-home-redesign .agh-home-property-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:18px!important}
+.agh-home-redesign .agh-home-property-card{overflow:hidden!important;border:1px solid #e7ebf2!important;border-radius:16px!important;background:#fff!important;box-shadow:0 3px 12px rgba(15,23,42,.06)!important}
+.agh-home-redesign .agh-home-property-image{height:220px!important;border-radius:0!important}
+.agh-home-redesign .agh-home-property-content{padding:16px!important}
+.agh-home-redesign .agh-home-property-content h3{font-size:14px!important;color:#0f172a!important}
+.agh-home-redesign .agh-home-property-facts{display:flex!important;justify-content:space-between!important;gap:4px!important;flex-wrap:wrap!important}
+.agh-home-redesign .agh-home-owner{padding-top:12px!important;border-top:1px solid #edf0f5!important}
+.agh-home-redesign .agh-home-benefits{width:min(100%,1240px)!important;margin:0 auto!important;padding:60px 30px!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important}
+.agh-home-redesign .agh-home-benefits article{padding:20px!important;border:1px solid #edf0f5!important;border-radius:16px!important;background:#fff!important;box-shadow:0 2px 9px rgba(15,23,42,.035)!important}
+.agh-home-redesign .agh-home-benefits article h3{color:#0f172a!important;font-size:14px!important}
+.agh-home-redesign .agh-home-benefits article p{color:#64748b!important;font-size:10px!important;line-height:1.6!important}
+.agh-home-redesign .agh-home-benefits article>small{color:#00864e!important;font-size:9px!important;font-weight:800!important}
+.agh-home-redesign .agh-home-owner-cta{width:calc(100% - 60px)!important;max-width:1240px!important;min-height:370px!important;margin:0 auto 55px!important;padding:38px!important;border-radius:20px!important;background:linear-gradient(110deg,#102b3a 0%,#0c2e57 50%,#005bea 100%)!important}
+.agh-home-redesign .agh-home-owner-cta h2{font-size:clamp(27px,3vw,42px)!important}
+.agh-home-redesign .agh-home-cta-panel{min-height:290px!important}
+.agh-home-redesign .agh-home-footer{display:grid!important;grid-template-columns:1.4fr 1fr 1fr 1fr!important;gap:34px!important;padding:44px max(30px,calc((100% - 1240px)/2)) 20px!important;background:#fff!important}
+.agh-home-redesign .agh-home-footer>div{display:flex!important;flex-direction:column!important;gap:11px!important}
+.agh-home-redesign .agh-home-footer>div>a,.agh-home-redesign .agh-home-footer>div>p{color:#64748b!important;font-size:10px!important;line-height:1.6!important}
+.agh-home-redesign .agh-home-footer>div>strong{margin-bottom:5px!important;color:#0f172a!important;font-size:10px!important;font-weight:800!important;text-transform:uppercase!important}
+.agh-home-redesign .agh-home-footer-bottom{grid-column:1/-1!important;display:flex!important;flex-direction:row!important;justify-content:space-between!important;padding-top:18px!important;border-top:1px solid #e2e8f0!important;color:#64748b!important;font-size:9px!important}
+.agh-home-redesign .agh-home-mobile-nav{display:none!important}
+@media(max-width:1050px){
+ .agh-home-redesign .agh-home-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ .agh-home-redesign .agh-home-benefits{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .agh-home-redesign .agh-home-property-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .agh-home-redesign .agh-home-search-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .agh-home-redesign .agh-home-search-button{width:100%!important}
+}
+@media(max-width:700px){
+ .agh-home-redesign .agh-home-hero.agh-stitch-hero{padding:36px 15px 25px!important}
+ .agh-stitch-hero-inner{margin-bottom:17px!important}
+ .agh-stitch-kicker{font-size:8px!important;padding:6px 9px!important}
+ .agh-stitch-hero-inner h1{max-width:440px!important;margin:16px auto 9px!important;font-size:clamp(28px,8vw,38px)!important;line-height:1.12!important;letter-spacing:-1.1px!important}
+ .agh-stitch-hero-inner p{max-width:390px!important;font-size:10px!important}
+ .agh-desktop-break{display:none!important}
+ .agh-home-redesign>.agh-home-search-panel{padding:12px!important;border-radius:15px!important}
+ .agh-home-redesign .agh-home-search-top{margin-bottom:10px!important}
+ .agh-home-redesign .agh-home-search-tabs{width:100%!important;justify-content:space-between!important;gap:1px!important}
+ .agh-home-redesign .agh-home-search-tabs button{padding:6px 9px!important;font-size:9px!important}
+ .agh-home-redesign .agh-home-search-fields{grid-template-columns:1fr!important;gap:7px!important}
+ .agh-home-redesign .agh-home-field{min-height:49px!important}
+ .agh-home-redesign .agh-home-search-button{min-height:47px!important}
+ .agh-home-redesign .agh-home-popular{justify-content:flex-start!important}
+ .agh-home-redesign .agh-home-popular>b{width:100%!important}
+ .agh-stitch-stats{grid-template-columns:repeat(2,1fr)!important;row-gap:13px!important;margin-top:18px!important;padding-top:14px!important}
+ .agh-stitch-stats>div:nth-child(2){border:0!important}
+ .agh-stitch-stats strong{font-size:17px!important}
+ .agh-stitch-stats small{font-size:7px!important}
+ .agh-home-redesign .agh-home-categories,.agh-home-redesign .agh-home-listings{padding:34px 15px!important}
+ .agh-home-redesign .agh-home-section-heading{align-items:flex-start!important;flex-direction:column!important;gap:12px!important}
+ .agh-home-redesign .agh-home-section-heading h2{font-size:23px!important}
+ .agh-home-redesign .agh-home-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ .agh-home-redesign .agh-home-category-grid>button{min-height:130px!important;padding:13px!important}
+ .agh-home-redesign .agh-home-category-icon{width:36px!important;height:36px!important;margin-bottom:9px!important}
+ .agh-home-redesign .agh-home-category-grid>button strong{font-size:11px!important}
+ .agh-home-redesign .agh-home-listing-tools{width:100%!important;flex-wrap:wrap!important}
+ .agh-home-redesign .agh-home-property-grid{grid-template-columns:1fr!important;gap:14px!important}
+ .agh-home-redesign .agh-home-property-image{height:220px!important}
+ .agh-home-redesign .agh-home-benefits{grid-template-columns:1fr!important;padding:34px 15px!important;gap:10px!important}
+ .agh-home-redesign .agh-home-owner-cta{width:calc(100% - 30px)!important;margin-bottom:30px!important;padding:22px 17px!important}
+ .agh-home-redesign .agh-home-cta-panel{min-height:320px!important}
+ .agh-home-redesign .agh-home-footer{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:25px 16px!important;padding:30px 16px 90px!important}
+ .agh-home-redesign .agh-home-footer-brand{grid-column:1/-1!important}
+ .agh-home-redesign .agh-home-footer-bottom{grid-column:1/-1!important;flex-direction:column!important;gap:8px!important}
+ .agh-home-redesign .agh-home-mobile-nav{position:fixed!important;z-index:80!important;left:10px!important;right:10px!important;bottom:10px!important;display:grid!important;grid-template-columns:repeat(5,1fr)!important;padding:8px 5px!important;border:1px solid #e2e8f0!important;border-radius:18px!important;background:rgba(255,255,255,.96)!important;box-shadow:0 8px 28px rgba(15,23,42,.16)!important;backdrop-filter:blur(16px)!important}
+ .agh-home-redesign .agh-home-mobile-nav a{display:flex!important;flex-direction:column!important;align-items:center!important;gap:2px!important;color:#64748b!important;font-size:18px!important;font-weight:800!important}
+ .agh-home-redesign .agh-home-mobile-nav a small{font-size:8px!important;font-weight:700!important}
+ .agh-home-redesign .agh-home-mobile-nav a.active{color:#005bea!important}
+ .agh-home-redesign .agh-home-mobile-nav a.post{color:#005bea!important}
+}
+@media(prefers-reduced-motion:reduce){.agh-home-redesign *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
