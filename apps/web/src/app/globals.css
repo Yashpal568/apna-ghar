@@ -5938,3 +5938,58 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
   .agh-home-redesign .agh-hero-search-filter{flex-basis:29px!important;width:29px!important}
   .agh-home-redesign .agh-hero-search-submit{flex-basis:38px!important;width:38px!important;height:38px!important}
 }
+
+
+/* Mobile home polish: smaller trust marks, a slimmer glass search pill,
+   and a persistent site header while the page scrolls. */
+.agh-market-header-scope{
+  position:sticky!important;
+  top:0!important;
+  z-index:12000!important;
+  align-self:flex-start!important;
+  width:100%!important;
+}
+.agh-market-header-scope .agh-header{
+  position:relative!important;
+  z-index:12000!important;
+}
+@media(max-width:700px){
+  .agh-home-redesign .agh-stitch-stat-icon{
+    width:23px!important;
+    height:23px!important;
+    stroke-width:2!important;
+  }
+  .agh-home-redesign .agh-stitch-stat-rupee{
+    font-size:21px!important;
+    line-height:23px!important;
+  }
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div{
+    gap:2px!important;
+  }
+  .agh-home-redesign .agh-home-hero.agh-stitch-hero>.agh-hero-searchbar{
+    background:rgba(210,232,244,.045)!important;
+    border-color:rgba(255,255,255,.48)!important;
+    box-shadow:0 8px 22px rgba(0,12,28,.10),inset 0 1px 0 rgba(255,255,255,.12)!important;
+    -webkit-backdrop-filter:blur(19px) saturate(155%)!important;
+    backdrop-filter:blur(19px) saturate(155%)!important;
+  }
+  .agh-home-redesign .agh-hero-searchbar-main{
+    min-height:46px!important;
+    height:46px!important;
+    padding:3px!important;
+  }
+  .agh-home-redesign .agh-hero-search-transaction,
+  .agh-home-redesign .agh-hero-search-location{
+    height:38px!important;
+  }
+  .agh-home-redesign .agh-hero-search-filter{height:36px!important}
+  .agh-home-redesign .agh-hero-search-submit{
+    width:38px!important;
+    height:38px!important;
+    flex-basis:38px!important;
+  }
+  .agh-home-redesign .agh-hero-search-submit svg{
+    width:18px!important;
+    height:18px!important;
+  }
+}
