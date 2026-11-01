@@ -4348,3 +4348,125 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
  .agh-market-header-scope .agh-brand{margin-right:auto}
  .agh-market-header-scope .agh-menu-toggle{display:grid!important;flex:0 0 42px;margin-left:auto}
 }
+
+
+/* FINAL correction: remove the constrained header container and put carousel above hero background */
+.agh-market-header-scope{
+  display:block!important;
+  position:relative!important;
+  left:calc(50% - 50vw)!important;
+  width:100vw!important;
+  max-width:100vw!important;
+  margin-left:0!important;
+  margin-right:0!important;
+}
+.agh-market-header-scope .agh-header{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  border-radius:0!important;
+}
+.agh-market .agh-market-header-scope .agh-header-main{
+  display:grid!important;
+  grid-template-columns:minmax(170px,auto) minmax(220px, min(27vw,440px)) minmax(0,1fr) auto!important;
+  align-items:center!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:78px!important;
+  margin:0!important;
+  padding:10px clamp(24px,4vw,76px)!important;
+  gap:clamp(12px,1.5vw,28px)!important;
+}
+.agh-market-header-scope .agh-brand{min-width:max-content!important}
+.agh-market-header-scope .agh-top-search{width:100%!important;max-width:none!important;min-width:0!important}
+.agh-market-header-scope .agh-desktop-nav{min-width:0!important;display:flex!important;justify-content:center!important;gap:clamp(2px,.55vw,10px)!important}
+.agh-market-header-scope .agh-desktop-nav a{padding-inline:clamp(6px,.65vw,12px)!important}
+.agh-market-header-scope .agh-header-actions{min-width:max-content!important}
+.agh-home-redesign .agh-home-hero{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  background:transparent!important;
+}
+.agh-home-redesign .agh-home-hero-carousel{
+  position:absolute!important;
+  z-index:0!important;
+  inset:0!important;
+  display:block!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+}
+.agh-home-redesign .agh-home-hero-carousel:after{
+  content:""!important;
+  position:absolute!important;
+  z-index:1!important;
+  inset:0!important;
+  background:linear-gradient(105deg,rgba(238,243,255,.70),rgba(231,250,245,.67)),linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.48))!important;
+  backdrop-filter:blur(5px) saturate(1.08)!important;
+  -webkit-backdrop-filter:blur(5px) saturate(1.08)!important;
+}
+.agh-home-redesign .agh-home-hero-slide{
+  z-index:0!important;
+  display:block!important;
+  inset:-24px!important;
+  background-size:cover!important;
+  background-position:center 48%!important;
+  filter:blur(10px) saturate(.95)!important;
+  opacity:0!important;
+  animation:agh-hero-crossfade 24s infinite ease-in-out!important;
+}
+.agh-home-redesign .agh-home-hero-slide-one{
+  background-image:url("https://images.unsplash.com/photo-1600585154340-be6161a56c0a?auto=format&fit=crop&w=2200&q=90")!important;
+  animation-delay:0s!important;
+}
+.agh-home-redesign .agh-home-hero-slide-two{
+  background-image:url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2200&q=90")!important;
+  animation-delay:8s!important;
+}
+.agh-home-redesign .agh-home-hero-slide-three{
+  background-image:url("https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2200&q=90")!important;
+  animation-delay:16s!important;
+}
+.agh-home-redesign .agh-home-hero-top,
+.agh-home-redesign .agh-home-hero-grid,
+.agh-home-redesign .agh-home-search-panel{position:relative!important;z-index:2!important}
+@media(max-width:1450px) and (min-width:1201px){
+ .agh-market .agh-market-header-scope .agh-header-main{
+  grid-template-columns:minmax(155px,auto) minmax(190px,1fr) auto!important;
+  padding-inline:clamp(18px,2.5vw,36px)!important;
+  gap:12px!important;
+ }
+ .agh-market-header-scope .agh-desktop-nav{display:none!important}
+ .agh-market-header-scope .agh-menu-toggle{display:grid!important}
+}
+@media(max-width:1200px) and (min-width:761px){
+ .agh-market .agh-market-header-scope .agh-header-main{
+  grid-template-columns:minmax(150px,auto) minmax(170px,1fr) auto!important;
+  padding-inline:22px!important;gap:12px!important;
+ }
+ .agh-market-header-scope .agh-desktop-nav{display:none!important}
+ .agh-market-header-scope .agh-menu-toggle{display:grid!important}
+}
+@media(max-width:760px){
+ .agh-market-header-scope{left:auto!important;width:100%!important;max-width:100%!important;margin:0!important}
+ .agh-market .agh-market-header-scope .agh-header-main{
+  display:flex!important;grid-template-columns:none!important;width:100%!important;
+  min-height:64px!important;padding:9px 16px!important;gap:8px!important;
+ }
+ .agh-market-header-scope .agh-top-search,
+ .agh-market-header-scope .agh-desktop-nav,
+ .agh-market-header-scope .agh-mobile-search,
+ .agh-market-header-scope .agh-header-actions{display:none!important}
+ .agh-market-header-scope .agh-brand{min-width:0!important;max-width:calc(100% - 56px)!important;margin-right:auto!important}
+ .agh-market-header-scope .agh-menu-toggle{display:grid!important;flex:0 0 42px!important;margin-left:auto!important}
+ .agh-home-redesign .agh-home-hero{background:transparent!important}
+ .agh-home-redesign .agh-home-hero-carousel:after{
+  background:linear-gradient(105deg,rgba(238,243,255,.76),rgba(231,250,245,.72)),linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.48))!important;
+  backdrop-filter:blur(7px) saturate(1.05)!important;
+  -webkit-backdrop-filter:blur(7px) saturate(1.05)!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .agh-home-redesign .agh-home-hero-slide{animation:none!important;opacity:.32!important}
+}
