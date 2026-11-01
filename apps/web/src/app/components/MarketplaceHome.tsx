@@ -132,13 +132,23 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
   return <main className="agh-market agh-home-redesign">
     <SiteHeader active="home" searchValue={location} onSearchChange={setLocation} />
 
-    <section className="agh-home-hero agh-stitch-hero" aria-label="Discover properties">
-      <div className="agh-stitch-hero-inner">
-        <div className="agh-stitch-kicker"><span>DIRECT OWNER PROPERTY MARKETPLACE</span><i/>Discover homes across India</div>
-        <h1>Find your dream home with <em>Zero Brokerage.</em></h1>
-        <p>Connect directly with verified property owners across India. No middlemen, no spam,<br className="agh-desktop-break"/> 100% verified deeds.</p>
+    <section className="agh-home-hero agh-stitch-hero agh-image-carousel" aria-label="Discover properties">
+      <div className="agh-hero-media" aria-hidden="true">
+        <img key={"desktop-"+heroIndex} className="agh-hero-background agh-hero-background-desktop" src={heroSlides[heroIndex].image} alt="" fetchPriority="high"/>
+        <img key={"mobile-"+heroIndex} className="agh-hero-background agh-hero-background-mobile" src={heroSlides[heroIndex].image} alt="" fetchPriority="high"/>
+        <div className="agh-hero-image-shade"/>
       </div>
-    <div className="agh-home-search-panel">
+      <div className="agh-stitch-hero-inner">
+        <div className="agh-stitch-kicker"><span>{heroSlides[heroIndex].eyebrow}</span><i/>Direct owner homes across India</div>
+        <h1>{heroSlides[heroIndex].title}</h1>
+        <p>{heroSlides[heroIndex].description}</p>
+        <div className="agh-hero-carousel-controls">
+          <button type="button" aria-label="Previous hero slide" onClick={() => setHeroIndex(index => (index - 1 + heroSlides.length) % heroSlides.length)}>‹</button>
+          <div className="agh-hero-carousel-dots">{heroSlides.map((slide,index)=><button key={slide.eyebrow} type="button" aria-label={"Show slide "+(index+1)} aria-current={heroIndex===index?"true":undefined} className={heroIndex===index?"active":""} onClick={()=>setHeroIndex(index)}/>)}</div>
+          <button type="button" aria-label="Next hero slide" onClick={() => setHeroIndex(index => (index + 1) % heroSlides.length)}>›</button>
+        </div>
+      </div>
+      <div className="agh-home-search-panel agh-glass-search">
         <div className="agh-home-search-top">
           <div className="agh-home-search-tabs">
             <button type="button" aria-pressed={activeTab === "buy"} className={activeTab === "buy" ? "active" : ""} onClick={() => { setActiveTab("buy"); setCategory("all"); }}>Buy</button>
@@ -149,7 +159,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
           <span className="agh-home-search-assurance">♧ &nbsp; Listings from direct owners</span>
         </div>
         <div className="agh-home-search-fields">
-          <label className="agh-home-field agh-home-field-location"><small>LOCATION / LOCALITY</small><span>⌖ <input aria-label="City or locality" value={location} onChange={event => setLocation(event.target.value)} placeholder="Enter city, area or landmark" /></span></label>
+          <label className="agh-home-field agh-home-field-location"><small>LOCATION / LOCALITY</small><span>⌖ <input aria-label="City or locality" value={location} onChange={event => setLocation(event.target.value)} placeholder="Enter city, area or landmark"/></span></label>
           <label className="agh-home-field"><small>PROPERTY TYPE</small><select value={category} onChange={event => { const next = event.target.value; setCategory(next); if (next === "commercial") setActiveTab("commercial"); else if (next === "plots") setActiveTab("plots"); else if (activeTab === "commercial" || activeTab === "plots") setActiveTab("buy"); }}><option value="all">All property types</option>{categories.filter(item => item.key !== "all").map(item => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
           <label className="agh-home-field"><small>BUDGET RANGE</small><select value={budget} onChange={event => setBudget(event.target.value)}><option value="any">Any budget</option><option value="50">Up to ₹50 lakh</option><option value="100">Up to ₹1 crore</option></select></label>
           <button type="button" className="agh-home-search-button" onClick={() => window.location.assign(searchUrl)}><span className="agh-home-search-button-label">Search properties</span><span className="agh-home-search-button-icon" aria-hidden="true">↗</span></button>
