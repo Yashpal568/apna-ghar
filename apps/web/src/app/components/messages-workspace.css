@@ -1,836 +1,503 @@
 /* ==========================================================================
-   Apna Ghar - PropTech Horizon Messaging Workspace
-   Full Viewport Height & Width · Modern 3-Column Desktop · Dedicated Mobile UI
-   All 5 Themes Supported (Light, Midnight, Graphite, Forest, AMOLED Black)
+   Apna Ghar - PropTech Horizon Stitch 32/30 Negotiation Chat Screen
+   Pixel-Perfect Match with Stitch Design Reference (32 & 30)
+   Full Viewport Mobile & Responsive Desktop Architecture
    ========================================================================== */
 
-/* 1. Shell container: fills available height without outer scrolling */
-.messages-workspace-shell {
+:root {
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #424655;
+  --color-primary: #0045b7;
+  --color-primary-container: #005bea;
+  --color-on-primary: #ffffff;
+  --color-secondary: #006d3d;
+  --color-secondary-container: #50fd9f;
+  --color-on-secondary-container: #007240;
+  --color-secondary-fixed: #5affa3;
+  --color-secondary-fixed-dim: #28e288;
+  --color-outline: #737687;
+  --color-outline-variant: #c3c6d8;
+  --color-inverse-surface: #213145;
+  --color-inverse-on-surface: #eaf1ff;
+}
+
+/* Base Body Configuration on /messages */
+html:has(.stitch-chat-shell),
+body:has(.stitch-chat-shell) {
   width: 100vw;
-  max-width: 100%;
   height: 100dvh;
   margin: 0;
   padding: 0;
+  overflow: hidden !important;
+  background-color: var(--color-surface, #f8f9ff);
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+/* Suppress outer site chrome on /messages */
+body:has(.stitch-chat-shell) footer,
+body:has(.stitch-chat-shell) .ag-site-footer,
+body:has(.stitch-chat-shell) .agh-footer,
+body:has(.stitch-chat-shell) .site-footer,
+body:has(.stitch-chat-shell) .ag-bottom-nav,
+body:has(.stitch-chat-shell) > header.ag-site-header,
+body:has(.stitch-chat-shell) > .ag-site-header {
+  display: none !important;
+}
+
+/* 1. Main Chat Shell */
+.stitch-chat-shell {
+  width: 100vw;
+  max-width: 100%;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--color-bg, #f8f9ff);
-  color: var(--color-text, #0b1c30);
+  background-color: var(--color-surface, #f8f9ff);
+  color: var(--color-on-surface, #0b1c30);
+  position: relative;
   overflow: hidden;
   box-sizing: border-box;
 }
 
-/* 2. Sleek PropTech Horizon Top Meta Bar */
-.messages-horizon-bar {
-  height: 42px;
-  min-height: 42px;
+/* 2. Fixed Sticky Top Header */
+.stitch-chat-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 64px;
+  min-height: 64px;
+  background: rgba(248, 249, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(195, 198, 216, 0.35);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+.stitch-chat-header-inner {
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  background: var(--color-surface, #ffffff);
-  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
-  flex-shrink: 0;
-  z-index: 10;
+  gap: 8px;
 }
 
-.messages-horizon-left {
+.stitch-chat-header-left {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
-  color: var(--color-muted, #737687);
   min-width: 0;
+  flex: 1;
 }
 
-.messages-horizon-live-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 6px #10b981;
+.stitch-header-back-btn {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--color-on-surface, #0b1c30);
+  cursor: pointer;
+  border-radius: 9999px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  margin-left: -8px;
   flex-shrink: 0;
 }
 
-.messages-horizon-title {
+.stitch-header-back-btn:hover {
+  background-color: var(--color-surface-container, #e5eeff);
   color: var(--color-primary, #0045b7);
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
 }
 
-.messages-horizon-sep {
-  color: var(--color-border, rgba(0, 0, 0, 0.15));
+.stitch-chat-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
-.messages-horizon-meta {
-  color: var(--color-text, #0b1c30);
+.stitch-header-circle-btn {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 9999px;
+  background-color: var(--color-surface-container-low, #eff4ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.stitch-header-circle-btn:hover {
+  background-color: var(--color-surface-container, #e5eeff);
+}
+
+.stitch-header-circle-btn:active {
+  transform: scale(0.95);
+}
+
+/* 3. Main Workspace Layout */
+.stitch-chat-layout-wrapper {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  overflow: hidden;
+  background-color: var(--color-surface, #f8f9ff);
+}
+
+/* Desktop Sidebar for Conversations List */
+.stitch-desktop-sidebar {
+  width: 320px;
+  min-width: 320px;
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  background-color: var(--color-surface-container-lowest, #ffffff);
+  border-right: 1px solid rgba(195, 198, 216, 0.4);
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .stitch-desktop-sidebar {
+    display: flex;
+  }
+}
+
+/* Center / Full-Width Chat Screen */
+.stitch-chat-main {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface, #f8f9ff);
+  position: relative;
+  overflow: hidden;
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .stitch-chat-main {
+    border-right: 1px solid rgba(195, 198, 216, 0.35);
+  }
+}
+
+/* 4. Pinned Sticky Property Micro-Context Strip */
+.stitch-property-sticky-strip {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  width: 100%;
+  padding: 8px 16px;
+  background: rgba(248, 249, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.stitch-property-context-card {
+  width: 100%;
+  background-color: var(--color-surface-container-lowest, #ffffff);
+  border-radius: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(195, 198, 216, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.stitch-property-context-card:active {
+  transform: scale(0.99);
+}
+
+.stitch-property-specs-drawer {
+  padding-top: 8px;
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 5. Native Chat Message Stream */
+.stitch-chat-stream {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.stitch-chat-stream::-webkit-scrollbar {
+  display: none;
+}
+
+/* 6. Bottom Interactive Anchor (Composer + Suggestions) */
+.stitch-bottom-anchor {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: rgba(248, 249, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(195, 198, 216, 0.3);
+  padding-top: 6px;
+  padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  z-index: 40;
+  flex-shrink: 0;
+}
+
+.stitch-chips-tray {
+  width: 100%;
+  overflow-x: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 16px 6px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  box-sizing: border-box;
+}
+
+.stitch-chips-tray::-webkit-scrollbar {
+  display: none;
+}
+
+.stitch-chip-btn {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
-}
-
-.messages-horizon-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: color-mix(in srgb, #006d3d 12%, var(--color-surface));
-  color: #006d3d;
-  font-size: 10.5px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.messages-horizon-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 11px;
-  flex-shrink: 0;
-}
-
-.messages-horizon-session {
-  color: var(--color-muted, #737687);
-}
-
-.messages-horizon-browse-btn {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--color-primary, #0045b7);
-  text-decoration: none;
-  transition: opacity 0.15s ease;
-}
-
-.messages-horizon-browse-btn:hover {
-  text-decoration: underline;
-}
-
-/* 3. Main Workspace Grid Layout */
-.messages-workspace-layout {
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 320px minmax(0, 1fr) 350px;
-  background: var(--color-bg, #f8f9ff);
-  overflow: hidden;
-}
-
-@media (min-width: 1600px) {
-  .messages-workspace-layout {
-    grid-template-columns: 340px minmax(0, 1fr) 380px;
-  }
-}
-
-@media (max-width: 1200px) and (min-width: 901px) {
-  .messages-workspace-layout {
-    grid-template-columns: 290px minmax(0, 1fr) 310px;
-  }
-}
-
-/* ==========================================================================
-   COLUMN 1: CONVERSATIONS SIDEBAR
-   ========================================================================== */
-.messages-col-sidebar {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: var(--color-surface, #ffffff);
-  border-right: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
-  overflow: hidden;
-  min-width: 0;
-}
-
-.messages-sidebar-top {
-  padding: 12px 14px 10px;
-  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.06));
-  flex-shrink: 0;
-}
-
-.messages-sidebar-list {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.messages-thread-item {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid transparent;
-  background: transparent;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(195, 198, 216, 0.35);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: transform 0.1s ease, background-color 0.15s ease;
+  user-select: none;
+}
+
+.stitch-chip-btn:hover {
+  filter: brightness(0.97);
+}
+
+.stitch-chip-btn:active {
+  transform: scale(0.95);
+}
+
+.stitch-composer-wrap {
+  padding: 2px 16px 4px;
   box-sizing: border-box;
 }
 
-.messages-thread-item:hover {
-  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
-}
-
-.messages-thread-item.is-active {
-  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
-  border-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
-}
-
-.messages-sidebar-footer {
-  padding: 8px 14px;
-  border-top: 1px solid var(--color-border, rgba(0, 0, 0, 0.06));
+.stitch-composer-form {
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  font-size: 10.5px;
-  color: var(--color-muted, #737687);
-  background: color-mix(in srgb, var(--color-surface) 95%, #000);
-  flex-shrink: 0;
-}
-
-/* ==========================================================================
-   COLUMN 2: CENTER CHAT & NEGOTIATION STREAM
-   ========================================================================== */
-.messages-col-chat {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: var(--color-surface, #ffffff);
-  overflow: hidden;
-  position: relative;
-  min-width: 0;
-}
-
-.messages-chat-header {
-  height: 56px;
-  min-height: 56px;
-  padding: 8px 16px;
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 12px !important;
-  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
-  background: var(--color-surface, #ffffff);
-  flex-shrink: 0;
-  z-index: 10;
+  gap: 6px;
+  background-color: var(--color-surface-container-lowest, #ffffff);
+  border-radius: 9999px;
+  padding: 4px 6px 4px 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(195, 198, 216, 0.45);
   box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.messages-chat-header-left {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  gap: 10px !important;
-  min-width: 0 !important;
-  flex: 1 !important;
-}
-
-.messages-chat-user-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--color-primary, #0045b7), #005bea);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 13px;
-  position: relative;
-  flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0, 69, 183, 0.2);
-}
-
-.messages-chat-user-avatar .online-dot {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #10b981;
-  border: 2px solid var(--color-surface, #ffffff);
-}
-
-.messages-chat-user-meta {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1;
-}
-
-.messages-chat-user-title-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-.messages-chat-user-name {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--color-text, #0b1c30);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin: 0;
-}
-
-.messages-chat-user-badge {
-  padding: 1px 6px;
-  border-radius: 6px;
-  background: rgba(0, 109, 61, 0.12);
-  color: #006d3d;
-  font-size: 9.5px;
-  font-weight: 700;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  flex-shrink: 0;
-}
-
-.messages-chat-user-sub {
-  font-size: 10.5px;
-  color: var(--color-muted, #737687);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-top: 1px;
-}
-
-.messages-chat-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.messages-action-pill {
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 8px;
-  background: var(--color-surface-container, #eff4ff);
-  color: var(--color-text, #0b1c30);
-  font-size: 11px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  text-decoration: none;
-  transition: all 0.15s ease;
-}
-
-.messages-action-pill:hover {
-  background: color-mix(in srgb, var(--color-primary, #0045b7) 15%, var(--color-surface));
-  color: var(--color-primary, #0045b7);
-}
-
-.messages-mobile-back-btn {
-  display: none;
-}
-
-.messages-dossier-pill-btn {
-  display: none;
-}
-
-/* Sticky Micro-Context Strip */
-.messages-context-micro-strip {
-  height: 48px;
-  min-height: 48px;
-  padding: 6px 16px;
-  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
-  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.06));
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-shrink: 0;
-  z-index: 9;
-  box-sizing: border-box;
-}
-
-.messages-micro-strip-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  flex: 1;
-}
-
-.messages-micro-thumb {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  object-fit: cover;
-  flex-shrink: 0;
-  background: var(--color-surface);
-}
-
-.messages-micro-info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1;
-}
-
-.messages-micro-title-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-.messages-micro-title {
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--color-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin: 0;
-}
-
-.messages-zero-broker-pill {
-  padding: 1px 6px;
-  border-radius: 999px;
-  background: #006d3d;
-  color: #ffffff;
-  font-size: 8.5px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  flex-shrink: 0;
-}
-
-.messages-micro-details {
-  font-size: 11px;
-  color: var(--color-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.messages-micro-price {
-  font-weight: 800;
-  color: var(--color-primary);
-}
-
-.messages-micro-view-link {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--color-primary);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
-}
-
-.messages-micro-view-link:hover {
-  text-decoration: underline;
-}
-
-/* Chat Stream */
-.messages-chat-stream {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  background: color-mix(in srgb, var(--color-bg) 60%, var(--color-surface));
-}
-
-/* Quick Prompts Bar */
-.messages-quick-prompts-tray {
-  padding: 6px 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  overflow-x: auto;
-  background: var(--color-surface, #ffffff);
-  border-top: 1px solid var(--color-border, rgba(0, 0, 0, 0.06));
-  flex-shrink: 0;
-}
-
-/* Bottom Composer Dock */
-.messages-composer-dock {
-  padding: 8px 14px 10px;
-  background: var(--color-surface, #ffffff);
-  border-top: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.messages-composer-input-card {
-  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.12));
-  border-radius: 14px;
-  background: var(--color-surface-subtle, #f8f9ff);
-  transition: all 0.15s ease;
-}
-
-.messages-composer-input-card:focus-within {
+.stitch-composer-form:focus-within {
   border-color: var(--color-primary, #0045b7);
-  background: var(--color-surface, #ffffff);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
+  box-shadow: 0 2px 12px rgba(0, 69, 183, 0.12);
 }
 
-/* ==========================================================================
-   COLUMN 3: PROPERTY & NEGOTIATION DOSSIER
-   ========================================================================== */
-.messages-col-dossier {
-  height: 100%;
+.stitch-composer-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--color-outline, #737687);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.stitch-composer-icon-btn:hover {
+  color: var(--color-primary, #0045b7);
+  background-color: var(--color-surface-container, #e5eeff);
+}
+
+.stitch-composer-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 8px 4px;
+  font-size: 14px;
+  color: var(--color-on-surface, #0b1c30);
+  font-family: inherit;
+}
+
+.stitch-composer-input::placeholder {
+  color: rgba(115, 118, 135, 0.7);
+}
+
+.stitch-composer-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background-color: var(--color-primary, #0045b7);
+  color: var(--color-on-primary, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 69, 183, 0.35);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+}
+
+.stitch-composer-send-btn:hover:not(:disabled) {
+  background-color: var(--color-primary-container, #005bea);
+}
+
+.stitch-composer-send-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.stitch-composer-send-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* 7. Slide-Up Counter Offer Bottom Sheet Modal */
+.stitch-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(33, 49, 69, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.stitch-bottom-sheet {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  background-color: var(--color-surface-container-lowest, #ffffff);
+  border-radius: 24px 24px 0 0;
+  padding: 16px 20px 24px;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
+  max-height: 90vh;
   overflow-y: auto;
-  background: var(--color-surface, #ffffff);
-  border-left: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
-  padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  min-width: 0;
+  box-sizing: border-box;
 }
 
-/* Empty Auth View */
-.messages-empty-auth-view {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-.messages-empty-auth-card {
-  max-width: 440px;
-  text-align: center;
-  padding: 32px 24px;
-  border-radius: 20px;
-  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
-  background: var(--color-surface, #ffffff);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-}
-
-.messages-empty-icon-wrap {
-  width: 60px;
-  height: 60px;
-  margin: 0 auto 16px;
+/* 8. Floating Action Toast */
+.stitch-floating-toast {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  background-color: var(--color-inverse-surface, #213145);
+  color: var(--color-inverse-on-surface, #eaf1ff);
+  padding: 12px 18px;
   border-radius: 16px;
-  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 12px;
+  max-width: 380px;
+  width: calc(100% - 32px);
+  pointer-events: none;
+  animation: slideDownToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.messages-empty-auth-card h2 {
-  font-size: 18px;
-  font-weight: 800;
-  margin-bottom: 8px;
-  color: var(--color-text);
-}
-
-.messages-empty-auth-card p {
-  font-size: 13px;
-  color: var(--color-muted);
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-.messages-empty-cta-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 22px;
-  border-radius: 12px;
-  background: var(--color-primary, #0045b7);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 25%, transparent);
-  transition: all 0.15s ease;
-}
-
-.messages-empty-cta-btn:hover {
-  transform: translateY(-1px);
-}
-
-/* ==========================================================================
-   RESPONSIVE MOBILE ARCHITECTURE (< 900px)
-   ========================================================================== */
-@media (max-width: 900px) {
-  /* Hide the extra marketplace search bar on mobile messages so the chat header takes its rightful place */
-  .messages-workspace-shell .agh-mobile-search {
-    display: none !important;
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-
-  /* On mobile, reserve space for the mobile bottom nav dock */
-  .messages-workspace-shell {
-    height: calc(100dvh - 65px - env(safe-area-inset-bottom)) !important;
-    min-height: 0 !important;
-  }
-
-  .messages-workspace-layout {
-    grid-template-columns: minmax(0, 1fr) !important;
-    height: 100% !important;
-  }
-
-  /* When chat is active on mobile: Column 1 and Column 3 are hidden!
-     The chat column takes 100% width and height! */
-  .messages-workspace-layout.is-chat-active .messages-col-sidebar {
-    display: none !important;
-  }
-
-  .messages-workspace-layout.is-chat-active .messages-col-dossier {
-    display: none !important; /* CRITICAL: Never stack under composer! */
-  }
-
-  .messages-workspace-layout.is-chat-active .messages-col-chat {
-    display: flex !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  /* When inbox list is active on mobile: Column 2 and 3 are hidden */
-  .messages-workspace-layout.is-sidebar-active .messages-col-chat,
-  .messages-workspace-layout.is-sidebar-active .messages-col-dossier {
-    display: none !important;
-  }
-
-  .messages-workspace-layout.is-sidebar-active .messages-col-sidebar {
-    display: flex !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  .messages-mobile-back-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-surface-container, #eff4ff);
-    color: var(--color-text, #0b1c30);
-    border: none;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  .messages-dossier-pill-btn {
-    display: inline-flex !important;
-    height: 30px;
-    padding: 0 8px;
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--color-primary, #0045b7) 12%, var(--color-surface));
-    color: var(--color-primary, #0045b7);
-    font-size: 11px;
-    font-weight: 700;
-    align-items: center;
-    gap: 4px;
-    border: none;
-    cursor: pointer;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .messages-chat-header {
-    height: 52px !important;
-    min-height: 52px !important;
-    padding: 6px 10px !important;
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 6px !important;
-    box-sizing: border-box !important;
-  }
-
-  .messages-chat-header-left {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    gap: 6px !important;
-    min-width: 0 !important;
-    flex: 1 !important;
-    overflow: hidden !important;
-  }
-
-  .messages-chat-user-avatar {
-    width: 32px !important;
-    height: 32px !important;
-    font-size: 12px !important;
-    border-radius: 8px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .messages-chat-user-meta {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    min-width: 0 !important;
-    flex: 1 !important;
-    overflow: hidden !important;
-  }
-
-  .messages-chat-user-title-row {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    gap: 4px !important;
-    min-width: 0 !important;
-    overflow: hidden !important;
-  }
-
-  .messages-chat-user-name {
-    font-size: 12.5px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-  }
-
-  .messages-chat-user-badge {
-    padding: 1px 4px !important;
-    font-size: 8.5px !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-
-  .messages-chat-user-sub {
-    font-size: 9.5px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    margin: 0 !important;
-  }
-
-  .messages-chat-actions {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    gap: 4px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .messages-context-micro-strip {
-    height: 40px !important;
-    min-height: 40px !important;
-    padding: 4px 10px !important;
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 6px !important;
-    box-sizing: border-box !important;
-  }
-
-  .messages-micro-strip-left {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    gap: 6px !important;
-    min-width: 0 !important;
-    flex: 1 !important;
-    overflow: hidden !important;
-  }
-
-  .messages-micro-thumb {
-    width: 26px !important;
-    height: 26px !important;
-    border-radius: 6px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .messages-micro-info {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    min-width: 0 !important;
-    flex: 1 !important;
-    overflow: hidden !important;
-  }
-
-  .messages-micro-title-row {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    gap: 4px !important;
-    min-width: 0 !important;
-    overflow: hidden !important;
-  }
-
-  .messages-micro-title {
-    font-size: 11px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    margin: 0 !important;
-  }
-
-  .messages-zero-broker-pill {
-    font-size: 7.5px !important;
-    padding: 1px 4px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .messages-micro-details {
-    font-size: 9.5px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-  }
-
-  .messages-micro-view-link {
-    font-size: 10px !important;
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-
-  .messages-quick-prompts-tray {
-    padding: 4px 8px !important;
-    gap: 4px !important;
-  }
-
-  .messages-composer-dock {
-    padding: 6px 8px 8px !important;
+  to {
+    opacity: 1;
   }
 }
 
-@media (max-width: 420px) {
-  .messages-chat-user-badge-text {
-    display: none !important;
+@keyframes slideDownToast {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -12px);
   }
-  .messages-dossier-pill-text {
-    display: none !important;
-  }
-  .messages-dossier-pill-btn {
-    padding: 0 6px !important;
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 }
 
-/* Suppress site-wide footer on /messages only */
-body:has(.messages-workspace-shell) footer:not(.cl-footer),
-body:has(.messages-workspace-shell) .ag-site-footer,
-body:has(.messages-workspace-shell) .agh-footer,
-body:has(.messages-workspace-shell) .site-footer {
-  display: none !important;
+.animate-in {
+  animation-duration: 0.25s;
+  animation-fill-mode: both;
+}
+
+.slide-in-from-bottom {
+  animation-name: slideInFromBottom;
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
