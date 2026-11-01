@@ -134,7 +134,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
 
     <section className="agh-home-hero agh-stitch-hero" aria-label="Discover properties">
       <div className="agh-stitch-hero-inner">
-        <div className="agh-stitch-kicker"><span>INDIA'S #1 DIRECT OWNER PORTAL</span><i/>100% Aadhaar &amp; Deed Verified</div>
+        <div className="agh-stitch-kicker"><span>DIRECT OWNER PROPERTY MARKETPLACE</span><i/>Discover homes across India</div>
         <h1>Find your dream home with <em>Zero Brokerage.</em></h1>
         <p>Connect directly with verified property owners across India. No middlemen, no spam,<br className="agh-desktop-break"/> 100% verified deeds.</p>
       </div>
@@ -185,9 +185,9 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
 
     <section className="agh-home-benefits">
       <article><span className="agh-home-benefit-icon green">▣</span><b>ZERO BROKERAGE GUARANTEED</b><h3>Strict 0% Commission</h3><p>Buyers and tenants save an average of ₹2.4 Lakhs in an unbrokered commission on every home purchase.</p><small>✓ &nbsp; Zero Platform Markups</small></article>
-      <article><span className="agh-home-benefit-icon blue">♢</span><b>PROPERTY CONFIDENCE</b><h3>Kaveri &amp; DigiLocker Check</h3><p>Property titles, encumbrance certificates (EC), and municipal ownership records are verified directly via state registries.</p><small>✓ &nbsp; State Registry Sync</small></article>
-      <article><span className="agh-home-benefit-icon green">▣</span><b>DIRECT CONNECTION</b><h3>Encrypted Masked Calls</h3><p>Your real mobile number is never shared. Talk to owners via a private virtual number, preventing telemarketer spam forever.</p><small>✓ &nbsp; 100% Number Privacy</small></article>
-      <article><span className="agh-home-benefit-icon blue">₹</span><b>SECURE TRANSACTIONS</b><h3>Protected Booking Journey</h3><p>Review property details and ownership information carefully before proceeding with a booking.</p><small>✓ &nbsp; Make informed decisions</small></article>
+      <article><span className="agh-home-benefit-icon blue">♢</span><b>PROPERTY DISCOVERY</b><h3>Clear Property Details</h3><p>Compare the listing information, location, price and available property details before contacting an owner.</p><small>✓ &nbsp; Browse with clarity</small></article>
+      <article><span className="agh-home-benefit-icon green">▣</span><b>OWNER CONNECTION</b><h3>Chat with Property Owners</h3><p>Start a conversation with a property owner through your Apna Ghar account and discuss the listing directly.</p><small>✓ &nbsp; Account-based messaging</small></article>
+      <article><span className="agh-home-benefit-icon blue">₹</span><b>PROPERTY MANAGEMENT</b><h3>Manage Your Listings</h3><p>Publish your property and manage the details of your listing from your Apna Ghar account.</p><small>✓ &nbsp; Owner listing tools</small></article>
     </section>
 
     <section className="agh-home-owner-cta">
