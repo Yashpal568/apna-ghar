@@ -81,7 +81,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>
+      <body data-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA || "local"}>
         {process.env.VERCEL === '1' ? (
           <Script src="/_vercel/insights/script.js" strategy="afterInteractive" />
         ) : null}
