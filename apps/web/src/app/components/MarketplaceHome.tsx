@@ -16,6 +16,21 @@ type Property = {
 type Result = { items: Property[]; pagination: { total: number; pages: number; page: number } };
 type Category = { key: string; label: string; icon: string };
 const money = (value: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(value);
+const heroSlides = [
+  { image: "https://images.unsplash.com/photo-1600585154340-be6161a56c0a?auto=format&fit=crop&w=2200&q=88", eyebrow: "SPACE TO GROW", title: <>Discover homes that<br/>make room for <em>more.</em></>, description: "From thoughtful apartments to spacious family villas, find a place that fits the way you want to live." },
+  { image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2200&q=88", eyebrow: "LIVE BEAUTIFULLY", title: <>Find a home with<br/><em>your kind</em> of comfort.</>, description: "Explore bright, beautifully designed spaces and connect directly with the people who own them." },
+  { image: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2200&q=88", eyebrow: "A BETTER WAY HOME", title: <>Your next chapter<br/>starts <em>at home.</em></>, description: "Discover homes with room for everyday moments, new beginnings and everything in between." },
+  { image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2200&q=88", eyebrow: "OWN YOUR SPACE", title: <>A place that feels<br/>like it was made <em>for you.</em></>, description: "Compare real listings, speak with owners and make your next move with confidence." },
+  { image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2200&q=88&sat=-10", eyebrow: "ZERO BROKERAGE LIVING", title: <>More home.<br/><em>Less in the way.</em></>, description: "Skip brokerage noise and focus on the homes, neighbourhoods and details that matter." },
+  { image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=2200&q=88", eyebrow: "ROOM FOR EVERY DREAM", title: <>From first keys<br/>to forever <em>homes.</em></>, description: "Whether you are buying or renting, meet owners directly and find your next right fit." },
+  { image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=88", eyebrow: "DESIGNED FOR LIVING", title: <>Find spaces that<br/>inspire <em>every day.</em></>, description: "Explore inviting interiors, practical layouts and properties selected for real life." },
+  { image: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2200&q=88&auto=format", eyebrow: "MAKE YOUR MOVE", title: <>The right address<br/>changes <em>everything.</em></>, description: "Search across locations and start a direct conversation with property owners." },
+  { image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2200&q=88&fit=crop", eyebrow: "A LITTLE MORE SPACE", title: <>Room to unwind.<br/>Space to <em>belong.</em></>, description: "Find a calm retreat, a lively neighbourhood or the perfect place to build your future." },
+  { image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=2200&q=88", eyebrow: "THE HOME YOU IMAGINE", title: <>Turn your next<br/>address into <em>home.</em></>, description: "Discover properties with clear details and connect with owners without middlemen." },
+  { image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=2200&q=88", eyebrow: "FIND YOUR OWN RHYTHM", title: <>A better fit for<br/>the life you <em>lead.</em></>, description: "From city apartments to peaceful independent homes, your search starts here." },
+  { image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=2200&q=88&brightness=5", eyebrow: "DIRECT. SIMPLE. YOURS.", title: <>Meet your next<br/><em>favourite place.</em></>, description: "Browse verified owner listings, ask questions directly and move forward on your terms." },
+];
+
 const categoryDefaults: Category[] = [
   { key: "apartments", label: "Flats & Apartments", icon: "▦" },
   { key: "houses", label: "Villas & Houses", icon: "⌂" },
@@ -44,6 +59,8 @@ function HomeCategoryIcon({ name }: { name: string }) {
 
 function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean; getToken: () => Promise<string | null> }) {
   const [activeTab, setActiveTab] = useState<"buy" | "rent" | "commercial" | "plots">("buy");
+  const [heroIndex, setHeroIndex] = useState(0);
+  useEffect(() => { const timer = window.setInterval(() => setHeroIndex(index => (index + 1) % heroSlides.length), 4000); return () => window.clearInterval(timer); }, []);
   const transaction = activeTab === "rent" ? "rent" : "buy";
   const [category, setCategory] = useState("all");
   const [location, setLocation] = useState("");
@@ -110,9 +127,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
 
     <section className="agh-home-hero" aria-label="Discover properties">
       <div className="agh-home-hero-carousel" aria-hidden="true">
-        <span className="agh-home-hero-slide agh-home-hero-slide-one" />
-        <span className="agh-home-hero-slide agh-home-hero-slide-two" />
-        <span className="agh-home-hero-slide agh-home-hero-slide-three" />
+        {heroSlides.map((slide, index) => <span key={slide.image} className={"agh-home-hero-slide" + (heroIndex === index ? " is-active" : "")} style={{ backgroundImage: "url('" + slide.image + "')" }} />)}
       </div>
       <div className="agh-home-utility">
         <span><i />⌖ {location.trim() || "Across India"}</span>
@@ -121,10 +136,10 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
       </div>
       <div className="agh-home-hero-content">
         <div className="agh-home-hero-copy">
-          <span className="agh-home-feature-badge">▣ &nbsp; 0% BROKERAGE HOMES</span>
-          <h1>Discover Luxury Villas &amp;<br />Homes Directly from Owners</h1>
-          <p className="agh-home-lede">Skip commission fees, negotiate directly with genuine property owners, and find a place that feels like home.</p>
-          <div className="agh-home-carousel-dots" aria-label="Property image carousel"><i/><i/><i/><i/></div>
+          <span className="agh-home-feature-badge">▣ &nbsp; {heroSlides[heroIndex].eyebrow}</span>
+          <h1>{heroSlides[heroIndex].title}</h1>
+          <p className="agh-home-lede">{heroSlides[heroIndex].description}</p>
+          <div className="agh-home-carousel-dots" aria-label={"Property image " + (heroIndex + 1) + " of " + heroSlides.length}>{heroSlides.map((slide, index) => <button key={slide.image} type="button" aria-label={"Show hero slide " + (index + 1)} aria-current={heroIndex === index ? "true" : undefined} onClick={() => setHeroIndex(index)} />)}</div>
         </div>
       </div>
       <div className="agh-home-search-panel">
@@ -141,7 +156,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
           <label className="agh-home-field agh-home-field-location"><small>LOCATION / LOCALITY</small><span>⌖ <input aria-label="City or locality" value={location} onChange={event => setLocation(event.target.value)} placeholder="Enter city, area or landmark" /></span></label>
           <label className="agh-home-field"><small>PROPERTY TYPE</small><select value={category} onChange={event => { const next = event.target.value; setCategory(next); if (next === "commercial") setActiveTab("commercial"); else if (next === "plots") setActiveTab("plots"); else if (activeTab === "commercial" || activeTab === "plots") setActiveTab("buy"); }}><option value="all">All property types</option>{categories.filter(item => item.key !== "all").map(item => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
           <label className="agh-home-field"><small>BUDGET RANGE</small><select value={budget} onChange={event => setBudget(event.target.value)}><option value="any">Any budget</option><option value="50">Up to ₹50 lakh</option><option value="100">Up to ₹1 crore</option></select></label>
-          <a className="agh-home-search-button" href={searchUrl}>Search <span>⌕</span></a>
+          <button type="button" className="agh-home-search-button" onClick={() => window.location.assign(searchUrl)}><span className="agh-home-search-button-label">Search properties</span><span className="agh-home-search-button-icon" aria-hidden="true">↗</span></button>
         </div>
         <div className="agh-home-popular"><b>POPULAR FILTERS:</b>{[{label:"Ready to move",value:"ready"},{label:"3+ BHK Only",value:"beds"},{label:"Direct From Owner",value:"owner"},{label:"Furnished",value:"furnished"},{label:"Under ₹50L",value:"budget"}].map(item => <button key={item.value} className={filter === item.value ? "active" : ""} onClick={() => { setFilter(filter === item.value ? "" : item.value); if (item.value === "budget") setBudget(budget === "50" ? "any" : "50"); }}>{item.label}</button>)}</div>
       </div>
@@ -173,7 +188,10 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
 
     <section className="agh-home-owner-cta">
       <div className="agh-home-cta-copy"><span className="agh-home-cta-pill">♧ &nbsp; ZERO BROKERAGE FOR OWNERS</span><h2>Have a property to share?<br/>Your next connection starts here.</h2><p>Publish your property details and connect with people looking for a place to call home. No middleman calls or hidden charges.</p><div className="agh-home-cta-stats"><span><b>Direct</b><small>OWNER CONTACT</small></span><span><b>100% Free</b><small>TO GET STARTED</small></span><span><b>₹0</b><small>BROKERAGE</small></span></div></div>
-      <div className="agh-home-cta-panel"><span>● &nbsp; DIRECT OWNER NETWORK</span><div className="agh-home-cta-house">⌂</div><h3>Direct Owner Self-Serve</h3><p>List your property and connect with interested buyers and tenants.</p><a href="/list-property">Post a property ↗</a><small>No credit card · Create your listing in minutes</small></div>
+      <div className="agh-home-cta-panel">
+        <div className="agh-home-cta-photo" role="img" aria-label="Modern home exterior" />
+        <div className="agh-home-cta-panel-content"><span>● &nbsp; DIRECT OWNER NETWORK</span><div className="agh-home-cta-house">⌂</div><h3>Direct Owner Self-Serve</h3><p>Showcase your property to people actively looking for a place to call home.</p><a href="/list-property">List your property <span aria-hidden="true">↗</span></a><small>No brokerage · No hidden charges</small></div>
+      </div>
     </section>
 
     <footer className="agh-home-footer">
