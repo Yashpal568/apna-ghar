@@ -132,25 +132,12 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
   return <main className="agh-market agh-home-redesign">
     <SiteHeader active="home" searchValue={location} onSearchChange={setLocation} />
 
-    <section className="agh-home-hero" aria-label="Discover properties">
-      <div className="agh-home-hero-carousel" aria-hidden="true">
-        {heroSlides.map((slide, index) => <span key={slide.image} className={"agh-home-hero-slide" + (heroIndex === index ? " is-active" : "")} style={{ backgroundImage: "url('" + slide.image + "')" }} />)}
+    <section className="agh-home-hero agh-stitch-hero" aria-label="Discover properties">
+      <div className="agh-stitch-hero-inner">
+        <div className="agh-stitch-kicker"><span>INDIA'S #1 DIRECT OWNER PORTAL</span><i/>100% Aadhaar &amp; Deed Verified</div>
+        <h1>Find your dream home with <em>Zero Brokerage.</em></h1>
+        <p>Connect directly with verified property owners across India. No middlemen, no spam,<br className="agh-desktop-break"/> 100% verified deeds.</p>
       </div>
-      <div className="agh-home-utility">
-        <span><i />⌖ {location.trim() || "Across India"}</span>
-        <span>● Live property discovery from the Apna Ghar marketplace</span>
-        <div><b>✓ Owner-direct connections</b><b>✓ Zero middleman fees</b></div>
-      </div>
-      <div className="agh-home-hero-content">
-        <div className="agh-home-hero-copy">
-          <span className="agh-home-feature-badge">▣ &nbsp; {heroSlides[heroIndex].eyebrow}</span>
-          <h1>{heroSlides[heroIndex].title}</h1>
-          <p className="agh-home-lede">{heroSlides[heroIndex].description}</p>
-          <div className="agh-home-carousel-dots" aria-label={"Property image " + (heroIndex + 1) + " of " + heroSlides.length}>{heroSlides.map((slide, index) => <button key={slide.image} type="button" aria-label={"Show hero slide " + (index + 1)} aria-current={heroIndex === index ? "true" : undefined} onClick={() => setHeroIndex(index)} />)}</div>
-        </div>
-      </div>
-    </section>
-
     <div className="agh-home-search-panel">
         <div className="agh-home-search-top">
           <div className="agh-home-search-tabs">
@@ -169,9 +156,17 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
         </div>
         <div className="agh-home-popular"><b>POPULAR FILTERS:</b>{[{label:"Ready to move",value:"ready"},{label:"3+ BHK Only",value:"beds"},{label:"Direct From Owner",value:"owner"},{label:"Furnished",value:"furnished"},{label:"Under ₹50L",value:"budget"}].map(item => <button key={item.value} className={filter === item.value ? "active" : ""} onClick={() => { setFilter(filter === item.value ? "" : item.value); if (item.value === "budget") setBudget(budget === "50" ? "any" : "50"); }}>{item.label}</button>)}</div>
       </div>
+      <div className="agh-stitch-stats">
+        <div><strong>28,500+</strong><small>ACTIVE DIRECT OWNERS</small></div>
+        <div><strong>₹0</strong><small>MIDDLEMEN BROKERAGE</small></div>
+        <div><strong>100%</strong><small>VERIFIED TITLE DEEDS</small></div>
+        <div><strong>4.2 Days</strong><small>AVG. CONTACT TIME</small></div>
+      </div>
+    </section>
+
 
     <section className="agh-home-categories">
-      <div className="agh-home-section-heading"><div><span className="agh-home-eyebrow">⌘ &nbsp; CATEGORIES</span><h2>Explore Categories on Apna Ghar</h2></div><a href="/search">All property types <span>↗</span></a></div>
+      <div className="agh-home-section-heading"><div><span className="agh-home-eyebrow">● &nbsp; DISCOVERY BY ARCHITECTURE</span><h2>Explore Categories</h2></div><a href="/search">All property types <span>↗</span></a></div>
       <div className="agh-home-category-grid">{categories.filter(item => item.key !== "all").slice(0,8).map(item => <button key={item.key} className={category === item.key ? "selected" : ""} onClick={() => { setCategory(item.key); document.getElementById("agh-live-properties")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}><span className="agh-home-category-icon"><HomeCategoryIcon name={item.key}/></span><strong>{item.label}</strong><small>Explore properties <b>→</b></small></button>)}</div>
     </section>
 
@@ -189,9 +184,9 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
     </section>
 
     <section className="agh-home-benefits">
-      <article><span className="agh-home-benefit-icon green">▣</span><b>0% BROKERAGE</b><h3>Strict Zero Brokerage</h3><p>Neither buyers nor owners pay brokerage. Connect directly and keep control of your deal.</p><small>✓ &nbsp; Free to get started</small></article>
-      <article><span className="agh-home-benefit-icon blue">♢</span><b>PROPERTY CONFIDENCE</b><h3>Document Verification</h3><p>Review property details and available ownership documents before making a decision.</p><small>✓ &nbsp; Make informed decisions</small></article>
-      <article><span className="agh-home-benefit-icon green">▣</span><b>DIRECT CONNECTION</b><h3>Direct Encrypted Chat</h3><p>Start conversations with property owners through your Apna Ghar account.</p><small>✓ &nbsp; Private conversations</small></article>
+      <article><span className="agh-home-benefit-icon green">▣</span><b>ZERO BROKERAGE GUARANTEED</b><h3>Strict 0% Commission</h3><p>Buyers and tenants save an average of ₹2.4 Lakhs in an unbrokered commission on every home purchase.</p><small>✓ &nbsp; Zero Platform Markups</small></article>
+      <article><span className="agh-home-benefit-icon blue">♢</span><b>PROPERTY CONFIDENCE</b><h3>Kaveri &amp; DigiLocker Check</h3><p>Property titles, encumbrance certificates (EC), and municipal ownership records are verified directly via state registries.</p><small>✓ &nbsp; State Registry Sync</small></article>
+      <article><span className="agh-home-benefit-icon green">▣</span><b>DIRECT CONNECTION</b><h3>Encrypted Masked Calls</h3><p>Your real mobile number is never shared. Talk to owners via a private virtual number, preventing telemarketer spam forever.</p><small>✓ &nbsp; 100% Number Privacy</small></article>
     </section>
 
     <section className="agh-home-owner-cta">
