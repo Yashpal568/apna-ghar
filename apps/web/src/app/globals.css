@@ -4470,3 +4470,189 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
 @media(prefers-reduced-motion:reduce){
  .agh-home-redesign .agh-home-hero-slide{animation:none!important;opacity:.32!important}
 }
+
+
+/* FINAL DESKTOP HOMEPAGE — aligned to the approved Apna Ghar Stitch reference */
+.agh-home-redesign{background:#f5f7fc!important;color:#111a31!important}
+.agh-home-redesign .agh-home-hero{width:100%!important;max-width:none!important;margin:0!important;padding:0 0 1px!important;overflow:visible!important;background:#f4f7ff!important}
+.agh-home-utility{height:48px;display:flex;align-items:center;gap:24px;padding:0 max(28px,calc((100vw - 1440px)/2));background:#fff;border-bottom:1px solid #e7ebf3;color:#334155;font-size:11px}
+.agh-home-utility>span{white-space:nowrap}.agh-home-utility>span:first-child{padding:7px 12px;border:1px solid #e4eaf3;border-radius:999px;font-weight:700}
+.agh-home-utility>span:first-child i{display:inline-block;width:7px;height:7px;margin-right:5px;border-radius:50%;background:#19c887}
+.agh-home-utility>div{display:flex;gap:9px;margin-left:auto}.agh-home-utility>div b{padding:7px 12px;border-radius:999px;background:#eaf1ff;color:#1552c0;font-size:10px}.agh-home-utility>div b:last-child{background:#dcfce9;color:#087c4b}
+.agh-home-hero-content{position:relative;z-index:2;width:min(1240px,calc(100% - 64px));min-height:300px;margin:0 auto;display:flex;align-items:center;padding:38px 0 28px}
+.agh-home-redesign .agh-home-hero-carousel{inset:48px 0 0!important;z-index:0!important}
+.agh-home-redesign .agh-home-hero-carousel:after{background:linear-gradient(90deg,rgba(4,22,48,.78) 0%,rgba(5,27,54,.52) 44%,rgba(5,27,54,.06) 100%),linear-gradient(0deg,rgba(4,22,48,.18),rgba(4,22,48,.10))!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.agh-home-redesign .agh-home-hero-slide{inset:0!important;filter:none!important;transform:scale(1.025)!important;background-position:center 48%!important;animation:agh-home-real-carousel 24s infinite ease-in-out!important}
+.agh-home-redesign .agh-home-hero-slide-one{background-image:url("https://images.unsplash.com/photo-1600585154340-be6161a56c0a?auto=format&fit=crop&w=2200&q=90")!important;animation-delay:0s!important}
+.agh-home-redesign .agh-home-hero-slide-two{background-image:url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2200&q=90")!important;animation-delay:8s!important}
+.agh-home-redesign .agh-home-hero-slide-three{background-image:url("https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2200&q=90")!important;animation-delay:16s!important}
+@keyframes agh-home-real-carousel{0%,4%{opacity:0}8%,29%{opacity:1}34%,100%{opacity:0}}
+.agh-home-hero-top{display:none!important}
+.agh-home-hero-grid{display:block!important;min-height:0!important;width:100%;margin:0!important}
+.agh-home-hero-copy{max-width:680px!important;color:#fff!important}
+.agh-home-feature-badge{display:inline-flex;align-items:center;margin-bottom:14px;padding:7px 14px;border:1px solid rgba(255,255,255,.4);border-radius:999px;background:rgba(220,255,235,.94);color:#075c37;font-size:10px;font-weight:850;letter-spacing:.5px}
+.agh-home-hero-copy h1{max-width:720px!important;margin:0!important;color:#fff!important;font-size:clamp(36px,4vw,58px)!important;line-height:1.05!important;letter-spacing:-2.5px!important;text-shadow:0 2px 20px rgba(0,0,0,.14)}
+.agh-home-hero-copy h1 em{color:#9df2c8!important}
+.agh-home-lede{max-width:540px!important;margin:12px 0 16px!important;color:rgba(255,255,255,.9)!important;font-size:14px!important;line-height:1.65!important}
+.agh-home-proof,.agh-home-location{display:none!important}
+.agh-home-carousel-dots{display:flex;gap:6px;align-items:center;margin-top:18px}
+.agh-home-carousel-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.7)}.agh-home-carousel-dots i:nth-child(2){width:22px;border-radius:99px;background:#21e49a}
+.agh-home-search-panel{width:min(1180px,calc(100% - 64px))!important;max-width:1180px!important;margin:-4px auto 0!important;padding:14px 22px 16px!important;border:1px solid rgba(210,220,237,.9)!important;border-radius:18px!important;background:rgba(255,255,255,.96)!important;box-shadow:0 18px 42px rgba(20,40,80,.16)!important;backdrop-filter:blur(18px)!important}
+.agh-home-search-top{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #e8edf5}
+.agh-home-search-tabs{padding:0 0 12px!important;border:0!important;gap:7px!important}
+.agh-home-search-tabs button{min-height:34px!important;min-width:72px;padding:7px 16px!important;border-radius:9px!important;font-size:11px!important;color:#26354d!important}
+.agh-home-search-tabs button.active{background:#0752c5!important;color:white!important;box-shadow:0 4px 10px rgba(7,82,197,.18)!important}
+.agh-home-search-assurance{padding:7px 11px;border-radius:999px;background:#f0fdf6;color:#087b4b;font-size:10px;font-weight:700;white-space:nowrap}
+.agh-home-search-fields{grid-template-columns:minmax(230px,1.4fr) minmax(160px,.9fr) minmax(170px,.95fr) auto!important;gap:10px!important;padding:14px 0 12px!important}
+.agh-home-field{min-height:55px!important;padding:8px 13px!important;border:1px solid #dce3ed!important;border-radius:10px!important;background:#fff!important;box-shadow:none!important}
+.agh-home-field small{font-size:8px!important;letter-spacing:.7px!important;color:#64748b!important}
+.agh-home-field input,.agh-home-field select{font-size:11px!important;color:#17243b!important}
+.agh-home-search-button{min-height:55px!important;padding:0 22px!important;border-radius:10px!important;background:#0752c5!important;color:#fff!important;font-size:11px!important;box-shadow:0 6px 15px rgba(7,82,197,.2)!important}
+.agh-home-popular{padding-top:10px!important;border:0!important;gap:7px!important}
+.agh-home-popular b{font-size:8px!important;color:#64748b!important}
+.agh-home-popular button{padding:6px 11px!important;background:#edf2ff!important;border:0!important;color:#253c68!important;font-size:9px!important}
+.agh-home-categories,.agh-home-listings,.agh-home-benefits,.agh-home-owner-cta,.agh-home-trust,.agh-home-footer{width:min(1440px,calc(100% - 64px))!important;max-width:1440px!important;margin-left:auto!important;margin-right:auto!important}
+.agh-home-categories{padding:34px 0 30px!important}
+.agh-home-section-heading{margin-bottom:16px!important}
+.agh-home-section-heading h2{margin:5px 0 4px!important;font-size:clamp(23px,2vw,29px)!important;letter-spacing:-.9px!important;color:#111a31!important}
+.agh-home-section-heading p{font-size:11px!important;color:#5d6a7f!important}
+.agh-home-eyebrow{font-size:9px!important;letter-spacing:1px!important;color:#0752c5!important}
+.agh-home-category-grid{grid-template-columns:repeat(8,minmax(0,1fr))!important;gap:9px!important}
+.agh-home-category-grid button{min-height:126px!important;align-items:center!important;justify-content:center!important;gap:8px!important;padding:12px 8px!important;border:1px solid #e5eaf2!important;border-radius:13px!important;background:#fff!important;text-align:center!important;box-shadow:0 3px 10px rgba(15,35,70,.025)}
+.agh-home-category-icon{display:grid!important;place-items:center!important;width:43px!important;height:43px!important;border-radius:12px!important;background:#edf3ff!important;color:#0752c5!important;font-size:23px!important}
+.agh-home-category-icon svg{width:23px;height:23px}
+.agh-home-category-grid button:nth-child(8) .agh-home-category-icon{background:#e6fbea!important;color:#078044!important}
+.agh-home-category-grid strong{font-size:10px!important;line-height:1.25!important;color:#17243b!important}
+.agh-home-category-grid small{font-size:8px!important;color:#718096!important}
+.agh-home-listings{padding:22px 0 28px!important}
+.agh-home-listings .agh-home-section-heading h2{font-size:clamp(23px,2vw,29px)!important}
+.agh-home-green-eyebrow{color:#078044!important}
+.agh-home-listing-tools{display:flex;align-items:center;gap:12px}
+.agh-home-listing-tools label{display:flex;align-items:center;gap:8px;color:#526078;font-size:9px}
+.agh-home-listing-tools select{min-height:34px;padding:0 10px;border:1px solid #dce3ed;border-radius:8px;background:#fff;color:#1c2b43;font-size:10px}
+.agh-home-listing-tools>a{padding:9px 12px;border-radius:9px;background:#eaf1ff;color:#1649a1!important;font-size:10px!important}
+.agh-home-property-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:13px!important}
+.agh-home-property-card{overflow:hidden;border:1px solid #e1e8f1!important;border-radius:13px!important;background:#fff!important;box-shadow:0 4px 14px rgba(15,35,70,.045)}
+.agh-home-property-image{position:relative!important;display:block!important;height:auto!important;min-height:0!important;aspect-ratio:1.52!important;background-size:cover!important;background-position:center!important;background-color:#e7edf5!important}
+.agh-home-property-image-0{background-image:linear-gradient(135deg,#cbd9e7,#e7eee8)!important}.agh-home-property-image-1{background-image:linear-gradient(135deg,#e5d9c5,#b6c9b5)!important}.agh-home-property-image-2{background-image:linear-gradient(135deg,#d7e2ed,#b6c9d4)!important}.agh-home-property-image-3{background-image:linear-gradient(135deg,#e8dfd2,#d4e2d6)!important}
+.agh-home-property-image:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(4,16,34,.72));pointer-events:none}
+.agh-home-brokerage-tag,.agh-home-sale-tag{position:absolute;z-index:2;top:9px;left:9px;padding:5px 7px;border-radius:5px;background:#087d43;color:#fff;font-size:7px;font-weight:850}
+.agh-home-sale-tag{left:auto;right:9px;background:rgba(15,29,48,.88)}
+.agh-home-property-image>b{position:absolute;z-index:2;top:8px;right:8px;display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#fff;color:#0752c5}
+.agh-home-property-image>strong{position:absolute;z-index:2;left:11px;bottom:22px;color:#fff;font-size:17px;font-weight:850;text-shadow:0 1px 4px #0008}
+.agh-home-property-image>small{position:absolute;z-index:2;right:10px;bottom:9px;color:#fff;font-size:8px}
+.agh-home-property-content{padding:11px!important}
+.agh-home-verified-label{font-size:7px;font-weight:850;color:#0752c5;letter-spacing:.3px}
+.agh-home-property-content h3{margin:5px 0!important;font-size:12px!important;line-height:1.3!important;color:#142139!important}
+.agh-home-property-content h3 a{color:inherit;text-decoration:none}
+.agh-home-property-place{margin:0!important;font-size:9px!important;color:#64748b!important}
+.agh-home-property-facts{display:flex;gap:9px;flex-wrap:wrap;margin:9px 0!important;padding:8px 0!important;border-top:1px solid #edf0f5;border-bottom:1px solid #edf0f5}
+.agh-home-property-facts span{font-size:8px!important;color:#526078!important}
+.agh-home-owner{display:flex;align-items:center;gap:8px;margin:0 0 9px!important}
+.agh-home-owner-avatar{width:27px!important;height:27px!important;background:#e7efff!important;color:#0752c5!important;font-size:10px!important}
+.agh-home-owner>div{display:grid;gap:1px;min-width:0}
+.agh-home-owner strong{font-size:9px!important;color:#17243b!important}
+.agh-home-owner small{font-size:7px!important;color:#718096!important}
+.agh-home-owner>b{margin-left:auto;padding:4px 7px;border-radius:99px;background:#dcfce9;color:#087b4b;font-size:7px}
+.agh-home-card-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important}
+.agh-home-card-actions a,.agh-home-card-actions button{display:flex;align-items:center;justify-content:center;min-height:32px!important;padding:5px!important;border:1px solid #dbe6fb!important;border-radius:8px!important;background:#eaf1ff!important;color:#0752c5!important;font-size:9px!important;font-weight:750!important;text-decoration:none}
+.agh-home-card-actions button:last-child{background:#0752c5!important;color:#fff!important;border-color:#0752c5!important}
+.agh-home-results-foot{display:flex;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:1px solid #e3e9f2;color:#64748b;font-size:9px}
+.agh-home-results-foot a{color:#0752c5;font-weight:750;text-decoration:none}
+.agh-home-benefits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:0 0 24px!important}
+.agh-home-benefits article{position:relative;min-height:150px;padding:17px;border:1px solid #e3e9f2;border-radius:13px;background:#fff;box-shadow:0 4px 12px rgba(15,35,70,.035)}
+.agh-home-benefit-icon{display:grid;place-items:center;width:35px;height:35px;margin-bottom:10px;border-radius:10px;font-size:18px}
+.agh-home-benefit-icon.green{background:#e2faed;color:#07834b}.agh-home-benefit-icon.blue{background:#e9efff;color:#1552c0}
+.agh-home-benefits article>b{position:absolute;top:22px;right:14px;padding:5px 8px;border-radius:99px;background:#e8fff2;color:#07834b;font-size:7px}
+.agh-home-benefits article h3{margin:0 0 5px;color:#142139;font-size:13px}
+.agh-home-benefits article p{margin:0 0 10px;color:#66748a;font-size:9px;line-height:1.5}
+.agh-home-benefits article small{color:#087b4b;font-size:8px;font-weight:750}
+.agh-home-owner-cta{position:relative!important;display:grid!important;grid-template-columns:1.2fr .8fr!important;align-items:center!important;gap:26px!important;min-height:235px;margin-top:0!important;margin-bottom:24px!important;padding:28px 34px!important;overflow:hidden;border:1px solid #0a2546!important;border-radius:18px!important;background:linear-gradient(100deg,#071b3a 0%,#0b2548 58%,#082e37 100%)!important;color:#fff!important;box-shadow:0 16px 30px rgba(8,25,52,.18)}
+.agh-home-owner-cta:after{content:"";position:absolute;right:0;top:0;bottom:0;width:31%;background:linear-gradient(90deg,#09244800,#09244833),url("https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=85") center/cover;opacity:.6;pointer-events:none}
+.agh-home-cta-copy,.agh-home-cta-panel{position:relative;z-index:1}
+.agh-home-cta-pill{display:inline-flex;padding:6px 10px;border:1px solid #13c58a;border-radius:999px;color:#7ff4c1;font-size:8px;font-weight:850}
+.agh-home-owner-cta h2{margin:13px 0 8px!important;color:#fff!important;font-size:clamp(22px,2.4vw,32px)!important;line-height:1.1!important;letter-spacing:-1px!important}
+.agh-home-owner-cta p{max-width:590px;color:#d6e2f2!important;font-size:10px!important;line-height:1.6!important}
+.agh-home-cta-stats{display:flex;gap:9px;margin-top:17px}
+.agh-home-cta-stats span{display:grid;gap:4px;min-width:112px;padding:9px 12px;border:1px solid rgba(255,255,255,.17);border-radius:10px;background:rgba(255,255,255,.08)}
+.agh-home-cta-stats b{color:#6ef0b7;font-size:15px}.agh-home-cta-stats small{color:#c7d5e8;font-size:7px;letter-spacing:.6px}
+.agh-home-cta-panel{justify-self:center;width:min(100%,320px);padding:16px;border:1px solid rgba(255,255,255,.2);border-radius:15px;background:rgba(255,255,255,.11);backdrop-filter:blur(12px);text-align:center}
+.agh-home-cta-panel>span{color:#7ef1bb;font-size:8px;font-weight:800}
+.agh-home-cta-house{display:grid;place-items:center;width:45px;height:45px;margin:11px auto 7px;border:1px solid #1cc98f;border-radius:12px;background:#0b594f;color:#8ff5c7;font-size:27px}
+.agh-home-cta-panel h3{margin:5px 0;color:#fff;font-size:13px}.agh-home-cta-panel p{margin:0 auto 11px;color:#d5e2f1;font-size:8px}
+.agh-home-cta-panel>a{display:flex;align-items:center;justify-content:center;min-height:38px;border-radius:999px;background:#20e890;color:#062a22;font-size:10px;font-weight:850;text-decoration:none}
+.agh-home-cta-panel>small{display:block;margin-top:8px;color:#c9d9e8;font-size:7px}
+.agh-home-footer{display:grid!important;grid-template-columns:1.4fr 1fr 1fr 1fr!important;gap:24px!important;padding:4px 0 18px!important;color:#25334b!important}
+.agh-home-footer-brand>a{display:inline-flex;margin-bottom:8px}
+.agh-home-footer-brand p{max-width:260px;margin:0 0 10px;color:#64748b;font-size:9px;line-height:1.5}
+.agh-home-footer-brand>span{display:inline-block;padding:5px 8px;border-radius:99px;background:#e2faed;color:#087b4b;font-size:8px;font-weight:750}
+.agh-home-footer>div:not(.agh-home-footer-brand):not(.agh-home-footer-bottom){display:flex;flex-direction:column;gap:7px}
+.agh-home-footer strong{margin-bottom:3px;color:#17243b;font-size:10px}
+.agh-home-footer a{color:#64748b;font-size:9px;text-decoration:none}.agh-home-footer a:hover{color:#0752c5}
+.agh-home-footer-bottom{grid-column:1/-1;display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid #e1e8f1;color:#64748b;font-size:8px}
+.agh-home-mobile-nav{display:none!important}
+@media(max-width:1100px){
+ .agh-home-category-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ .agh-home-property-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .agh-home-search-fields{grid-template-columns:1.2fr 1fr 1fr!important}
+ .agh-home-search-button{grid-column:1/-1}
+}
+@media(max-width:760px){
+ .agh-home-utility{height:auto;min-height:38px;gap:7px;padding:7px 14px;font-size:8px;flex-wrap:wrap}
+ .agh-home-utility>span:nth-child(2){display:none}
+ .agh-home-utility>div{gap:4px}
+ .agh-home-utility>div b{padding:5px 7px;font-size:7px}
+ .agh-home-hero-content{width:calc(100% - 32px);min-height:240px;padding:28px 0 24px}
+ .agh-home-redesign .agh-home-hero-carousel{inset:38px 0 0!important}
+ .agh-home-redesign .agh-home-hero-carousel:after{background:linear-gradient(90deg,rgba(4,22,48,.72),rgba(4,22,48,.35)),linear-gradient(0deg,rgba(4,22,48,.15),rgba(4,22,48,.1))!important}
+ .agh-home-hero-copy h1{font-size:clamp(29px,7vw,42px)!important;letter-spacing:-1.4px!important}
+ .agh-home-lede{font-size:11px!important;max-width:460px}
+ .agh-home-search-panel{width:calc(100% - 24px)!important;margin:-4px auto 0!important;padding:11px!important}
+ .agh-home-search-top{align-items:flex-start;flex-direction:column;gap:0}
+ .agh-home-search-assurance{display:none}
+ .agh-home-search-tabs{width:100%;justify-content:space-between;gap:3px!important}
+ .agh-home-search-tabs button{min-width:0!important;padding:7px 9px!important;font-size:9px!important}
+ .agh-home-search-fields{grid-template-columns:1fr 1fr!important;gap:7px!important;padding:10px 0!important}
+ .agh-home-field-location{grid-column:1/-1}
+ .agh-home-field{min-height:48px!important;padding:7px 9px!important}
+ .agh-home-field input,.agh-home-field select{font-size:10px!important}
+ .agh-home-search-button{grid-column:1/-1;min-height:42px!important}
+ .agh-home-popular{gap:5px!important}.agh-home-popular button{font-size:8px!important;padding:6px 8px!important}
+ .agh-home-categories,.agh-home-listings,.agh-home-benefits,.agh-home-owner-cta,.agh-home-footer{width:calc(100% - 28px)!important}
+ .agh-home-categories{padding:27px 0 22px!important}
+ .agh-home-section-heading{align-items:flex-start!important;gap:10px!important}
+ .agh-home-section-heading h2{font-size:20px!important}
+ .agh-home-section-heading p{font-size:9px!important}
+ .agh-home-category-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important}
+ .agh-home-category-grid button{min-height:102px!important;padding:9px 4px!important}
+ .agh-home-category-icon{width:35px!important;height:35px!important}
+ .agh-home-category-grid strong{font-size:8px!important}
+ .agh-home-category-grid small{font-size:7px!important}
+ .agh-home-listings{padding:15px 0 22px!important}
+ .agh-home-listing-tools{width:100%;justify-content:space-between}
+ .agh-home-listings>.agh-home-section-heading{flex-direction:column;align-items:stretch}
+ .agh-home-property-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+ .agh-home-property-image{aspect-ratio:1.15!important}
+ .agh-home-property-image>strong{font-size:12px}
+ .agh-home-property-content{padding:8px!important}
+ .agh-home-property-content h3{font-size:10px!important}
+ .agh-home-property-facts{gap:5px!important}
+ .agh-home-property-facts span{font-size:7px!important}
+ .agh-home-owner strong{font-size:8px!important}
+ .agh-home-card-actions{grid-template-columns:1fr!important}
+ .agh-home-card-actions a,.agh-home-card-actions button{min-height:30px!important}
+ .agh-home-benefits{grid-template-columns:1fr!important;gap:8px!important}
+ .agh-home-benefits article{min-height:0;padding:13px}
+ .agh-home-benefits article p{max-width:90%}
+ .agh-home-owner-cta{grid-template-columns:1fr!important;gap:16px!important;padding:19px!important}
+ .agh-home-owner-cta:after{width:55%;opacity:.28}
+ .agh-home-owner-cta h2{font-size:22px!important}
+ .agh-home-cta-stats{gap:5px}.agh-home-cta-stats span{min-width:0;flex:1;padding:8px}
+ .agh-home-cta-stats b{font-size:12px}
+ .agh-home-cta-panel{width:100%}
+ .agh-home-footer{grid-template-columns:1fr 1fr!important;gap:16px!important;padding:22px 0!important}
+ .agh-home-footer-brand{grid-column:1/-1}
+ .agh-home-footer-bottom{flex-direction:column;gap:7px}
+}
+@media(max-width:380px){.agh-home-hero-copy h1{font-size:28px!important}.agh-home-search-tabs button{padding-inline:6px!important}.agh-home-property-image{aspect-ratio:1.05!important}}
+@media(prefers-reduced-motion:reduce){.agh-home-redesign .agh-home-hero-slide{animation:none!important;opacity:.6!important}}
