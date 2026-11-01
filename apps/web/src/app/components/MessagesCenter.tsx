@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { fetchApi } from "../utils/api";
+import SiteHeader from "./SiteHeader";
 import "./messages-workspace.css";
 
 type Message = {
@@ -502,7 +503,13 @@ function MessagesCenterAuthenticated() {
   };
 
   return (
-    <div className={`stitch-chat-shell ${selected ? "is-chat-mode" : "is-inbox-mode"}`}>
+    <div className="messages-workspace-root">
+      {/* Desktop Site Navbar (Restored on PC screen, hidden on mobile) */}
+      <div className="stitch-desktop-navbar-wrap">
+        <SiteHeader active="messages" />
+      </div>
+
+      <div className={`stitch-chat-shell ${selected ? "is-chat-mode" : "is-inbox-mode"}`}>
       {/* =====================================================================
           VIEW A: MOBILE CONVERSATIONS LIST (Shown on Mobile when no conversation is selected)
           ===================================================================== */}
@@ -682,7 +689,7 @@ function MessagesCenterAuthenticated() {
             (Always shown on Desktop; shown on Mobile when a conversation is selected)
             ===================================================================== */}
         <div className="stitch-chat-active-container">
-          {/* Fixed Sticky Header (Exact Stitch 32 Specification) */}
+          {/* Fixed Sticky Header (Exact Stitch 31/32 Specification) */}
           <header className="stitch-chat-header">
             <div className="stitch-chat-header-inner">
               <div className="stitch-chat-header-left">
@@ -696,25 +703,27 @@ function MessagesCenterAuthenticated() {
                 </button>
 
                 <div className="relative flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center overflow-hidden">
-                    <span className="material-symbols-outlined text-primary text-[22px]">
-                      real_estate_agent
-                    </span>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-primary-container text-on-primary font-bold flex items-center justify-center text-sm shadow-xs">
+                    {rawOwnerName.slice(0, 2).toUpperCase()}
                   </div>
-                  <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-sm">
-                    <span className="material-symbols-outlined text-[11px] font-bold">verified</span>
-                  </span>
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-secondary ring-2 ring-surface" title="Online now"></span>
                 </div>
 
                 <div className="min-w-0 pl-1">
                   <div className="flex items-center gap-1.5">
-                    <h2 className="font-headline-sm text-headline-sm text-on-surface truncate m-0 font-bold">
-                      Negotiation Room
+                    <h2 className="font-headline-sm text-sm sm:text-base text-on-surface truncate m-0 font-bold">
+                      {rawOwnerName}
                     </h2>
+                    <span className="material-symbols-outlined text-secondary text-[16px] shrink-0" title="Verified Owner">
+                      verified
+                    </span>
+                    <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-secondary-container/60 text-on-secondary-container text-[10px] font-bold">
+                      Direct Owner
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-on-surface-variant font-label-md text-label-md truncate">
-                    <span className="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim shrink-0"></span>
-                    <span className="truncate">Active Seller • Apna Ghar</span>
+                  <div className="flex items-center gap-1.5 text-on-surface-variant font-label-md text-xs truncate">
+                    <span className="w-1.5 h-1.5 rounded-full bg-secondary shrink-0"></span>
+                    <span className="truncate">Active Negotiation • RBI Escrow Protected</span>
                   </div>
                 </div>
               </div>
@@ -725,6 +734,7 @@ function MessagesCenterAuthenticated() {
                     href={`tel:${ownerPhone.replace(/[^+0-9]/g, "")}`}
                     aria-label="Call seller"
                     className="stitch-header-circle-btn text-primary"
+                    title="Direct Call (Masked)"
                   >
                     <span className="material-symbols-outlined text-[20px]">call</span>
                   </a>
@@ -735,6 +745,7 @@ function MessagesCenterAuthenticated() {
                   rel="noopener noreferrer"
                   aria-label="Property listing info"
                   className="stitch-header-circle-btn text-on-surface-variant"
+                  title="View Public Listing"
                 >
                   <span className="material-symbols-outlined text-[20px]">info</span>
                 </a>
@@ -744,6 +755,31 @@ function MessagesCenterAuthenticated() {
               </div>
             </div>
           </header>
+
+          {/* Desktop Top Meta Breadcrumb Bar (Stitch 31) */}
+          <div className="stitch-desktop-meta-bar">
+            <div className="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
+              <span className="flex items-center gap-1.5 text-primary font-bold">
+                <span className="material-symbols-outlined text-[16px]">forum</span>
+                Direct Owner Desk
+              </span>
+              <span className="text-outline-variant">•</span>
+              <span>Zero Brokerage Direct Exchange</span>
+              <span className="text-outline-variant">•</span>
+              <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[11px] font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                RBI-Regulated Escrow Title Lock Active
+              </span>
+            </div>
+            <div className="flex items-center gap-3 text-xs">
+              <span className="text-outline flex items-center gap-1">
+                <span className="material-symbols-outlined text-[15px] text-secondary">verified_user</span>
+                Zero Brokerage Direct Chat
+              </span>
+              <span className="text-outline">|</span>
+              <span className="text-on-surface font-semibold text-[11px]">Verified Safe Session</span>
+            </div>
+          </div>
 
           {/* Main Layout (Desktop Split + Mobile Full Screen) */}
           <div className="stitch-chat-layout-wrapper">
@@ -805,38 +841,76 @@ function MessagesCenterAuthenticated() {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
                 {filteredItems.map((conv) => {
                   const isSelected = conv._id === selected;
-                  const thumb = conv.thumbUrl || VERIFIED_FALLBACK_IMG;
                   const owner = conv.contactName || "Yash Pal";
+                  const cleanName = owner.replace(/\s*\(Owner\)/i, "");
+                  const initials = cleanName.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase() || "YP";
+                  const lastMsg = conv.messages?.[conv.messages.length - 1];
+                  const unread = (user?.id && conv.unreadCountByUser?.[user.id]) || 0;
+
                   return (
                     <button
                       key={conv._id}
                       type="button"
                       onClick={() => handleOpenConversation(conv._id)}
-                      className={`w-full p-2.5 rounded-xl text-left flex items-center gap-2.5 transition-all border-none cursor-pointer ${
+                      className={`w-full p-3 rounded-xl text-left flex items-start gap-3 transition-all border-none cursor-pointer ${
                         isSelected
-                          ? "bg-surface-container-low border border-primary/20 shadow-xs"
-                          : "hover:bg-surface-container-low/50 bg-transparent"
+                          ? "bg-primary-fixed/35 border-l-4 border-l-primary shadow-xs"
+                          : "hover:bg-surface-container-low/60 bg-transparent"
                       }`}
                     >
-                      <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-surface-container">
-                        <img src={thumb} alt="" className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-xs text-on-surface truncate">
-                            {owner}
-                          </span>
-                          <span className="text-[10px] text-outline">5:12 PM</span>
+                      <div className="relative flex-shrink-0 mt-0.5">
+                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-xs shadow-xs ${
+                          isSelected
+                            ? "bg-gradient-to-tr from-primary to-primary-container text-on-primary"
+                            : "bg-surface-container text-on-surface-variant"
+                        }`}>
+                          {initials}
                         </div>
-                        <p className="text-[11px] text-on-surface-variant font-medium truncate m-0">
-                          {conv.propertyTitle}
+                        <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-secondary ring-2 ring-surface-container-lowest" title="Active"></span>
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-0.5">
+                          <div className="flex items-center gap-1.5 truncate">
+                            <span className="font-bold text-xs text-on-surface truncate">
+                              {cleanName}
+                            </span>
+                            <span className="material-symbols-outlined text-[14px] text-secondary shrink-0">
+                              verified
+                            </span>
+                          </div>
+                          <span className="text-[10px] text-outline font-medium shrink-0">
+                            {formatRelativeTime(lastMsg?.sentAt || conv.lastMessageAt)}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1 mb-1">
+                          <span className="font-label-sm text-[10px] text-primary font-bold uppercase tracking-wider">
+                            Owner
+                          </span>
+                          <span className="text-outline-variant text-[10px]">•</span>
+                          <span className="font-body-sm text-[11px] text-on-surface-variant truncate">
+                            {conv.propertyTitle}
+                          </span>
+                        </div>
+
+                        <p className="text-[11px] text-on-surface-variant font-normal truncate m-0 mb-1.5">
+                          {lastMsg?.text || "Zero brokerage direct discussion"}
                         </p>
-                        <span className="inline-block mt-0.5 text-[9.5px] px-1.5 py-0.2 rounded bg-secondary-container text-on-secondary-container font-bold">
-                          {conv.statusBadge || "Active Negotiation"}
-                        </span>
+
+                        <div className="flex items-center justify-between pt-1 border-t border-outline-variant/20">
+                          <span className="px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-container font-extrabold text-[9.5px]">
+                            {conv.statusBadge || "Active Negotiation"}
+                          </span>
+                          {unread > 0 && (
+                            <span className="w-4 h-4 rounded-full bg-primary text-on-primary font-bold text-[9px] flex items-center justify-center">
+                              {unread}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </button>
                   );
@@ -1340,6 +1414,187 @@ function MessagesCenterAuthenticated() {
                 </div>
               </div>
             </main>
+
+            {/* COLUMN 3: RIGHT DETAILS DRAWER (Property & Safe Escrow Dossier - Stitch 31) */}
+            <aside className="stitch-desktop-dossier-column">
+              {/* Card 1: Property Dossier */}
+              <div className="stitch-dossier-card">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-label-sm text-[11px] uppercase font-bold text-outline tracking-wider">
+                    Property Dossier
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-[10px] font-bold">
+                    RERA Registered
+                  </span>
+                </div>
+
+                <div className="relative w-full h-36 rounded-xl overflow-hidden mb-3 bg-surface-container group">
+                  <img
+                    src={propertyThumb}
+                    alt={propertyTitle}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-inverse-surface/80 text-inverse-on-surface backdrop-blur-md font-label-sm text-[10px] font-bold">
+                    {propertyInfo?.location?.locality || "Model Town"} • Direct Owner
+                  </div>
+                  <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-primary text-on-primary font-label-sm text-[10px] font-bold shadow-xs">
+                    Ready to Move
+                  </div>
+                </div>
+
+                <h3 className="font-headline-sm text-sm text-on-surface font-bold m-0 mb-1 truncate">
+                  {propertyTitle}
+                </h3>
+                <p className="font-body-sm text-[11px] text-on-surface-variant m-0 mb-3 truncate">
+                  {[propertyInfo?.location?.locality, propertyInfo?.location?.city, propertyInfo?.location?.state].filter(Boolean).join(", ") || "Model Town, Amritsar, Punjab"}
+                </p>
+
+                <div className="grid grid-cols-2 gap-2 p-2.5 bg-surface-container-low rounded-xl mb-3">
+                  <div className="flex flex-col">
+                    <span className="font-label-sm text-[9.5px] text-outline">Configuration</span>
+                    <span className="font-label-lg text-xs text-on-surface font-bold">
+                      {propertyInfo?.bedrooms ? `${propertyInfo.bedrooms} BHK Luxury` : "4 BHK Luxury"}
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-label-sm text-[9.5px] text-outline">Super Built-up</span>
+                    <span className="font-label-lg text-xs text-on-surface font-bold">
+                      {plotArea}
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-label-sm text-[9.5px] text-outline">Orientation</span>
+                    <span className="font-label-lg text-xs text-on-surface font-bold">
+                      {plotFacing} (Vaastu)
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-label-sm text-[9.5px] text-outline">Ownership Title</span>
+                    <span className="font-label-lg text-xs text-on-surface font-bold truncate">
+                      {plotRegistry}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-baseline justify-between pt-1 border-t border-outline-variant/30">
+                  <span className="font-label-sm text-[11px] text-outline">Listed Asking Price:</span>
+                  <span className="font-headline-md text-sm text-primary font-extrabold">
+                    ₹{formatINR(propertyAskingPrice)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Card 2: RBI Escrow Safety Shield */}
+              <div className="stitch-dossier-card bg-gradient-to-br from-surface-container-lowest to-surface-container-low border-l-4 border-l-secondary">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-7 h-7 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">
+                    <span className="material-symbols-outlined text-[16px]">shield</span>
+                  </div>
+                  <span className="font-label-md text-xs text-on-surface font-bold">
+                    Apna Ghar Escrow Shield
+                  </span>
+                </div>
+                <p className="font-body-sm text-[11px] text-on-surface-variant m-0 mb-3 leading-relaxed">
+                  Your token deposit of <strong className="text-on-surface font-semibold">₹50,000</strong> is parked safely under RBI nodal trustee guidelines until title deed mutation and draft sale agreement execution.
+                </p>
+                <div className="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest text-on-surface font-label-sm text-[10.5px]">
+                  <span className="flex items-center gap-1 text-secondary font-bold">
+                    <span className="material-symbols-outlined text-[14px]">lock</span>
+                    100% Refundable
+                  </span>
+                  <span className="text-outline font-medium">Zero Brokerage Fee</span>
+                </div>
+              </div>
+
+              {/* Card 3: Owner Trust & Verification Matrix */}
+              <div className="stitch-dossier-card">
+                <span className="font-label-sm text-[11px] uppercase font-bold text-outline tracking-wider block mb-3">
+                  Owner Verification Matrix
+                </span>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary text-on-primary font-headline-sm text-sm flex items-center justify-center font-bold shadow-xs">
+                    {rawOwnerName.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1">
+                      <span className="font-label-lg text-xs text-on-surface font-bold truncate">
+                        {rawOwnerName}
+                      </span>
+                      <span className="material-symbols-outlined text-[15px] text-secondary">verified</span>
+                    </div>
+                    <span className="font-body-sm text-[11px] text-on-surface-variant block">
+                      KYC Verified Title Holder
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-2 font-label-sm text-[11px]">
+                  <div className="flex items-center justify-between text-on-surface-variant">
+                    <span className="flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[15px] text-secondary">flash_on</span>
+                      Response Rate
+                    </span>
+                    <span className="font-bold text-on-surface">100% (&lt; 15 mins)</span>
+                  </div>
+                  <div className="flex items-center justify-between text-on-surface-variant">
+                    <span className="flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[15px] text-primary">badge</span>
+                      Identity Verification
+                    </span>
+                    <span className="font-bold text-secondary flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-[13px]">check_circle</span>
+                      Verified
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-on-surface-variant">
+                    <span className="flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[15px] text-primary">real_estate_agent</span>
+                      Property Mutation
+                    </span>
+                    <span className="font-bold text-secondary flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-[13px]">check_circle</span>
+                      Clear Title
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 4: Book Private Inspection */}
+              <div className="stitch-dossier-card">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-label-md text-xs text-on-surface font-bold">
+                    Book In-Person Inspection
+                  </span>
+                  <span className="material-symbols-outlined text-primary text-[18px]">calendar_month</span>
+                </div>
+                <p className="font-body-sm text-[11px] text-on-surface-variant m-0 mb-3">
+                  Select a preferred slot for private tour with {rawOwnerName}.
+                </p>
+                <div className="grid grid-cols-2 gap-2 mb-2.5">
+                  <button
+                    type="button"
+                    className="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface text-center font-label-sm text-[10.5px] font-bold border-none cursor-pointer transition-colors"
+                    onClick={() => alert(`Requested walkthrough for Saturday inspection with ${rawOwnerName}.`)}
+                  >
+                    Sat • 11:00 AM
+                  </button>
+                  <button
+                    type="button"
+                    className="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface text-center font-label-sm text-[10.5px] font-bold border-none cursor-pointer transition-colors"
+                    onClick={() => alert(`Requested walkthrough for Sunday inspection with ${rawOwnerName}.`)}
+                  >
+                    Sun • 4:00 PM
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  className="w-full py-2 rounded-xl bg-primary text-on-primary font-label-md text-xs font-bold transition-all flex items-center justify-center gap-1 border-none cursor-pointer shadow-xs hover:bg-primary-container"
+                  onClick={() => alert(`Opening inspection scheduler with ${rawOwnerName}.`)}
+                >
+                  <span className="material-symbols-outlined text-[16px]">add</span>
+                  Request Custom Time
+                </button>
+              </div>
+            </aside>
           </div>
         </div>
 
@@ -1567,6 +1822,7 @@ function MessagesCenterAuthenticated() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

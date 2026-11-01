@@ -43,14 +43,28 @@ body:has(.stitch-chat-shell) {
   overscroll-behavior: none;
 }
 
-/* Suppress outer site chrome on /messages */
+/* Suppress site-wide footer on /messages */
 body:has(.stitch-chat-shell) footer,
 body:has(.stitch-chat-shell) .ag-site-footer,
 body:has(.stitch-chat-shell) .agh-footer,
-body:has(.stitch-chat-shell) .site-footer,
-body:has(.stitch-chat-shell) > header.ag-site-header,
-body:has(.stitch-chat-shell) > .ag-site-header {
+body:has(.stitch-chat-shell) .site-footer {
   display: none !important;
+}
+
+/* Site Navbar: Visible on Desktop/PC screen, suppressed on Mobile /messages */
+.stitch-desktop-navbar-wrap {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1023px) {
+  .stitch-desktop-navbar-wrap,
+  body:has(.stitch-chat-shell) .agh-market-header-scope {
+    display: none !important;
+  }
 }
 
 /* Suppress mobile bottom nav only when actively in mobile chat mode,
@@ -60,6 +74,17 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 }
 
 /* 1. Main Chat Shell */
+.messages-workspace-root {
+  width: 100vw;
+  max-width: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface, #f8f9ff);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
 .stitch-chat-shell {
   width: 100vw;
   max-width: 100%;
@@ -71,6 +96,16 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  .stitch-chat-shell {
+    flex: 1;
+    height: calc(100dvh - 76px);
+    max-height: calc(100dvh - 76px);
+    min-height: 0;
+    width: 100%;
+  }
 }
 
 /* 1b. Mobile Conversation List View */
@@ -272,6 +307,12 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   flex-shrink: 0;
 }
 
+@media (min-width: 1024px) {
+  .stitch-header-back-btn {
+    display: none !important;
+  }
+}
+
 .stitch-header-back-btn:hover {
   background-color: var(--color-surface-container, #e5eeff);
   color: var(--color-primary, #0045b7);
@@ -306,6 +347,29 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   transform: scale(0.95);
 }
 
+/* 2b. Desktop Meta Breadcrumb & Trust Banner Bar */
+.stitch-desktop-meta-bar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .stitch-desktop-meta-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 18px;
+    margin: 8px auto 6px;
+    width: 100%;
+    max-width: 1440px;
+    background-color: var(--color-surface-container-lowest, #ffffff);
+    border-radius: 14px;
+    border: 1px solid rgba(195, 198, 216, 0.35);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+}
+
 /* 3. Main Workspace Layout */
 .stitch-chat-layout-wrapper {
   flex: 1;
@@ -318,16 +382,30 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   background-color: var(--color-surface, #f8f9ff);
 }
 
-/* Desktop Sidebar for Conversations List */
+@media (min-width: 1024px) {
+  .stitch-chat-layout-wrapper {
+    max-width: 1440px;
+    padding: 0 16px 12px;
+    gap: 12px;
+    height: calc(100% - 50px);
+    box-sizing: border-box;
+  }
+}
+
+/* Desktop Sidebar for Conversations List (Column 1) */
 .stitch-desktop-sidebar {
   width: 320px;
-  min-width: 320px;
+  min-width: 300px;
+  max-width: 340px;
   height: 100%;
   display: none;
   flex-direction: column;
   background-color: var(--color-surface-container-lowest, #ffffff);
-  border-right: 1px solid rgba(195, 198, 216, 0.4);
+  border: 1px solid rgba(195, 198, 216, 0.4);
+  border-radius: 16px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 @media (min-width: 1024px) {
@@ -336,7 +414,7 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   }
 }
 
-/* Center / Full-Width Chat Screen */
+/* Center / Negotiation Room Main Screen (Column 2) */
 .stitch-chat-main {
   flex: 1;
   min-width: 0;
@@ -346,15 +424,59 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   background-color: var(--color-surface, #f8f9ff);
   position: relative;
   overflow: hidden;
-  max-width: 760px;
-  margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 }
 
 @media (min-width: 1024px) {
   .stitch-chat-main {
-    border-right: 1px solid rgba(195, 198, 216, 0.35);
+    border-radius: 16px;
+    border: 1px solid rgba(195, 198, 216, 0.35);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+    background-color: var(--color-surface-container-lowest, #ffffff);
+    max-width: none;
+    margin: 0;
   }
+}
+
+/* Desktop Right Dossier Drawer (Column 3) */
+.stitch-desktop-dossier-column {
+  width: 320px;
+  min-width: 300px;
+  max-width: 340px;
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  flex-shrink: 0;
+  padding-right: 2px;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+.stitch-desktop-dossier-column::-webkit-scrollbar {
+  width: 4px;
+}
+
+.stitch-desktop-dossier-column::-webkit-scrollbar-thumb {
+  background: rgba(195, 198, 216, 0.5);
+  border-radius: 9999px;
+}
+
+@media (min-width: 1280px) {
+  .stitch-desktop-dossier-column {
+    display: flex;
+  }
+}
+
+.stitch-dossier-card {
+  background-color: var(--color-surface-container-lowest, #ffffff);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(195, 198, 216, 0.35);
+  box-sizing: border-box;
 }
 
 /* 4. Pinned Sticky Property Micro-Context Strip */
