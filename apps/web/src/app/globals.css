@@ -5225,3 +5225,17 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
  .agh-home-redesign .agh-home-mobile-nav a.post{color:#005bea!important}
 }
 @media(prefers-reduced-motion:reduce){.agh-home-redesign *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* The search form now lives inside the navy hero, matching the Stitch composition */
+.agh-home-redesign .agh-stitch-hero>.agh-home-search-panel{
+  width:min(100%,1060px)!important;max-width:1060px!important;margin:0 auto!important;
+  position:relative!important;z-index:3!important;padding:16px 20px 14px!important;
+  border:1px solid rgba(255,255,255,.1)!important;border-radius:18px!important;
+  background:#fff!important;box-shadow:0 16px 42px rgba(0,0,0,.22)!important;
+}
+.agh-home-redesign .agh-stitch-hero .agh-home-search-fields{grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr) minmax(0,.9fr) auto!important}
+@media(max-width:1050px){.agh-home-redesign .agh-stitch-hero .agh-home-search-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:700px){
+ .agh-home-redesign .agh-stitch-hero>.agh-home-search-panel{padding:12px!important}
+ .agh-home-redesign .agh-stitch-hero .agh-home-search-fields{grid-template-columns:1fr!important}
+}
