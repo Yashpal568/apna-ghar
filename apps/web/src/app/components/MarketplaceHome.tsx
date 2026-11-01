@@ -43,7 +43,8 @@ function HomeCategoryIcon({ name }: { name: string }) {
 }
 
 function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean; getToken: () => Promise<string | null> }) {
-  const [transaction, setTransaction] = useState<"buy" | "rent">("buy");
+  const [activeTab, setActiveTab] = useState<"buy" | "rent" | "commercial" | "plots">("buy");
+  const transaction = activeTab === "rent" ? "rent" : "buy";
   const [category, setCategory] = useState("all");
   const [location, setLocation] = useState("");
   const [budget, setBudget] = useState("any");
@@ -129,16 +130,16 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
       <div className="agh-home-search-panel">
         <div className="agh-home-search-top">
           <div className="agh-home-search-tabs">
-            <button className={transaction === "buy" ? "active" : ""} onClick={() => setTransaction("buy")}>Buy</button>
-            <button className={transaction === "rent" ? "active" : ""} onClick={() => setTransaction("rent")}>Rent</button>
-            <button className={category === "commercial" ? "active" : ""} onClick={() => setCategory("commercial")}>Commercial</button>
-            <button onClick={() => { setCategory("plots"); setTransaction("buy"); }}>Plots &amp; Land</button>
+            <button type="button" aria-pressed={activeTab === "buy"} className={activeTab === "buy" ? "active" : ""} onClick={() => { setActiveTab("buy"); setCategory("all"); }}>Buy</button>
+            <button type="button" aria-pressed={activeTab === "rent"} className={activeTab === "rent" ? "active" : ""} onClick={() => { setActiveTab("rent"); setCategory("all"); }}>Rent</button>
+            <button type="button" aria-pressed={activeTab === "commercial"} className={activeTab === "commercial" ? "active" : ""} onClick={() => { setActiveTab("commercial"); setCategory("commercial"); }}>Commercial</button>
+            <button type="button" aria-pressed={activeTab === "plots"} className={activeTab === "plots" ? "active" : ""} onClick={() => { setActiveTab("plots"); setCategory("plots"); }}>Plots &amp; Land</button>
           </div>
           <span className="agh-home-search-assurance">♧ &nbsp; Listings from direct owners</span>
         </div>
         <div className="agh-home-search-fields">
           <label className="agh-home-field agh-home-field-location"><small>LOCATION / LOCALITY</small><span>⌖ <input aria-label="City or locality" value={location} onChange={event => setLocation(event.target.value)} placeholder="Enter city, area or landmark" /></span></label>
-          <label className="agh-home-field"><small>PROPERTY TYPE</small><select value={category} onChange={event => setCategory(event.target.value)}><option value="all">All property types</option>{categories.filter(item => item.key !== "all").map(item => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
+          <label className="agh-home-field"><small>PROPERTY TYPE</small><select value={category} onChange={event => { const next = event.target.value; setCategory(next); if (next === "commercial") setActiveTab("commercial"); else if (next === "plots") setActiveTab("plots"); else if (activeTab === "commercial" || activeTab === "plots") setActiveTab("buy"); }}><option value="all">All property types</option>{categories.filter(item => item.key !== "all").map(item => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
           <label className="agh-home-field"><small>BUDGET RANGE</small><select value={budget} onChange={event => setBudget(event.target.value)}><option value="any">Any budget</option><option value="50">Up to ₹50 lakh</option><option value="100">Up to ₹1 crore</option></select></label>
           <a className="agh-home-search-button" href={searchUrl}>Search <span>⌕</span></a>
         </div>
@@ -158,7 +159,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
       {loading && <div className="agh-home-property-grid">{Array.from({ length: 4 }, (_, index) => <div className="agh-home-skeleton" key={index}><div /><span /><span /></div>)}</div>}
       {!loading && !error && !result?.items.length && <div className="agh-home-empty"><span>⌂</span><h3>No published properties found</h3><p>Try a different location or category, or be the first to list a property.</p><a href="/list-property">Post a property ↗</a></div>}
       {!loading && !error && !!result?.items.length && <div className="agh-home-property-grid">{result.items.slice(0,4).map((property,index) => <article className="agh-home-property-card" key={property._id}>
-        <a className={"agh-home-property-image agh-home-property-image-" + (index%4)} href={"/property/" + encodeURIComponent(property.slug || property._id)} style={{ backgroundImage: property.imageUrls?.[0] ? "url('" + property.imageUrls[0] + "')" : undefined }}><span className="agh-home-brokerage-tag">0% BROKERAGE</span><span className="agh-home-sale-tag">{property.listingType === "rent" ? "FOR RENT" : "FOR SALE"}</span><b aria-hidden="true">↗</b><strong>{money(property.priceAmount)}{property.listingType === "rent" ? " / mo" : ""}</strong><small>{property.areaValue} {property.areaUnit}</small></a>
+        <a className={"agh-home-property-image agh-home-property-image-" + (index%4)} href={"/property/" + encodeURIComponent(property.slug || property._id)} ><img className="agh-home-property-photo" src={property.imageUrls?.[0] || undefined} alt={property.title + " property"} loading="lazy" onError={event => { event.currentTarget.style.display = "none"; }} /><span className="agh-home-brokerage-tag">0% BROKERAGE</span><span className="agh-home-sale-tag">{property.listingType === "rent" ? "FOR RENT" : "FOR SALE"}</span><b aria-hidden="true">↗</b><strong>{money(property.priceAmount)}{property.listingType === "rent" ? " / mo" : ""}</strong><small>{property.areaValue} {property.areaUnit}</small></a>
         <div className="agh-home-property-content"><span className="agh-home-verified-label">✓ &nbsp; DIRECT OWNER LISTING</span><h3><a href={"/property/" + encodeURIComponent(property.slug || property._id)}>{property.title}</a></h3><p className="agh-home-property-place">⌖ {[property.location?.locality,property.location?.city,property.location?.state].filter(Boolean).join(", ") || "Location not specified"}</p><div className="agh-home-property-facts"><span>▱ {property.areaValue} {property.areaUnit}</span>{property.bedrooms != null && <span>▦ {property.bedrooms} Beds</span>}{property.bathrooms != null && <span>♧ {property.bathrooms} Baths</span>}</div><div className="agh-home-owner"><span className="agh-home-owner-avatar">{(property.contactName || "O").slice(0,1).toUpperCase()}</span><div><strong>{property.contactName || "Property owner"}</strong><small>Listed on Apna Ghar</small></div><b>Direct</b></div><div className="agh-home-card-actions">{property.contactPhone?.trim() ? <a href={"tel:" + property.contactPhone.replace(/[^+0-9]/g,"")}>☎ &nbsp; Call Owner</a> : <button disabled title="No public phone number provided">Call unavailable</button>}<button onClick={() => void contactOwner(property)} disabled={contactBusy === property._id}>▤ &nbsp; {contactBusy === property._id ? "Opening…" : "Chat"}</button></div></div>
       </article>)}</div>}
       <div className="agh-home-results-foot"><span>{result ? result.pagination.total + " published properties" : "Live marketplace inventory"}</span><a href={searchUrl}>Explore all properties →</a></div>
