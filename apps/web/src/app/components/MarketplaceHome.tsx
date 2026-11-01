@@ -95,12 +95,16 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
       <div className="agh-home-hero-top"><span className="agh-home-kicker"><i /> INDIA'S DIRECT-OWNER PROPERTY MARKETPLACE</span><span className="agh-home-trust">✓ Built for transparent property discovery</span></div>
       <div className="agh-home-hero-grid">
         <div className="agh-home-hero-copy">
-          <h1>Find a place<br />to call <em>home.</em></h1>
-          <p className="agh-home-lede">Discover homes, spaces and opportunities across India — connect with property owners directly.</p>
+          <span className="agh-home-mobile-eyebrow">ZERO BROKERAGE · DIRECT OWNER</span>
+          <h1>Discover a home<br />that feels like <em>yours.</em></h1>
+          <p className="agh-home-lede">Find verified homes, apartments and plots across India. Connect directly with owners and move forward with confidence.</p>
           <div className="agh-home-proof"><span>✓ Direct owner connections</span><b /> <span>✓ No middleman commission</span></div>
           <div className="agh-home-location"><span>⌖</span><div><small>EXPLORE YOUR CITY</small><strong>{location.trim() || "Across India"}</strong></div><span className="agh-home-location-count">{loading ? "…" : (result?.pagination.total ?? 0) + " listings"}</span></div>
         </div>
-        <div className="agh-home-visual" aria-label="Beautiful modern home"><div className="agh-home-visual-glow" /><div className="agh-home-visual-card"><div className="agh-home-visual-sky" /><div className="agh-home-visual-sun" /><div className="agh-home-visual-hill hill-back" /><div className="agh-home-visual-hill hill-front" /><div className="agh-home-illustration"><div className="agh-home-roof" /><div className="agh-home-building"><span /><span /><i /></div></div><div className="agh-home-visual-caption"><span>YOUR NEXT CHAPTER</span><strong>Starts right here.</strong></div></div><div className="agh-home-float agh-home-float-one"><b>⌂</b><span><strong>Made for real life</strong><small>Find a space that fits</small></span></div><div className="agh-home-float agh-home-float-two"><b>✓</b><span><strong>Owner-first discovery</strong><small>Connect with confidence</small></span></div></div>
+        <div className="agh-home-promo" role="complementary" aria-label="Direct owner property discovery">
+          <div className="agh-home-promo-photo" />
+          <div className="agh-home-promo-copy"><span>ZERO BROKERAGE</span><strong>Find your home, direct from owners.</strong><p>Transparent deals. Phone-verified sellers. No hidden middlemen.</p><div><a href="/search?transaction=buy">Buy a home</a><a href="/search?transaction=rent">Rent a home</a></div></div>
+        </div>
       </div>
       <div className="agh-home-search-panel">
         <div className="agh-home-search-tabs"><button className={transaction === "buy" ? "active" : ""} onClick={() => setTransaction("buy")}>Buy</button><button className={transaction === "rent" ? "active" : ""} onClick={() => setTransaction("rent")}>Rent</button><button className={category === "commercial" ? "active" : ""} onClick={() => setCategory("commercial")}>Commercial</button><button onClick={() => { setCategory("plots"); setTransaction("buy"); }}>Plots & Land</button></div>
