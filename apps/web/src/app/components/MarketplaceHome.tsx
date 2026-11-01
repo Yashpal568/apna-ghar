@@ -16,8 +16,9 @@ type Property = {
 type Result = { items: Property[]; pagination: { total: number; pages: number; page: number } };
 type Category = { key: string; label: string; icon: string };
 const money = (value: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(value);
+const heroFallbackImage = "https://images.pexels.com/photos/36676879/pexels-photo-36676879.jpeg?auto=compress&cs=tinysrgb&w=2000";
 const heroSlides = [
-  { image: "https://images.unsplash.com/photo-1600585154340-be6161a56c0a?auto=format&fit=crop&w=2560&q=95", eyebrow: "LUXURY VILLAS & HOMES", title: <>Discover Luxury Villas &<br/>Homes <em>Directly from Owners.</em></>, description: "Skip commission fees, connect with verified owners, and find premium homes across India." },
+  { image: heroFallbackImage, eyebrow: "LUXURY VILLAS & HOMES", title: <>Discover Luxury Villas &<br/>Homes <em>Directly from Owners.</em></>, description: "Skip commission fees, connect with verified owners, and find premium homes across India." },
   { image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2560&q=95", eyebrow: "MODERN ARCHITECTURE", title: <>Find a home with<br/><em>your kind</em> of comfort.</>, description: "From contemporary architecture to welcoming interiors, find a home that fits your everyday." },
   { image: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2560&q=95", eyebrow: "SPACES TO GROW", title: <>Your next chapter<br/>starts <em>at home.</em></>, description: "Browse independent houses, premium apartments and family-friendly homes across India." },
   { image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2560&q=95", eyebrow: "LUXURY INTERIORS", title: <>A place that feels<br/>like it was made <em>for you.</em></>, description: "Discover light-filled living spaces, elegant finishes and homes with room to breathe." },
@@ -142,8 +143,8 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
 
     <section className={"agh-home-hero agh-stitch-hero agh-image-carousel"+(searchFiltersOpen?" has-search-filters-open":"")} aria-label="Discover properties">
       <div className="agh-hero-media" aria-hidden="true">
-        <img key={"desktop-"+heroIndex} className="agh-hero-background agh-hero-background-desktop" src={heroSlides[heroIndex].image} alt="" fetchPriority="high"/>
-        <img key={"mobile-"+heroIndex} className="agh-hero-background agh-hero-background-mobile" src={heroSlides[heroIndex].image.replace("w=2560","w=1200")} alt="" fetchPriority="high"/>
+        <img key={"desktop-"+heroIndex} className="agh-hero-background agh-hero-background-desktop" src={heroSlides[heroIndex].image} alt="" fetchPriority="high" decoding="async" onError={event => { const image = event.currentTarget; if (image.dataset.fallbackApplied !== "true") { image.dataset.fallbackApplied = "true"; image.src = heroFallbackImage; } else { image.style.visibility = "hidden"; } }}/>
+        <img key={"mobile-"+heroIndex} className="agh-hero-background agh-hero-background-mobile" src={heroSlides[heroIndex].image.replace("w=2560","w=1200")} alt="" fetchPriority="high" decoding="async" onError={event => { const image = event.currentTarget; if (image.dataset.fallbackApplied !== "true") { image.dataset.fallbackApplied = "true"; image.src = heroFallbackImage; } else { image.style.visibility = "hidden"; } }}/>
         <div className="agh-hero-image-shade"/>
       </div>
       <div className="agh-stitch-hero-inner">
@@ -157,7 +158,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
         </div>
       </div>
       <div className="agh-home-search-panel agh-glass-search agh-hero-searchbar">
-        <div className="agh-hero-searchbar-main" role="search">
+        <form className="agh-hero-searchbar-main" role="search" onSubmit={event => { event.preventDefault(); window.location.assign(searchUrl); }}>
           <label className="agh-hero-search-transaction" aria-label="Listing purpose">
             <select value={activeTab === "rent" ? "rent" : "buy"} onChange={event => { const next = event.target.value; setActiveTab(next === "rent" ? "rent" : "buy"); }}>
               <option value="buy">Buy</option>
@@ -174,10 +175,10 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
           <button type="button" className={"agh-hero-search-filter"+(searchFiltersOpen?" is-open":"")} aria-label="More search filters" aria-expanded={searchFiltersOpen} onClick={() => setSearchFiltersOpen(value => !value)}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M13 4v6M7 14v6" /></svg>
           </button>
-          <button type="button" className="agh-hero-search-submit" aria-label="Search properties" onClick={() => window.location.assign(searchUrl)}>
+          <button type="submit" className="agh-hero-search-submit" aria-label="Search properties">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
           </button>
-        </div>
+        </form>
         {searchFiltersOpen && <div className="agh-hero-search-filter-popover">
           <label><span>Property type</span><select value={category} onChange={event => { const next = event.target.value; setCategory(next); if (next === "commercial") setActiveTab("commercial"); else if (next === "plots") setActiveTab("plots"); else if (activeTab === "commercial" || activeTab === "plots") setActiveTab("buy"); }}><option value="all">All property types</option>{categories.filter(item => item.key !== "all").map(item => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
           <label><span>Budget range</span><select value={budget} onChange={event => setBudget(event.target.value)}><option value="any">Any budget</option><option value="50">Up to ₹50 lakh</option><option value="100">Up to ₹1 crore</option></select></label>
@@ -186,8 +187,8 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
         </div>}
       </div>
       <div className="agh-stitch-stats">
-        <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 13 9 7l6 2 4-2 10 7-4 5-5-3-5 6-4-3-4 2-5-8Zm8-4 6 5m-7 5 4 3m3-5 4 3m1-6 4 3" /></svg><strong>Direct</strong><small>OWNER CONNECTIONS</small></div>
-        <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M21 7c-1.5-2-8-2-10 1-2 4 2 6 6 7s6 3 4 7c-2 3-8 3-11 0M16 3v26M6 11h18M6 21h18" /></svg><strong>₹0</strong><small>MIDDLEMEN BROKERAGE</small></div>
+        <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="m3.5 12 5.2-5.2 5.1 1.1 3.1 2.2 2.7-1.4 3.5 1.1 5.9 5.1-4.1 4.4-3.2-2.1-4.4 4.4a2.4 2.4 0 0 1-3.4 0l-1.2-1.2a2.4 2.4 0 0 1-3.3-.2l-1.1-1.1a2.4 2.4 0 0 1-2.7-1.1L3.5 12Z"/><path d="m8.7 6.8 5.4 5.1a2.6 2.6 0 0 0 3.6 0l1.9-1.8M12.6 18.8l2.1 2.1m1.3-4.4 2.4 2.4m1.2-4.5 2.5 2.5"/></svg><strong>Direct</strong><small>OWNER CONNECTIONS</small></div>
+        <div><span className="agh-stitch-stat-rupee" aria-hidden="true">₹</span><strong>₹0</strong><small>MIDDLEMEN BROKERAGE</small></div>
         <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 11 4v8c0 7-5 11-11 14C10 26 5 22 5 15V7l11-4Zm-5 13 4 4 7-8" /></svg><strong>Secure</strong><small>VERIFIED &amp; SAFE</small></div>
         <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="m18 2-12 17h9l-1 11 12-18h-9l1-10Z" /></svg><strong>Live</strong><small>PROPERTY DISCOVERY</small></div>
       </div>
