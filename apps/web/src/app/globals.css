@@ -6155,3 +6155,68 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
   top:0!important;
   z-index:50000!important;
 }
+
+
+/* Desktop search pill: match the compact 46px mobile control instead of
+   inheriting the oversized 62px desktop dimensions from the earlier hero pass. */
+@media(min-width:701px){
+  .agh-home-redesign .agh-home-hero.agh-stitch-hero>.agh-hero-searchbar{
+    padding:0!important;
+    min-height:46px!important;
+    border-radius:999px!important;
+  }
+  .agh-home-redesign .agh-hero-searchbar-main{
+    min-height:46px!important;
+    height:46px!important;
+    padding:3px!important;
+    gap:0!important;
+  }
+  .agh-home-redesign .agh-hero-search-transaction,
+  .agh-home-redesign .agh-hero-search-location{
+    height:38px!important;
+    min-height:38px!important;
+  }
+  .agh-home-redesign .agh-hero-search-transaction{
+    flex-basis:108px!important;
+    margin-right:5px!important;
+  }
+  .agh-home-redesign .agh-hero-search-transaction select{
+    font-size:13px!important;
+  }
+  .agh-home-redesign .agh-hero-search-transaction>span{
+    font-size:12px!important;
+    right:8px!important;
+  }
+  .agh-home-redesign .agh-hero-search-location{
+    padding:0 12px!important;
+    gap:7px!important;
+  }
+  .agh-home-redesign .agh-hero-search-location>span{
+    font-size:17px!important;
+  }
+  .agh-home-redesign .agh-hero-search-location input{
+    font-size:12px!important;
+  }
+  .agh-home-redesign .agh-hero-search-divider{
+    height:30px!important;
+  }
+  .agh-home-redesign .agh-hero-search-filter{
+    flex:0 0 42px!important;
+    width:42px!important;
+    height:36px!important;
+  }
+  .agh-home-redesign .agh-hero-search-filter svg{
+    width:20px!important;
+    height:20px!important;
+  }
+  .agh-home-redesign .agh-hero-search-submit{
+    flex:0 0 40px!important;
+    width:40px!important;
+    height:40px!important;
+    margin:0 0 0 2px!important;
+  }
+  .agh-home-redesign .agh-hero-search-submit svg{
+    width:19px!important;
+    height:19px!important;
+  }
+}
