@@ -17,6 +17,7 @@ type Result = { items: Property[]; pagination: { total: number; pages: number; p
 type Category = { key: string; label: string; icon: string };
 const money = (value: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(value);
 const heroFallbackImage = "https://images.pexels.com/photos/36676879/pexels-photo-36676879.jpeg?auto=compress&cs=tinysrgb&w=2000";
+const heroSecondaryFallbackImage = "https://images.pexels.com/photos/31817157/pexels-photo-31817157.jpeg?auto=compress&cs=tinysrgb&w=2000";
 const heroSlides = [
   { image: heroFallbackImage, eyebrow: "LUXURY VILLAS & HOMES", title: <>Discover Luxury Villas &<br/>Homes <em>Directly from Owners.</em></>, description: "Skip commission fees, connect with verified owners, and find premium homes across India." },
   { image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2560&q=95", eyebrow: "MODERN ARCHITECTURE", title: <>Find a home with<br/><em>your kind</em> of comfort.</>, description: "From contemporary architecture to welcoming interiors, find a home that fits your everyday." },
@@ -143,7 +144,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
 
     <section className={"agh-home-hero agh-stitch-hero agh-image-carousel"+(searchFiltersOpen?" has-search-filters-open":"")} aria-label="Discover properties">
       <div className="agh-hero-media" aria-hidden="true">
-        <img key={"desktop-"+heroIndex} className="agh-hero-background agh-hero-background-desktop" src={heroSlides[heroIndex].image} alt="" fetchPriority="high" decoding="async" onError={event => { const image = event.currentTarget; if (image.dataset.fallbackApplied !== "true") { image.dataset.fallbackApplied = "true"; image.src = heroFallbackImage; } else { image.style.visibility = "hidden"; } }}/>
+        <img key={"desktop-"+heroIndex} className="agh-hero-background agh-hero-background-desktop" src={heroSlides[heroIndex].image} alt="" fetchPriority="high" decoding="async" onError={event => { const image = event.currentTarget; if (image.dataset.fallbackApplied !== "true") { image.dataset.fallbackApplied = "true"; image.src = heroSecondaryFallbackImage; } else { image.style.visibility = "hidden"; } }}/>
         <img key={"mobile-"+heroIndex} className="agh-hero-background agh-hero-background-mobile" src={heroSlides[heroIndex].image.replace("w=2560","w=1200")} alt="" fetchPriority="high" decoding="async" onError={event => { const image = event.currentTarget; if (image.dataset.fallbackApplied !== "true") { image.dataset.fallbackApplied = "true"; image.src = heroFallbackImage; } else { image.style.visibility = "hidden"; } }}/>
         <div className="agh-hero-image-shade"/>
       </div>
@@ -188,7 +189,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
       </div>
       <div className="agh-stitch-stats">
         <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="m3.5 12 5.2-5.2 5.1 1.1 3.1 2.2 2.7-1.4 3.5 1.1 5.9 5.1-4.1 4.4-3.2-2.1-4.4 4.4a2.4 2.4 0 0 1-3.4 0l-1.2-1.2a2.4 2.4 0 0 1-3.3-.2l-1.1-1.1a2.4 2.4 0 0 1-2.7-1.1L3.5 12Z"/><path d="m8.7 6.8 5.4 5.1a2.6 2.6 0 0 0 3.6 0l1.9-1.8M12.6 18.8l2.1 2.1m1.3-4.4 2.4 2.4m1.2-4.5 2.5 2.5"/></svg><strong>Direct</strong><small>OWNER CONNECTIONS</small></div>
-        <div><span className="agh-stitch-stat-rupee" aria-hidden="true">₹</span><strong>₹0</strong><small>MIDDLEMEN BROKERAGE</small></div>
+        <div><span className="agh-stitch-stat-rupee" aria-hidden="true">₹0</span><strong>₹0</strong><small>MIDDLEMEN BROKERAGE</small></div>
         <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 11 4v8c0 7-5 11-11 14C10 26 5 22 5 15V7l11-4Zm-5 13 4 4 7-8" /></svg><strong>Secure</strong><small>VERIFIED &amp; SAFE</small></div>
         <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="m18 2-12 17h9l-1 11 12-18h-9l1-10Z" /></svg><strong>Live</strong><small>PROPERTY DISCOVERY</small></div>
       </div>
