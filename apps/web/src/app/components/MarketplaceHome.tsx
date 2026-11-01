@@ -188,7 +188,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
         </div>}
       </div>
       <div className="agh-stitch-stats">
-        <div><svg className="agh-stitch-stat-icon agh-handshake-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 3.2-3.2a2 2 0 0 1 2.5-.2l2.1 1.3 1.7-1a2.4 2.4 0 0 1 2.6.2L21 11l-2.2 2.3-3.1-2.1-4.2 4a1.8 1.8 0 0 1-2.5 0L4 10.2"/><path d="m7.2 12.1 3.1 3.1a1.8 1.8 0 0 0 2.5 0l1.1-1.1"/><path d="m5.2 7.1-2.7 2.7 3.1 3.1 2-2"/><path d="m18.8 8.9 2.7 2.7-3 3-2-2"/><path d="m13.5 7.2 1.8 1.3"/></svg><strong>Direct</strong><small>OWNER CONNECTIONS</small></div>
+        <div><span className="agh-stitch-stat-icon agh-handshake-icon material-symbols-outlined" aria-hidden="true">handshake</span><strong>Direct</strong><small>OWNER CONNECTIONS</small></div>
         <div><span className="agh-stitch-stat-rupee" aria-hidden="true">₹0</span><strong>₹0</strong><small>MIDDLEMEN BROKERAGE</small></div>
         <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 11 4v8c0 7-5 11-11 14C10 26 5 22 5 15V7l11-4Zm-5 13 4 4 7-8" /></svg><strong>Secure</strong><small>VERIFIED &amp; SAFE</small></div>
         <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="m18 2-12 17h9l-1 11 12-18h-9l1-10Z" /></svg><strong>Live</strong><small>PROPERTY DISCOVERY</small></div>
