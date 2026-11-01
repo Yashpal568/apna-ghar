@@ -5458,3 +5458,51 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
  .agh-home-redesign .agh-home-card-actions{width:100%!important;max-width:none!important;grid-template-columns:1fr!important;gap:8px!important}
  .agh-home-redesign .agh-home-card-actions a,.agh-home-redesign .agh-home-card-actions button{min-height:46px!important}
 }
+
+
+/* Unified Apna Ghar bottom dock — one shared navigation on every mobile route */
+@media(max-width:760px){
+ body{padding-bottom:calc(112px + env(safe-area-inset-bottom))!important}
+ .ag-bottom-nav,
+ body:has(.agh-home-redesign) .ag-bottom-nav,
+ body:has(.agh-home-redesign) .ag-bottom-nav{
+  position:fixed!important;inset:auto 12px calc(10px + env(safe-area-inset-bottom)) 12px!important;
+  z-index:10000!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  align-items:center!important;min-height:72px!important;padding:7px 8px!important;
+  border:1px solid rgba(211,222,239,.85)!important;border-radius:23px!important;
+  background:rgba(255,255,255,.91)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(170%)!important;backdrop-filter:blur(24px) saturate(170%)!important;
+  box-shadow:0 12px 38px rgba(15,35,65,.16),0 2px 8px rgba(15,35,65,.06)!important;
+ }
+ .ag-bottom-nav .ag-bottom-nav-item{
+  position:relative!important;display:flex!important;min-width:0!important;min-height:56px!important;
+  flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;
+  padding:4px 2px!important;border-radius:15px!important;background:transparent!important;
+  color:#758297!important;text-decoration:none!important;font-family:var(--font-ui)!important;
+  font-size:10px!important;font-weight:650!important;line-height:1.1!important;
+  transition:color .2s ease,background .2s ease,transform .2s ease!important;
+ }
+ .ag-bottom-nav .ag-bottom-nav-icon{display:grid!important;place-items:center!important;width:34px!important;height:30px!important;border-radius:11px!important}
+ .ag-bottom-nav .ag-bottom-nav-icon svg{display:block!important;width:21px!important;height:21px!important;max-width:none!important}
+ .ag-bottom-nav .ag-bottom-nav-label{display:block!important;font-size:9px!important;font-weight:700!important;letter-spacing:.05px!important}
+ .ag-bottom-nav .ag-bottom-nav-item.is-active{color:#075bea!important;background:rgba(7,91,234,.075)!important}
+ .ag-bottom-nav .ag-bottom-nav-item.is-active .ag-bottom-nav-icon{background:rgba(7,91,234,.10)!important}
+ .ag-bottom-nav .ag-bottom-nav-post{top:-10px!important;gap:3px!important;color:#075bea!important;background:transparent!important}
+ .ag-bottom-nav .ag-bottom-nav-post .ag-bottom-nav-icon{
+  width:49px!important;height:49px!important;border-radius:17px!important;
+  background:linear-gradient(145deg,#1474ff,#0648c7)!important;color:#fff!important;
+  box-shadow:0 8px 18px rgba(7,91,234,.3)!important;
+  transform:translateY(-5px)!important;
+ }
+ .ag-bottom-nav .ag-bottom-nav-post .ag-bottom-nav-icon svg{width:25px!important;height:25px!important;stroke-width:2.1!important}
+ .ag-bottom-nav .ag-bottom-nav-post .ag-bottom-nav-label{margin-top:-4px!important;color:#075bea!important;font-size:9px!important}
+ .ag-bottom-nav .ag-bottom-nav-item:active{transform:scale(.94)!important}
+ .ag-bottom-nav .ag-bottom-nav-item:focus-visible{outline:2px solid #075bea!important;outline-offset:2px!important}
+ /* Remove route-specific duplicates so the shared dock is the only bottom navigation. */
+ .agh-home-mobile-nav,.messages-mobile-bottom-nav{display:none!important}
+ body:has(.agh-home-redesign) .ag-bottom-nav{display:grid!important}
+}
+@media(max-width:380px){
+ .ag-bottom-nav{inset-inline:8px!important;padding-inline:5px!important}
+ .ag-bottom-nav .ag-bottom-nav-label{font-size:8px!important}
+}
