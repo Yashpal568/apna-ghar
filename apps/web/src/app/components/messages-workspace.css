@@ -48,9 +48,14 @@ body:has(.stitch-chat-shell) footer,
 body:has(.stitch-chat-shell) .ag-site-footer,
 body:has(.stitch-chat-shell) .agh-footer,
 body:has(.stitch-chat-shell) .site-footer,
-body:has(.stitch-chat-shell) .ag-bottom-nav,
 body:has(.stitch-chat-shell) > header.ag-site-header,
 body:has(.stitch-chat-shell) > .ag-site-header {
+  display: none !important;
+}
+
+/* Suppress mobile bottom nav only when actively in mobile chat mode,
+   so the live negotiation composer sits flush at the bottom */
+body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   display: none !important;
 }
 
@@ -191,9 +196,16 @@ body:has(.stitch-chat-shell) > .ag-site-header {
 @media (max-width: 1023px) {
   .stitch-chat-shell.is-inbox-mode .stitch-mobile-inbox-view {
     display: flex !important;
+    height: calc(100dvh - 66px - env(safe-area-inset-bottom, 0px)) !important;
+    max-height: calc(100dvh - 66px - env(safe-area-inset-bottom, 0px)) !important;
   }
   .stitch-chat-shell.is-inbox-mode .stitch-chat-active-container {
     display: none !important;
+  }
+
+  /* Keep shared mobile bottom navigation visible on mobile conversation list */
+  body:has(.stitch-chat-shell.is-inbox-mode) .ag-bottom-nav {
+    display: grid !important;
   }
 
   .stitch-chat-shell.is-chat-mode .stitch-mobile-inbox-view {
