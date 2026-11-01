@@ -115,12 +115,19 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
     try {
       const token = await getToken();
       if (!token) throw new Error("Please sign in again to contact the owner.");
-      const response = await fetchApi("/conversations/property/" + encodeURIComponent(property._id), { method: "POST", headers: { Authorization: "Bearer " + token, "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({}) });
+      const response = await fetchApi("/conversations/property/" + encodeURIComponent(property._id), {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token, "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({}),
+      });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Couldn't open this conversation.");
       window.location.assign("/messages?conversation=" + encodeURIComponent(body.conversationId));
-    } catch (cause) { setNotice(cause instanceof Error ? cause.message : "Couldn't open this conversation."); setContactBusy(""); }
-  }, [getToken, isSignedIn]);
+    } catch (cause) {
+      setNotice(cause instanceof Error ? cause.message : "Couldn't open this conversation.");
+      setContactBusy("");
+    }
+  }, [isSignedIn, getToken]);
 
   return <main className="agh-market agh-home-redesign">
     <SiteHeader active="home" searchValue={location} onSearchChange={setLocation} />

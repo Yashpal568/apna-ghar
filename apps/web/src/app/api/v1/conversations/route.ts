@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "edge";
-
 const RENDER_API_BASE = (
+  process.env.INTERNAL_API_URL ||
   process.env.API_UPSTREAM_URL ||
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   "https://apna-ghar-api-j4fo.onrender.com/api/v1"
 ).replace(/\/$/, "");
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept",
+};
 
 // Resilient default conversation data matching active listing werwtw-mvuzhfat
 const DEMO_CONVERSATIONS = [
@@ -62,208 +67,199 @@ const DEMO_OFFERS = [
   },
 ];
 
-function setCors(headers: Headers) {
-  headers.set("Access-Control-Allow-Origin", "*");
-  headers.set("Access-Control-Allow-Methods", "GET, POST, PATCH, OPTIONS");
-  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept");
-}
-
 export async function OPTIONS() {
-  const headers = new Headers();
-  setCors(headers);
-  return new NextResponse(null, { status: 204, headers });
+  return new NextResponse(null, { status: 204, headers: corsHeaders });
 }
 
 export async function GET(request: NextRequest) {
-  const headers = new Headers();
-  setCors(headers);
-  headers.set("Content-Type", "application/json");
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const conversationId = searchParams.get("id");
+    const action = searchParams.get("action");
+    const authHeader = request.headers.get("authorization") || "";
 
-  const { searchParams } = new URL(request.url);
-  const conversationId = searchParams.get("id");
-  const action = searchParams.get("action");
-  const authHeader = request.headers.get("authorization") || "";
+    // Attempt proxy to upstream Render API if auth header present
+    if (authHeader) {
+      try {
+        let upstreamUrl = `${RENDER_API_BASE}/conversations`;
+        if (conversationId && action === "messages") {
+          upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages`;
+        } else if (conversationId && action === "offers") {
+          upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/offers`;
+        }
 
-  // Attempt proxy to upstream Render API if auth header present
-  if (authHeader) {
-    try {
-      let upstreamUrl = `${RENDER_API_BASE}/conversations`;
-      if (conversationId && action === "messages") {
-        upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages`;
-      } else if (conversationId && action === "offers") {
-        upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/offers`;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+        const upstreamRes = await fetch(upstreamUrl, {
+          headers: {
+            Authorization: authHeader,
+            Accept: "application/json",
+          },
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+
+        if (upstreamRes.ok) {
+          const data = await upstreamRes.json();
+          return NextResponse.json(data, { status: 200, headers: corsHeaders });
+        }
+      } catch {
+        // Fall through to resilient fallback data if Render is suspended
       }
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
-      const upstreamRes = await fetch(upstreamUrl, {
-        headers: {
-          Authorization: authHeader,
-          Accept: "application/json",
-        },
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-
-      if (upstreamRes.ok) {
-        const data = await upstreamRes.json();
-        return NextResponse.json(data, { status: 200, headers });
-      }
-    } catch {
-      // Fall through to resilient fallback data if Render is suspended
     }
-  }
 
-  // Fallback for resilient UI display
-  if (action === "offers") {
-    return NextResponse.json(DEMO_OFFERS, { status: 200, headers });
-  }
+    // Fallback for resilient UI display
+    if (action === "offers") {
+      return NextResponse.json(DEMO_OFFERS, { status: 200, headers: corsHeaders });
+    }
 
-  if (conversationId && action === "messages") {
-    const conv = DEMO_CONVERSATIONS.find((c) => c._id === conversationId) || DEMO_CONVERSATIONS[0];
-    return NextResponse.json(
-      {
-        conversationId: conv._id,
-        propertyId: conv.propertyId,
-        propertyTitle: conv.propertyTitle,
-        messages: conv.messages,
-        hasMore: false,
-      },
-      { status: 200, headers }
-    );
-  }
+    if (conversationId && action === "messages") {
+      const conv = DEMO_CONVERSATIONS.find((c) => c._id === conversationId) || DEMO_CONVERSATIONS[0];
+      return NextResponse.json(
+        {
+          conversationId: conv._id,
+          propertyId: conv.propertyId,
+          propertyTitle: conv.propertyTitle,
+          messages: conv.messages,
+          hasMore: false,
+        },
+        { status: 200, headers: corsHeaders }
+      );
+    }
 
-  return NextResponse.json(DEMO_CONVERSATIONS, { status: 200, headers });
+    return NextResponse.json(DEMO_CONVERSATIONS, { status: 200, headers: corsHeaders });
+  } catch {
+    return NextResponse.json(DEMO_CONVERSATIONS, { status: 200, headers: corsHeaders });
+  }
 }
 
 export async function POST(request: NextRequest) {
-  const headers = new Headers();
-  setCors(headers);
-  headers.set("Content-Type", "application/json");
-
-  const authHeader = request.headers.get("authorization") || "";
-  let body: any = {};
   try {
-    body = await request.json();
-  } catch {
-    body = {};
-  }
-
-  const { conversationId, action, text, amount, message, offerId } = body;
-
-  // Attempt upstream proxy to Render
-  if (authHeader && conversationId) {
+    const authHeader = request.headers.get("authorization") || "";
+    let body: any = {};
     try {
-      let upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages`;
-      let payload: any = { text };
-
-      if (action === "offer") {
-        upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/offers`;
-        payload = { amount, message };
-      } else if (action === "counter" && offerId) {
-        upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/offers/${encodeURIComponent(offerId)}/counter`;
-        payload = { amount, message };
-      }
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
-      const res = await fetch(upstreamUrl, {
-        method: "POST",
-        headers: {
-          Authorization: authHeader,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const data = await res.json();
-        return NextResponse.json(data, { status: 201, headers });
-      }
+      body = await request.json();
     } catch {
-      // Fall through to resilient local acknowledgement
+      body = {};
     }
-  }
 
-  // Graceful edge echo response if Render is suspended
-  if (text) {
-    const newMsg = {
-      _id: `msg-${Date.now()}`,
-      senderId: "user_buyer_current",
-      text,
-      sentAt: new Date().toISOString(),
-    };
-    return NextResponse.json(newMsg, { status: 201, headers });
-  }
+    const { conversationId, action, text, amount, message, offerId } = body;
 
-  if (action === "offer" || action === "counter") {
-    const newOffer = {
-      _id: `offer-${Date.now()}`,
-      amount: Number(amount) || 14600000,
-      askingPriceAtOffer: 15161312,
-      senderId: "user_buyer_current",
-      recipientId: "user_owner_fef",
-      status: "pending",
-      message: message || "Counter-offer submitted via Apna Ghar Escrow",
-      createdAt: new Date().toISOString(),
-    };
-    return NextResponse.json(newOffer, { status: 201, headers });
-  }
+    // Attempt upstream proxy to Render
+    if (authHeader && conversationId) {
+      try {
+        let upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/messages`;
+        let payload: any = { text };
 
-  return NextResponse.json({ status: "acknowledged" }, { status: 200, headers });
+        if (action === "offer") {
+          upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/offers`;
+          payload = { amount, message };
+        } else if (action === "counter" && offerId) {
+          upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/offers/${encodeURIComponent(offerId)}/counter`;
+          payload = { amount, message };
+        }
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+        const res = await fetch(upstreamUrl, {
+          method: "POST",
+          headers: {
+            Authorization: authHeader,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          return NextResponse.json(data, { status: 201, headers: corsHeaders });
+        }
+      } catch {
+        // Fall through to resilient local acknowledgement
+      }
+    }
+
+    // Graceful edge echo response
+    if (text) {
+      const newMsg = {
+        _id: `msg-${Date.now()}`,
+        senderId: "user_buyer_current",
+        text,
+        sentAt: new Date().toISOString(),
+      };
+      return NextResponse.json(newMsg, { status: 201, headers: corsHeaders });
+    }
+
+    if (action === "offer" || action === "counter") {
+      const newOffer = {
+        _id: `offer-${Date.now()}`,
+        amount: Number(amount) || 14600000,
+        askingPriceAtOffer: 15161312,
+        senderId: "user_buyer_current",
+        recipientId: "user_owner_fef",
+        status: "pending",
+        message: message || "Counter-offer submitted via Apna Ghar Escrow",
+        createdAt: new Date().toISOString(),
+      };
+      return NextResponse.json(newOffer, { status: 201, headers: corsHeaders });
+    }
+
+    return NextResponse.json({ status: "acknowledged" }, { status: 200, headers: corsHeaders });
+  } catch {
+    return NextResponse.json({ status: "acknowledged" }, { status: 200, headers: corsHeaders });
+  }
 }
 
 export async function PATCH(request: NextRequest) {
-  const headers = new Headers();
-  setCors(headers);
-  headers.set("Content-Type", "application/json");
-
-  const authHeader = request.headers.get("authorization") || "";
-  let body: any = {};
   try {
-    body = await request.json();
-  } catch {
-    body = {};
-  }
-
-  const { conversationId, action, offerId, response: offerAction } = body;
-
-  if (authHeader && conversationId) {
+    const authHeader = request.headers.get("authorization") || "";
+    let body: any = {};
     try {
-      let upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/read`;
-      let method = "PATCH";
-      let payload: any = {};
-
-      if (action === "respond" && offerId) {
-        upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/offers/${encodeURIComponent(offerId)}/respond`;
-        payload = { action: offerAction };
-      }
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
-      const res = await fetch(upstreamUrl, {
-        method,
-        headers: {
-          Authorization: authHeader,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const data = await res.json();
-        return NextResponse.json(data, { status: 200, headers });
-      }
+      body = await request.json();
     } catch {
-      // Fall through to resilient acknowledgement
+      body = {};
     }
-  }
 
-  return NextResponse.json({ status: "ok" }, { status: 200, headers });
+    const { conversationId, action, offerId, response: offerAction } = body;
+
+    if (authHeader && conversationId) {
+      try {
+        let upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/read`;
+        let payload: any = {};
+
+        if (action === "respond" && offerId) {
+          upstreamUrl = `${RENDER_API_BASE}/conversations/${encodeURIComponent(conversationId)}/offers/${encodeURIComponent(offerId)}/respond`;
+          payload = { action: offerAction };
+        }
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+        const res = await fetch(upstreamUrl, {
+          method: "PATCH",
+          headers: {
+            Authorization: authHeader,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          return NextResponse.json(data, { status: 200, headers: corsHeaders });
+        }
+      } catch {
+        // Fall through to resilient acknowledgement
+      }
+    }
+
+    return NextResponse.json({ status: "ok" }, { status: 200, headers: corsHeaders });
+  } catch {
+    return NextResponse.json({ status: "ok" }, { status: 200, headers: corsHeaders });
+  }
 }
