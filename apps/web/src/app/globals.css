@@ -5993,3 +5993,55 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
     height:18px!important;
   }
 }
+
+
+/* Trust-strip icon system: consistent light strokes, compact sizing and aligned labels. */
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div{
+  display:grid!important;grid-template-rows:24px 18px 14px!important;
+  align-content:center!important;justify-items:center!important;gap:2px!important;
+  min-width:0!important;min-height:62px!important;padding:0 4px!important;text-align:center!important;
+}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats .agh-stitch-stat-icon{
+  display:block!important;width:23px!important;height:23px!important;fill:none!important;
+  stroke:#28e5a0!important;stroke-width:1.65!important;stroke-linecap:round!important;
+  stroke-linejoin:round!important;vector-effect:non-scaling-stroke;
+}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats .agh-stitch-stat-rupee{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:23px!important;height:23px!important;margin:0!important;color:#28e5a0!important;
+  font-size:21px!important;font-weight:600!important;line-height:1!important;letter-spacing:-1.2px!important;
+}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div strong{
+  display:block!important;align-self:center!important;margin:0!important;font-size:14px!important;
+  font-weight:750!important;line-height:18px!important;white-space:nowrap!important;
+}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div:nth-child(2) strong{display:none!important}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div small{
+  display:block!important;align-self:center!important;width:100%!important;margin:0!important;
+  font-size:6.8px!important;font-weight:500!important;line-height:14px!important;
+  letter-spacing:-.12px!important;text-align:center!important;white-space:nowrap!important;
+}
+.agh-home-redesign .agh-market-header-scope{position:static!important;width:100%!important;max-width:none!important}
+.agh-home-redesign .agh-market-header-scope .agh-header{
+  position:sticky!important;top:0!important;z-index:12000!important;width:100%!important;
+  background:rgba(255,255,255,.97)!important;
+  -webkit-backdrop-filter:blur(16px)!important;backdrop-filter:blur(16px)!important;
+}
+@media(max-width:700px){
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div{
+    grid-template-rows:22px 17px 13px!important;min-height:56px!important;
+    padding-inline:2px!important;gap:1px!important;
+  }
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats .agh-stitch-stat-icon{
+    width:21px!important;height:21px!important;stroke-width:1.65!important;
+  }
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div strong{
+    font-size:13px!important;line-height:17px!important;font-weight:700!important;
+  }
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div small{
+    font-size:6.3px!important;line-height:13px!important;letter-spacing:-.18px!important;
+  }
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats .agh-stitch-stat-rupee{
+    width:21px!important;height:21px!important;font-size:19px!important;font-weight:600!important;
+  }
+}
