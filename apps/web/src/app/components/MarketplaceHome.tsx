@@ -109,7 +109,14 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
     void load(); return () => controller.abort();
   }, [transaction, category, location, budget, sort, filter, retry]);
 
-  const searchUrl = "/search?transaction=" + transaction + (location.trim() ? "&location=" + encodeURIComponent(location.trim()) : "") + (category !== "all" ? "&type=" + encodeURIComponent(category) : "");
+  const searchQuery = new URLSearchParams({ transaction });
+  if (location.trim()) searchQuery.set("location", location.trim());
+  if (category !== "all") searchQuery.set("type", category);
+  if (budget === "50") searchQuery.set("maxPrice", "5000000");
+  if (budget === "100") searchQuery.set("maxPrice", "10000000");
+  if (filter === "beds") searchQuery.set("minBedrooms", "3");
+  if (filter === "furnished") searchQuery.set("furnishing", "furnished");
+  const searchUrl = "/search?" + searchQuery.toString();
   const contactOwner = useCallback(async (property: Property) => {
     if (!isSignedIn) { window.location.assign("/sign-in?redirect_url=" + encodeURIComponent("/search")); return; }
     setContactBusy(property._id); setNotice("");
