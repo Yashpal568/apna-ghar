@@ -5020,3 +5020,73 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
   .agh-home-redesign .agh-home-search-tabs{flex-wrap:wrap!important}
   .agh-home-redesign .agh-home-categories{padding-top:26px!important}
 }
+
+
+/* Correct Stitch overlap: full-height carousel with the search card straddling its bottom edge */
+.agh-home-redesign .agh-home-hero{
+  height:440px!important;
+  min-height:440px!important;
+  overflow:visible!important;
+  position:relative!important;
+  isolation:isolate!important;
+}
+.agh-home-redesign .agh-home-hero-carousel{
+  inset:48px 0 0!important;
+  height:392px!important;
+  z-index:0!important;
+  overflow:hidden!important;
+}
+.agh-home-redesign .agh-home-hero-content{
+  height:392px!important;
+  min-height:392px!important;
+  padding:24px 0!important;
+  position:relative!important;
+  z-index:2!important;
+}
+.agh-home-redesign>.agh-home-search-panel{
+  position:relative!important;
+  z-index:5!important;
+  width:min(1200px,calc(100% - 64px))!important;
+  max-width:1200px!important;
+  margin:-112px auto 0!important;
+  transform:none!important;
+}
+.agh-home-redesign .agh-home-categories{
+  position:relative!important;
+  z-index:1!important;
+  padding-top:34px!important;
+}
+@media(min-width:901px){
+  .agh-home-redesign .agh-home-search-panel{min-height:220px}
+}
+@media(max-width:900px) and (min-width:651px){
+  .agh-home-redesign .agh-home-hero{height:400px!important;min-height:400px!important}
+  .agh-home-redesign .agh-home-hero-carousel{height:352px!important}
+  .agh-home-redesign .agh-home-hero-content{height:352px!important;min-height:352px!important}
+  .agh-home-redesign>.agh-home-search-panel{
+    width:calc(100% - 40px)!important;
+    margin-top:-88px!important;
+  }
+  .agh-home-redesign .agh-home-categories{padding-top:30px!important}
+}
+@media(max-width:650px){
+  .agh-home-redesign .agh-home-hero{
+    height:310px!important;
+    min-height:310px!important;
+    overflow:visible!important;
+  }
+  .agh-home-redesign .agh-home-hero-carousel{
+    inset:44px 0 0!important;
+    height:266px!important;
+  }
+  .agh-home-redesign .agh-home-hero-content{
+    width:calc(100% - 32px)!important;
+    height:266px!important;
+    min-height:266px!important;
+  }
+  .agh-home-redesign>.agh-home-search-panel{
+    width:calc(100% - 28px)!important;
+    margin:-58px auto 0!important;
+  }
+  .agh-home-redesign .agh-home-categories{padding-top:26px!important}
+}
