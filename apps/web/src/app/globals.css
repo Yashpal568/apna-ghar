@@ -4928,3 +4928,37 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
   transform:none!important
  }
 }
+
+
+/* Reference alignment: let the hero breathe, then seat the search panel lower */
+@media(min-width:761px){
+ .agh-home-redesign .agh-home-hero-content{
+  min-height:326px!important;
+  padding:38px 0 24px!important;
+  align-items:center!important;
+ }
+ .agh-home-redesign .agh-home-search-panel{
+  margin-top:54px!important;
+  margin-bottom:0!important;
+  transform:translateY(0)!important;
+  max-width:1180px!important;
+ }
+ .agh-home-redesign .agh-home-hero-slide{
+  filter:none!important;
+  -webkit-filter:none!important;
+  background-size:cover!important;
+  background-position:center 48%!important;
+  image-rendering:auto;
+ }
+ .agh-home-redesign .agh-home-hero-carousel:after{
+  background:
+   linear-gradient(90deg,rgba(4,22,48,.70) 0%,rgba(5,27,54,.36) 43%,rgba(5,27,54,.04) 100%),
+   linear-gradient(0deg,rgba(4,22,48,.14),rgba(4,22,48,.04))!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+ }
+}
+@media(max-width:760px){
+ .agh-home-redesign .agh-home-hero-content{min-height:240px!important}
+ .agh-home-redesign .agh-home-search-panel{margin-top:-4px!important}
+}
