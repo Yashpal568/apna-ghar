@@ -92,7 +92,19 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
 
   const searchUrl = "/search?transaction=" + transaction + (location.trim() ? "&location=" + encodeURIComponent(location.trim()) : "") + (category !== "all" ? "&type=" + encodeURIComponent(category) : "");
   const contactOwner = useCallback(async (property: Property) => {
-    if (!isSignedIn) { window.location.assign("/sign-in?redirect_url=" + encodeURIC  return <main className="agh-market agh-home-redesign">
+    if (!isSignedIn) { window.location.assign("/sign-in?redirect_url=" + encodeURIComponent("/search")); return; }
+    setContactBusy(property._id); setNotice("");
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("Please sign in again to contact the owner.");
+      const response = await fetchApi("/conversations/property/" + encodeURIComponent(property._id), { method: "POST", headers: { Authorization: "Bearer " + token, "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({}) });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Couldn't open this conversation.");
+      window.location.assign("/messages?conversation=" + encodeURIComponent(body.conversationId));
+    } catch (cause) { setNotice(cause instanceof Error ? cause.message : "Couldn't open this conversation."); setContactBusy(""); }
+  }, [getToken, isSignedIn]);
+
+  return <main className="agh-market agh-home-redesign">
     <SiteHeader active="home" searchValue={location} onSearchChange={setLocation} />
 
     <section className="agh-home-hero" aria-label="Discover properties">
@@ -170,7 +182,6 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
       <div><strong>Legal &amp; Support</strong><a href="/about">About Apna Ghar</a><a href="/privacy">Privacy Protection</a><a href="/terms">Terms of Discovery</a><a href="/messages">24×7 Support via Messages</a></div>
       <div className="agh-home-footer-bottom"><span>© {new Date().getFullYear()} Apna Ghar PropTech. All rights reserved.</span><span>VERIFIED SECURITY &nbsp; ◈ &nbsp; Secure account access</span></div>
     </footer>
-    <nav className="agh-home-mobile-nav" aria-label="Mobile navigation"><a className="active" href="/">⌂<small>Home</small></a><a href="/search">⌕<small>Search</small></a><a className="post" href="/list-property">＋<small>Post</small></a><a href="/messages">▤<small>Chat</small></a><a href="/profile">◉<small>Profile</small></a></nav>uy a home</a><a href="/search?transaction=rent">Rent a home</a><a href="/search?type=commercial">Commercial</a></div><div><strong>For property owners</strong><a href="/list-property">Post a property</a><a href="/my-listings">Manage listings</a></div><div><strong>Your account</strong><a href="/profile">My profile</a><a href="/messages">Messages</a><a href="/about">About us</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div><div className="agh-home-footer-bottom">© {new Date().getFullYear()} Apna Ghar. Made for finding what feels like home.</div></footer>
     <nav className="agh-home-mobile-nav" aria-label="Mobile navigation"><a className="active" href="/">⌂<small>Home</small></a><a href="/search">⌕<small>Search</small></a><a className="post" href="/list-property">＋<small>Post</small></a><a href="/messages">▤<small>Chat</small></a><a href="/profile">◉<small>Profile</small></a></nav>
   </main>;
 }
