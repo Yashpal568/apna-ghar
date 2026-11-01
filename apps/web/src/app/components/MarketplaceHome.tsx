@@ -157,17 +157,17 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
         <div className="agh-home-popular"><b>POPULAR FILTERS:</b>{[{label:"Ready to move",value:"ready"},{label:"3+ BHK Only",value:"beds"},{label:"Direct From Owner",value:"owner"},{label:"Furnished",value:"furnished"},{label:"Under ₹50L",value:"budget"}].map(item => <button key={item.value} className={filter === item.value ? "active" : ""} onClick={() => { setFilter(filter === item.value ? "" : item.value); if (item.value === "budget") setBudget(budget === "50" ? "any" : "50"); }}>{item.label}</button>)}</div>
       </div>
       <div className="agh-stitch-stats">
-        <div><strong>28,500+</strong><small>ACTIVE DIRECT OWNERS</small></div>
+        <div><strong>Direct</strong><small>OWNER CONNECTIONS</small></div>
         <div><strong>₹0</strong><small>MIDDLEMEN BROKERAGE</small></div>
-        <div><strong>100%</strong><small>VERIFIED TITLE DEEDS</small></div>
-        <div><strong>4.2 Days</strong><small>AVG. CONTACT TIME</small></div>
+        <div><strong>Secure</strong><small>ACCOUNT MESSAGING</small></div>
+        <div><strong>Live</strong><small>PROPERTY DISCOVERY</small></div>
       </div>
     </section>
 
 
     <section className="agh-home-categories">
       <div className="agh-home-section-heading"><div><span className="agh-home-eyebrow">● &nbsp; DISCOVERY BY ARCHITECTURE</span><h2>Explore Categories</h2></div><a href="/search">All property types <span>↗</span></a></div>
-      <div className="agh-home-category-grid">{categories.filter(item => item.key !== "all").slice(0,8).map(item => <button key={item.key} className={category === item.key ? "selected" : ""} onClick={() => { setCategory(item.key); document.getElementById("agh-live-properties")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}><span className="agh-home-category-icon"><HomeCategoryIcon name={item.key}/></span><strong>{item.label}</strong><small>Explore properties <b>→</b></small></button>)}</div>
+      <div className="agh-home-category-grid">{categories.filter(item => item.key !== "all").slice(0,6).map(item => <button key={item.key} className={category === item.key ? "selected" : ""} onClick={() => { setCategory(item.key); document.getElementById("agh-live-properties")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}><span className="agh-home-category-icon"><HomeCategoryIcon name={item.key}/></span><strong>{item.label}</strong><small>Explore properties <b>→</b></small></button>)}</div>
     </section>
 
     <section className="agh-home-listings" id="agh-live-properties">
@@ -187,6 +187,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
       <article><span className="agh-home-benefit-icon green">▣</span><b>ZERO BROKERAGE GUARANTEED</b><h3>Strict 0% Commission</h3><p>Buyers and tenants save an average of ₹2.4 Lakhs in an unbrokered commission on every home purchase.</p><small>✓ &nbsp; Zero Platform Markups</small></article>
       <article><span className="agh-home-benefit-icon blue">♢</span><b>PROPERTY CONFIDENCE</b><h3>Kaveri &amp; DigiLocker Check</h3><p>Property titles, encumbrance certificates (EC), and municipal ownership records are verified directly via state registries.</p><small>✓ &nbsp; State Registry Sync</small></article>
       <article><span className="agh-home-benefit-icon green">▣</span><b>DIRECT CONNECTION</b><h3>Encrypted Masked Calls</h3><p>Your real mobile number is never shared. Talk to owners via a private virtual number, preventing telemarketer spam forever.</p><small>✓ &nbsp; 100% Number Privacy</small></article>
+      <article><span className="agh-home-benefit-icon blue">₹</span><b>SECURE TRANSACTIONS</b><h3>Protected Booking Journey</h3><p>Review property details and ownership information carefully before proceeding with a booking.</p><small>✓ &nbsp; Make informed decisions</small></article>
     </section>
 
     <section className="agh-home-owner-cta">
