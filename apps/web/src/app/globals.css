@@ -4250,7 +4250,7 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
  .agh-home-footer strong{font-size:9px}
  .agh-home-footer a{font-size:8px}
  .agh-home-footer-bottom{font-size:7px}
- .agh-home-redesign .agh-home-mobile-nav{display:none!important}
+ .agh-home-redesign .agh-home-mobile-nav{display:grid!important}
  body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
 }
 @media(max-width:380px){.agh-home-hero-copy h1{font-size:31px}.agh-home-promo-copy strong{font-size:16px}.agh-home-category-grid strong{font-size:7px}}
