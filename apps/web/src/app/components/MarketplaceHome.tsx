@@ -140,7 +140,7 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
   return <main className="agh-market agh-home-redesign">
     <SiteHeader active="home" searchValue={location} onSearchChange={setLocation} />
 
-    <section className="agh-home-hero agh-stitch-hero agh-image-carousel" aria-label="Discover properties">
+    <section className={"agh-home-hero agh-stitch-hero agh-image-carousel"+(searchFiltersOpen?" has-search-filters-open":"")} aria-label="Discover properties">
       <div className="agh-hero-media" aria-hidden="true">
         <img key={"desktop-"+heroIndex} className="agh-hero-background agh-hero-background-desktop" src={heroSlides[heroIndex].image} alt="" fetchPriority="high"/>
         <img key={"mobile-"+heroIndex} className="agh-hero-background agh-hero-background-mobile" src={heroSlides[heroIndex].image.replace("w=2560","w=1200")} alt="" fetchPriority="high"/>
