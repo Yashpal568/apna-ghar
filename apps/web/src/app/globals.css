@@ -6045,3 +6045,99 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
     width:21px!important;height:21px!important;font-size:19px!important;font-weight:600!important;
   }
 }
+
+
+/* Definitive mobile header + trust strip correction.
+   Sticky belongs on the wrapper because it is the full header's containing block. */
+.agh-home-redesign .agh-market-header-scope{
+  position:-webkit-sticky!important;
+  position:sticky!important;
+  top:0!important;
+  z-index:50000!important;
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  align-self:stretch!important;
+  margin:0!important;
+}
+.agh-home-redesign .agh-market-header-scope .agh-header{
+  position:relative!important;
+  top:auto!important;
+  z-index:50000!important;
+  width:100%!important;
+  background:rgba(255,255,255,.98)!important;
+  -webkit-backdrop-filter:blur(16px)!important;
+  backdrop-filter:blur(16px)!important;
+}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div{
+  display:grid!important;
+  grid-template-rows:26px 20px 14px!important;
+  align-content:center!important;
+  justify-items:center!important;
+  align-items:center!important;
+  gap:2px!important;
+  min-height:64px!important;
+  padding:0 2px!important;
+  text-align:center!important;
+}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats .agh-handshake-icon{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:25px!important;
+  height:25px!important;
+  overflow:visible!important;
+  color:#28e5a0!important;
+  font-family:"Material Symbols Outlined"!important;
+  font-size:25px!important;
+  font-weight:300!important;
+  font-style:normal!important;
+  line-height:1!important;
+  letter-spacing:normal!important;
+  white-space:nowrap!important;
+  font-feature-settings:"liga"!important;
+  -webkit-font-feature-settings:"liga"!important;
+  -webkit-font-smoothing:antialiased!important;
+}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats .agh-stitch-stat-icon:not(.agh-handshake-icon){
+  width:23px!important;height:23px!important;fill:none!important;
+  stroke:#28e5a0!important;stroke-width:1.65!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats .agh-stitch-stat-rupee{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:24px!important;height:24px!important;margin:0!important;
+  color:#28e5a0!important;font-size:22px!important;font-weight:600!important;
+  line-height:1!important;letter-spacing:-1px!important;white-space:nowrap!important;
+}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div strong{
+  display:block!important;margin:0!important;align-self:center!important;
+  font-size:13px!important;line-height:20px!important;font-weight:650!important;
+  white-space:nowrap!important;
+}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div:nth-child(2) strong{display:none!important}
+.agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div small{
+  display:block!important;width:100%!important;margin:0!important;
+  font-size:6.4px!important;line-height:14px!important;font-weight:500!important;
+  letter-spacing:-.15px!important;text-align:center!important;white-space:nowrap!important;
+}
+@media(max-width:700px){
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div{
+    grid-template-rows:23px 18px 12px!important;min-height:57px!important;gap:1px!important;
+  }
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats .agh-handshake-icon{
+    width:22px!important;height:22px!important;font-size:22px!important;
+  }
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats .agh-stitch-stat-icon:not(.agh-handshake-icon){
+    width:21px!important;height:21px!important;stroke-width:1.65!important;
+  }
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats .agh-stitch-stat-rupee{
+    width:22px!important;height:22px!important;font-size:20px!important;
+  }
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div strong{
+    font-size:12px!important;line-height:18px!important;font-weight:650!important;
+  }
+  .agh-home-redesign .agh-stitch-hero .agh-stitch-stats>div small{
+    font-size:5.9px!important;line-height:12px!important;letter-spacing:-.2px!important;
+  }
+}
