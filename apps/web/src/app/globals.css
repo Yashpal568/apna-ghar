@@ -5415,3 +5415,46 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
  .agh-home-redesign .agh-stitch-hero .agh-home-popular>b{flex:0 0 auto!important;font-size:6px!important}
  .agh-home-redesign .agh-stitch-hero .agh-home-popular button{flex:0 0 auto!important;padding:4px 6px!important;font-size:6px!important}
 }
+
+
+/* Listings: restore the original vertical feed — exactly one full-width card per row */
+.agh-home-redesign .agh-home-property-grid{
+ display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;
+ width:100%!important;gap:22px!important;align-items:stretch!important;
+}
+.agh-home-redesign .agh-home-property-card{
+ display:grid!important;grid-template-columns:minmax(280px,42%) minmax(0,1fr)!important;
+ width:100%!important;max-width:100%!important;min-height:300px!important;
+ align-items:stretch!important;border-radius:22px!important;
+}
+.agh-home-redesign .agh-home-property-image{
+ width:100%!important;height:100%!important;min-height:300px!important;
+ aspect-ratio:auto!important;align-self:stretch!important;border-radius:0!important;
+}
+.agh-home-redesign .agh-home-property-photo{width:100%!important;height:100%!important;object-fit:cover!important}
+.agh-home-redesign .agh-home-property-content{
+ justify-content:center!important;padding:24px 26px!important;
+}
+.agh-home-redesign .agh-home-property-content h3{font-size:clamp(19px,2vw,25px)!important}
+.agh-home-redesign .agh-home-property-place{font-size:13px!important}
+.agh-home-redesign .agh-home-property-facts{justify-content:flex-start!important;gap:22px!important;font-size:12px!important}
+.agh-home-redesign .agh-home-card-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important;max-width:520px!important}
+@media(max-width:760px){
+ .agh-home-redesign .agh-home-property-grid{display:flex!important;flex-direction:column!important;gap:17px!important}
+ .agh-home-redesign .agh-home-property-card{
+  display:flex!important;flex-direction:column!important;width:100%!important;
+  min-height:0!important;border-radius:20px!important;
+ }
+ .agh-home-redesign .agh-home-property-image{
+  display:block!important;position:relative!important;width:100%!important;
+  height:auto!important;min-height:0!important;aspect-ratio:16/10!important;
+  flex:0 0 auto!important;border-radius:0!important;
+ }
+ .agh-home-redesign .agh-home-property-photo{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important}
+ .agh-home-redesign .agh-home-property-content{padding:17px 17px 16px!important;justify-content:flex-start!important}
+ .agh-home-redesign .agh-home-property-content h3{font-size:19px!important}
+ .agh-home-redesign .agh-home-property-place{font-size:12px!important}
+ .agh-home-redesign .agh-home-property-facts{justify-content:space-between!important;gap:8px!important;font-size:10px!important}
+ .agh-home-redesign .agh-home-card-actions{width:100%!important;max-width:none!important;grid-template-columns:1fr!important;gap:8px!important}
+ .agh-home-redesign .agh-home-card-actions a,.agh-home-redesign .agh-home-card-actions button{min-height:46px!important}
+}
