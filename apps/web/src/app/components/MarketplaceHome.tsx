@@ -17,7 +17,7 @@ type Result = { items: Property[]; pagination: { total: number; pages: number; p
 type Category = { key: string; label: string; icon: string };
 const money = (value: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(value);
 const heroSlides = [
-  { image: "https://images.unsplash.com/photo-1600585154340-be6161a56c0a?auto=format&fit=crop&w=2560&q=95", eyebrow: "VILLA LIVING", title: <>Discover homes that<br/>make room for <em>more.</em></>, description: "Explore striking villas, spacious family homes and thoughtfully designed places to call your own." },
+  { image: "https://images.unsplash.com/photo-1600585154340-be6161a56c0a?auto=format&fit=crop&w=2560&q=95", eyebrow: "LUXURY VILLAS & HOMES", title: <>Discover Luxury Villas &<br/>Homes <em>Directly from Owners.</em></>, description: "Skip commission fees, connect with verified owners, and find premium homes across India." },
   { image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2560&q=95", eyebrow: "MODERN ARCHITECTURE", title: <>Find a home with<br/><em>your kind</em> of comfort.</>, description: "From contemporary architecture to welcoming interiors, find a home that fits your everyday." },
   { image: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=2560&q=95", eyebrow: "SPACES TO GROW", title: <>Your next chapter<br/>starts <em>at home.</em></>, description: "Browse independent houses, premium apartments and family-friendly homes across India." },
   { image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2560&q=95", eyebrow: "LUXURY INTERIORS", title: <>A place that feels<br/>like it was made <em>for you.</em></>, description: "Discover light-filled living spaces, elegant finishes and homes with room to breathe." },
@@ -186,10 +186,10 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
         </div>}
       </div>
       <div className="agh-stitch-stats">
-        <div><strong>Direct</strong><small>OWNER CONNECTIONS</small></div>
-        <div><strong>₹0</strong><small>MIDDLEMEN BROKERAGE</small></div>
-        <div><strong>Secure</strong><small>ACCOUNT MESSAGING</small></div>
-        <div><strong>Live</strong><small>PROPERTY DISCOVERY</small></div>
+        <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 13 9 7l6 2 4-2 10 7-4 5-5-3-5 6-4-3-4 2-5-8Zm8-4 6 5m-7 5 4 3m3-5 4 3m1-6 4 3" /></svg><strong>Direct</strong><small>OWNER CONNECTIONS</small></div>
+        <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M21 7c-1.5-2-8-2-10 1-2 4 2 6 6 7s6 3 4 7c-2 3-8 3-11 0M16 3v26M6 11h18M6 21h18" /></svg><strong>₹0</strong><small>MIDDLEMEN BROKERAGE</small></div>
+        <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 11 4v8c0 7-5 11-11 14C10 26 5 22 5 15V7l11-4Zm-5 13 4 4 7-8" /></svg><strong>Secure</strong><small>VERIFIED &amp; SAFE</small></div>
+        <div><svg className="agh-stitch-stat-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="m18 2-12 17h9l-1 11 12-18h-9l1-10Z" /></svg><strong>Live</strong><small>PROPERTY DISCOVERY</small></div>
       </div>
     </section>
 
