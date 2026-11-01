@@ -4656,3 +4656,40 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
 }
 @media(max-width:380px){.agh-home-hero-copy h1{font-size:28px!important}.agh-home-search-tabs button{padding-inline:6px!important}.agh-home-property-image{aspect-ratio:1.05!important}}
 @media(prefers-reduced-motion:reduce){.agh-home-redesign .agh-home-hero-slide{animation:none!important;opacity:.6!important}}
+
+
+/* Homepage image reliability + single-active search mode correction */
+.agh-home-redesign .agh-home-hero-carousel{
+  background-image:url("https://images.unsplash.com/photo-1600585154340-be6161a56c0a?auto=format&fit=crop&w=2200&q=85");
+  background-size:cover;background-position:center 48%;
+}
+.agh-home-redesign .agh-home-hero-carousel:after{
+  background:linear-gradient(90deg,rgba(4,22,48,.48) 0%,rgba(5,27,54,.28) 48%,rgba(5,27,54,.12) 100%),linear-gradient(0deg,rgba(4,16,34,.12),rgba(4,16,34,.08))!important;
+}
+.agh-home-redesign .agh-home-hero-slide{
+  animation:agh-home-real-carousel 24s infinite ease-in-out!important;
+  animation-fill-mode:both!important;
+}
+.agh-home-redesign .agh-home-hero-slide-one{animation-delay:0s!important}
+.agh-home-redesign .agh-home-hero-slide-two{animation-delay:-8s!important}
+.agh-home-redesign .agh-home-hero-slide-three{animation-delay:-16s!important}
+@keyframes agh-home-real-carousel{
+  0%,29%{opacity:1}
+  34%,95%{opacity:0}
+  100%{opacity:1}
+}
+.agh-home-property-image{background-size:cover!important;background-position:center!important}
+.agh-home-property-image-0{background-image:url("https://images.unsplash.com/photo-1600585154340-be6161a56c0a?auto=format&fit=crop&w=1000&q=85"),linear-gradient(135deg,#cbd9e7,#e7eee8)!important}
+.agh-home-property-image-1{background-image:url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85"),linear-gradient(135deg,#e5d9c5,#b6c9b5)!important}
+.agh-home-property-image-2{background-image:url("https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1000&q=85"),linear-gradient(135deg,#d7e2ed,#b6c9d4)!important}
+.agh-home-property-image-3{background-image:url("https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=85"),linear-gradient(135deg,#e8dfd2,#d4e2d6)!important}
+.agh-home-property-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0}
+.agh-home-property-image:after{z-index:1!important}
+.agh-home-property-image>span,.agh-home-property-image>b,.agh-home-property-image>strong,.agh-home-property-image>small{z-index:2!important}
+.agh-home-search-tabs button[aria-pressed="true"]{background:#0752c5!important;color:#fff!important;box-shadow:0 4px 10px rgba(7,82,197,.18)!important}
+.agh-home-search-tabs button[aria-pressed="false"]{background:transparent!important;color:#26354d!important;box-shadow:none!important}
+@media(max-width:760px){
+ .agh-home-redesign .agh-home-hero-carousel:after{
+  background:linear-gradient(90deg,rgba(4,22,48,.48),rgba(5,27,54,.28)),linear-gradient(0deg,rgba(4,16,34,.12),rgba(4,16,34,.08))!important;
+ }
+}
