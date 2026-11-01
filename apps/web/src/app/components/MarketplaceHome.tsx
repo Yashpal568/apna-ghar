@@ -149,7 +149,9 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
           <div className="agh-home-carousel-dots" aria-label={"Property image " + (heroIndex + 1) + " of " + heroSlides.length}>{heroSlides.map((slide, index) => <button key={slide.image} type="button" aria-label={"Show hero slide " + (index + 1)} aria-current={heroIndex === index ? "true" : undefined} onClick={() => setHeroIndex(index)} />)}</div>
         </div>
       </div>
-      <div className="agh-home-search-panel">
+    </section>
+
+    <div className="agh-home-search-panel">
         <div className="agh-home-search-top">
           <div className="agh-home-search-tabs">
             <button type="button" aria-pressed={activeTab === "buy"} className={activeTab === "buy" ? "active" : ""} onClick={() => { setActiveTab("buy"); setCategory("all"); }}>Buy</button>
@@ -167,7 +169,6 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
         </div>
         <div className="agh-home-popular"><b>POPULAR FILTERS:</b>{[{label:"Ready to move",value:"ready"},{label:"3+ BHK Only",value:"beds"},{label:"Direct From Owner",value:"owner"},{label:"Furnished",value:"furnished"},{label:"Under ₹50L",value:"budget"}].map(item => <button key={item.value} className={filter === item.value ? "active" : ""} onClick={() => { setFilter(filter === item.value ? "" : item.value); if (item.value === "budget") setBudget(budget === "50" ? "any" : "50"); }}>{item.label}</button>)}</div>
       </div>
-    </section>
 
     <section className="agh-home-categories">
       <div className="agh-home-section-heading"><div><span className="agh-home-eyebrow">⌘ &nbsp; CATEGORIES</span><h2>Explore Categories on Apna Ghar</h2></div><a href="/search">All property types <span>↗</span></a></div>
