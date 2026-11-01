@@ -48,12 +48,12 @@ jobs:
       - name: Verify deployed Worker serves this exact commit
         env:
           EXPECTED_BUILD_SHA: ${{ github.sha }}
-          PROPERTY_URL: https://apna-ghar-web.yash38688.workers.dev/property/werwtw-mvuzhfat
+          HOME_URL: https://apna-ghar-web.yash38688.workers.dev/
         run: |
           set -euo pipefail
           for attempt in $(seq 1 12); do
-            curl --fail --silent --show-error "$PROPERTY_URL" -o /tmp/property-page.html || true
-            if grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" /tmp/property-page.html; then
+            curl --fail --silent --show-error "$HOME_URL" -o /tmp/home-page.html || true
+            if grep -Fq "data-build-sha=\"$EXPECTED_BUILD_SHA\"" /tmp/home-page.html; then
               echo "Verified live Worker build SHA: $EXPECTED_BUILD_SHA"
               exit 0
             fi
@@ -61,5 +61,5 @@ jobs:
             sleep 10
           done
           echo "::error::Live Worker did not serve expected build SHA $EXPECTED_BUILD_SHA"
-          grep -o 'data-build-sha[^ >]*' /tmp/property-page.html | head -1 || true
+          grep -o 'data-build-sha[^ >]*' /tmp/home-page.html | head -1 || true
           exit 1
