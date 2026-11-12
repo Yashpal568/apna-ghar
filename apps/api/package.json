@@ -6,6 +6,7 @@
     "start": "node -e \"const fs=require('fs');const path=require('path');const candidates=['dist/main.js','dist/src/main.js','dist/apps/api/main.js','dist/apps/api/src/main.js','dist/apps/api/src/main.js'];const entry=candidates.find(fs.existsSync);if(!entry){console.error('Compiled API entrypoint not found. Checked: '+candidates.join(', '));process.exit(1)}console.log('Starting compiled API from '+entry);require(path.resolve(entry))\"",
     "start:dev": "nest start --watch",
     "build": "nest build",
+    "postbuild": "node scripts/ensure-entrypoint.js",
     "test": "jest",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "start:prod": "npm run start"
