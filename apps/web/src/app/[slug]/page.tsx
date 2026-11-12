@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import PropertySearchResults from "../components/PropertySearchResults";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
-const pages: Record<
+const INFO_PAGES: Record<
   string,
   {
     title: string;
@@ -111,49 +113,241 @@ const pages: Record<
   },
 };
 
+const CITY_LANDINGS: Record<
+  string,
+  { name: string; title: string; eyebrow: string; intro: string }
+> = {
+  mumbai: {
+    name: "Mumbai",
+    title: "Properties for Sale & Rent in Mumbai",
+    eyebrow: "MUMBAI REAL ESTATE",
+    intro: "Explore verified direct owner properties across Mumbai Metropolitan without agent commissions.",
+  },
+  bengaluru: {
+    name: "Bengaluru",
+    title: "Properties for Sale & Rent in Bengaluru",
+    eyebrow: "BENGALURU TECH CORRIDORS",
+    intro: "Browse modern apartments, independent houses and plots in Bengaluru directly from owners.",
+  },
+  delhi: {
+    name: "Delhi",
+    title: "Properties for Sale & Rent in Delhi NCR",
+    eyebrow: "DELHI NCR REAL ESTATE",
+    intro: "Find residential and commercial properties across Delhi NCR with zero middleman charges.",
+  },
+  hyderabad: {
+    name: "Hyderabad",
+    title: "Properties for Sale & Rent in Hyderabad",
+    eyebrow: "HYDERABAD FINANCIAL DISTRICT",
+    intro: "Explore direct owner flats and villas in Hyderabad's premier growth hubs.",
+  },
+  pune: {
+    name: "Pune",
+    title: "Properties for Sale & Rent in Pune",
+    eyebrow: "PUNE PROPERTY MARKET",
+    intro: "Compare verified apartments, ready-to-move homes and plots in Pune.",
+  },
+  amritsar: {
+    name: "Amritsar",
+    title: "Properties for Sale & Rent in Amritsar",
+    eyebrow: "AMRITSAR REAL ESTATE",
+    intro: "Verified residential and commercial plots and homes in Amritsar, Punjab.",
+  },
+};
+
+const CATEGORY_LANDINGS: Record<
+  string,
+  { key: string; title: string; eyebrow: string; intro: string }
+> = {
+  apartments: {
+    key: "apartment",
+    title: "Flats & Apartments for Sale",
+    eyebrow: "FLATS & APARTMENTS",
+    intro: "Find modern builder floors, multistory apartments and luxury high-rises directly from owners.",
+  },
+  apartment: {
+    key: "apartment",
+    title: "Flats & Apartments for Sale",
+    eyebrow: "FLATS & APARTMENTS",
+    intro: "Find modern builder floors, multistory apartments and luxury high-rises directly from owners.",
+  },
+  houses: {
+    key: "house",
+    title: "Villas & Independent Houses for Sale",
+    eyebrow: "VILLAS & HOUSES",
+    intro: "Discover spacious independent homes, duplexes and villas across India.",
+  },
+  house: {
+    key: "house",
+    title: "Villas & Independent Houses for Sale",
+    eyebrow: "VILLAS & HOUSES",
+    intro: "Discover spacious independent homes, duplexes and villas across India.",
+  },
+  plots: {
+    key: "plot",
+    title: "Plots & Land for Sale",
+    eyebrow: "PLOTS & LAND",
+    intro: "Search verified residential, agricultural and commercial land with direct owner contact.",
+  },
+  plot: {
+    key: "plot",
+    title: "Plots & Land for Sale",
+    eyebrow: "PLOTS & LAND",
+    intro: "Search verified residential, agricultural and commercial land with direct owner contact.",
+  },
+  villas: {
+    key: "villa",
+    title: "Luxury Villas for Sale",
+    eyebrow: "LUXURY VILLAS",
+    intro: "Browse standalone and gated community luxury villas with private gardens and amenities.",
+  },
+  villa: {
+    key: "villa",
+    title: "Luxury Villas for Sale",
+    eyebrow: "LUXURY VILLAS",
+    intro: "Browse standalone and gated community luxury villas with private gardens and amenities.",
+  },
+  commercial: {
+    key: "commercial",
+    title: "Commercial Properties for Sale & Lease",
+    eyebrow: "COMMERCIAL REAL ESTATE",
+    intro: "Offices, retail spaces and shops for sale or lease directly from property owners.",
+  },
+  pg: {
+    key: "pg",
+    title: "PG & Co-Living Spaces for Rent",
+    eyebrow: "PG & CO-LIVING",
+    intro: "Furnished paying guest rooms and shared coliving homes across major Indian cities.",
+  },
+};
+
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const page = pages[params.slug] ?? pages.about;
+  const slug = params.slug?.toLowerCase();
+  if (INFO_PAGES[slug]) {
+    const page = INFO_PAGES[slug];
+    return {
+      title: `${page.eyebrow} | Apna Ghar`,
+      description: page.intro,
+    };
+  }
+  if (CITY_LANDINGS[slug]) {
+    const city = CITY_LANDINGS[slug];
+    return {
+      title: `${city.title} | Apna Ghar`,
+      description: city.intro,
+    };
+  }
+  if (CATEGORY_LANDINGS[slug]) {
+    const category = CATEGORY_LANDINGS[slug];
+    return {
+      title: `${category.title} | Apna Ghar`,
+      description: category.intro,
+    };
+  }
   return {
-    title: `${page.eyebrow} | Apna Ghar`,
-    description: page.intro,
+    title: "Apna Ghar | Direct Owner Property Marketplace",
   };
 }
 
-export default function PublicInfoPage({
+export default function DynamicPage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const page = pages[params.slug] ?? pages.about;
-  return (
-    <div className="info-page-wrapper">
-      <SiteHeader active="home" />
-      <main className="page-shell interior-page">
-        <div className="breadcrumb">
-          <a href="/">Home</a>
-          <span>/</span>
-          <span>{page.eyebrow}</span>
-        </div>
-        <div className="info-page">
-          <p className="eyebrow">{page.eyebrow}</p>
-          <h1>{page.title}</h1>
-          <p className="info-intro">{page.intro}</p>
-          {page.sections.map((section) => (
-            <section key={section.heading}>
-              <h2>{section.heading}</h2>
-              <p>{section.body}</p>
-            </section>
-          ))}
-          <a className="button button-outline" href="/">
-            ← Back to Apna Ghar
-          </a>
-        </div>
-        <SiteFooter />
-      </main>
-    </div>
-  );
+  const slug = params.slug?.toLowerCase();
+
+  // 1. Static Informational Pages
+  if (INFO_PAGES[slug]) {
+    const page = INFO_PAGES[slug];
+    return (
+      <div className="info-page-wrapper">
+        <SiteHeader active="home" />
+        <main className="page-shell interior-page">
+          <div className="breadcrumb">
+            <a href="/">Home</a>
+            <span>/</span>
+            <span>{page.eyebrow}</span>
+          </div>
+          <div className="info-page">
+            <p className="eyebrow">{page.eyebrow}</p>
+            <h1>{page.title}</h1>
+            <p className="info-intro">{page.intro}</p>
+            {page.sections.map((section) => (
+              <section key={section.heading}>
+                <h2>{section.heading}</h2>
+                <p>{section.body}</p>
+              </section>
+            ))}
+            <a className="button button-outline" href="/">
+              ← Back to Apna Ghar
+            </a>
+          </div>
+          <SiteFooter />
+        </main>
+      </div>
+    );
+  }
+
+  // 2. Data-Driven City Landing Pages
+  if (CITY_LANDINGS[slug]) {
+    const city = CITY_LANDINGS[slug];
+    return (
+      <div className="city-landing-wrapper">
+        <SiteHeader active="search" searchValue={city.name} />
+        <main className="page-shell interior-page">
+          <div className="breadcrumb">
+            <a href="/">Home</a>
+            <span>/</span>
+            <a href="/search">Explore</a>
+            <span>/</span>
+            <span>{city.name}</span>
+          </div>
+          <section className="search-page-heading">
+            <p className="eyebrow">{city.eyebrow}</p>
+            <h1>
+              Homes in <em>{city.name}</em>
+            </h1>
+            <p>{city.intro}</p>
+          </section>
+          <PropertySearchResults location={city.name} transaction="buy" />
+          <SiteFooter />
+        </main>
+      </div>
+    );
+  }
+
+  // 3. Data-Driven Category Landing Pages
+  if (CATEGORY_LANDINGS[slug]) {
+    const category = CATEGORY_LANDINGS[slug];
+    return (
+      <div className="category-landing-wrapper">
+        <SiteHeader active="search" />
+        <main className="page-shell interior-page">
+          <div className="breadcrumb">
+            <a href="/">Home</a>
+            <span>/</span>
+            <a href="/search">Explore</a>
+            <span>/</span>
+            <span>{category.eyebrow}</span>
+          </div>
+          <section className="search-page-heading">
+            <p className="eyebrow">{category.eyebrow}</p>
+            <h1>
+              {category.title.split(" ")[0]} <em>{category.title.split(" ").slice(1).join(" ")}</em>
+            </h1>
+            <p>{category.intro}</p>
+          </section>
+          <PropertySearchResults category={category.key} transaction="buy" />
+          <SiteFooter />
+        </main>
+      </div>
+    );
+  }
+
+  // 4. Unknown Route: Trigger standard 404
+  notFound();
 }

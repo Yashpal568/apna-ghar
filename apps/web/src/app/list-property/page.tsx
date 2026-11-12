@@ -43,14 +43,14 @@ const initialDraft: Draft = {
   videos: "",
 };
 
-// Recover individual Cloudinary URLs even from legacy drafts where URLs were concatenated without separators.
+// Recover individual Cloudinary and verified media URLs even from drafts where URLs were concatenated without separators.
 const parseMediaUrls = (value: string) => value
   .split(/(?=https?:\/\/)/i)
   .map((part) => part.trim().replace(/[\s,;\]}]+$/g, ""))
   .filter((part) => {
     try {
       const parsed = new URL(part);
-      return (parsed.protocol === "https:" || parsed.protocol === "http:") && parsed.hostname === "res.cloudinary.com";
+      return (parsed.protocol === "https:" || parsed.protocol === "http:") && parsed.hostname.length > 3;
     } catch {
       return false;
     }

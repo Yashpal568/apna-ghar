@@ -95,9 +95,12 @@ export async function POST(request: NextRequest) {
     return errorResponse("A valid request body is required.", 400);
   }
 
-  const { conversationId, action, text, amount, message, offerId } = body as Record<string, unknown>;
+  const { conversationId, propertyId, action, text, amount, message, offerId } = body as Record<string, unknown>;
+  if (typeof propertyId === "string" && propertyId.trim()) {
+    return proxy(`${API_BASE}/conversations/property/${encodeURIComponent(propertyId.trim())}`, "POST", authorization, { message });
+  }
   if (typeof conversationId !== "string" || !conversationId.trim()) {
-    return errorResponse("Conversation ID is required.", 400);
+    return errorResponse("Conversation ID or Property ID is required.", 400);
   }
 
   const id = encodeURIComponent(conversationId);

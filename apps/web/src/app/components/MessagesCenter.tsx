@@ -247,7 +247,7 @@ function MessagesCenterAuthenticated() {
           : null;
       const isDesktop = typeof window !== "undefined" && window.innerWidth >= 1024;
 
-      if (requested && list.some((c) => c._id === requested)) {
+      if (requested) {
         // Specific conversation requested in URL (e.g. from listing detail page)
         setSelected(requested);
       } else if (isDesktop && list[0]?._id) {

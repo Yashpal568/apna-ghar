@@ -13,8 +13,13 @@ This checklist tracks verified repository automation separately from manual envi
   - [x] Synchronized category schema and keys between homepage (`MarketplaceHome.tsx`), search form (`search/page.tsx`), and search results (`PropertySearchResults.tsx`) for `apartment`, `house`, `plot`, `commercial`, `pg`, `villa`.
   - [x] Added pagination auto-reset on search filter updates in `PropertySearchResults.tsx`.
   - [x] Added dedicated legal & support route handlers in `[slug]/page.tsx` for `/terms` and `/contact`.
+  - [x] Implemented rich dynamic metadata, canonical links, and OpenGraph/Twitter cards for property detail pages (`property/[id]/page.tsx`).
+  - [x] Implemented data-driven city and category landing routes in `[slug]/page.tsx` for Mumbai, Bengaluru, Delhi, Hyderabad, Pune, Amritsar, and all categories.
+  - [x] Added Next.js same-origin conversation proxy handler `POST /api/v1/conversations/property/[propertyId]` to eliminate CORS failures during buyer-seller conversation creation.
+  - [x] Hardened media URL parser in `list-property/page.tsx` to handle any valid HTTPS image/video references alongside Cloudinary uploads.
   - [x] Verified full monorepo typecheck (`npm run typecheck`: API, web, mobile passed with 0 errors).
   - [x] Verified unit and contract test suites (`npm test`: 9 passed, 53 passed).
+  - [x] Verified API e2e health and domain test suites (`npm run test:e2e:api`: 3 passed, 12 passed).
   - [x] Verified production build (`npm run build:web`: 21/21 routes compiled and optimized).
   - [x] Verified local server HTTP 200 and navbar presence across all 12 core marketplace routes.
 

@@ -3,10 +3,62 @@ import PropertySearchResults from "../components/PropertySearchResults";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
-export const metadata: Metadata = {
-  title: "Explore properties | Apna Ghar",
-  description: "Explore property types, verified owner listings and locations across India on Apna Ghar.",
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: {
+    location?: string;
+    type?: string;
+    transaction?: string;
+  };
+}): Promise<Metadata> {
+  const loc = searchParams.location?.trim();
+  const rawType = searchParams.type?.trim();
+  const typeMap: Record<string, string> = {
+    apartment: "Flats & Apartments",
+    apartments: "Flats & Apartments",
+    house: "Villas & Houses",
+    houses: "Villas & Houses",
+    plot: "Plots & Land",
+    plots: "Plots & Land",
+    commercial: "Commercial Properties",
+    pg: "PG & Co-Living Spaces",
+    villa: "Luxury Villas",
+    villas: "Luxury Villas",
+  };
+  const categoryLabel = rawType && rawType !== "all property types" ? typeMap[rawType.toLowerCase()] || rawType : "";
+  const tx = searchParams.transaction === "rent" ? "for Rent" : "for Sale";
+
+  let title = "Explore Properties across India | Apna Ghar";
+  let description = "Explore verified direct owner property listings across India without agent commission.";
+
+  if (loc && categoryLabel) {
+    title = `${categoryLabel} ${tx} in ${loc} | Apna Ghar`;
+    description = `Discover verified direct owner ${categoryLabel.toLowerCase()} ${tx} in ${loc}. 0% brokerage on Apna Ghar.`;
+  } else if (loc) {
+    title = `Properties ${tx} in ${loc} | Direct Owner Homes | Apna Ghar`;
+    description = `Explore houses, apartments, and plots ${tx} in ${loc}. Connect directly with owners with zero brokerage.`;
+  } else if (categoryLabel) {
+    title = `${categoryLabel} ${tx} in India | Apna Ghar`;
+    description = `Compare verified direct owner ${categoryLabel.toLowerCase()} ${tx} across top cities in India.`;
+  }
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      siteName: "Apna Ghar",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
 
 export default function SearchPage({
   searchParams,
@@ -47,12 +99,26 @@ export default function SearchPage({
           <span>Explore properties</span>
         </div>
         <section className="search-page-heading">
-          <p className="eyebrow">YOUR SEARCH, YOUR PACE</p>
+          <p className="eyebrow">
+            {location ? `PROPERTIES IN ${location.toUpperCase()}` : "YOUR SEARCH, YOUR PACE"}
+          </p>
           <h1>
-            Find the place<br />
-            that feels <em>right.</em>
+            {location ? (
+              <>
+                Homes in <em>{location}</em>
+              </>
+            ) : (
+              <>
+                Find the place<br />
+                that feels <em>right.</em>
+              </>
+            )}
           </h1>
-          <p>Browse with a clear head. Compare the details that matter to you.</p>
+          <p>
+            {location
+              ? `Browse direct owner listings in ${location}. Filter by price, bedrooms and configuration.`
+              : "Browse with a clear head. Compare the details that matter to you."}
+          </p>
         </section>
         <form action="/search" className="search-card search-page-form">
           <div className="search-field">

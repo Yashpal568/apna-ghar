@@ -16,7 +16,7 @@
 - Mobile workspace may remain parked; native Android/iOS projects are not an acceptance blocker for the current web-first phase.
 - Foundation scaffolding, health/readiness, shared packages, test wiring and setup docs are implemented. CI failures are explicitly deferred to the immediate follow-up task; fix all workflows before starting M2. Never claim green checks without actual success.
 
-## M2 — Web experience
+## M2 — Web experience — IMPLEMENTATION VERIFIED; LIVE BROWSER ACCEPTANCE IN PROGRESS
 Responsive marketing/home page, property search/filter/sort, property detail pages, city/category landing pages, customer accounts, favorites, seller/broker dashboards and listing management.
 
 ## M3 — Backend domain and identity — IMPLEMENTATION COMPLETE; LIVE ACCEPTANCE PENDING
