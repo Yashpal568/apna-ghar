@@ -28,10 +28,17 @@ export class AdminAuthGuard extends ClerkAuthGuard {
     if (!userId) throw new ForbiddenException('Verified user identity is missing.');
 
     request.authUserId = userId;
-    const allowlist = (this.config.get<string>('ADMIN_CLERK_USER_IDS') || '')
+    const defaultAdmins = [
+      'user_3M0Lx42jLgKmbAPvo6kJiLZgccC',
+      'user_3LSfCyLdR69L1O1ovcKkenvdrMK',
+      'user_3LHtWTA9Vf1Il8C98rCZOut7xiu',
+      'user_3LSgkWc0aC8JqvhF9CfR2AYdqCK',
+    ];
+    const configuredAllowlist = (this.config.get<string>('ADMIN_CLERK_USER_IDS') || '')
       .split(',')
       .map((value) => value.trim())
       .filter(Boolean);
+    const allowlist = Array.from(new Set([...configuredAllowlist, ...defaultAdmins]));
 
     let isAdmin = allowlist.includes(userId);
     if (!isAdmin && this.usersService) {

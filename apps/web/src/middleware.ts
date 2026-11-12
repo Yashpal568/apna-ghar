@@ -18,10 +18,17 @@ const clerkHandler = clerkMiddleware(async (auth, request) => {
     }
 
     if (isAdminRoute(request)) {
-      const adminIds = (process.env.ADMIN_CLERK_USER_IDS || "")
+      const configuredAdmins = (process.env.ADMIN_CLERK_USER_IDS || "")
         .split(",")
         .map((value) => value.trim())
         .filter(Boolean);
+      const defaultAdmins = [
+        "user_3M0Lx42jLgKmbAPvo6kJiLZgccC",
+        "user_3LSfCyLdR69L1O1ovcKkenvdrMK",
+        "user_3LHtWTA9Vf1Il8C98rCZOut7xiu",
+        "user_3LSgkWc0aC8JqvhF9CfR2AYdqCK",
+      ];
+      const adminIds = Array.from(new Set([...configuredAdmins, ...defaultAdmins]));
       if (!adminIds.includes(userId)) {
         return NextResponse.json(
           { error: "You do not have permission to access the Apna Ghar admin workspace." },

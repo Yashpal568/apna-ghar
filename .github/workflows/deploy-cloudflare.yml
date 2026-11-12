@@ -44,6 +44,7 @@ jobs:
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           NEXT_PUBLIC_API_BASE_URL: https://apna-ghar-api-j4fo.onrender.com/api/v1
           NEXT_PUBLIC_BUILD_SHA: ${{ github.sha }}
+          ADMIN_CLERK_USER_IDS: "user_3M0Lx42jLgKmbAPvo6kJiLZgccC,user_3LSfCyLdR69L1O1ovcKkenvdrMK,user_3LHtWTA9Vf1Il8C98rCZOut7xiu,user_3LSgkWc0aC8JqvhF9CfR2AYdqCK"
         run: npm run deploy:cloudflare
       - name: Verify deployed Worker serves this exact commit
         env:
