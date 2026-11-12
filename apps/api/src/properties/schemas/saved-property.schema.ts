@@ -10,3 +10,4 @@ export class SavedProperty {
 }
 export const SavedPropertySchema = SchemaFactory.createForClass(SavedProperty);
 SavedPropertySchema.index({ userId: 1, propertyId: 1 }, { unique: true });
+SavedPropertySchema.index({ userId: 1, createdAt: -1 });

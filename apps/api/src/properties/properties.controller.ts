@@ -119,6 +119,15 @@ export class PropertiesController {
     return this.propertiesService.listMine(request.authUserId);
   }
 
+  @Get('mine/:slugOrId')
+  @UseGuards(PropertyAuthGuard)
+  async findMineOne(@Req() request: AuthenticatedRequest, @Param('slugOrId') slugOrId: string) {
+    if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
+    const property = await this.propertiesService.findMineById(request.authUserId, slugOrId);
+    if (!property) throw new NotFoundException('Property not found or not owned by this account');
+    return property;
+  }
+
   @Patch(':id')
   @UseGuards(PropertyAuthGuard)
   async updateMine(@Req() request: AuthenticatedRequest, @Param('id') id: string, @Body() body: UpdatePropertyDto) {

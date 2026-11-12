@@ -5,7 +5,8 @@ import { PropertyAuthGuard } from './property-auth.guard';
 import { VisitRequestsService } from './visit-requests.service';
 
 type AuthenticatedRequest = { authUserId?: string };
-class CreateVisitRequestDto {
+
+export class CreateVisitRequestDto {
   @IsDateString({ strict: true }) preferredDate!: string;
   @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @Matches(/^([01]\d|2[0-3]):[0-5]\d$/) preferredTime!: string;
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(1000) message?: string;
@@ -20,6 +21,12 @@ export class VisitRequestsController {
   listMine(@Req() request: AuthenticatedRequest) {
     if (!request.authUserId) throw new BadRequestException('Authenticated user identity is missing');
     return this.service.listMine(request.authUserId);
+  }
+
+  @Get('received')
+  listReceived(@Req() request: AuthenticatedRequest) {
+    if (!request.authUserId) throw new BadRequestException('Authenticated user identity is missing');
+    return this.service.listReceived(request.authUserId);
   }
 
   @Post(':propertyId')

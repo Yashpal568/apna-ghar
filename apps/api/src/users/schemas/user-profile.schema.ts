@@ -3,6 +3,14 @@ import { HydratedDocument } from 'mongoose';
 
 export type UserProfileDocument = HydratedDocument<UserProfile>;
 
+export enum UserRole {
+  USER = 'USER',
+  OWNER = 'OWNER',
+  ADMIN = 'ADMIN',
+}
+
+export type AccountStatus = 'active' | 'suspended' | 'deactivated';
+
 @Schema({ timestamps: true, collection: 'user_profiles' })
 export class UserProfile {
   @Prop({ required: true, unique: true, index: true, trim: true })
@@ -22,6 +30,20 @@ export class UserProfile {
 
   @Prop({ trim: true, maxlength: 500, default: '' })
   about!: string;
+
+  @Prop({ trim: true, maxlength: 2048, default: '' })
+  imageUrl!: string;
+
+  @Prop({ required: true, enum: ['USER', 'OWNER', 'ADMIN'], default: UserRole.USER, index: true })
+  role!: UserRole;
+
+  @Prop({ required: true, enum: ['active', 'suspended', 'deactivated'], default: 'active', index: true })
+  accountStatus!: AccountStatus;
+
+  @Prop({ type: Date, default: Date.now })
+  lastActiveAt!: Date;
 }
 
 export const UserProfileSchema = SchemaFactory.createForClass(UserProfile);
+UserProfileSchema.index({ role: 1, accountStatus: 1 });
+UserProfileSchema.index({ email: 1 });

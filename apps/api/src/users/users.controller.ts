@@ -1,17 +1,18 @@
 import { Body, Controller, Get, Put, Req, ServiceUnavailableException, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClerkClient } from '@clerk/backend';
-import { IsEmail, IsOptional, IsString, MaxLength, ValidateIf } from 'class-validator';
+import { IsEmail, IsOptional, IsString, IsUrl, MaxLength, ValidateIf } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { UsersService } from './users.service';
 
-class UpdateProfileDto {
+export class UpdateProfileDto {
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(100) name?: string;
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @ValidateIf((_object, value) => value !== '') @IsEmail() @MaxLength(254) email?: string;
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(30) phone?: string;
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(100) city?: string;
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(500) about?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsUrl({ protocols: ['https'], require_protocol: true }) @MaxLength(2048) imageUrl?: string;
 }
 
 type AuthenticatedRequest = { auth: { userId: string; claims?: Record<string, unknown> } };
@@ -23,7 +24,8 @@ function claimText(value: unknown): string {
 function identityFromClaims(claims: Record<string, unknown> = {}) {
   const name = claimText(claims.name) || [claimText(claims.first_name), claimText(claims.last_name)].filter(Boolean).join(' ');
   const email = claimText(claims.email) || claimText(claims.email_address);
-  return { name, email };
+  const imageUrl = claimText(claims.image_url) || claimText(claims.picture);
+  return { name, email, imageUrl };
 }
 
 @Controller('users')
@@ -40,7 +42,8 @@ export class UsersController {
       const identity = await clerk.users.getUser(request.auth.userId);
       const name = [identity.firstName, identity.lastName].filter(Boolean).join(' ').trim();
       const email = identity.primaryEmailAddress?.emailAddress || '';
-      const profile = await this.users.syncClerkIdentity(request.auth.userId, { name, email });
+      const imageUrl = identity.imageUrl || '';
+      const profile = await this.users.syncClerkIdentity(request.auth.userId, { name, email, imageUrl });
       return {
         id: request.auth.userId,
         name: profile.name,
@@ -48,7 +51,9 @@ export class UsersController {
         phone: profile.phone,
         city: profile.city,
         about: profile.about,
-        imageUrl: identity.imageUrl,
+        imageUrl: profile.imageUrl || identity.imageUrl,
+        role: profile.role,
+        accountStatus: profile.accountStatus,
       };
     } catch (error) {
       if (error instanceof UnauthorizedException) throw error;
@@ -72,6 +77,7 @@ export class UsersController {
       const identity = {
         name: [user.firstName, user.lastName].filter((part): part is string => Boolean(part?.trim())).join(' ') || fromClaims.name,
         email: user.primaryEmailAddress?.emailAddress?.trim() || fromClaims.email,
+        imageUrl: user.imageUrl || fromClaims.imageUrl,
       };
       return this.users.getMyProfile(userId, identity);
     } catch {

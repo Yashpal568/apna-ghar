@@ -1,8 +1,15 @@
-import { Controller, Get, Post, Delete, Param, Req, UseGuards, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, Req, UseGuards, NotFoundException, BadRequestException } from '@nestjs/common';
+import { IsArray, IsString } from 'class-validator';
 import { PropertyAuthGuard } from './property-auth.guard';
 import { SavedPropertiesService } from './saved-properties.service';
 
 type AuthenticatedRequest = { authUserId?: string };
+
+export class SyncSavedPropertiesDto {
+  @IsArray()
+  @IsString({ each: true })
+  propertyIds!: string[];
+}
 
 @Controller('saved-properties')
 @UseGuards(PropertyAuthGuard)
@@ -13,6 +20,19 @@ export class SavedPropertiesController {
   list(@Req() request: AuthenticatedRequest) {
     if (!request.authUserId) throw new BadRequestException('Authenticated user identity is missing');
     return this.service.list(request.authUserId);
+  }
+
+  @Post('sync')
+  async sync(@Req() request: AuthenticatedRequest, @Body() body: SyncSavedPropertiesDto) {
+    if (!request.authUserId) throw new BadRequestException('Authenticated user identity is missing');
+    return this.service.sync(request.authUserId, body.propertyIds || []);
+  }
+
+  @Get('check/:propertyId')
+  async isSaved(@Req() request: AuthenticatedRequest, @Param('propertyId') propertyId: string) {
+    if (!request.authUserId) throw new BadRequestException('Authenticated user identity is missing');
+    const isSaved = await this.service.isSaved(request.authUserId, propertyId);
+    return { propertyId, isSaved };
   }
 
   @Post(':propertyId')

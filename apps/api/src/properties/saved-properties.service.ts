@@ -33,4 +33,37 @@ export class SavedPropertiesService {
     await this.saved.deleteOne({ userId, propertyId }).exec();
     return { saved: false, propertyId };
   }
+
+  async sync(userId: string, propertyIds: string[]) {
+    const mongoose = await import('mongoose');
+    const validIds = (propertyIds || []).filter((id) => mongoose.isValidObjectId(id));
+    if (!validIds.length) return { savedIds: [], count: 0 };
+
+    const activeProperties = await this.properties
+      .find({ _id: { $in: validIds }, status: 'active', deletedAt: null })
+      .select('_id')
+      .lean()
+      .exec();
+
+    const activeIdStrings = activeProperties.map((p) => String(p._id));
+    if (!activeIdStrings.length) return { savedIds: [], count: 0 };
+
+    const ops = activeIdStrings.map((propertyId) => ({
+      updateOne: {
+        filter: { userId, propertyId },
+        update: { $setOnInsert: { userId, propertyId } },
+        upsert: true,
+      },
+    }));
+
+    await this.saved.bulkWrite(ops);
+    return { savedIds: activeIdStrings, count: activeIdStrings.length };
+  }
+
+  async isSaved(userId: string, propertyId: string): Promise<boolean> {
+    const mongoose = await import('mongoose');
+    if (!mongoose.isValidObjectId(propertyId)) return false;
+    const record = await this.saved.findOne({ userId, propertyId }).select('_id').lean().exec();
+    return Boolean(record);
+  }
 }

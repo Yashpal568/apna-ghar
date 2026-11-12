@@ -24,3 +24,4 @@ export class PropertyOffer {
 export const PropertyOfferSchema = SchemaFactory.createForClass(PropertyOffer);
 PropertyOfferSchema.index({ conversationId: 1, createdAt: 1 });
 PropertyOfferSchema.index({ recipientId: 1, status: 1, createdAt: -1 });
+PropertyOfferSchema.index({ conversationId: 1, status: 1 });

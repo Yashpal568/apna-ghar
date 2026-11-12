@@ -45,3 +45,5 @@ PropertySchema.index({ status: 1, publishedAt: -1 });
 PropertySchema.index({ categoryId: 1, status: 1, publishedAt: -1 });
 PropertySchema.index({ 'location.city': 1, status: 1, publishedAt: -1 });
 PropertySchema.index({ priceAmount: 1, status: 1 });
+PropertySchema.index({ ownerId: 1, deletedAt: 1, publishedAt: -1 });
+PropertySchema.index({ status: 1, deletedAt: 1, publishedAt: -1 });

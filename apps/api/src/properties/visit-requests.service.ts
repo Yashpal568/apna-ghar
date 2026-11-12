@@ -15,11 +15,21 @@ export class VisitRequestsService {
     return this.requests.find({ userId }).sort({ createdAt: -1 }).lean().exec();
   }
 
+  async listReceived(ownerId: string) {
+    const ownerProperties = await this.properties.find({ ownerId, deletedAt: null }).select('_id').lean().exec();
+    const propertyIds = ownerProperties.map((p) => String(p._id));
+    if (!propertyIds.length) return [];
+    return this.requests.find({ propertyId: { $in: propertyIds } }).sort({ createdAt: -1 }).lean().exec();
+  }
+
   async create(userId: string, propertyId: string, input: { preferredDate: string; preferredTime: string; message?: string }) {
     const mongoose = await import('mongoose');
     if (!mongoose.isValidObjectId(propertyId)) return null;
-    const property = await this.properties.findOne({ _id: propertyId, status: 'active', deletedAt: null }).select('_id').lean().exec();
+    const property = await this.properties.findOne({ _id: propertyId, status: 'active', deletedAt: null }).select('_id ownerId').lean().exec();
     if (!property) return null;
+    if (property.ownerId === userId) {
+      throw new BadRequestException('You cannot schedule a visit request on your own property.');
+    }
     const todayParts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
     const today = `${todayParts.find((part) => part.type === 'year')?.value}-${todayParts.find((part) => part.type === 'month')?.value}-${todayParts.find((part) => part.type === 'day')?.value}`;
     if (input.preferredDate < today) throw new BadRequestException('Visit date must be today or later.');

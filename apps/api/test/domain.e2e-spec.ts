@@ -77,7 +77,11 @@ describe('M3 identity and profile HTTP (e2e)', () => {
       id: 'user_test_123', name: 'Yash Pal', email: 'yash@example.com',
       imageUrl: 'https://images.example.com/user.png',
     }));
-    expect(service.syncClerkIdentity).toHaveBeenCalledWith('user_test_123', { name: 'Yash Pal', email: 'yash@example.com' });
+    expect(service.syncClerkIdentity).toHaveBeenCalledWith('user_test_123', {
+      name: 'Yash Pal',
+      email: 'yash@example.com',
+      imageUrl: 'https://images.example.com/user.png',
+    });
   });
 
   it('rejects unauthenticated profile requests', async () => {

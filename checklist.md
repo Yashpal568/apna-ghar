@@ -22,6 +22,19 @@ This checklist tracks verified repository automation separately from manual envi
   - [x] Verified API e2e health and domain test suites (`npm run test:e2e:api`: 3 passed, 12 passed).
   - [x] Verified production build (`npm run build:web`: 21/21 routes compiled and optimized).
   - [x] Verified local server HTTP 200 and navbar presence across all 12 core marketplace routes.
+- [x] M3 Backend Domain & Identity implementation & local verification:
+  - [x] Clerk server-side token verification with `@clerk/backend` in `ClerkAuthGuard` and `PropertyAuthGuard`, deriving identity from verified subject `claims.sub`.
+  - [x] User profile domain synchronization in `UsersService` & `UsersController` with fields: `id`, `name`, `email`, `phone`, `city`, `about`, `imageUrl`, `role`, `accountStatus`, `lastActiveAt`, and timestamps.
+  - [x] Backend role system with `UserRole` enum (`USER`, `OWNER`, `ADMIN`), `@Roles` decorator, and `RolesGuard`. Role tampering prevented through DTO whitelisting.
+  - [x] Automatic elevation from `USER` to `OWNER` on successful property creation in `PropertiesService.create()`.
+  - [x] Strict property ownership integrity: update, hide/restore, delete (soft-delete) strictly scoped to `ownerId: request.authUserId`. Added `GET /api/v1/properties/mine/:slugOrId`.
+  - [x] Saved properties isolation with compound unique index `{ userId, propertyId }`. Implemented guest favorites migration endpoint `POST /api/v1/saved-properties/sync`.
+  - [x] Conversation and messaging domain authorization: buyer != owner validation, participant isolation, rate limiting, and added `GET /api/v1/conversations/:conversationId`.
+  - [x] Visit requests validation: prevented owners from requesting visits on their own listings; added received visits endpoint `GET /api/v1/visit-requests/received`.
+  - [x] Database integrity: added non-speculative compound indexes to Mongoose schemas for `user_profiles`, `properties`, `saved_properties`, `conversations`, and `property_offers`.
+  - [x] Automated test suite: 12/12 unit test suites passed (71/71 tests), 3/3 API e2e test suites passed (12/12 tests).
+  - [x] Full monorepo typecheck passed (API, web, mobile with 0 errors).
+  - [x] Web production build passed (21/21 routes compiled and optimized).
 
 ## Environment readiness
 

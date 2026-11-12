@@ -1,16 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, SortOrder } from 'mongoose';
 import { ListPropertiesQueryDto } from './dto/list-properties-query.dto';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { Property, PropertyDocument } from './schemas/property.schema';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class PropertiesService {
-  constructor(@InjectModel(Property.name) private readonly properties: Model<PropertyDocument>) {}
+  constructor(
+    @InjectModel(Property.name) private readonly properties: Model<PropertyDocument>,
+    @Optional() private readonly usersService?: UsersService,
+  ) {}
 
   async create(ownerId: string, input: CreatePropertyDto) {
-    const base = input.title.toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 90) || 'property';
+    const base = input.title.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 90) || 'property';
     const slug = `${base}-${Date.now().toString(36)}`;
     const property = await this.properties.create({
       ...input,
@@ -20,12 +24,29 @@ export class PropertiesService {
       publishedAt: new Date(),
       deletedAt: null,
     });
+    if (this.usersService) {
+      await this.usersService.promoteToOwner(ownerId);
+    }
     return property.toObject();
   }
 
   async listMine(ownerId: string) {
     return this.properties.find({ ownerId, deletedAt: null })
       .sort({ publishedAt: -1 }).select('-__v').lean().exec();
+  }
+
+  async findMineById(ownerId: string, identifier: string) {
+    if (!identifier || typeof identifier !== 'string') return null;
+    const clean = identifier.trim();
+    if (!clean) return null;
+    const mongoose = await import('mongoose');
+    const filter: FilterQuery<PropertyDocument> = { ownerId, deletedAt: null };
+    if (mongoose.isValidObjectId(clean)) {
+      filter.$or = [{ _id: clean }, { slug: clean.toLowerCase() }];
+    } else {
+      filter.slug = clean.toLowerCase();
+    }
+    return this.properties.findOne(filter).select('-__v').lean().exec();
   }
 
   async updateMine(ownerId: string, identifier: string, input: Partial<CreatePropertyDto>) {

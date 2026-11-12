@@ -278,5 +278,22 @@ describe('ConversationsController', () => {
     );
   });
 
+  it('returns single conversation details when requester is a participant', async () => {
+    const convo = {
+      _id: '507f1f77bcf86cd799439011',
+      participantIds: [buyer, owner],
+      propertyId: '507f1f77bcf86cd799439012',
+      propertyTitle: 'Family home',
+      unreadCountByUser: new Map([[buyer, 0], [owner, 1]]),
+    };
+    conversations.findOne.mockReturnValue(chain(convo));
+    const result = await controller.getOne({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011');
+    expect(result.propertyTitle).toBe('Family home');
+    expect(result.unreadCountByUser).toEqual({ [buyer]: 0, [owner]: 1 });
+  });
 
+  it('rejects access to single conversation details if requester is not a participant', async () => {
+    conversations.findOne.mockReturnValue(chain(null));
+    await expect(controller.getOne({ auth: { userId: 'stranger' } }, '507f1f77bcf86cd799439011')).rejects.toBeInstanceOf(NotFoundException);
+  });
 });

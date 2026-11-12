@@ -101,6 +101,22 @@ export class ConversationsController {
     return { conversationId: String(conversation._id), propertyId: conversation.propertyId, propertyTitle: conversation.propertyTitle };
   }
 
+  @Get(':conversationId')
+  async getOne(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string) {
+    if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
+    const conversation = await this.conversations.findOne({
+      _id: new Types.ObjectId(conversationId),
+      participantIds: request.auth.userId,
+    }).lean().exec();
+    if (!conversation) throw new NotFoundException('Conversation not found.');
+    return {
+      ...conversation,
+      unreadCountByUser: conversation.unreadCountByUser instanceof Map
+        ? Object.fromEntries(conversation.unreadCountByUser)
+        : conversation.unreadCountByUser || {},
+    };
+  }
+
   @Get(':conversationId/messages')
   async getMessages(
     @Req() request: RequestWithAuth,

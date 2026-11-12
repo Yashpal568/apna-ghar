@@ -26,3 +26,5 @@ export class Conversation {
 export const ConversationSchema = SchemaFactory.createForClass(Conversation);
 ConversationSchema.index({ participantIds: 1, lastMessageAt: -1 });
 ConversationSchema.index({ propertyId: 1, buyerId: 1 }, { unique: true });
+ConversationSchema.index({ ownerId: 1, lastMessageAt: -1 });
+ConversationSchema.index({ buyerId: 1, lastMessageAt: -1 });

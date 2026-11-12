@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UsersModule } from '../users/users.module';
 import { PropertiesController } from './properties.controller';
 import { PropertiesService } from './properties.service';
 import { PropertyAuthGuard } from './property-auth.guard';
@@ -16,7 +17,15 @@ import { PropertyReportsService } from './property-reports.service';
 import { AdminAuthGuard } from './admin-auth.guard';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Property.name, schema: PropertySchema }, { name: SavedProperty.name, schema: SavedPropertySchema }, { name: VisitRequest.name, schema: VisitRequestSchema }, { name: PropertyReport.name, schema: PropertyReportSchema }])],
+  imports: [
+    UsersModule,
+    MongooseModule.forFeature([
+      { name: Property.name, schema: PropertySchema },
+      { name: SavedProperty.name, schema: SavedPropertySchema },
+      { name: VisitRequest.name, schema: VisitRequestSchema },
+      { name: PropertyReport.name, schema: PropertyReportSchema },
+    ]),
+  ],
   controllers: [PropertiesController, SavedPropertiesController, VisitRequestsController, PropertyReportsController],
   providers: [PropertiesService, SavedPropertiesService, VisitRequestsService, PropertyReportsService, PropertyAuthGuard, AdminAuthGuard],
 })
