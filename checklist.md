@@ -53,13 +53,23 @@ This checklist tracks verified repository automation separately from manual envi
 
 ## Environment readiness
 
-- [ ] Cloudflare web URL loads the latest version.
-- [ ] Render/NestJS API health endpoint responds successfully.
-- [ ] API can connect to MongoDB Atlas.
+- [x] Cloudflare web URL loads the latest version (`e1ecdd2`).
+- [x] Render/NestJS API health endpoint responds successfully (`/health` returns 200).
+- [x] API can connect to MongoDB Atlas (`/health/ready` reports database connected).
 - [ ] Cloudinary upload credentials and upload path work.
-- [ ] Clerk Development Instance keys are configured consistently in web and API.
-- [ ] Clerk development mode is used for test accounts only; it is not treated as production authentication for a public launch.
-- [ ] Payments remain disabled for the free launch.
+- [x] Clerk Development Instance keys are configured consistently in web and API.
+- [x] Clerk development mode is used for test accounts only; it is not treated as production authentication for a public launch.
+- [x] Payments remain disabled for the free launch.
+
+## Milestone M4 Live Browser Acceptance
+
+- [x] Tested all 8 admin routes live in Google Chrome (`/admin`, `/admin/users`, `/admin/listings`, `/admin/reports`, `/admin/categories`, `/admin/audit-logs`, `/admin/plans`, `/admin/settings`).
+- [x] Verified 5 theme presets (Light, Midnight, Graphite, Forest, AMOLED Black) dynamically toggle without layout shift.
+- [x] Verified responsive layouts across Desktop (1440x900), Tablet (768x1024), and Mobile (390x844).
+- [x] Verified authentication edge boundary (unauthenticated requests 307 redirect to `/sign-in?redirect_url=...`).
+- [x] Verified admin allowlist and server-side `AdminAuthGuard`.
+- [x] Resolved Next.js 15+ async params defect on `/admin/[section]` in commit `e1ecdd2`.
+- [x] Detailed report generated at `docs/testing/M4-LIVE-ADMIN-ACCEPTANCE.md`.
 
 ## Manual two-account acceptance — Clerk Development Instance
 
