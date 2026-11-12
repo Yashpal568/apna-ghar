@@ -18,17 +18,20 @@ const sections: Record<string, { title: string; eyebrow: string; description: st
   },
 };
 
-export async function generateMetadata({ params }: { params: { section: string } }): Promise<Metadata> {
-  return { title: `${sections[params.section]?.title ?? "Admin workspace"} | Apna Ghar` };
+export async function generateMetadata({ params }: { params: Promise<{ section: string }> }): Promise<Metadata> {
+  const resolved = await params;
+  return { title: `${sections[resolved?.section]?.title ?? "Admin workspace"} | Apna Ghar` };
 }
 
-export default function AdminSectionPage({ params }: { params: { section: string } }) {
-  const section = sections[params.section] ?? sections.plans;
-  const isPlans = params.section === "plans";
+export default async function AdminSectionPage({ params }: { params: Promise<{ section: string }> }) {
+  const resolved = await params;
+  const sectionKey = resolved?.section || "plans";
+  const section = sections[sectionKey] ?? sections.plans;
+  const isPlans = sectionKey === "plans";
 
   return (
     <main className="admin-page">
-      <AdminNav activeSection={params.section as any} />
+      <AdminNav activeSection={sectionKey as any} />
       <section className="admin-main">
         <header className="admin-topbar">
           <div>
