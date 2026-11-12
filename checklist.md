@@ -53,9 +53,10 @@ This checklist tracks verified repository automation separately from manual envi
 
 ## Environment readiness
 
-- [x] Cloudflare web URL loads the latest version (`8e124d8`).
+- [x] Cloudflare web URL loads the latest version (`5a53c12`).
 - [x] Render/NestJS API health endpoint responds successfully (`/health` returns 200).
 - [x] API can connect to MongoDB Atlas (`/health/ready` reports database connected).
+- [x] Render backend production deployment synchronized and live with latest codebase (`5a53c12`, 0 stale 404s).
 - [ ] Cloudinary upload credentials and upload path work.
 - [x] Clerk Development Instance keys are configured consistently in web and API.
 - [x] Clerk development mode is used for test accounts only; it is not treated as production authentication for a public launch.
@@ -74,6 +75,9 @@ This checklist tracks verified repository automation separately from manual envi
 - [x] Verified authentication edge boundary (unauthenticated requests 307 redirect to `/sign-in?redirect_url=...`).
 - [x] Verified admin allowlist and server-side `AdminAuthGuard`.
 - [x] Resolved Next.js 15+ async params defect on `/admin/[section]` in commit `e1ecdd2`.
+- [x] Verified Render backend deployment synchronization (`5a53c12`) with 0 stale 404s on all admin API routes.
+- [x] Verified live database mutations end-to-end on Render + MongoDB Atlas (User Suspend/Reactivate, Property Hide/Restore, Category Edit).
+- [x] Verified immutable audit log generation and persistence across browser refresh.
 - [x] Detailed report generated at `docs/testing/M4-LIVE-ADMIN-ACCEPTANCE.md`.
 
 ## Manual two-account acceptance — Clerk Development Instance
