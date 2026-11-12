@@ -1,15 +1,123 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import AdminNav from "../components/AdminNav";
 import ThemePicker from "../../components/ThemePicker";
 
 const sections: Record<string, { title: string; eyebrow: string; description: string; columns: string[] }> = {
-  listings: { title: "Listing management", eyebrow: "MARKETPLACE", description: "Search, inspect and manage listing records. Valid listings publish by default; review is reserved for reported or policy-violating content.", columns: ["Listing", "Owner", "Location", "Status", "Updated"] },
-  users: { title: "User directory", eyebrow: "ACCOUNTS", description: "User search, account details, safety actions and access history will appear when Clerk and the protected admin API are connected.", columns: ["User", "Email", "Joined", "Account status", "Actions"] },
-  reports: { title: "Safety reports", eyebrow: "TRUST & SAFETY", description: "Triage reported listings, suspected fraud and user safety complaints. No live report feed is connected in this preview.", columns: ["Report", "Target", "Reason", "Received", "Status"] },
-  plans: { title: "Plans & entitlements", eyebrow: "MONETIZATION", description: "Configure future subscription plans and feature entitlements. All users remain on Free and payment flows stay disabled at launch.", columns: ["Plan", "Features", "Availability", "Billing", "Actions"] },
-  settings: { title: "Marketplace settings", eyebrow: "CONFIGURATION", description: "Feature flags, launch settings, theme defaults and operational controls will be managed here after admin authorization is implemented.", columns: ["Setting", "Current value", "Scope", "Updated"] },
+  plans: {
+    title: "Plans & Entitlements",
+    eyebrow: "MONETIZATION",
+    description: "Launch policy: All users receive 100% Free access. Billing gateways and paid boosts remain disabled for the initial launch.",
+    columns: ["Plan Tier", "Price", "Entitlements", "Billing Status", "Launch Availability"],
+  },
+  settings: {
+    title: "Marketplace Settings",
+    eyebrow: "CONFIGURATION",
+    description: "Operational parameters, theme presets, verification modes, and environment limits for the marketplace backend.",
+    columns: ["Setting Key", "Current Value", "Target Scope", "Status"],
+  },
 };
-export async function generateMetadata({ params }: { params: { section: string } }): Promise<Metadata> { return { title: sections[params.section]?.title ?? "Admin workspace" }; }
+
+export async function generateMetadata({ params }: { params: { section: string } }): Promise<Metadata> {
+  return { title: `${sections[params.section]?.title ?? "Admin workspace"} | Apna Ghar` };
+}
+
 export default function AdminSectionPage({ params }: { params: { section: string } }) {
-  const section = sections[params.section] ?? sections.listings;
-  return <main className="admin-page"><aside className="admin-sidebar"><a className="admin-brand" href="/"><span className="brand-placeholder">INSERT APPROVED APNA GHAR LOGO ASSET</span><span className="brand-name">Apna <b>Ghar</b></span><small>ADMIN CONSOLE</small></a><p className="admin-nav-label">WORKSPACE</p><a className="admin-nav-item" href="/admin">◫ Overview</a><a className={`admin-nav-item ${params.section==="listings"?"active":""}`} href="/admin/listings">▤ Listings</a><a className={`admin-nav-item ${params.section==="users"?"active":""}`} href="/admin/users">♙ Users</a><a className={`admin-nav-item ${params.section==="reports"?"active":""}`} href="/admin/reports">⚑ Safety reports</a><p className="admin-nav-label">CONFIGURATION</p><a className={`admin-nav-item ${params.section==="plans"?"active":""}`} href="/admin/plans">◇ Plans & entitlements</a><a className={`admin-nav-item ${params.section==="settings"?"active":""}`} href="/admin/settings">⚙ Settings</a></aside><section className="admin-main"><header className="admin-topbar"><div><p className="eyebrow">{section.eyebrow}</p><h1>{section.title}</h1></div><div className="admin-top-actions"><ThemePicker compact/><span className="admin-preview-label">DESIGN PREVIEW</span></div></header><div className="admin-warning"><strong>Preview only — not connected to live data</strong><span>Admin actions are intentionally disabled until server-side role authorization, audit logging and protected API endpoints are available.</span></div><section className="admin-panel"><div className="admin-panel-head"><div><h2>{section.title}</h2><p>{section.description}</p></div><span className="admin-preview-label">NO LIVE DATA</span></div><div className="admin-table-wrap"><table className="admin-table"><thead><tr>{section.columns.map((column)=><th key={column}>{column}</th>)}</tr></thead><tbody><tr><td colSpan={section.columns.length}><div className="admin-table-empty"><span>⌕</span><b>No records to display</b><p>Connect the API to load real records. Sample records are deliberately omitted to avoid presenting invented data as real.</p></div></td></tr></tbody></table></div></section><footer className="admin-footer"><a href="/admin">← Back to overview</a></footer></section></main>;
+  const section = sections[params.section] ?? sections.plans;
+  const isPlans = params.section === "plans";
+
+  return (
+    <main className="admin-page">
+      <AdminNav activeSection={params.section as any} />
+      <section className="admin-main">
+        <header className="admin-topbar">
+          <div>
+            <p className="eyebrow">{section.eyebrow}</p>
+            <h1>{section.title}</h1>
+          </div>
+          <div className="admin-top-actions">
+            <ThemePicker compact />
+          </div>
+        </header>
+
+        <div className="admin-policy-note" style={{ marginBottom: 20 }}>
+          <b>{isPlans ? "Zero-Cost Free Launch Policy" : "System Configuration Scope"}</b>
+          <p>{section.description}</p>
+        </div>
+
+        <section className="admin-panel">
+          <div className="admin-panel-head">
+            <div>
+              <h2>{section.title}</h2>
+              <p>{isPlans ? "Active Launch Tiers" : "Active Environment Controls"}</p>
+            </div>
+          </div>
+
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  {section.columns.map((column) => (
+                    <th key={column}>{column}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {isPlans ? (
+                  <tr>
+                    <td style={{ padding: "12px", fontSize: 11, fontWeight: 700 }}>Free Community Tier</td>
+                    <td style={{ padding: "12px", fontSize: 11 }}>₹0 / month</td>
+                    <td style={{ padding: "12px", fontSize: 11 }}>Unlimited Search, Favorites, Messaging, Listing CRUD</td>
+                    <td style={{ padding: "12px", fontSize: 11 }}>
+                      <span className="report-status report-status-resolved">Disabled (Free Launch)</span>
+                    </td>
+                    <td style={{ padding: "12px", fontSize: 11 }}>
+                      <span className="report-status report-status-active">Active Everywhere</span>
+                    </td>
+                  </tr>
+                ) : (
+                  <>
+                    <tr>
+                      <td style={{ padding: "12px", fontSize: 11, fontWeight: 700 }}>
+                        <code>IMMEDIATE_PUBLISHING</code>
+                      </td>
+                      <td style={{ padding: "12px", fontSize: 11 }}>true</td>
+                      <td style={{ padding: "12px", fontSize: 11 }}>Properties Domain</td>
+                      <td style={{ padding: "12px", fontSize: 11 }}>
+                        <span className="report-status report-status-active">Enforced</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ padding: "12px", fontSize: 11, fontWeight: 700 }}>
+                        <code>CLERK_DEV_INSTANCE</code>
+                      </td>
+                      <td style={{ padding: "12px", fontSize: 11 }}>Active</td>
+                      <td style={{ padding: "12px", fontSize: 11 }}>Identity Provider</td>
+                      <td style={{ padding: "12px", fontSize: 11 }}>
+                        <span className="report-status report-status-active">Enforced</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style={{ padding: "12px", fontSize: 11, fontWeight: 700 }}>
+                        <code>PAYMENTS_DISABLED</code>
+                      </td>
+                      <td style={{ padding: "12px", fontSize: 11 }}>true</td>
+                      <td style={{ padding: "12px", fontSize: 11 }}>Checkout & Subscriptions</td>
+                      <td style={{ padding: "12px", fontSize: 11 }}>
+                        <span className="report-status report-status-active">Enforced</span>
+                      </td>
+                    </tr>
+                  </>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <footer className="admin-footer">
+          <Link href="/admin">← Back to Overview</Link>
+        </footer>
+      </section>
+    </main>
+  );
 }

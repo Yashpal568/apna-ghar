@@ -1,6 +1,7 @@
-import { ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import { ExecutionContext, ForbiddenException, Injectable, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
+import { UsersService } from '../users/users.service';
 
 type AuthenticatedRequest = {
   authUserId?: string;
@@ -9,11 +10,14 @@ type AuthenticatedRequest = {
 
 /**
  * Admin authorization builds on the same verified Clerk identity as user and
- * property routes, then applies the server-side admin allowlist.
+ * property routes, checking both the server-side admin allowlist and the user role.
  */
 @Injectable()
 export class AdminAuthGuard extends ClerkAuthGuard {
-  constructor(config: ConfigService) {
+  constructor(
+    config: ConfigService,
+    @Optional() private readonly usersService?: UsersService,
+  ) {
     super(config);
   }
 
@@ -29,7 +33,15 @@ export class AdminAuthGuard extends ClerkAuthGuard {
       .map((value) => value.trim())
       .filter(Boolean);
 
-    if (!allowlist.includes(userId)) {
+    let isAdmin = allowlist.includes(userId);
+    if (!isAdmin && this.usersService) {
+      const profile = await this.usersService.findByClerkUserId(userId);
+      if (profile?.role === 'ADMIN') {
+        isAdmin = true;
+      }
+    }
+
+    if (!isAdmin) {
       throw new ForbiddenException('This account is not authorized for admin operations.');
     }
     return true;

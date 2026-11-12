@@ -35,6 +35,21 @@ This checklist tracks verified repository automation separately from manual envi
   - [x] Automated test suite: 12/12 unit test suites passed (71/71 tests), 3/3 API e2e test suites passed (12/12 tests).
   - [x] Full monorepo typecheck passed (API, web, mobile with 0 errors).
   - [x] Web production build passed (21/21 routes compiled and optimized).
+- [x] M4 Dedicated Admin & Moderation implementation & local verification:
+  - [x] Server-side admin authorization: Enforced `AdminAuthGuard` (supporting allowlist & MongoDB `UserRole.ADMIN`) and `RolesGuard` on all privileged routes. Ordinary users/owners rejected with 401/403.
+  - [x] Real Admin Dashboard Overview: Live MongoDB aggregations for total users (active/suspended), total properties, active listings, hidden listings, removed/moderated listings, pending reports, recent registrations, recent property activity, and audit logs.
+  - [x] User Management (`/admin/users`): Paginated user listing with search, role and status filters, view details & user listings, suspend and reactivate accounts with mandatory reasons; self-suspension guard prevents admins from suspending themselves.
+  - [x] Account Suspension Enforcement: `PropertyAuthGuard` blocks all mutations (create, edit, delete, media upload) with 403 Forbidden if user accountStatus is `suspended`.
+  - [x] Property Moderation (`/admin/listings`): Paginated property listing with search, status filters, property inspection modal, and hide/restore/remove actions with mandatory reasons. Valid listings continue to publish immediately (no mandatory approval queue).
+  - [x] Safety Reports Management (`/admin/reports`): Paginated reports triage, status filter, resolution notes modal, dismiss/resolve actions, and linked property moderation.
+  - [x] Moderation Audit Logs (`/admin/audit-logs`): Dedicated MongoDB collection `audit_logs` tracking `adminUserId`, `action`, `targetType`, `targetId`, `reason`, `details`, and timestamp, with compound indexes.
+  - [x] Category Administration (`/admin/categories`): List all categories, active/inactive toggle buttons without breaking existing listings, edit dialog (label, icon, sortOrder).
+  - [x] Responsive Frontend: Dedicated admin UI pages (`/admin`, `/admin/users`, `/admin/listings`, `/admin/reports`, `/admin/categories`, `/admin/audit-logs`, `/admin/plans`, `/admin/settings`) styled with Apna Ghar blue-green identity, shared `AdminNav`, and 5-theme support.
+  - [x] Next.js Proxy: Created `apps/web/src/app/api/v1/admin/[...path]/route.ts` forwarding authenticated admin requests with Bearer tokens to the upstream API.
+  - [x] Verified full monorepo typecheck (`npm run typecheck`: API, web, mobile passed with 0 errors).
+  - [x] Verified automated unit tests (`npm test`: 14/14 test suites, 81/81 tests passed).
+  - [x] Verified API e2e tests (`npm run test:e2e:api`: 3/3 test suites, 12/12 tests passed).
+  - [x] Verified production builds: `npm run build:api` (NestJS clean build) and `npm run build:web` (25/25 Next.js static/dynamic routes compiled cleanly).
 
 ## Environment readiness
 

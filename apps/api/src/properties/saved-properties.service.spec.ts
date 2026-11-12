@@ -108,3 +108,4 @@ describe('SavedPropertiesService', () => {
     expect(savedModel.bulkWrite).toHaveBeenCalledTimes(1);
   });
 });
+

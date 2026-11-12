@@ -135,3 +135,4 @@ describe('VisitRequestsService', () => {
     expect(requestsModel.create).not.toHaveBeenCalled();
   });
 });
+

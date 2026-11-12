@@ -17,6 +17,7 @@ class ListPropertyReportsQueryDto {
 
 class ModeratePropertyReportDto {
   @IsIn(['open', 'reviewing', 'resolved', 'dismissed']) status!: 'open' | 'reviewing' | 'resolved' | 'dismissed';
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(1000) notes?: string;
 }
 
 @Controller('property-reports')
@@ -35,7 +36,7 @@ export class PropertyReportsController {
   @UseGuards(AdminAuthGuard)
   async moderate(@Req() request: AuthenticatedRequest, @Param('reportId') reportId: string, @Body() body: ModeratePropertyReportDto) {
     if (!request.authUserId) throw new BadRequestException('Authenticated admin identity is missing');
-    const report = await this.service.moderate(reportId, body.status);
+    const report = await this.service.moderate(reportId, body.status, body.notes, request.authUserId);
     if (!report) throw new NotFoundException('Report not found');
     return report;
   }

@@ -56,3 +56,4 @@ describe('RolesGuard', () => {
     await expect(guard.canActivate(context())).rejects.toBeInstanceOf(ForbiddenException);
   });
 });
+

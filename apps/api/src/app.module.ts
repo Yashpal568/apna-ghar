@@ -6,6 +6,7 @@ import { PropertiesModule } from './properties/properties.module';
 import { UsersModule } from './users/users.module';
 import { ConversationsModule } from './conversations/conversations.module';
 import { CategoriesModule } from './categories/categories.module';
+import { AdminModule } from './admin/admin.module';
 
 function validateEnvironment(config: Record<string, unknown>) {
   const port = Number(config.API_PORT ?? 4000);
@@ -35,6 +36,7 @@ function validateEnvironment(config: Record<string, unknown>) {
     UsersModule,
     ConversationsModule,
     CategoriesModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

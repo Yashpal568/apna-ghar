@@ -22,7 +22,7 @@ Responsive marketing/home page, property search/filter/sort, property detail pag
 ## M3 — Backend domain and identity — IMPLEMENTATION COMPLETE; LIVE ACCEPTANCE PENDING
 Clerk server-side token verification, profile sync, roles/permissions, versioned API, property/category/user/favorite/contact/report domains, validation, consistent errors and test coverage. Design repository interfaces before database integration.
 
-## M4 — Dedicated admin and moderation
+## M4 — Dedicated admin and moderation — IMPLEMENTATION COMPLETE; LIVE ACCEPTANCE PENDING
 Server-protected admin access, dashboard metrics, users, listings, categories, reports, moderation, configuration and audit log. Every privileged API operation must enforce server-side permissions.
 
 ## M5 — Marketing SEO and growth foundations
