@@ -17,7 +17,9 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  const publishableKey =
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+    process.env.CLERK_PUBLISHABLE_KEY;
 
   return (
     <html lang="en">
@@ -34,32 +36,32 @@ export default function RootLayout({
               theme: {
                 extend: {
                   colors: {
-                    primary: "#0045b7",
-                    "primary-container": "#005bea",
+                    primary: "var(--color-primary, #0045b7)",
+                    "primary-container": "var(--color-primary-container, #005bea)",
                     "primary-fixed": "#dbe1ff",
                     "primary-fixed-dim": "#b3c5ff",
-                    "on-primary": "#ffffff",
+                    "on-primary": "var(--color-on-primary, #ffffff)",
                     "on-primary-container": "#dfe5ff",
                     "on-primary-fixed": "#00174a",
                     "on-primary-fixed-variant": "#003ea6",
-                    secondary: "#006d3d",
-                    "secondary-container": "#50fd9f",
+                    secondary: "var(--color-secondary, #006d3d)",
+                    "secondary-container": "var(--color-secondary-container, #50fd9f)",
                     "secondary-fixed": "#5affa3",
                     "secondary-fixed-dim": "#28e288",
-                    "on-secondary": "#ffffff",
-                    "on-secondary-container": "#007240",
+                    "on-secondary": "var(--color-on-secondary, #ffffff)",
+                    "on-secondary-container": "var(--color-on-secondary-container, #007240)",
                     "on-secondary-fixed": "#00210f",
-                    surface: "#f8f9ff",
-                    background: "#f8f9ff",
-                    "surface-container-lowest": "#ffffff",
-                    "surface-container-low": "#eff4ff",
-                    "surface-container": "#e5eeff",
-                    "surface-container-high": "#dce9ff",
-                    "surface-container-highest": "#d3e4fe",
-                    "on-surface": "#0b1c30",
-                    "on-surface-variant": "#424655",
-                    outline: "#737687",
-                    "outline-variant": "#c3c6d8",
+                    surface: "var(--color-surface, #f8f9ff)",
+                    background: "var(--color-surface, #f8f9ff)",
+                    "surface-container-lowest": "var(--color-surface-container-lowest, #ffffff)",
+                    "surface-container-low": "var(--color-surface-container-low, #eff4ff)",
+                    "surface-container": "var(--color-surface-container, #e5eeff)",
+                    "surface-container-high": "var(--color-surface-container-high, #dce9ff)",
+                    "surface-container-highest": "var(--color-surface-container-highest, #d3e4fe)",
+                    "on-surface": "var(--color-on-surface, #0b1c30)",
+                    "on-surface-variant": "var(--color-on-surface-variant, #424655)",
+                    outline: "var(--color-outline, #737687)",
+                    "outline-variant": "var(--color-outline-variant, #c3c6d8)",
                     error: "#ba1a1a",
                     "error-container": "#ffdad6"
                   },

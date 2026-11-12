@@ -28,7 +28,7 @@ type PropertyDetailResponse = {
   reports?: Array<{ _id: string; reason: string; details?: string; status: string; createdAt?: string }>;
 };
 
-const api = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
+const api = "/api/v1";
 
 export default function AdminListingsPage() {
   const { isSignedIn, getToken } = useAuth();

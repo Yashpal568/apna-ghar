@@ -32,7 +32,7 @@ type UserDetailsResponse = {
   listingsCount: number;
 };
 
-const api = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
+const api = "/api/v1";
 
 export default function AdminUsersPage() {
   const { isSignedIn, getToken } = useAuth();

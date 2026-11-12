@@ -13,7 +13,7 @@ type CategoryItem = {
   sortOrder: number;
 };
 
-const api = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
+const api = "/api/v1";
 
 export default function AdminCategoriesPage() {
   const { isSignedIn, getToken } = useAuth();

@@ -1,32 +1,139 @@
 /* ==========================================================================
-   Apna Ghar - PropTech Horizon Stitch 32/30 Negotiation Chat Screen
-   Pixel-Perfect Match with Stitch Design Reference (32 & 30)
-   Full Viewport Mobile & Responsive Desktop Architecture
+   Apna Ghar - PropTech Premium Desktop & Mobile Negotiation Chat Workspace
+   High-End PropTech SaaS Experience (Linear / Airbnb / WhatsApp Web Caliber)
+   Multi-Theme Matrix (Light, Midnight, Graphite, Forest, AMOLED Black)
    ========================================================================== */
 
-:root {
-  --color-surface: #f8f9ff;
-  --color-surface-dim: #cbdbf5;
-  --color-surface-bright: #f8f9ff;
+/* Theme Palette Token System */
+:root,
+[data-theme="light"] {
+  --color-surface: #f4f6fa;
+  --color-surface-dim: #e6ebf5;
+  --color-surface-bright: #ffffff;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #eff4ff;
-  --color-surface-container: #e5eeff;
-  --color-surface-container-high: #dce9ff;
-  --color-surface-container-highest: #d3e4fe;
-  --color-on-surface: #0b1c30;
-  --color-on-surface-variant: #424655;
-  --color-primary: #0045b7;
+  --color-surface-container-low: #f8fafc;
+  --color-surface-container: #edf2f9;
+  --color-surface-container-high: #e2e8f0;
+  --color-surface-container-highest: #cbd5e1;
+  --color-on-surface: #0f172a;
+  --color-on-surface-variant: #475569;
+  --color-primary: #064cc0;
   --color-primary-container: #005bea;
   --color-on-primary: #ffffff;
-  --color-secondary: #006d3d;
-  --color-secondary-container: #50fd9f;
-  --color-on-secondary-container: #007240;
+  --color-secondary: #00874c;
+  --color-secondary-container: #d1fae5;
+  --color-on-secondary-container: #065f46;
   --color-secondary-fixed: #5affa3;
   --color-secondary-fixed-dim: #28e288;
-  --color-outline: #737687;
-  --color-outline-variant: #c3c6d8;
-  --color-inverse-surface: #213145;
-  --color-inverse-on-surface: #eaf1ff;
+  --color-outline: #64748b;
+  --color-outline-variant: #e2e8f0;
+  --color-inverse-surface: #1e293b;
+  --color-inverse-on-surface: #f8fafc;
+}
+
+[data-theme="midnight"] {
+  --color-surface: #0b1120;
+  --color-surface-dim: #070b15;
+  --color-surface-bright: #131d31;
+  --color-surface-container-lowest: #111a2e;
+  --color-surface-container-low: #15223c;
+  --color-surface-container: #1b273e;
+  --color-surface-container-high: #22324f;
+  --color-surface-container-highest: #2a3d60;
+  --color-on-surface: #f8fafc;
+  --color-on-surface-variant: #cbd5e1;
+  --color-outline: #94a3b8;
+  --color-outline-variant: #1e2c46;
+  --color-primary: #2563eb;
+  --color-primary-container: #1d4ed8;
+  --color-on-primary: #ffffff;
+  --color-secondary: #20e890;
+  --color-secondary-container: #064e3b;
+  --color-on-secondary-container: #6ee7b7;
+  --color-secondary-fixed: #5affa3;
+  --color-secondary-fixed-dim: #20e890;
+  --color-inverse-surface: #f8fafc;
+  --color-inverse-on-surface: #0b1120;
+}
+
+[data-theme="graphite"] {
+  --color-surface: #17191d;
+  --color-surface-dim: #111215;
+  --color-surface-bright: #202328;
+  --color-surface-container-lowest: #1d2024;
+  --color-surface-container-low: #24272d;
+  --color-surface-container: #2b2f36;
+  --color-surface-container-high: #343841;
+  --color-surface-container-highest: #3d424d;
+  --color-on-surface: #f3f4f6;
+  --color-on-surface-variant: #d1d5db;
+  --color-outline: #9ca3af;
+  --color-outline-variant: #2f343b;
+  --color-primary: #2563eb;
+  --color-primary-container: #1d4ed8;
+  --color-on-primary: #ffffff;
+  --color-secondary: #20e890;
+  --color-secondary-container: #064e3b;
+  --color-on-secondary-container: #6ee7b7;
+  --color-secondary-fixed: #5affa3;
+  --color-secondary-fixed-dim: #20e890;
+  --color-inverse-surface: #f3f4f6;
+  --color-inverse-on-surface: #17191d;
+}
+
+[data-theme="forest"] {
+  --color-surface: #0b1715;
+  --color-surface-dim: #07100e;
+  --color-surface-bright: #122421;
+  --color-surface-container-lowest: #10211e;
+  --color-surface-container-low: #152925;
+  --color-surface-container: #1b332e;
+  --color-surface-container-high: #223e38;
+  --color-surface-container-highest: #2a4b43;
+  --color-on-surface: #ecfdf5;
+  --color-on-surface-variant: #c7e5da;
+  --color-outline: #a7f3d0;
+  --color-outline-variant: #1c3731;
+  --color-primary: #2563eb;
+  --color-primary-container: #1d4ed8;
+  --color-on-primary: #ffffff;
+  --color-secondary: #20e890;
+  --color-secondary-container: #064e3b;
+  --color-on-secondary-container: #6ee7b7;
+  --color-secondary-fixed: #5affa3;
+  --color-secondary-fixed-dim: #20e890;
+  --color-inverse-surface: #ecfdf5;
+  --color-inverse-on-surface: #0b1715;
+}
+
+[data-theme="amoled"] {
+  --color-surface: #000000;
+  --color-surface-dim: #000000;
+  --color-surface-bright: #0d0d0d;
+  --color-surface-container-lowest: #0a0a0a;
+  --color-surface-container-low: #121212;
+  --color-surface-container: #1a1a1a;
+  --color-surface-container-high: #242424;
+  --color-surface-container-highest: #2e2e2e;
+  --color-on-surface: #ffffff;
+  --color-on-surface-variant: #e2e8f0;
+  --color-outline: #94a3b8;
+  --color-outline-variant: #262626;
+  --color-primary: #3b82f6;
+  --color-primary-container: #1d4ed8;
+  --color-on-primary: #ffffff;
+  --color-secondary: #20e890;
+  --color-secondary-container: #064e3b;
+  --color-on-secondary-container: #6ee7b7;
+  --color-secondary-fixed: #5affa3;
+  --color-secondary-fixed-dim: #20e890;
+  --color-inverse-surface: #ffffff;
+  --color-inverse-on-surface: #000000;
+}
+
+/* Suppress redundant global meta bar */
+.stitch-desktop-meta-bar {
+  display: none !important;
 }
 
 /* Base Body Configuration on /messages */
@@ -37,7 +144,8 @@ body:has(.stitch-chat-shell) {
   margin: 0;
   padding: 0;
   overflow: hidden !important;
-  background-color: var(--color-surface, #f8f9ff);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
   font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
@@ -51,7 +159,19 @@ body:has(.stitch-chat-shell) .site-footer {
   display: none !important;
 }
 
-/* Site Navbar: Visible on Desktop/PC screen, suppressed on Mobile /messages */
+/* Mobile Bottom Navigation: Visible on mobile, never suppressed */
+@media (max-width: 1023px) {
+  body:has(.stitch-chat-shell) .ag-bottom-nav {
+    display: grid !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+  }
+}
+
+/* Desktop Site Navbar: Visible on PC screen, hidden on Mobile */
 .stitch-desktop-navbar-wrap {
   width: 100%;
   position: sticky;
@@ -67,20 +187,33 @@ body:has(.stitch-chat-shell) .site-footer {
   }
 }
 
-/* Suppress mobile bottom nav only when actively in mobile chat mode,
-   so the live negotiation composer sits flush at the bottom */
-body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
-  display: none !important;
+/* Custom Slim Scrollbars */
+.stitch-custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-/* 1. Main Chat Shell */
+.stitch-custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.stitch-custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 9999px;
+}
+
+.stitch-custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}
+
+/* 1. Main Workspace Root */
 .messages-workspace-root {
   width: 100vw;
   max-width: 100%;
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-surface, #f8f9ff);
+  background-color: var(--color-surface);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -91,8 +224,8 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-surface, #f8f9ff);
-  color: var(--color-on-surface, #0b1c30);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
@@ -101,9 +234,9 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 @media (min-width: 1024px) {
   .stitch-chat-shell {
     flex: 1;
+    min-height: 0;
     height: calc(100dvh - 76px);
     max-height: calc(100dvh - 76px);
-    min-height: 0;
     width: 100%;
   }
 }
@@ -115,7 +248,7 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-surface, #f8f9ff);
+  background-color: var(--color-surface);
   overflow: hidden;
   box-sizing: border-box;
   animation: fadeIn 0.2s ease-out;
@@ -133,10 +266,8 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   width: 100%;
   height: 64px;
   min-height: 64px;
-  background: rgba(248, 249, 255, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(195, 198, 216, 0.35);
+  background: var(--color-surface-container-lowest);
+  border-bottom: 1px solid var(--color-outline-variant);
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
   display: flex;
   align-items: center;
@@ -149,8 +280,8 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 
 .stitch-inbox-search-filter {
   padding: 12px 16px 10px;
-  background-color: var(--color-surface, #f8f9ff);
-  border-bottom: 1px solid rgba(195, 198, 216, 0.25);
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-outline-variant);
   flex-shrink: 0;
   box-sizing: border-box;
 }
@@ -173,14 +304,14 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 
 .stitch-inbox-card {
   width: 100%;
-  background-color: var(--color-surface-container-lowest, #ffffff);
+  background-color: var(--color-surface-container-lowest);
   border-radius: 16px;
   padding: 12px 14px;
   display: flex;
   align-items: center;
   gap: 12px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(195, 198, 216, 0.35);
+  border: 1px solid var(--color-outline-variant);
   cursor: pointer;
   transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   user-select: none;
@@ -188,13 +319,13 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 }
 
 .stitch-inbox-card:hover {
-  border-color: var(--color-primary, #0045b7);
+  border-color: var(--color-primary);
   box-shadow: 0 2px 8px rgba(0, 69, 183, 0.08);
 }
 
 .stitch-inbox-card:active {
   transform: scale(0.98);
-  background-color: var(--color-surface-container-low, #eff4ff);
+  background-color: var(--color-surface-container-low);
 }
 
 /* 1c. Active Chat View Container */
@@ -205,7 +336,7 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: var(--color-surface, #f8f9ff);
+  background-color: var(--color-surface);
   box-sizing: border-box;
   animation: fadeIn 0.2s ease-out;
 }
@@ -238,45 +369,46 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
     display: none !important;
   }
 
-  /* Keep shared mobile bottom navigation visible on mobile conversation list */
-  body:has(.stitch-chat-shell.is-inbox-mode) .ag-bottom-nav {
-    display: grid !important;
-  }
-
   .stitch-chat-shell.is-chat-mode .stitch-mobile-inbox-view {
     display: none !important;
   }
   .stitch-chat-shell.is-chat-mode .stitch-chat-active-container {
     display: flex !important;
+    height: calc(100dvh - 66px - env(safe-area-inset-bottom, 0px)) !important;
+    max-height: calc(100dvh - 66px - env(safe-area-inset-bottom, 0px)) !important;
   }
   .stitch-desktop-sidebar {
     display: none !important;
   }
 }
 
-/* 2. Fixed Sticky Top Header */
+/* 2. Mobile-Only Header */
 .stitch-chat-header {
   position: sticky;
   top: 0;
   left: 0;
   right: 0;
   width: 100%;
-  height: 64px;
-  min-height: 64px;
-  background: rgba(248, 249, 255, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(195, 198, 216, 0.35);
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+  height: 60px;
+  min-height: 60px;
+  background: var(--color-surface-container-lowest);
+  border-bottom: 1px solid var(--color-outline-variant);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
   z-index: 50;
   flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .stitch-chat-header {
+    display: none !important;
+  }
 }
 
 .stitch-chat-header-inner {
   height: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -292,30 +424,24 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 }
 
 .stitch-header-back-btn {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 40px;
+  min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
-  color: var(--color-on-surface, #0b1c30);
+  color: var(--color-on-surface);
   cursor: pointer;
   border-radius: 9999px;
   transition: background-color 0.15s ease, color 0.15s ease;
-  margin-left: -8px;
+  margin-left: -6px;
   flex-shrink: 0;
 }
 
-@media (min-width: 1024px) {
-  .stitch-header-back-btn {
-    display: none !important;
-  }
-}
-
 .stitch-header-back-btn:hover {
-  background-color: var(--color-surface-container, #e5eeff);
-  color: var(--color-primary, #0045b7);
+  background-color: var(--color-surface-container);
+  color: var(--color-primary);
 }
 
 .stitch-chat-header-right {
@@ -326,48 +452,28 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 }
 
 .stitch-header-circle-btn {
-  min-width: 44px;
-  min-height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 9999px;
-  background-color: var(--color-surface-container-low, #eff4ff);
+  background-color: var(--color-surface-container-low);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
+  border: 1px solid var(--color-outline-variant);
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 0.15s ease, transform 0.1s ease;
+  color: var(--color-on-surface);
+  transition: background-color 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
 }
 
 .stitch-header-circle-btn:hover {
-  background-color: var(--color-surface-container, #e5eeff);
+  background-color: var(--color-surface-container);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .stitch-header-circle-btn:active {
   transform: scale(0.95);
-}
-
-/* 2b. Desktop Meta Breadcrumb & Trust Banner Bar */
-.stitch-desktop-meta-bar {
-  display: none;
-}
-
-@media (min-width: 1024px) {
-  .stitch-desktop-meta-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 7px 18px;
-    margin: 8px auto 6px;
-    width: 100%;
-    max-width: 1440px;
-    background-color: var(--color-surface-container-lowest, #ffffff);
-    border-radius: 14px;
-    border: 1px solid rgba(195, 198, 216, 0.35);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
-    flex-shrink: 0;
-    box-sizing: border-box;
-  }
 }
 
 /* 3. Main Workspace Layout */
@@ -379,31 +485,31 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   margin: 0 auto;
   display: flex;
   overflow: hidden;
-  background-color: var(--color-surface, #f8f9ff);
+  background-color: var(--color-surface);
 }
 
 @media (min-width: 1024px) {
   .stitch-chat-layout-wrapper {
-    max-width: 1440px;
-    padding: 0 16px 12px;
-    gap: 12px;
-    height: calc(100% - 50px);
+    max-width: 1600px;
+    padding: 14px 20px 16px;
+    gap: 16px;
+    height: 100%;
     box-sizing: border-box;
   }
 }
 
 /* Desktop Sidebar for Conversations List (Column 1) */
 .stitch-desktop-sidebar {
-  width: 320px;
-  min-width: 300px;
-  max-width: 340px;
+  width: 340px;
+  min-width: 320px;
+  max-width: 360px;
   height: 100%;
   display: none;
   flex-direction: column;
-  background-color: var(--color-surface-container-lowest, #ffffff);
-  border: 1px solid rgba(195, 198, 216, 0.4);
-  border-radius: 16px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  background-color: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -421,7 +527,7 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-surface, #f8f9ff);
+  background-color: var(--color-surface);
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -430,37 +536,54 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 
 @media (min-width: 1024px) {
   .stitch-chat-main {
-    border-radius: 16px;
-    border: 1px solid rgba(195, 198, 216, 0.35);
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
-    background-color: var(--color-surface-container-lowest, #ffffff);
+    border-radius: 20px;
+    border: 1px solid var(--color-outline-variant);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    background-color: var(--color-surface-container-lowest);
     max-width: none;
     margin: 0;
   }
 }
 
+/* Desktop In-Column Conversation Header */
+.stitch-desktop-chat-header {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .stitch-desktop-chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--color-outline-variant);
+    background: var(--color-surface-container-lowest);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+}
+
 /* Desktop Right Dossier Drawer (Column 3) */
 .stitch-desktop-dossier-column {
-  width: 320px;
-  min-width: 300px;
-  max-width: 340px;
+  width: 340px;
+  min-width: 320px;
+  max-width: 360px;
   height: 100%;
   display: none;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   overflow-y: auto;
   flex-shrink: 0;
-  padding-right: 2px;
   box-sizing: border-box;
   -webkit-overflow-scrolling: touch;
 }
 
 .stitch-desktop-dossier-column::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
 }
 
 .stitch-desktop-dossier-column::-webkit-scrollbar-thumb {
-  background: rgba(195, 198, 216, 0.5);
+  background: var(--color-outline-variant);
   border-radius: 9999px;
 }
 
@@ -471,11 +594,11 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 }
 
 .stitch-dossier-card {
-  background-color: var(--color-surface-container-lowest, #ffffff);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(195, 198, 216, 0.35);
+  background-color: var(--color-surface-container-lowest);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-outline-variant);
   box-sizing: border-box;
 }
 
@@ -483,32 +606,34 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 .stitch-property-sticky-strip {
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: 20;
   width: 100%;
   padding: 8px 16px;
-  background: rgba(248, 249, 255, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  background: var(--color-surface-container-low);
+  border-bottom: 1px solid var(--color-outline-variant);
   box-sizing: border-box;
   flex-shrink: 0;
 }
 
 .stitch-property-context-card {
   width: 100%;
-  background-color: var(--color-surface-container-lowest, #ffffff);
-  border-radius: 12px;
-  padding: 8px 12px;
+  background-color: var(--color-surface-container-lowest);
+  border-radius: 14px;
+  padding: 8px 14px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(195, 198, 216, 0.3);
+  border: 1px solid var(--color-outline-variant);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   user-select: none;
   box-sizing: border-box;
+}
+
+.stitch-property-context-card:hover {
+  border-color: var(--color-primary);
 }
 
 .stitch-property-context-card:active {
@@ -525,17 +650,22 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 12px 16px 20px;
+  padding: 16px 20px 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   box-sizing: border-box;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
 
 .stitch-chat-stream::-webkit-scrollbar {
-  display: none;
+  width: 6px;
+}
+
+.stitch-chat-stream::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 9999px;
 }
 
 /* 6. Bottom Interactive Anchor (Composer + Suggestions) */
@@ -545,15 +675,13 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   left: 0;
   right: 0;
   width: 100%;
-  background: rgba(248, 249, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(195, 198, 216, 0.3);
-  padding-top: 6px;
-  padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
-  z-index: 40;
+  background: var(--color-surface-container-lowest);
+  border-top: 1px solid var(--color-outline-variant);
+  padding: 8px 16px 12px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
+  z-index: 20;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .stitch-chips-tray {
@@ -562,7 +690,7 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 2px 16px 6px;
+  padding: 2px 4px 8px;
   scroll-behavior: smooth;
   scrollbar-width: none;
   box-sizing: border-box;
@@ -574,20 +702,21 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 
 .stitch-chip-btn {
   flex-shrink: 0;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 9999px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 650;
   white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(195, 198, 216, 0.35);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--color-outline-variant);
   cursor: pointer;
-  transition: transform 0.1s ease, background-color 0.15s ease;
+  transition: transform 0.1s ease, background-color 0.15s ease, border-color 0.15s ease;
   user-select: none;
 }
 
 .stitch-chip-btn:hover {
   filter: brightness(0.97);
+  border-color: var(--color-primary);
 }
 
 .stitch-chip-btn:active {
@@ -595,7 +724,7 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
 }
 
 .stitch-composer-wrap {
-  padding: 2px 16px 4px;
+  padding: 2px 0 2px;
   box-sizing: border-box;
 }
 
@@ -603,39 +732,40 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 6px;
-  background-color: var(--color-surface-container-lowest, #ffffff);
+  gap: 8px;
+  background-color: var(--color-surface-container-low);
   border-radius: 9999px;
-  padding: 4px 6px 4px 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(195, 198, 216, 0.45);
+  padding: 5px 8px 5px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--color-outline-variant);
   box-sizing: border-box;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stitch-composer-form:focus-within {
-  border-color: var(--color-primary, #0045b7);
-  box-shadow: 0 2px 12px rgba(0, 69, 183, 0.12);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+  background-color: var(--color-surface-container-lowest);
 }
 
 .stitch-composer-icon-btn {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
-  color: var(--color-outline, #737687);
+  color: var(--color-outline);
   cursor: pointer;
   flex-shrink: 0;
   transition: color 0.15s ease, background-color 0.15s ease;
 }
 
 .stitch-composer-icon-btn:hover {
-  color: var(--color-primary, #0045b7);
-  background-color: var(--color-surface-container, #e5eeff);
+  color: var(--color-primary);
+  background-color: var(--color-surface-container);
 }
 
 .stitch-composer-input {
@@ -646,32 +776,32 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   outline: none;
   padding: 8px 4px;
   font-size: 14px;
-  color: var(--color-on-surface, #0b1c30);
+  color: var(--color-on-surface);
   font-family: inherit;
 }
 
 .stitch-composer-input::placeholder {
-  color: rgba(115, 118, 135, 0.7);
+  color: var(--color-outline);
 }
 
 .stitch-composer-send-btn {
   width: 40px;
   height: 40px;
   border-radius: 9999px;
-  background-color: var(--color-primary, #0045b7);
-  color: var(--color-on-primary, #ffffff);
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
-  box-shadow: 0 2px 6px rgba(0, 69, 183, 0.35);
+  box-shadow: 0 2px 6px rgba(0, 69, 183, 0.3);
   cursor: pointer;
   flex-shrink: 0;
   transition: background-color 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
 }
 
 .stitch-composer-send-btn:hover:not(:disabled) {
-  background-color: var(--color-primary-container, #005bea);
+  background-color: var(--color-primary-container);
 }
 
 .stitch-composer-send-btn:active:not(:disabled) {
@@ -688,7 +818,7 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: rgba(33, 49, 69, 0.45);
+  background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   display: flex;
@@ -701,34 +831,34 @@ body:has(.stitch-chat-shell.is-chat-mode) .ag-bottom-nav {
   width: 100%;
   max-width: 520px;
   margin: 0 auto;
-  background-color: var(--color-surface-container-lowest, #ffffff);
+  background-color: var(--color-surface-container-lowest);
   border-radius: 24px 24px 0 0;
-  padding: 16px 20px 24px;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
+  padding: 20px 24px 28px;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
   max-height: 90vh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   box-sizing: border-box;
 }
 
 /* 8. Floating Action Toast */
 .stitch-floating-toast {
   position: fixed;
-  top: 76px;
+  top: 86px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 99999;
-  background-color: var(--color-inverse-surface, #213145);
-  color: var(--color-inverse-on-surface, #eaf1ff);
-  padding: 12px 18px;
+  background-color: var(--color-inverse-surface);
+  color: var(--color-inverse-on-surface);
+  padding: 12px 20px;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   gap: 12px;
-  max-width: 380px;
+  max-width: 420px;
   width: calc(100% - 32px);
   pointer-events: none;
   animation: slideDownToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);

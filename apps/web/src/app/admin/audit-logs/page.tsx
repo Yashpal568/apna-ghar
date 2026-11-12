@@ -16,7 +16,7 @@ type AuditEntry = {
   createdAt: string;
 };
 
-const api = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
+const api = "/api/v1";
 
 export default function AdminAuditLogsPage() {
   const { isSignedIn, getToken } = useAuth();

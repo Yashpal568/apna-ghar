@@ -63,10 +63,10 @@ type PropertySummary = {
 };
 
 const VERIFIED_FALLBACK_IMG =
-  "https://lh3.googleusercontent.com/aida/AEtjO1XHuKp5MM1E24wGWoeyKeYJMGJqIQrZgW3kCTa4vaa4kN71aj8z4AeulfS2iBFucumPZh9WVXQBEi6w272585Iiw_ZQMrByocLAVQYYv9n4n1_34AJK9CbezGXiZkZIjbpzl_O_-ugMbH_8USP88WSHRTpQ3SCcJeQ8IPyUwNUlgUM6GPfM0KuEbVyv_NCscUoyW5DloufqIJB1XMEwRc-mpWHsg_6tcDpoCu6_JssH";
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85";
 
 const VERIFIED_FALLBACK_IMG_2 =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuC95rQa8nqGejiNHo_gUyOYvPCB7UNOqsFnznnNCPD0GvTG3Uq-apd0Ivd4KUOEsWQqvx7LmshptUF1YrixnSUJQCwSi0ut5WhuckLLL8zo8cHodgBQVVz1CmmThXUfNDLK7VbP1DyBYYCs3PE1KycrtOKp7N4ZFmVIE50_dljZHFNl3LOguSKnqJentKARo4AbHdZsKzQNMbntq7N7Y9-GBLn9RJ16p21i73atRxY";
+  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85";
 
 function formatRelativeTime(dateStr?: string): string {
   if (!dateStr) return "";
@@ -785,15 +785,21 @@ function MessagesCenterAuthenticated() {
           <div className="stitch-chat-layout-wrapper">
             {/* Desktop Sidebar (visible on widescreen >= 1024px) */}
             <aside className="stitch-desktop-sidebar">
-              <div className="p-3 border-b border-outline-variant/30">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-bold text-sm text-on-surface m-0">Direct Negotiations</h3>
-                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold text-[10px]">
-                    {items.length} Active
+              <div className="p-3.5 border-b border-outline-variant/30 flex-shrink-0">
+                <div className="flex items-center justify-between mb-2.5">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-sm text-on-surface m-0">Negotiations</h3>
+                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold text-[10.5px]">
+                      {items.length} Active
+                    </span>
+                  </div>
+                  <span className="flex items-center gap-1 text-[10px] font-bold text-secondary bg-secondary-container/40 px-2 py-0.5 rounded-full">
+                    <span className="material-symbols-outlined text-[12px] text-secondary">shield</span>
+                    Escrow
                   </span>
                 </div>
-                <div className="relative w-full">
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-[16px] text-outline">
+                <div className="relative w-full mb-2">
+                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-[16px] text-outline pointer-events-none">
                     search
                   </span>
                   <input
@@ -801,17 +807,17 @@ function MessagesCenterAuthenticated() {
                     placeholder="Search conversations…"
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
-                    className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-surface-container-low text-xs text-on-surface placeholder:text-outline border border-transparent focus:border-primary/40 focus:outline-none"
+                    className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-surface-container-low text-xs text-on-surface placeholder:text-outline border border-outline-variant/30 focus:border-primary/50 focus:outline-none transition-all"
                   />
                 </div>
-                <div className="flex items-center gap-1 mt-2">
+                <div className="flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => setActiveFilter("all")}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border-none cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border-none cursor-pointer transition-colors ${
                       activeFilter === "all"
-                        ? "bg-primary text-on-primary"
-                        : "bg-surface-container-low text-on-surface-variant"
+                        ? "bg-primary text-on-primary shadow-xs"
+                        : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"
                     }`}
                   >
                     All ({items.length})
@@ -819,10 +825,10 @@ function MessagesCenterAuthenticated() {
                   <button
                     type="button"
                     onClick={() => setActiveFilter("unread")}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border-none cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border-none cursor-pointer transition-colors ${
                       activeFilter === "unread"
-                        ? "bg-primary text-on-primary"
-                        : "bg-surface-container-low text-on-surface-variant"
+                        ? "bg-primary text-on-primary shadow-xs font-bold"
+                        : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"
                     }`}
                   >
                     Unread
@@ -830,10 +836,10 @@ function MessagesCenterAuthenticated() {
                   <button
                     type="button"
                     onClick={() => setActiveFilter("offers")}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border-none cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border-none cursor-pointer transition-colors ${
                       activeFilter === "offers"
-                        ? "bg-primary text-on-primary"
-                        : "bg-surface-container-low text-on-surface-variant"
+                        ? "bg-primary text-on-primary shadow-xs font-bold"
+                        : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"
                     }`}
                   >
                     Offers (2)
@@ -841,7 +847,7 @@ function MessagesCenterAuthenticated() {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
+              <div className="flex-1 overflow-y-auto p-2.5 space-y-2 stitch-custom-scrollbar">
                 {filteredItems.map((conv) => {
                   const isSelected = conv._id === selected;
                   const owner = conv.contactName || "Yash Pal";
@@ -855,10 +861,10 @@ function MessagesCenterAuthenticated() {
                       key={conv._id}
                       type="button"
                       onClick={() => handleOpenConversation(conv._id)}
-                      className={`w-full p-3 rounded-xl text-left flex items-start gap-3 transition-all border-none cursor-pointer ${
+                      className={`w-full p-3 rounded-2xl text-left flex items-start gap-3 transition-all border-none cursor-pointer ${
                         isSelected
-                          ? "bg-primary-fixed/35 border-l-4 border-l-primary shadow-xs"
-                          : "hover:bg-surface-container-low/60 bg-transparent"
+                          ? "bg-primary/10 border-l-4 border-l-primary shadow-xs ring-1 ring-primary/20"
+                          : "hover:bg-surface-container-low/70 bg-transparent"
                       }`}
                     >
                       <div className="relative flex-shrink-0 mt-0.5">
@@ -887,17 +893,16 @@ function MessagesCenterAuthenticated() {
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-1 mb-1">
-                          <span className="font-label-sm text-[10px] text-primary font-bold uppercase tracking-wider">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span className="font-label-sm text-[9px] px-1.5 py-0.2 rounded bg-primary/10 text-primary font-bold uppercase tracking-wider shrink-0">
                             Owner
                           </span>
-                          <span className="text-outline-variant text-[10px]">•</span>
                           <span className="font-body-sm text-[11px] text-on-surface-variant truncate">
                             {conv.propertyTitle}
                           </span>
                         </div>
 
-                        <p className="text-[11px] text-on-surface-variant font-normal truncate m-0 mb-1.5">
+                        <p className="text-[11.5px] text-on-surface-variant font-normal truncate m-0 mb-1.5 leading-tight">
                           {lastMsg?.text || "Zero brokerage direct discussion"}
                         </p>
 
@@ -917,7 +922,7 @@ function MessagesCenterAuthenticated() {
                 })}
               </div>
 
-              <div className="p-3 border-t border-outline-variant/30 text-[11px] text-outline flex items-center justify-between">
+              <div className="p-3 border-t border-outline-variant/30 text-[11px] text-outline flex items-center justify-between bg-surface-container-lowest flex-shrink-0">
                 <span className="flex items-center gap-1 font-semibold text-secondary">
                   <span className="material-symbols-outlined text-[14px]">shield</span> Escrow Active
                 </span>
@@ -927,6 +932,61 @@ function MessagesCenterAuthenticated() {
 
             {/* Center Chat Screen */}
             <main className="stitch-chat-main">
+              {/* Desktop In-Column Conversation Header */}
+              <div className="stitch-desktop-chat-header">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="relative flex-shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-primary-container text-on-primary font-bold flex items-center justify-center text-sm shadow-xs">
+                      {rawOwnerName.slice(0, 2).toUpperCase()}
+                    </div>
+                    <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-secondary ring-2 ring-surface-container-lowest" title="Online now"></span>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h2 className="font-headline-sm text-sm sm:text-base text-on-surface truncate m-0 font-bold">
+                        {rawOwnerName}
+                      </h2>
+                      <span className="material-symbols-outlined text-secondary text-[16px] shrink-0" title="Verified Owner">
+                        verified
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold">
+                        Direct Owner
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
+                      <span className="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
+                      <span className="truncate">Active Negotiation • RBI Escrow Protected</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {ownerPhone && (
+                    <a
+                      href={`tel:${ownerPhone.replace(/[^+0-9]/g, "")}`}
+                      aria-label="Call seller"
+                      className="stitch-header-circle-btn text-primary"
+                      title="Direct Call (Masked)"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">call</span>
+                    </a>
+                  )}
+                  <a
+                    href={`/property/${encodeURIComponent(propertyInfo?.slug || activeConversation.propertySlug || "werwtw-mvuzhfat")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Property listing info"
+                    className="stitch-header-circle-btn text-on-surface-variant"
+                    title="View Public Listing"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">info</span>
+                  </a>
+                  <span className="hidden xl:flex px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container text-[11px] font-bold items-center gap-1.5">
+                    <span className="material-symbols-outlined text-[14px]">shield</span>
+                    ₹50,000 Escrow Active
+                  </span>
+                </div>
+              </div>
+
               {/* Pinned Sticky Property Micro-Context Strip */}
               <section className="stitch-property-sticky-strip">
                 <div
@@ -936,22 +996,23 @@ function MessagesCenterAuthenticated() {
                   tabIndex={0}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container shadow-xs">
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container shadow-xs">
                       <img
                         alt={propertyTitle}
                         className="w-full h-full object-cover"
                         src={propertyThumb}
+                        onError={(e) => { (e.target as HTMLImageElement).src = VERIFIED_FALLBACK_IMG; }}
                       />
-                      <span className="absolute bottom-0 inset-x-0 bg-primary/85 text-[9px] text-on-primary font-bold text-center py-0.5 leading-none">
+                      <span className="absolute bottom-0 inset-x-0 bg-primary/85 text-[8.5px] text-on-primary font-bold text-center py-0.2 leading-none">
                         VERIFIED
                       </span>
                     </div>
                     <div className="min-w-0 flex flex-col justify-center">
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-headline-sm text-[15px] font-bold text-on-surface truncate">
+                      <div className="flex items-center gap-2">
+                        <span className="font-headline-sm text-sm font-bold text-on-surface truncate">
                           {formatCrLakh(propertyAskingPrice)}
                         </span>
-                        <span className="bg-secondary-container text-on-secondary-container font-label-sm text-[10px] px-1.5 py-0.5 rounded-full uppercase tracking-wider font-extrabold flex items-center gap-1">
+                        <span className="bg-secondary-container text-on-secondary-container font-label-sm text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
                           Offer Accepted
                         </span>
@@ -1057,16 +1118,16 @@ function MessagesCenterAuthenticated() {
                   return (
                     <div key={m._id} className="flex flex-col items-start gap-1 max-w-[88%] self-start">
                       <div className="flex items-center gap-1.5 px-1 mb-0.5">
-                        <span className="w-2 h-2 rounded-full bg-secondary-fixed-dim"></span>
-                        <span className="font-label-sm text-label-sm text-on-surface font-bold">
+                        <span className="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
+                        <span className="font-label-sm text-xs text-on-surface font-bold">
                           {ownerName}
                         </span>
-                        <span className="font-label-sm text-[10px] bg-secondary-container text-on-secondary-container px-1 rounded font-bold">
+                        <span className="font-label-sm text-[10px] bg-secondary-container text-on-secondary-container px-1.5 py-0.2 rounded font-bold">
                           Direct
                         </span>
                       </div>
-                      <div className="bg-surface-container-lowest text-on-surface rounded-2xl rounded-tl-xs px-4 py-3 shadow-sm border border-outline-variant/30">
-                        <p className="font-body-md text-body-md leading-relaxed m-0">{m.text}</p>
+                      <div className="bg-surface-container-low text-on-surface rounded-2xl rounded-tl-xs px-4 py-3 shadow-xs border border-outline-variant/30">
+                        <p className="font-body-md text-sm leading-relaxed m-0 text-on-surface">{m.text}</p>
                       </div>
                       <span className="text-on-surface-variant font-label-sm text-[11px] px-1">
                         {formatRelativeTime(m.sentAt)}
@@ -1076,7 +1137,7 @@ function MessagesCenterAuthenticated() {
                 })}
 
                 {/* High-Impact Counter-Offer Received Card (Embedded Stream) */}
-                <div className="w-full bg-surface-container-lowest rounded-2xl p-4 shadow-md border-l-4 border-l-primary flex flex-col gap-3">
+                <div className="w-full bg-surface-container-low rounded-2xl p-4 shadow-sm border-l-4 border-l-primary flex flex-col gap-3 border border-outline-variant/30">
                   <div className="flex items-center justify-between pb-2 border-b border-outline-variant/30">
                     <div className="flex items-center gap-2">
                       <span className="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
@@ -1096,17 +1157,17 @@ function MessagesCenterAuthenticated() {
                         </h4>
                       </div>
                     </div>
-                    <span className="px-2 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-[11px] font-bold">
+                    <span className="px-2 py-1 rounded-full bg-surface-container text-primary font-label-sm text-[11px] font-bold">
                       Pending Review
                     </span>
                   </div>
 
-                  <div className="bg-surface-container-low rounded-xl p-2.5 flex items-center justify-between text-on-surface">
+                  <div className="bg-surface-container rounded-xl p-2.5 flex items-center justify-between text-on-surface">
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-secondary text-[18px]">
                         verified
                       </span>
-                      <span className="font-body-sm text-[12px] text-on-surface-variant">
+                      <span className="font-body-sm text-[12px] text-on-surface-variant font-medium">
                         Secured via Token Escrow
                       </span>
                     </div>
@@ -1174,7 +1235,7 @@ function MessagesCenterAuthenticated() {
                 </div>
 
                 {/* Counter-Offer Accepted / Deal Locked Card */}
-                <div className="w-full bg-surface-container-lowest rounded-2xl p-4 shadow-md border-l-4 border-l-secondary flex flex-col gap-3 animate-in slide-in-from-bottom duration-300">
+                <div className="w-full bg-surface-container-low rounded-2xl p-4 shadow-sm border-l-4 border-l-secondary flex flex-col gap-3 border border-outline-variant/30 animate-in slide-in-from-bottom duration-300">
                   <div className="flex items-center justify-between pb-2 border-b border-outline-variant/30">
                     <div className="flex items-center gap-2">
                       <span className="w-8 h-8 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">
@@ -1349,14 +1410,14 @@ function MessagesCenterAuthenticated() {
                   </button>
                   <button
                     type="button"
-                    className="stitch-chip-btn bg-surface-container-lowest text-on-surface"
+                    className="stitch-chip-btn bg-surface-container-low text-on-surface"
                     onClick={() => handleChipClick("🏷️ Can you do ₹1.45 Cr?")}
                   >
                     🏷️ Can you do ₹1.45 Cr?
                   </button>
                   <button
                     type="button"
-                    className="stitch-chip-btn bg-surface-container-lowest text-on-surface"
+                    className="stitch-chip-btn bg-surface-container-low text-on-surface"
                     onClick={() => handleChipClick("📑 Request Legal Draft Agreement")}
                   >
                     📑 Request Legal Draft Agreement
@@ -1407,8 +1468,8 @@ function MessagesCenterAuthenticated() {
 
                   <div className="flex items-center justify-center gap-1.5 pt-1.5 pb-0.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                    <span className="font-label-sm text-[10px] text-on-surface-variant tracking-wide font-medium">
-                      100% Direct Seller Conversation • Zero Platform Fee
+                    <span className="font-label-sm text-[10.5px] text-on-surface-variant tracking-wide font-medium">
+                      100% Direct Seller Conversation • Zero Platform Fee • RBI-Regulated Escrow
                     </span>
                   </div>
                 </div>
@@ -1416,7 +1477,7 @@ function MessagesCenterAuthenticated() {
             </main>
 
             {/* COLUMN 3: RIGHT DETAILS DRAWER (Property & Safe Escrow Dossier - Stitch 31) */}
-            <aside className="stitch-desktop-dossier-column">
+            <aside className="stitch-desktop-dossier-column stitch-custom-scrollbar">
               {/* Card 1: Property Dossier */}
               <div className="stitch-dossier-card">
                 <div className="flex items-center justify-between mb-3">
@@ -1431,6 +1492,7 @@ function MessagesCenterAuthenticated() {
                 <div className="relative w-full h-36 rounded-xl overflow-hidden mb-3 bg-surface-container group">
                   <img
                     src={propertyThumb}
+                    onError={(e) => { (e.target as HTMLImageElement).src = VERIFIED_FALLBACK_IMG; }}
                     alt={propertyTitle}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
