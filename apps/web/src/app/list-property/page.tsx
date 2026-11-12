@@ -100,7 +100,14 @@ const LOCALITY_SUGGESTIONS = ["Civil Lines","Model Town","Shastri Nagar","Gandhi
 const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
 
 function ListingForm() {
-  const { getToken } = useAuth();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      const redirectUrl = encodeURIComponent(window.location.href);
+      window.location.href = `/sign-in?redirect_url=${redirectUrl}`;
+    }
+  }, [isLoaded, isSignedIn]);
   const [draft, setDraft] = useState<Draft>(() => {
     if (typeof window === "undefined") return initialDraft;
     try {
