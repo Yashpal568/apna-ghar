@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
+import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
 type Home = {
@@ -118,49 +119,55 @@ export default function SavedPage() {
   };
 
   return (
-    <main className="page-shell interior-page">
-      
-      <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>Saved homes</span></div>
-      <section className="listing-intro">
-        <p className="eyebrow">YOUR SHORTLIST</p>
-        <h1>Places worth<br /><em>coming back to.</em></h1>
-        <p>Keep your favourite properties together while you compare.</p>
-      </section>
-      {notice && <p className="form-notice" role="status">{notice}</p>}
-      {!ready ? (
-        <div className="search-empty" role="status"><h2>Loading saved homes…</h2><p>Checking this device and your account.</p></div>
-      ) : homes.length === 0 ? (
-        <div className="search-empty">
-          <div className="empty-illustration"><span>⌂</span><span>♡</span></div>
-          <h2>Your shortlist starts here</h2>
-          <p>Save properties from search results and they’ll appear here. Sign in to sync them across devices.</p>
-          <a className="button button-primary" href="/search">Explore properties ↗</a>
+    <div className="saved-page-wrapper">
+      <SiteHeader active="saved" />
+      <main className="page-shell interior-page">
+        <div className="breadcrumb">
+          <a href="/">Home</a>
+          <span>/</span>
+          <span>Saved homes</span>
         </div>
-      ) : (
-        <>
-          <div className="results-toolbar">
-            <div><h2>Saved properties</h2><p>{homes.length} saved home{homes.length === 1 ? "" : "s"}{isSignedIn ? " · synced to your account when available" : " · stored on this device"}</p></div>
-            <a className="text-link" href="/search">Find more homes ↗</a>
+        <section className="listing-intro">
+          <p className="eyebrow">YOUR SHORTLIST</p>
+          <h1>Places worth<br /><em>coming back to.</em></h1>
+          <p>Keep your favourite properties together while you compare.</p>
+        </section>
+        {notice && <p className="form-notice" role="status">{notice}</p>}
+        {!ready ? (
+          <div className="search-empty" role="status"><h2>Loading saved homes…</h2><p>Checking this device and your account.</p></div>
+        ) : homes.length === 0 ? (
+          <div className="search-empty">
+            <div className="empty-illustration"><span>⌂</span><span>♡</span></div>
+            <h2>Your shortlist starts here</h2>
+            <p>Save properties from search results and they’ll appear here. Sign in to sync them across devices.</p>
+            <a className="button button-primary" href="/search">Explore properties ↗</a>
           </div>
-          <div className="property-results-grid">
-            {homes.map((home) => (
-              <article className="property-result-card" key={home._id}>
-                <a className="property-result-link" href={"/property/" + encodeURIComponent(home.slug || home._id)}>
-                  <div className="property-result-image">{home.imageUrls?.[0] ? <img src={home.imageUrls[0]} alt="" loading="lazy" /> : <span aria-hidden="true">⌂</span>}<span className="property-result-badge">{home.listingType === "rent" ? "FOR RENT" : "FOR SALE"}</span></div>
-                  <div className="property-result-body">
-                    <p className="property-result-location">{[home.location?.locality, home.location?.city, home.location?.state].filter(Boolean).join(", ")}</p>
-                    <h3>{home.title}</h3>
-                    <p className="property-result-price">{money(home.priceAmount)}{home.listingType === "rent" ? " / month" : ""}</p>
-                    <p className="property-result-facts">{home.bedrooms ? home.bedrooms + " beds · " : ""}{home.bathrooms ? home.bathrooms + " baths · " : ""}{home.areaValue} {home.areaUnit}</p>
-                  </div>
-                </a>
-                <button className="button button-outline saved-toggle" type="button" disabled={removingId === home._id} onClick={() => void remove(home)}>{removingId === home._id ? "Removing…" : "Remove from saved"}</button>
-              </article>
-            ))}
-          </div>
-        </>
-      )}
-      <SiteFooter />
-    </main>
+        ) : (
+          <>
+            <div className="results-toolbar">
+              <div><h2>Saved properties</h2><p>{homes.length} saved home{homes.length === 1 ? "" : "s"}{isSignedIn ? " · synced to your account when available" : " · stored on this device"}</p></div>
+              <a className="text-link" href="/search">Find more homes ↗</a>
+            </div>
+            <div className="property-results-grid">
+              {homes.map((home) => (
+                <article className="property-result-card" key={home._id}>
+                  <a className="property-result-link" href={"/property/" + encodeURIComponent(home.slug || home._id)}>
+                    <div className="property-result-image">{home.imageUrls?.[0] ? <img src={home.imageUrls[0]} alt="" loading="lazy" /> : <span aria-hidden="true">⌂</span>}<span className="property-result-badge">{home.listingType === "rent" ? "FOR RENT" : "FOR SALE"}</span></div>
+                    <div className="property-result-body">
+                      <p className="property-result-location">{[home.location?.locality, home.location?.city, home.location?.state].filter(Boolean).join(", ")}</p>
+                      <h3>{home.title}</h3>
+                      <p className="property-result-price">{money(home.priceAmount)}{home.listingType === "rent" ? " / month" : ""}</p>
+                      <p className="property-result-facts">{home.bedrooms ? home.bedrooms + " beds · " : ""}{home.bathrooms ? home.bathrooms + " baths · " : ""}{home.areaValue} {home.areaUnit}</p>
+                    </div>
+                  </a>
+                  <button className="button button-outline saved-toggle" type="button" disabled={removingId === home._id} onClick={() => void remove(home)}>{removingId === home._id ? "Removing…" : "Remove from saved"}</button>
+                </article>
+              ))}
+            </div>
+          </>
+        )}
+        <SiteFooter />
+      </main>
+    </div>
   );
 }

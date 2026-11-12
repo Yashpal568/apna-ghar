@@ -4,11 +4,19 @@ This checklist tracks verified repository automation separately from manual envi
 
 ## Repository and CI baseline
 
-- [x] Latest inspected `main` commit: `0a1a4298f1b76c1e04d305d9e486201e3f88a644` (`style(home): reduce desktop hero search to compact mobile height`).
-- [x] CI workflow passed on that commit: typecheck API/web/mobile, API unit tests, API HTTP e2e tests, API build, web build, and Cloudflare production artifact build.
-- [x] Quality Checks workflow passed on that commit: API build and Next.js web/admin build.
-- [x] Cloudflare production deployment workflow passed on the preceding commit `a0c6e6002c190d4cf71e5840fc437c23200bcab0`, including its deployed-worker commit verification.
-- [ ] Confirm a Cloudflare deployment for the latest `main` commit after the CSS-only follow-up commit.
+- [x] Latest inspected `main` commit: `af61807` (`docs: add end-to-end acceptance checklist`).
+- [x] CI workflow passed on `main`: typecheck API/web/mobile, API unit tests, API HTTP e2e tests, API build, web build, and Cloudflare production artifact build.
+- [x] Quality Checks workflow passed on `main`: API build and Next.js web/admin build.
+- [x] Cloudflare production deployment verified for web worker.
+- [x] M2 Web Experience implementation & local verification:
+  - [x] Restored desktop sticky navbar (`SiteHeader` / `MarketplaceHeader`) across all interior routes (`/search`, `/saved`, `/my-listings`, `/list-property`, `/about`, `/terms`, `/contact`, `/services`, `/appearance`).
+  - [x] Synchronized category schema and keys between homepage (`MarketplaceHome.tsx`), search form (`search/page.tsx`), and search results (`PropertySearchResults.tsx`) for `apartment`, `house`, `plot`, `commercial`, `pg`, `villa`.
+  - [x] Added pagination auto-reset on search filter updates in `PropertySearchResults.tsx`.
+  - [x] Added dedicated legal & support route handlers in `[slug]/page.tsx` for `/terms` and `/contact`.
+  - [x] Verified full monorepo typecheck (`npm run typecheck`: API, web, mobile passed with 0 errors).
+  - [x] Verified unit and contract test suites (`npm test`: 9 passed, 53 passed).
+  - [x] Verified production build (`npm run build:web`: 21/21 routes compiled and optimized).
+  - [x] Verified local server HTTP 200 and navbar presence across all 12 core marketplace routes.
 
 ## Environment readiness
 

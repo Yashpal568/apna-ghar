@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
+import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
 type Draft = {
@@ -346,9 +347,10 @@ function ListingForm() {
   const priceInWords = draft.price && Number(draft.price) > 0 ? (Number(draft.price) >= 10000000 ? (Number(draft.price) / 10000000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) + " crore" : Number(draft.price) >= 100000 ? (Number(draft.price) / 100000).toLocaleString("en-IN", { maximumFractionDigits: 2 }) + " lakh" : "Below ₹1 lakh") : "Your price will appear here";
 
   return (
-    <main className="page-shell interior-page listing-page-redesign">
-      
-      <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>{editingId ? "Edit listing" : "Post property"}</span></div>
+    <div className="list-property-page-wrapper">
+      <SiteHeader active="account" />
+      <main className="page-shell interior-page listing-page-redesign">
+        <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>{editingId ? "Edit listing" : "Post property"}</span></div>
       <section className="listing-workspace-heading">
         <div className="listing-heading-copy"><p className="eyebrow">OWNER LISTING PORTAL</p><h1>{editingId ? "Update your property" : "Your property. Your next chapter."}</h1><p>{editingId ? "Make your changes, review the details and save your listing." : "Share the details buyers need. Review everything before your property goes live."}</p></div>
         <div className="listing-heading-note"><span className="listing-heading-note-icon">⌂</span><span><strong>Free to post</strong><small>Connect directly with interested buyers and tenants.</small></span></div>
@@ -407,13 +409,26 @@ function ListingForm() {
       </section>
       <SiteFooter />
     </main>
+  </div>
   );
 }
 
 export default function ListPropertyPage() {
   const configured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
   if (!configured) {
-    return <main className="page-shell interior-page"><section className="search-empty"><h1>Sign in required</h1><p>Configure Clerk authentication before publishing a property.</p><a className="button button-primary" href="/sign-in">Sign in</a><a className="text-link" href="/">Back home</a></section></main>;
+    return (
+      <div className="list-property-page-wrapper">
+        <SiteHeader active="account" />
+        <main className="page-shell interior-page">
+          <section className="search-empty">
+            <h1>Sign in required</h1>
+            <p>Configure Clerk authentication before publishing a property.</p>
+            <a className="button button-primary" href="/sign-in">Sign in</a>
+            <a className="text-link" href="/">Back home</a>
+          </section>
+        </main>
+      </div>
+    );
   }
   return <ListingForm />;
 }

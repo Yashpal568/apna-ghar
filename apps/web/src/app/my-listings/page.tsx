@@ -1,9 +1,9 @@
 "use client";
-import SiteFooter from "../components/SiteFooter";
 
-
-import { useAuth } from "@clerk/nextjs";
 import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
+import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
 
 type Listing = {
   _id: string;
@@ -102,6 +102,7 @@ function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getTo
     </div>
   </article>;
 }
+
 function ConnectedListings() {
   const { getToken } = useAuth();
   const [listings, setListings] = useState<Listing[]>([]);
@@ -153,11 +154,15 @@ function SignInRequired() {
 
 export default function MyListingsPage() {
   const clerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-  return <main className="page-shell interior-page">
-    
-    <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>My listings</span></div>
-    <section className="listing-intro"><p className="eyebrow">OWNER WORKSPACE</p><h1>Your properties,<br /><em>all in one place.</em></h1><p>Manage the homes and spaces you advertise on Apna Ghar.</p></section>
-    {clerkConfigured ? <ConnectedListings /> : <SignInRequired />}
-    <SiteFooter />
-  </main>;
+  return (
+    <div className="my-listings-page-wrapper">
+      <SiteHeader active="account" />
+      <main className="page-shell interior-page">
+        <div className="breadcrumb"><a href="/">Home</a><span>/</span><span>My listings</span></div>
+        <section className="listing-intro"><p className="eyebrow">OWNER WORKSPACE</p><h1>Your properties,<br /><em>all in one place.</em></h1><p>Manage the homes and spaces you advertise on Apna Ghar.</p></section>
+        {clerkConfigured ? <ConnectedListings /> : <SignInRequired />}
+        <SiteFooter />
+      </main>
+    </div>
+  );
 }

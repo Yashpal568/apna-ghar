@@ -34,29 +34,32 @@ const heroSlides = [
 ];
 
 const categoryDefaults: Category[] = [
-  { key: "apartments", label: "Flats & Apartments", icon: "▦" },
-  { key: "houses", label: "Villas & Houses", icon: "⌂" },
-  { key: "plots", label: "Plots & Land", icon: "▧" },
+  { key: "apartment", label: "Flats & Apartments", icon: "▦" },
+  { key: "house", label: "Villas & Houses", icon: "⌂" },
+  { key: "plot", label: "Plots & Land", icon: "▧" },
   { key: "commercial", label: "Commercial", icon: "▤" },
   { key: "pg", label: "PG & Co-living", icon: "⌑" },
-  { key: "farmhouse", label: "Farmhouses", icon: "♧" },
-  { key: "builder-floors", label: "Builder Floors", icon: "▥" },
+  { key: "villa", label: "Luxury Villas", icon: "♧" },
   { key: "all", label: "All property types", icon: "＋" },
 ];
 
 
 function HomeCategoryIcon({ name }: { name: string }) {
   const paths: Record<string, string> = {
+    apartment: "M4 21V5l8-3 8 3v16M8 9h2m4 0h2M8 13h2m4 0h2M8 17h2m4 0h2M2 21h20",
     apartments: "M4 21V5l8-3 8 3v16M8 9h2m4 0h2M8 13h2m4 0h2M8 17h2m4 0h2M2 21h20",
+    house: "M3 11 12 3l9 8M5 10v11h14V10M10 21v-6h4v6",
     houses: "M3 11 12 3l9 8M5 10v11h14V10M10 21v-6h4v6",
+    plot: "m2 19 7-12 5 8 3-5 5 9H2Z",
     plots: "m2 19 7-12 5 8 3-5 5 9H2Z",
+    villa: "M3 21h18M5 21V9l7-6 7 6v12M9 13h6m-6 4h6",
     commercial: "M3 9h18l-2-6H5L3 9Zm1 0v11h16V9M8 20v-7h8v7M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0",
     pg: "M3 11V6m0 5h18v9H3v-9Zm0 0h5a3 3 0 0 0-5 0Zm10 9v-5h5v5",
     farmhouse: "M3 21h18M5 21V9l7-6 7 6v12M9 13h6m-6 4h6",
     "builder-floors": "M4 21V3h16v18M8 7h2m4 0h2M8 11h2m4 0h2M8 15h2m4 0h2M10 21v-3h4v3",
     "new-projects": "M12 2 15 5l4-1 1 4 3 3-3 3-1 4-4-1-3 3-3-3-4 1-1-4-3-3 3-3 1-4 4 1 3-3Zm-3 10 2 2 4-4"
   };
-  return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={paths[name] || paths.houses}/></svg>;
+  return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={paths[name] || paths.house || paths.houses}/></svg>;
 }
 
 function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean; getToken: () => Promise<string | null> }) {
@@ -231,9 +234,9 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
 
     <footer className="agh-home-footer">
       <div className="agh-home-footer-brand"><a href="/"><BrandLogo/></a><p>India's next-generation direct marketplace connecting homeowners and buyers without middleman commissions.</p><span>✓ &nbsp; Zero Brokerage Marketplace</span></div>
-      <div><strong>Top Real Estate Hubs</strong><a href="/search">Mumbai Metropolitan</a><a href="/search">Bengaluru Tech Corridors</a><a href="/search">Delhi NCR &amp; Gurgaon</a><a href="/search">Hyderabad Financial District</a><a href="/search">Pune IT Hub</a></div>
-      <div><strong>Explore Properties</strong><a href="/search">Builder Floors</a><a href="/search">Ready-to-Move Apartments</a><a href="/search">Gated Community Plots</a><a href="/search">Co-working &amp; Retail</a><a href="/search">Luxury Penthouse Suites</a></div>
-      <div><strong>Legal &amp; Support</strong><a href="/about">About Apna Ghar</a><a href="/privacy">Privacy Protection</a><a href="/terms">Terms of Discovery</a><a href="/messages">24×7 Support via Messages</a></div>
+      <div><strong>Top Real Estate Hubs</strong><a href="/search?location=Mumbai">Mumbai Metropolitan</a><a href="/search?location=Bengaluru">Bengaluru Tech Corridors</a><a href="/search?location=Delhi">Delhi NCR &amp; Gurgaon</a><a href="/search?location=Hyderabad">Hyderabad Financial District</a><a href="/search?location=Pune">Pune IT Hub</a></div>
+      <div><strong>Explore Properties</strong><a href="/search?type=apartment">Ready-to-Move Apartments</a><a href="/search?type=house">Villas &amp; Houses</a><a href="/search?type=plot">Gated Community Plots</a><a href="/search?type=commercial">Commercial Spaces</a><a href="/search?type=pg">PG &amp; Co-living</a></div>
+      <div><strong>Legal &amp; Support</strong><a href="/about">About Apna Ghar</a><a href="/privacy">Privacy Protection</a><a href="/terms">Terms of Discovery</a><a href="/contact">Support &amp; Contact</a></div>
       <div className="agh-home-footer-bottom"><span>© {new Date().getFullYear()} Apna Ghar PropTech. All rights reserved.</span><span>VERIFIED SECURITY &nbsp; ◈ &nbsp; Secure account access</span></div>
     </footer>
 

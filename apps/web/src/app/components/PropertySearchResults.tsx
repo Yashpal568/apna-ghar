@@ -25,6 +25,15 @@ type Property = {
 type Result = { items: Property[]; pagination: { page: number; limit: number; total: number; pages: number } };
 const money = (amount: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 
+const normalizeCategory = (cat?: string): string | undefined => {
+  if (!cat || cat === "all" || cat === "all property types") return undefined;
+  if (cat === "apartments") return "apartment";
+  if (cat === "houses") return "house";
+  if (cat === "plots") return "plot";
+  if (cat === "villas") return "villa";
+  return cat;
+};
+
 function toggleSavedProperty(property: Property): boolean {
   try {
     const existing = JSON.parse(localStorage.getItem("apna-ghar-saved-homes") || "[]") as Property[];
@@ -38,15 +47,42 @@ function toggleSavedProperty(property: Property): boolean {
   }
 }
 
-export default function PropertySearchResults({ location, transaction, category, minPrice, maxPrice, minBedrooms, minBathrooms, furnishing, initialSort }: { location?: string; transaction: string; category?: string; minPrice?: string; maxPrice?: string; minBedrooms?: string; minBathrooms?: string; furnishing?: string; initialSort?: string }) {
+export default function PropertySearchResults({
+  location,
+  transaction,
+  category,
+  minPrice,
+  maxPrice,
+  minBedrooms,
+  minBathrooms,
+  furnishing,
+  initialSort,
+}: {
+  location?: string;
+  transaction: string;
+  category?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  minBedrooms?: string;
+  minBathrooms?: string;
+  furnishing?: string;
+  initialSort?: string;
+}) {
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [page, setPage] = useState(1);
-  const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc">(initialSort === "price_asc" || initialSort === "price_desc" ? initialSort : "newest");
+  const [sort, setSort] = useState<"newest" | "price_asc" | "price_desc">(
+    initialSort === "price_asc" || initialSort === "price_desc" ? initialSort : "newest"
+  );
   const [savedNotice, setSavedNotice] = useState("");
   const { isSignedIn, getToken } = useAuth();
+
+  // Reset pagination to page 1 whenever any filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [location, transaction, category, minPrice, maxPrice, minBedrooms, minBathrooms, furnishing]);
 
   async function contactOwner(property: Property) {
     if (!isSignedIn) {
@@ -149,7 +185,8 @@ export default function PropertySearchResults({ location, transaction, category,
       if (minBathrooms && Number(minBathrooms) >= 0) params.set("minBathrooms", minBathrooms);
       if (furnishing) params.set("furnishing", furnishing);
       if (transaction === "rent" || transaction === "sale" || transaction === "buy") params.set("listingType", transaction === "buy" ? "sale" : transaction);
-      if (category && category !== "all property types") params.set("categoryId", category);
+      const normalizedCat = normalizeCategory(category);
+      if (normalizedCat) params.set("categoryId", normalizedCat);
       try {
         const response = await fetchApi(`/properties?${params.toString()}`, { signal: controller.signal, headers: { Accept: "application/json" } });
         if (!response.ok) throw new Error(`Property search failed (${response.status}).`);
@@ -170,6 +207,7 @@ export default function PropertySearchResults({ location, transaction, category,
   if (!result?.items.length) return <div className="search-empty"><div className="empty-illustration"><span>⌂</span><span>⌕</span></div><h2>No matching properties yet</h2><p>There are no published listings matching these filters. Try another city or list your property to get started.</p><a className="button button-primary" href="/list-property">List a property</a><a className="text-link" href="/">Back to home</a></div>;
 
   return <section aria-live="polite">
+    {savedNotice && <p className="form-notice" role="status">{savedNotice}</p>}
     <div className="results-toolbar"><div><h2>Available properties</h2><p>{result.pagination.total} listing{result.pagination.total === 1 ? "" : "s"} · live marketplace data</p></div><div className="results-toolbar-actions"><label className="sort-control">Sort by <select aria-label="Sort properties" value={sort} onChange={(event) => { setSort(event.target.value as typeof sort); setPage(1); }}><option value="newest">Newest</option><option value="price_asc">Price: low to high</option><option value="price_desc">Price: high to low</option></select></label><a className="text-link" href="/saved">Saved homes ({savedIds.length})</a></div></div>
     <div className="property-results-grid">
       {result.items.map((property) => {

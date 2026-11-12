@@ -1,5 +1,6 @@
 "use client";
 
+import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import ThemePicker from "../components/ThemePicker";
 
@@ -13,8 +14,8 @@ const themes = [
 
 export default function AppearancePage() {
   return (
-    <>
-      
+    <div className="appearance-page-wrapper">
+      <SiteHeader active="home" />
       <main className="appearance-page">
         <section className="appearance-intro">
           <p className="appearance-eyebrow">MAKE IT YOURS</p>
@@ -132,6 +133,6 @@ export default function AppearancePage() {
         @media (max-width: 760px) { .appearance-page { padding: 36px 18px 56px; } .appearance-theme-grid { grid-template-columns: 1fr; } .appearance-control-row { align-items: flex-start; flex-direction: column; } .appearance-system-note { align-items: flex-start; flex-wrap: wrap; padding: 18px; } .appearance-system-label { margin-left: 60px; white-space: normal; } }
         @media (prefers-reduced-motion: reduce) { .appearance-theme-sample * { transition: none!important; } }
       `}</style>
-    </>
+    </div>
   );
 }
