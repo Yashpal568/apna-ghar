@@ -1,0 +1,998 @@
+{
+  "chromeConnected": true,
+  "chromeVersion": "156.0.8078.80",
+  "routes": {
+    "/admin": {
+      "initialStatus": 200,
+      "finalUrl": "https://apna-ghar-web.yash38688.workers.dev/sign-in?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin",
+      "title": "Sign in | Apna Ghar | Apna Ghar",
+      "isSignInRedirect": true,
+      "isNotFound": true,
+      "hasClerkComponent": true,
+      "screenshot": "E:\\apna-ghar\\apna-ghar\\docs\\testing\\screenshots\\admin-dashboard-desktop.png",
+      "consoleLogsCount": 13,
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "networkErrors": [
+        {
+          "url": "https://1-32qejmfculbo63bv2gweceu2ea-lf2ejo7rowvmuvqdxsnt7jgyha-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-32qejmfculbo63bv2gweceu2ea-lf2ejo7rowvmuvqdxsnt7jgyha-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-32qejmfculbo63bv2gweceu2ea-lf2ejo7rowvmuvqdxsnt7jgyha-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-32qejmfculbo63bv2gweceu2ea-lf2ejo7rowvmuvqdxsnt7jgyha-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-32qejmfculbo63bv2gweceu2ea-lf2ejo7rowvmuvqdxsnt7jgyha-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-32qejmfculbo63bv2gweceu2ea-lf2ejo7rowvmuvqdxsnt7jgyha-p.client.protect.clerk.com:18443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-32qejmfculbo63bv2gweceu2ea-lf2ejo7rowvmuvqdxsnt7jgyha-p.client.protect.clerk.com:992/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-32qejmfculbo63bv2gweceu2ea-lf2ejo7rowvmuvqdxsnt7jgyha-p.client.protect.clerk.com:2082/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-32qejmfculbo63bv2gweceu2ea-lf2ejo7rowvmuvqdxsnt7jgyha-p.client.protect.clerk.com:8443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-32qejmfculbo63bv2gweceu2ea-lf2ejo7rowvmuvqdxsnt7jgyha-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/c/1-32qejmfculbo63bv2gweceu2ea-lf2ejo7rowvmuvqdxsnt7jgyha/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "requestsCount": 38
+    },
+    "/admin/users": {
+      "initialStatus": 200,
+      "finalUrl": "https://apna-ghar-web.yash38688.workers.dev/sign-in?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin%2Fusers",
+      "title": "Sign in | Apna Ghar | Apna Ghar",
+      "isSignInRedirect": true,
+      "isNotFound": true,
+      "hasClerkComponent": true,
+      "screenshot": "E:\\apna-ghar\\apna-ghar\\docs\\testing\\screenshots\\admin-users-desktop.png",
+      "consoleLogsCount": 13,
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "networkErrors": [
+        {
+          "url": "https://1-fxftpmepqm6z4v26vxixoebpzy-gph6q4xpxa7gxlfn3p2y4bmtdy-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-fxftpmepqm6z4v26vxixoebpzy-gph6q4xpxa7gxlfn3p2y4bmtdy-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-fxftpmepqm6z4v26vxixoebpzy-gph6q4xpxa7gxlfn3p2y4bmtdy-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-fxftpmepqm6z4v26vxixoebpzy-gph6q4xpxa7gxlfn3p2y4bmtdy-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-fxftpmepqm6z4v26vxixoebpzy-gph6q4xpxa7gxlfn3p2y4bmtdy-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-fxftpmepqm6z4v26vxixoebpzy-gph6q4xpxa7gxlfn3p2y4bmtdy-p.client.protect.clerk.com:2082/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-fxftpmepqm6z4v26vxixoebpzy-gph6q4xpxa7gxlfn3p2y4bmtdy-p.client.protect.clerk.com:8443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-fxftpmepqm6z4v26vxixoebpzy-gph6q4xpxa7gxlfn3p2y4bmtdy-p.client.protect.clerk.com:992/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-fxftpmepqm6z4v26vxixoebpzy-gph6q4xpxa7gxlfn3p2y4bmtdy-p.client.protect.clerk.com:18443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-fxftpmepqm6z4v26vxixoebpzy-gph6q4xpxa7gxlfn3p2y4bmtdy-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/c/1-fxftpmepqm6z4v26vxixoebpzy-gph6q4xpxa7gxlfn3p2y4bmtdy/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "requestsCount": 38
+    },
+    "/admin/listings": {
+      "initialStatus": 200,
+      "finalUrl": "https://apna-ghar-web.yash38688.workers.dev/sign-in?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin%2Flistings",
+      "title": "Sign in | Apna Ghar | Apna Ghar",
+      "isSignInRedirect": true,
+      "isNotFound": true,
+      "hasClerkComponent": true,
+      "screenshot": "E:\\apna-ghar\\apna-ghar\\docs\\testing\\screenshots\\admin-listings-desktop.png",
+      "consoleLogsCount": 13,
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "networkErrors": [
+        {
+          "url": "https://1-rw34ozy7pp25lmbpdux4p5p5yq-senylpc63orraj2u46ww2lebjq-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-rw34ozy7pp25lmbpdux4p5p5yq-senylpc63orraj2u46ww2lebjq-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-rw34ozy7pp25lmbpdux4p5p5yq-senylpc63orraj2u46ww2lebjq-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-rw34ozy7pp25lmbpdux4p5p5yq-senylpc63orraj2u46ww2lebjq-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-rw34ozy7pp25lmbpdux4p5p5yq-senylpc63orraj2u46ww2lebjq-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-rw34ozy7pp25lmbpdux4p5p5yq-senylpc63orraj2u46ww2lebjq-p.client.protect.clerk.com:992/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-rw34ozy7pp25lmbpdux4p5p5yq-senylpc63orraj2u46ww2lebjq-p.client.protect.clerk.com:8443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-rw34ozy7pp25lmbpdux4p5p5yq-senylpc63orraj2u46ww2lebjq-p.client.protect.clerk.com:2082/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-rw34ozy7pp25lmbpdux4p5p5yq-senylpc63orraj2u46ww2lebjq-p.client.protect.clerk.com:18443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-rw34ozy7pp25lmbpdux4p5p5yq-senylpc63orraj2u46ww2lebjq-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/c/1-rw34ozy7pp25lmbpdux4p5p5yq-senylpc63orraj2u46ww2lebjq/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "requestsCount": 38
+    },
+    "/admin/reports": {
+      "initialStatus": 200,
+      "finalUrl": "https://apna-ghar-web.yash38688.workers.dev/sign-in?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin%2Freports",
+      "title": "Sign in | Apna Ghar | Apna Ghar",
+      "isSignInRedirect": true,
+      "isNotFound": true,
+      "hasClerkComponent": true,
+      "screenshot": "E:\\apna-ghar\\apna-ghar\\docs\\testing\\screenshots\\admin-reports-desktop.png",
+      "consoleLogsCount": 13,
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "networkErrors": [
+        {
+          "url": "https://1-r77hduwg474ba4pidn4hctei5a-s4kia4v2qqzlqgdeojdera2dpm-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-r77hduwg474ba4pidn4hctei5a-s4kia4v2qqzlqgdeojdera2dpm-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-r77hduwg474ba4pidn4hctei5a-s4kia4v2qqzlqgdeojdera2dpm-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-r77hduwg474ba4pidn4hctei5a-s4kia4v2qqzlqgdeojdera2dpm-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-r77hduwg474ba4pidn4hctei5a-s4kia4v2qqzlqgdeojdera2dpm-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-r77hduwg474ba4pidn4hctei5a-s4kia4v2qqzlqgdeojdera2dpm-p.client.protect.clerk.com:8443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-r77hduwg474ba4pidn4hctei5a-s4kia4v2qqzlqgdeojdera2dpm-p.client.protect.clerk.com:2082/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-r77hduwg474ba4pidn4hctei5a-s4kia4v2qqzlqgdeojdera2dpm-p.client.protect.clerk.com:18443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-r77hduwg474ba4pidn4hctei5a-s4kia4v2qqzlqgdeojdera2dpm-p.client.protect.clerk.com:992/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-r77hduwg474ba4pidn4hctei5a-s4kia4v2qqzlqgdeojdera2dpm-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/c/1-r77hduwg474ba4pidn4hctei5a-s4kia4v2qqzlqgdeojdera2dpm/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "requestsCount": 38
+    },
+    "/admin/categories": {
+      "initialStatus": 200,
+      "finalUrl": "https://apna-ghar-web.yash38688.workers.dev/sign-in?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin%2Fcategories",
+      "title": "Sign in | Apna Ghar | Apna Ghar",
+      "isSignInRedirect": true,
+      "isNotFound": true,
+      "hasClerkComponent": true,
+      "screenshot": "E:\\apna-ghar\\apna-ghar\\docs\\testing\\screenshots\\admin-categories-desktop.png",
+      "consoleLogsCount": 13,
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "networkErrors": [
+        {
+          "url": "https://1-orkjlvjvonespwixumkngfwlta-7hhtnb5uh34mo7agtspm2ax254-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-orkjlvjvonespwixumkngfwlta-7hhtnb5uh34mo7agtspm2ax254-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-orkjlvjvonespwixumkngfwlta-7hhtnb5uh34mo7agtspm2ax254-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-orkjlvjvonespwixumkngfwlta-7hhtnb5uh34mo7agtspm2ax254-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-orkjlvjvonespwixumkngfwlta-7hhtnb5uh34mo7agtspm2ax254-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-orkjlvjvonespwixumkngfwlta-7hhtnb5uh34mo7agtspm2ax254-p.client.protect.clerk.com:18443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-orkjlvjvonespwixumkngfwlta-7hhtnb5uh34mo7agtspm2ax254-p.client.protect.clerk.com:8443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-orkjlvjvonespwixumkngfwlta-7hhtnb5uh34mo7agtspm2ax254-p.client.protect.clerk.com:2082/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-orkjlvjvonespwixumkngfwlta-7hhtnb5uh34mo7agtspm2ax254-p.client.protect.clerk.com:992/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-orkjlvjvonespwixumkngfwlta-7hhtnb5uh34mo7agtspm2ax254-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/c/1-orkjlvjvonespwixumkngfwlta-7hhtnb5uh34mo7agtspm2ax254/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "requestsCount": 38
+    },
+    "/admin/audit-logs": {
+      "initialStatus": 200,
+      "finalUrl": "https://apna-ghar-web.yash38688.workers.dev/sign-in?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin%2Faudit-logs",
+      "title": "Sign in | Apna Ghar | Apna Ghar",
+      "isSignInRedirect": true,
+      "isNotFound": true,
+      "hasClerkComponent": true,
+      "screenshot": "E:\\apna-ghar\\apna-ghar\\docs\\testing\\screenshots\\admin-audit-logs-desktop.png",
+      "consoleLogsCount": 13,
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "networkErrors": [
+        {
+          "url": "https://1-5nvaia2p7x3gdtymscwil2grh4-vrirkmyuacbal6vvv5ki6s34ly-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-5nvaia2p7x3gdtymscwil2grh4-vrirkmyuacbal6vvv5ki6s34ly-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-5nvaia2p7x3gdtymscwil2grh4-vrirkmyuacbal6vvv5ki6s34ly-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-5nvaia2p7x3gdtymscwil2grh4-vrirkmyuacbal6vvv5ki6s34ly-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-5nvaia2p7x3gdtymscwil2grh4-vrirkmyuacbal6vvv5ki6s34ly-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-5nvaia2p7x3gdtymscwil2grh4-vrirkmyuacbal6vvv5ki6s34ly-p.client.protect.clerk.com:992/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-5nvaia2p7x3gdtymscwil2grh4-vrirkmyuacbal6vvv5ki6s34ly-p.client.protect.clerk.com:8443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-5nvaia2p7x3gdtymscwil2grh4-vrirkmyuacbal6vvv5ki6s34ly-p.client.protect.clerk.com:18443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-5nvaia2p7x3gdtymscwil2grh4-vrirkmyuacbal6vvv5ki6s34ly-p.client.protect.clerk.com:2082/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-5nvaia2p7x3gdtymscwil2grh4-vrirkmyuacbal6vvv5ki6s34ly-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/c/1-5nvaia2p7x3gdtymscwil2grh4-vrirkmyuacbal6vvv5ki6s34ly/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "requestsCount": 38
+    },
+    "/admin/plans": {
+      "initialStatus": 200,
+      "finalUrl": "https://apna-ghar-web.yash38688.workers.dev/sign-in?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin%2Fplans",
+      "title": "Sign in | Apna Ghar | Apna Ghar",
+      "isSignInRedirect": true,
+      "isNotFound": true,
+      "hasClerkComponent": true,
+      "screenshot": "E:\\apna-ghar\\apna-ghar\\docs\\testing\\screenshots\\admin-plans-desktop.png",
+      "consoleLogsCount": 13,
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "networkErrors": [
+        {
+          "url": "https://1-qazkm3rlq4bfzhr3mgpvylstu4-wdwh6zrcuvagqaqick442yapl4-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-qazkm3rlq4bfzhr3mgpvylstu4-wdwh6zrcuvagqaqick442yapl4-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-qazkm3rlq4bfzhr3mgpvylstu4-wdwh6zrcuvagqaqick442yapl4-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-qazkm3rlq4bfzhr3mgpvylstu4-wdwh6zrcuvagqaqick442yapl4-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-qazkm3rlq4bfzhr3mgpvylstu4-wdwh6zrcuvagqaqick442yapl4-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-qazkm3rlq4bfzhr3mgpvylstu4-wdwh6zrcuvagqaqick442yapl4-p.client.protect.clerk.com:992/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-qazkm3rlq4bfzhr3mgpvylstu4-wdwh6zrcuvagqaqick442yapl4-p.client.protect.clerk.com:18443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-qazkm3rlq4bfzhr3mgpvylstu4-wdwh6zrcuvagqaqick442yapl4-p.client.protect.clerk.com:8443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-qazkm3rlq4bfzhr3mgpvylstu4-wdwh6zrcuvagqaqick442yapl4-p.client.protect.clerk.com:2082/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-qazkm3rlq4bfzhr3mgpvylstu4-wdwh6zrcuvagqaqick442yapl4-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/c/1-qazkm3rlq4bfzhr3mgpvylstu4-wdwh6zrcuvagqaqick442yapl4/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "requestsCount": 38
+    },
+    "/admin/settings": {
+      "initialStatus": 200,
+      "finalUrl": "https://apna-ghar-web.yash38688.workers.dev/sign-in?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin%2Fsettings",
+      "title": "Sign in | Apna Ghar | Apna Ghar",
+      "isSignInRedirect": true,
+      "isNotFound": true,
+      "hasClerkComponent": true,
+      "screenshot": "E:\\apna-ghar\\apna-ghar\\docs\\testing\\screenshots\\admin-settings-desktop.png",
+      "consoleLogsCount": 13,
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "networkErrors": [
+        {
+          "url": "https://1-uex2wc3gtkphcmhzni5ocpzpfy-pvperssggwgrgxx2zsqwunn3ea-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-uex2wc3gtkphcmhzni5ocpzpfy-pvperssggwgrgxx2zsqwunn3ea-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-uex2wc3gtkphcmhzni5ocpzpfy-pvperssggwgrgxx2zsqwunn3ea-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-uex2wc3gtkphcmhzni5ocpzpfy-pvperssggwgrgxx2zsqwunn3ea-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-uex2wc3gtkphcmhzni5ocpzpfy-pvperssggwgrgxx2zsqwunn3ea-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-uex2wc3gtkphcmhzni5ocpzpfy-pvperssggwgrgxx2zsqwunn3ea-p.client.protect.clerk.com:18443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-uex2wc3gtkphcmhzni5ocpzpfy-pvperssggwgrgxx2zsqwunn3ea-p.client.protect.clerk.com:8443/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-uex2wc3gtkphcmhzni5ocpzpfy-pvperssggwgrgxx2zsqwunn3ea-p.client.protect.clerk.com:992/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-uex2wc3gtkphcmhzni5ocpzpfy-pvperssggwgrgxx2zsqwunn3ea-p.client.protect.clerk.com:2082/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://1-uex2wc3gtkphcmhzni5ocpzpfy-pvperssggwgrgxx2zsqwunn3ea-p.client.protect.clerk.com/ins_3LGlkUUOzpumMIJki1gDmo5QPBx/c/1-uex2wc3gtkphcmhzni5ocpzpfy-pvperssggwgrgxx2zsqwunn3ea/probe",
+          "failure": "net::ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "requestsCount": 38
+    }
+  },
+  "responsive": {
+    "desktop": {
+      "viewport": {
+        "name": "desktop",
+        "width": 1280,
+        "height": 800
+      },
+      "finalUrl": "https://apna-ghar-web.yash38688.workers.dev/sign-in?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin",
+      "screenshot": "E:\\apna-ghar\\apna-ghar\\docs\\testing\\screenshots\\admin-desktop.png"
+    },
+    "tablet": {
+      "viewport": {
+        "name": "tablet",
+        "width": 768,
+        "height": 1024
+      },
+      "finalUrl": "https://apna-ghar-web.yash38688.workers.dev/sign-in?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin",
+      "screenshot": "E:\\apna-ghar\\apna-ghar\\docs\\testing\\screenshots\\admin-tablet.png"
+    },
+    "mobile": {
+      "viewport": {
+        "name": "mobile",
+        "width": 375,
+        "height": 812
+      },
+      "finalUrl": "https://apna-ghar-web.yash38688.workers.dev/sign-in?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin",
+      "screenshot": "E:\\apna-ghar\\apna-ghar\\docs\\testing\\screenshots\\admin-mobile.png"
+    }
+  },
+  "apiTests": {
+    "Health check": {
+      "url": "https://apna-ghar-api-j4fo.onrender.com/api/v1/health",
+      "statusCode": 200,
+      "body": "{\"status\":\"ok\",\"service\":\"apna-ghar-api\",\"timestamp\":\"2026-11-12T11:00:47.306Z\",\"note\":\"Liveness only; database readiness is reported separately.\"}"
+    },
+    "Admin overview (unauthenticated)": {
+      "url": "https://apna-ghar-api-j4fo.onrender.com/api/v1/admin/overview",
+      "statusCode": 404,
+      "body": "{\"statusCode\":404,\"message\":\"Cannot GET /api/v1/admin/overview\",\"timestamp\":\"2026-11-12T11:00:47.450Z\",\"path\":\"/api/v1/admin/overview\"}"
+    },
+    "Admin users (unauthenticated)": {
+      "url": "https://apna-ghar-api-j4fo.onrender.com/api/v1/admin/users",
+      "statusCode": 404,
+      "body": "{\"statusCode\":404,\"message\":\"Cannot GET /api/v1/admin/users\",\"timestamp\":\"2026-11-12T11:00:47.715Z\",\"path\":\"/api/v1/admin/users\"}"
+    },
+    "Admin properties (unauthenticated)": {
+      "url": "https://apna-ghar-api-j4fo.onrender.com/api/v1/admin/properties",
+      "statusCode": 404,
+      "body": "{\"statusCode\":404,\"message\":\"Cannot GET /api/v1/admin/properties\",\"timestamp\":\"2026-11-12T11:00:47.834Z\",\"path\":\"/api/v1/admin/properties\"}"
+    },
+    "Admin categories (unauthenticated)": {
+      "url": "https://apna-ghar-api-j4fo.onrender.com/api/v1/admin/categories",
+      "statusCode": 404,
+      "body": "{\"statusCode\":404,\"message\":\"Cannot GET /api/v1/admin/categories\",\"timestamp\":\"2026-11-12T11:00:47.957Z\",\"path\":\"/api/v1/admin/categories\"}"
+    },
+    "Admin audit logs (unauthenticated)": {
+      "url": "https://apna-ghar-api-j4fo.onrender.com/api/v1/admin/audit-logs",
+      "statusCode": 404,
+      "body": "{\"statusCode\":404,\"message\":\"Cannot GET /api/v1/admin/audit-logs\",\"timestamp\":\"2026-11-12T11:00:48.084Z\",\"path\":\"/api/v1/admin/audit-logs\"}"
+    },
+    "Admin reports (unauthenticated)": {
+      "url": "https://apna-ghar-api-j4fo.onrender.com/api/v1/property-reports",
+      "statusCode": 401,
+      "body": "{\"statusCode\":401,\"message\":\"Sign in is required to publish a property.\",\"timestamp\":\"2026-11-12T11:00:48.238Z\",\"path\":\"/api/v1/property-reports\"}"
+    },
+    "Categories public endpoint": {
+      "url": "https://apna-ghar-api-j4fo.onrender.com/api/v1/categories",
+      "statusCode": 200,
+      "body": "[{\"_id\":\"6ae3438b927d87c0475f2369\",\"key\":\"apartment\",\"icon\":\"⌂\",\"label\":\"Apartments & flats\",\"sortOrder\":1},{\"_id\":\"6ae3438b927d87c0475f236a\",\"key\":\"house\",\"icon\":\"⌂\",\"label\":\"Villas & houses\",\"sortOrder\":2},{\"_id\":\"6ae3438b927d87c0475f236b\",\"key\":\"villa\",\"icon\":\"⌂\",\"label\":\"Villas\",\"sortOrder\":3},{\"_id\":\"6ae3438b927d87c0475f236c\",\"key\":\"plot\",\"icon\":\"⌁\",\"label\":\"Plots & land\",\"sortOrder\":4},{\"_id\":\"6ae3438b927d87c0475f236d\",\"key\":\"commercial\",\"icon\":\"▤\",\"label\":\"Shops & offices\",\"sortOrder\":5},"
+    },
+    "Properties public endpoint": {
+      "url": "https://apna-ghar-api-j4fo.onrender.com/api/v1/properties",
+      "statusCode": 200,
+      "body": "{\"items\":[{\"_id\":\"6aec5c5e9968eb42b9274e40\",\"ownerId\":\"user_3LSgkWc0aC8JqvhF9CfR2AYdqCK\",\"title\":\"0\",\"slug\":\"property-mw3evq0r\",\"description\":\"Property Type: Agricultural Land\\nLocation: Kashipur road\\nTotal Area: 1 Hectare\\nArea in Sq. Yd.: 11,960 Sq. Yd. (Approx.)\\nArea in Acres: 2.47 Acres\\nLand Type: Agricultural\\nLand Facing: Road Facing (if verified)\\nSoil: Fertile agricultural soil (if verified)\\nKey Features\",\"contactName\":\"Ankit Serswal\",\"contactPhone\":\"6397275329\",\"categoryId\":\"plot\",\""
+    }
+  },
+  "signInElements": {
+    "inputs": [
+      {
+        "name": "location",
+        "type": "text",
+        "placeholder": "Search city, locality, project or landmark…",
+        "id": ""
+      },
+      {
+        "name": "location",
+        "type": "text",
+        "placeholder": "Search city or locality…",
+        "id": ""
+      },
+      {
+        "name": "identifier",
+        "type": "text",
+        "placeholder": "Enter email or username",
+        "id": "identifier-field"
+      },
+      {
+        "name": "password",
+        "type": "password",
+        "placeholder": "Enter your password",
+        "id": "password-field"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "⌕",
+        "type": "submit",
+        "className": ""
+      },
+      {
+        "text": "◐\nAppearance\n⌄",
+        "type": "button",
+        "className": "theme-trigger"
+      },
+      {
+        "text": "☰",
+        "type": "button",
+        "className": "agh-menu-toggle"
+      },
+      {
+        "text": "Search",
+        "type": "submit",
+        "className": ""
+      },
+      {
+        "text": "Continue with Google",
+        "type": "submit",
+        "className": "cl-socialButtonsBlockButton cl-button cl-socialButtonsBlockButton__google cl-button__google 🔒️ cl-internal-1hdlqow"
+      },
+      {
+        "text": "",
+        "type": "submit",
+        "className": ""
+      },
+      {
+        "text": "",
+        "type": "submit",
+        "className": "cl-formFieldInputShowPasswordButton cl-button 🔒️ cl-internal-f7en1o"
+      },
+      {
+        "text": "Continue",
+        "type": "submit",
+        "className": "cl-formButtonPrimary cl-button 🔒️ cl-internal-ztsfnw"
+      }
+    ],
+    "links": [
+      {
+        "text": "Apna Ghar",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/"
+      },
+      {
+        "text": "Browse properties",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/search"
+      },
+      {
+        "text": "Buy",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/search?transaction=buy"
+      },
+      {
+        "text": "Rent",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/search?transaction=rent"
+      },
+      {
+        "text": "Commercial",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/search?type=commercial"
+      },
+      {
+        "text": "Plots",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/search?type=plot"
+      },
+      {
+        "text": "Messages",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/messages"
+      },
+      {
+        "text": "Post property",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/list-property"
+      },
+      {
+        "text": "Sign up",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/sign-up#/?redirect_url=https%3A%2F%2Fapna-ghar-web.yash38688.workers.dev%2Fadmin"
+      },
+      {
+        "text": "",
+        "href": "https://go.clerk.com/components"
+      },
+      {
+        "text": "Create your free account",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/sign-up"
+      },
+      {
+        "text": "Terms",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/terms"
+      },
+      {
+        "text": "Privacy Policy",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/privacy"
+      },
+      {
+        "text": "Home",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/"
+      },
+      {
+        "text": "Explore homes",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/search"
+      },
+      {
+        "text": "Help & support",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/help"
+      },
+      {
+        "text": "Home",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/"
+      },
+      {
+        "text": "Search",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/search"
+      },
+      {
+        "text": "Post",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/list-property"
+      },
+      {
+        "text": "Chat",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/messages"
+      },
+      {
+        "text": "Profile",
+        "href": "https://apna-ghar-web.yash38688.workers.dev/profile"
+      }
+    ]
+  }
+}
