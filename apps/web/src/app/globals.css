@@ -2705,28 +2705,9 @@ html[data-theme="amoled"] .profile-stitch-notice.is-error { border-color:#7f1d1d
 body { overflow-wrap:anywhere; }
 img,video,svg { max-width:100%; }
 
-/* Bottom navigation follows the supplied mobile prototype and respects device safe areas. */
+/* Bottom navigation defined in unified section */
 .ag-bottom-nav { display:none; }
 @media (max-width:760px) {
-  body { padding-bottom:calc(70px + env(safe-area-inset-bottom)); }
-  .ag-bottom-nav {
-    position:fixed; inset:auto 0 0; z-index:1000;
-    display:grid; grid-template-columns:repeat(5,minmax(0,1fr));
-    min-height:66px; padding:7px 6px calc(7px + env(safe-area-inset-bottom));
-    border-top:1px solid var(--color-border);
-    background:color-mix(in srgb,var(--color-surface) 94%,transparent);
-    -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
-    box-shadow:0 -8px 28px rgba(15,23,42,.08);
-  }
-  .ag-bottom-nav a {
-    min-width:0; min-height:48px; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:4px; padding:4px 2px;
-    border-radius:12px; text-decoration:none; color:var(--color-text-secondary);
-    font-family:var(--font-ui); font-size:10px; font-weight:650; line-height:1.1;
-  }
-  .ag-bottom-nav a svg { width:21px; height:21px; display:block; flex:0 0 auto; }
-  .ag-bottom-nav a.is-active { color:var(--color-primary); background:color-mix(in srgb,var(--color-primary) 9%,transparent); }
-  .ag-bottom-nav a:focus-visible { outline-offset:-2px; }
   .ag-mobile-menu { bottom:auto !important; }
   .ag-home-hero { min-height:590px !important; margin-bottom:190px !important; }
   .ag-home-hero-content { min-height:590px !important; padding:34px 20px 190px !important; align-items:center; }
@@ -2767,7 +2748,6 @@ img,video,svg { max-width:100%; }
   .ag-home-search-fields { grid-template-columns:minmax(0,1fr) !important; }
   .ag-home-search-field:first-child,.ag-home-search-fields>button { grid-column:1; }
   .ag-home-category-grid { grid-template-columns:minmax(0,1fr) !important; }
-  .ag-bottom-nav a { font-size:9px; }
 }
 @media (min-width:761px) and (max-width:1180px) {
   .ag-header-inner { grid-template-columns:auto minmax(0,1fr) auto !important; gap:12px !important; }
@@ -3976,9 +3956,6 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
 .agh-market-header-scope .agh-sell-btn span{font-size:19px;line-height:1}
 @media(max-width:760px){
   .agh-market-header-scope .agh-header-actions .agh-sell-btn{display:none}
-  .ag-bottom-nav a.ag-bottom-nav-post{color:var(--color-text-secondary);background:transparent}
-  .ag-bottom-nav a.ag-bottom-nav-post svg{width:27px;height:27px;padding:5px;border-radius:999px;background:#064CC0;color:#fff;stroke-width:2.2}
-  .ag-bottom-nav a.ag-bottom-nav-post.is-active{color:#064CC0;background:color-mix(in srgb,#064CC0 8%,transparent)}
 }
 
 /* Review-before-publish media gallery */
@@ -4632,7 +4609,6 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
 .agh-home-trust{padding:28px 0}
 .agh-home-footer{padding:42px 0 25px}
 .agh-home-mobile-nav{display:none!important}
-body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
 @media(max-width:1100px){.agh-home-category-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.agh-home-search-fields{grid-template-columns:1.3fr 1fr 1fr}.agh-home-search-button{grid-column:auto}.agh-home-property-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){
  .agh-home-redesign{padding:0 0 18px}
@@ -4719,8 +4695,6 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
  .agh-home-footer strong{font-size:9px}
  .agh-home-footer a{font-size:8px}
  .agh-home-footer-bottom{font-size:7px}
- .agh-home-redesign .agh-home-mobile-nav{display:grid!important}
- body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
 }
 @media(max-width:380px){.agh-home-hero-copy h1{font-size:31px}.agh-home-promo-copy strong{font-size:16px}.agh-home-category-grid strong{font-size:7px}}
 @media(prefers-reduced-motion:reduce){.agh-home-redesign *{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -5928,50 +5902,306 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
 
 
 /* Unified Apna Ghar bottom dock — one shared navigation on every mobile route */
-@media(max-width:900px){
- body{padding-bottom:calc(112px + env(safe-area-inset-bottom))!important}
- .ag-bottom-nav,
- body:has(.agh-home-redesign) .ag-bottom-nav,
- body:has(.agh-home-redesign) .ag-bottom-nav{
-  position:fixed!important;inset:auto 12px calc(10px + env(safe-area-inset-bottom)) 12px!important;
-  z-index:10000!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
-  align-items:center!important;min-height:72px!important;padding:7px 8px!important;
-  border:1px solid rgba(211,222,239,.85)!important;border-radius:23px!important;
-  background:rgba(255,255,255,.91)!important;
-  -webkit-backdrop-filter:blur(24px) saturate(170%)!important;backdrop-filter:blur(24px) saturate(170%)!important;
-  box-shadow:0 12px 38px rgba(15,35,65,.16),0 2px 8px rgba(15,35,65,.06)!important;
- }
- .ag-bottom-nav .ag-bottom-nav-item{
-  position:relative!important;display:flex!important;min-width:0!important;min-height:56px!important;
-  flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;
-  padding:4px 2px!important;border-radius:15px!important;background:transparent!important;
-  color:#758297!important;text-decoration:none!important;font-family:var(--font-ui)!important;
-  font-size:10px!important;font-weight:650!important;line-height:1.1!important;
-  transition:color .2s ease,background .2s ease,transform .2s ease!important;
- }
- .ag-bottom-nav .ag-bottom-nav-icon{display:grid!important;place-items:center!important;width:34px!important;height:30px!important;border-radius:11px!important}
- .ag-bottom-nav .ag-bottom-nav-icon svg{display:block!important;width:21px!important;height:21px!important;max-width:none!important}
- .ag-bottom-nav .ag-bottom-nav-label{display:block!important;font-size:9px!important;font-weight:700!important;letter-spacing:.05px!important}
- .ag-bottom-nav .ag-bottom-nav-item.is-active{color:#075bea!important;background:rgba(7,91,234,.075)!important}
- .ag-bottom-nav .ag-bottom-nav-item.is-active .ag-bottom-nav-icon{background:rgba(7,91,234,.10)!important}
- .ag-bottom-nav .ag-bottom-nav-post{top:-10px!important;gap:3px!important;color:#075bea!important;background:transparent!important}
- .ag-bottom-nav .ag-bottom-nav-post .ag-bottom-nav-icon{
-  width:49px!important;height:49px!important;border-radius:17px!important;
-  background:linear-gradient(145deg,#1474ff,#0648c7)!important;color:#fff!important;
-  box-shadow:0 8px 18px rgba(7,91,234,.3)!important;
-  transform:translateY(-5px)!important;
- }
- .ag-bottom-nav .ag-bottom-nav-post .ag-bottom-nav-icon svg{width:25px!important;height:25px!important;stroke-width:2.1!important}
- .ag-bottom-nav .ag-bottom-nav-post .ag-bottom-nav-label{margin-top:-4px!important;color:#075bea!important;font-size:9px!important}
- .ag-bottom-nav .ag-bottom-nav-item:active{transform:scale(.94)!important}
- .ag-bottom-nav .ag-bottom-nav-item:focus-visible{outline:2px solid #075bea!important;outline-offset:2px!important}
- /* Remove route-specific duplicates so the shared dock is the only bottom navigation. */
- .agh-home-mobile-nav,.messages-mobile-bottom-nav{display:none!important}
- body:has(.agh-home-redesign) .ag-bottom-nav{display:grid!important}
+.ag-bottom-nav {
+  display: none;
 }
-@media(max-width:380px){
- .ag-bottom-nav{inset-inline:8px!important;padding-inline:5px!important}
- .ag-bottom-nav .ag-bottom-nav-label{font-size:8px!important}
+
+@media (max-width: 1023px) {
+  body {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Floating Dock Outer Wrapper */
+  .ag-bottom-nav {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 10000 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    pointer-events: none !important;
+    padding: 0 14px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Glassmorphic Pill Dock */
+  .ag-bottom-nav-pill {
+    pointer-events: auto !important;
+    width: 100% !important;
+    max-width: 430px !important;
+    height: 64px !important;
+    padding: 4px 6px !important;
+    border-radius: 26px !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    align-items: center !important;
+    background: color-mix(in srgb, var(--color-surface) 86%, transparent) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent) !important;
+    box-shadow: 0 10px 32px -4px rgba(15, 23, 42, 0.16), 0 2px 10px rgba(15, 23, 42, 0.06) !important;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease !important;
+  }
+
+  /* Dark Theme Adaptations */
+  [data-theme="midnight"] .ag-bottom-nav-pill,
+  [data-theme="graphite"] .ag-bottom-nav-pill,
+  [data-theme="forest"] .ag-bottom-nav-pill {
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 14px 40px -4px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  [data-theme="amoled"] .ag-bottom-nav-pill {
+    background: rgba(0, 0, 0, 0.90) !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 14px 44px -4px rgba(0, 0, 0, 0.85), 0 0 1px 1px rgba(255, 255, 255, 0.08) !important;
+  }
+
+  /* Navigation Items */
+  .ag-bottom-nav-item {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    min-height: 54px !important;
+    text-decoration: none !important;
+    color: var(--color-muted) !important;
+    user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    transition: color 0.18s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .ag-bottom-nav-item:active {
+    transform: scale(0.93) !important;
+  }
+
+  .ag-bottom-nav-item:focus-visible {
+    outline: 2px solid var(--color-primary) !important;
+    outline-offset: -2px !important;
+    border-radius: 16px !important;
+  }
+
+  /* Icon Container */
+  .ag-bottom-nav-icon-container {
+    position: relative !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 36px !important;
+    height: 30px !important;
+    border-radius: 12px !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .ag-bottom-nav-svg {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: block !important;
+    stroke: currentColor !important;
+    transition: stroke 0.18s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  /* Active Capsule Pill Indicator */
+  .ag-bottom-nav-active-pill {
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: 12px !important;
+    background: transparent !important;
+    opacity: 0 !important;
+    transform: scale(0.8) !important;
+    transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease !important;
+    z-index: 1 !important;
+  }
+
+  .ag-bottom-nav-item.is-active .ag-bottom-nav-active-pill {
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent) !important;
+    opacity: 1 !important;
+    transform: scale(1) !important;
+  }
+
+  [data-theme="amoled"] .ag-bottom-nav-item.is-active .ag-bottom-nav-active-pill {
+    background: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  /* Active Item Text & Colors */
+  .ag-bottom-nav-item.is-active {
+    color: var(--color-primary) !important;
+  }
+
+  [data-theme="amoled"] .ag-bottom-nav-item.is-active {
+    color: #ffffff !important;
+  }
+
+  .ag-bottom-nav-item.is-active .ag-bottom-nav-svg {
+    transform: translateY(-1px) scale(1.05) !important;
+  }
+
+  /* Labels */
+  .ag-bottom-nav-label {
+    position: relative !important;
+    z-index: 2 !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.1px !important;
+    line-height: 1 !important;
+    transition: color 0.18s ease, font-weight 0.18s ease !important;
+  }
+
+  .ag-bottom-nav-item.is-active .ag-bottom-nav-label {
+    font-weight: 750 !important;
+    color: var(--color-text) !important;
+  }
+
+  /* Center "Post" Action — Elevated Centerpiece */
+  .ag-bottom-nav-center {
+    gap: 2px !important;
+  }
+
+  .ag-bottom-nav-post-circle {
+    position: relative !important;
+    top: -6px !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 999px !important;
+    background: linear-gradient(135deg, #075bea 0%, #009966 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 18px rgba(7, 91, 234, 0.36), 0 2px 6px rgba(0, 153, 102, 0.22) !important;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease !important;
+  }
+
+  .ag-bottom-nav-post-svg {
+    width: 22px !important;
+    height: 22px !important;
+    display: block !important;
+    stroke: #ffffff !important;
+  }
+
+  .ag-bottom-nav-center:hover .ag-bottom-nav-post-circle {
+    transform: translateY(-2px) scale(1.06) !important;
+    box-shadow: 0 8px 22px rgba(7, 91, 234, 0.44), 0 3px 8px rgba(0, 153, 102, 0.28) !important;
+  }
+
+  .ag-bottom-nav-center:active .ag-bottom-nav-post-circle {
+    transform: translateY(1px) scale(0.92) !important;
+  }
+
+  .ag-bottom-nav-center .ag-bottom-nav-label {
+    margin-top: -6px !important;
+  }
+
+  .ag-bottom-nav-center.is-active .ag-bottom-nav-label {
+    color: var(--color-primary) !important;
+  }
+
+  /* Unread Chat Badge */
+  .ag-bottom-nav-badge {
+    position: absolute !important;
+    top: -2px !important;
+    right: -4px !important;
+    z-index: 5 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    padding: 0 4px !important;
+    border-radius: 999px !important;
+    background: var(--color-green, #20E890) !important;
+    color: #052E25 !important;
+    font-size: 9px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    border: 1.5px solid var(--color-surface) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Hover micro-interactions for pointer devices */
+  @media (hover: hover) and (pointer: fine) {
+    .ag-bottom-nav-item:hover:not(.is-active) {
+      color: var(--color-text) !important;
+    }
+    .ag-bottom-nav-item:hover:not(.is-active) .ag-bottom-nav-svg {
+      transform: translateY(-2px) scale(1.05) !important;
+    }
+    .ag-bottom-nav-item:hover:not(.is-active) .ag-bottom-nav-active-pill {
+      background: color-mix(in srgb, var(--color-primary) 6%, transparent) !important;
+      opacity: 1 !important;
+      transform: scale(0.92) !important;
+    }
+  }
+
+  /* Compact screens (360px - 375px) */
+  @media (max-width: 375px) {
+    .ag-bottom-nav {
+      padding: 0 8px !important;
+      bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+    .ag-bottom-nav-pill {
+      height: 60px !important;
+      padding: 2px 4px !important;
+      border-radius: 22px !important;
+    }
+    .ag-bottom-nav-label {
+      font-size: 9px !important;
+    }
+    .ag-bottom-nav-post-circle {
+      width: 40px !important;
+      height: 40px !important;
+      top: -5px !important;
+    }
+    .ag-bottom-nav-post-svg {
+      width: 20px !important;
+      height: 20px !important;
+    }
+  }
+
+  /* Reduced Motion Support */
+  @media (prefers-reduced-motion: reduce) {
+    .ag-bottom-nav-pill,
+    .ag-bottom-nav-item,
+    .ag-bottom-nav-post-circle,
+    .ag-bottom-nav-svg,
+    .ag-bottom-nav-active-pill {
+      transition: none !important;
+      transform: none !important;
+      animation: none !important;
+    }
+    .ag-bottom-nav-item:active {
+      transform: none !important;
+    }
+    .ag-bottom-nav-center:active .ag-bottom-nav-post-circle {
+      transform: none !important;
+    }
+  }
+
+  /* Remove legacy route-specific duplicate navigations */
+  .agh-home-mobile-nav,
+  .messages-mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+/* Strict Desktop Hiding */
+@media (min-width: 1024px) {
+  .ag-bottom-nav {
+    display: none !important;
+  }
+}
+
+/* Auth page isolation: hide mobile bottom nav on auth screens */
+body:has(.auth-experience) .ag-bottom-nav,
+body:has(.auth-page) .ag-bottom-nav,
+.auth-experience .ag-bottom-nav,
+.auth-page .ag-bottom-nav {
+  display: none !important;
 }
 
 

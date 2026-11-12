@@ -159,15 +159,10 @@ body:has(.stitch-chat-shell) .site-footer {
   display: none !important;
 }
 
-/* Mobile Bottom Navigation: Visible on mobile, never suppressed */
+/* Mobile Bottom Navigation: Visible on mobile, styled via unified .ag-bottom-nav floating dock */
 @media (max-width: 1023px) {
   body:has(.stitch-chat-shell) .ag-bottom-nav {
-    display: grid !important;
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1000 !important;
+    display: flex !important;
   }
 }
 
@@ -362,8 +357,8 @@ body:has(.stitch-chat-shell) .site-footer {
 @media (max-width: 1023px) {
   .stitch-chat-shell.is-inbox-mode .stitch-mobile-inbox-view {
     display: flex !important;
-    height: calc(100dvh - 66px - env(safe-area-inset-bottom, 0px)) !important;
-    max-height: calc(100dvh - 66px - env(safe-area-inset-bottom, 0px)) !important;
+    height: calc(100dvh - 84px - env(safe-area-inset-bottom, 0px)) !important;
+    max-height: calc(100dvh - 84px - env(safe-area-inset-bottom, 0px)) !important;
   }
   .stitch-chat-shell.is-inbox-mode .stitch-chat-active-container {
     display: none !important;
@@ -374,8 +369,8 @@ body:has(.stitch-chat-shell) .site-footer {
   }
   .stitch-chat-shell.is-chat-mode .stitch-chat-active-container {
     display: flex !important;
-    height: calc(100dvh - 66px - env(safe-area-inset-bottom, 0px)) !important;
-    max-height: calc(100dvh - 66px - env(safe-area-inset-bottom, 0px)) !important;
+    height: calc(100dvh - 84px - env(safe-area-inset-bottom, 0px)) !important;
+    max-height: calc(100dvh - 84px - env(safe-area-inset-bottom, 0px)) !important;
   }
   .stitch-desktop-sidebar {
     display: none !important;
