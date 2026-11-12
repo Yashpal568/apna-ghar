@@ -7,7 +7,14 @@ export type MessageDocument = HydratedDocument<Message>;
 export class Message {
   @Prop({ type: MongooseSchema.Types.ObjectId, required: true, index: true }) conversationId!: Types.ObjectId;
   @Prop({ required: true, trim: true, index: true }) senderId!: string;
-  @Prop({ required: true, trim: true, maxlength: 4000 }) text!: string;
+  @Prop({ required: false, trim: true, maxlength: 4000, default: '' }) text!: string;
+  @Prop({ type: Object, required: false }) attachment?: {
+    url: string;
+    filename: string;
+    contentType: string;
+    sizeBytes?: number;
+    publicId?: string;
+  };
   @Prop({ type: Date, required: true, index: true }) sentAt!: Date;
 }
 

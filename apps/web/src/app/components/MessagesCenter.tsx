@@ -14,6 +14,14 @@ import { fetchApi } from "../utils/api";
 import SiteHeader from "./SiteHeader";
 import "./messages-workspace.css";
 
+type MessageAttachment = {
+  url: string;
+  filename: string;
+  contentType: string;
+  sizeBytes?: number;
+  publicId?: string;
+};
+
 type Message = {
   _id?: string;
   senderId: string;
@@ -22,6 +30,7 @@ type Message = {
   isOfferProposal?: boolean;
   offerAmount?: number;
   offerValidity?: string;
+  attachment?: MessageAttachment;
 };
 
 type Conversation = {
@@ -101,6 +110,58 @@ function formatCrLakh(num?: number): string {
   return "₹" + num.toLocaleString("en-IN");
 }
 
+function formatFileSize(bytes?: number): string {
+  if (!bytes || bytes <= 0) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function renderMessageAttachment(att?: MessageAttachment, isMine = false) {
+  if (!att) return null;
+  const isImg = att.contentType?.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(att.url);
+  if (isImg) {
+    return (
+      <div className="mb-2 max-w-[280px] overflow-hidden rounded-xl border border-white/20 bg-black/15">
+        <a href={att.url} target="_blank" rel="noopener noreferrer" className="block cursor-pointer">
+          <img
+            src={att.url}
+            alt={att.filename || "Attachment"}
+            className="w-full max-h-56 object-cover hover:opacity-90 transition-opacity"
+          />
+        </a>
+        <div className={`flex items-center justify-between px-2.5 py-1.5 text-[11px] ${isMine ? "bg-black/25 text-white" : "bg-black/10 text-on-surface"}`}>
+          <span className="truncate max-w-[170px] font-medium">{att.filename}</span>
+          {att.sizeBytes ? <span>{formatFileSize(att.sizeBytes)}</span> : null}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`mb-2 flex items-center gap-2.5 p-2.5 rounded-xl border border-white/20 max-w-[300px] ${isMine ? "bg-black/25 text-white" : "bg-black/5 text-on-surface"}`}>
+      <div className="w-9 h-9 rounded-lg bg-red-500/20 text-red-500 flex items-center justify-center font-bold text-lg shrink-0">
+        📄
+      </div>
+      <div className="flex-1 min-w-0 text-left">
+        <p className="m-0 text-xs font-semibold truncate">{att.filename}</p>
+        <p className="m-0 text-[10px] opacity-75">
+          PDF Document {att.sizeBytes ? `• ${formatFileSize(att.sizeBytes)}` : ""}
+        </p>
+      </div>
+      <a
+        href={att.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        download={att.filename}
+        className={`px-2.5 py-1 rounded text-[11px] font-bold transition-colors shrink-0 ${isMine ? "bg-white/20 hover:bg-white/30 text-white" : "bg-primary text-on-primary hover:bg-primary-container"}`}
+      >
+        View ↗
+      </a>
+    </div>
+  );
+}
+
 const DEFAULT_CONVERSATIONS: Conversation[] = [
   {
     _id: "conv-werwtw-mvuzhfat-1",
@@ -175,7 +236,7 @@ const DEFAULT_CONVERSATIONS: Conversation[] = [
 ];
 
 function MessagesCenterAuthenticated() {
-  const { getToken } = useAuth();
+  const { getToken, isSignedIn } = useAuth();
   const { user } = useUser();
 
   const [items, setItems] = useState<Conversation[]>(DEFAULT_CONVERSATIONS);
@@ -188,6 +249,13 @@ function MessagesCenterAuthenticated() {
   const [customMessages, setCustomMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
+
+  // File attachment state
+  const [pendingAttachment, setPendingAttachment] = useState<{
+    file: File;
+    previewUrl?: string;
+  } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Interactive Specs Drawer
   const [specsOpen, setSpecsOpen] = useState(false);
@@ -214,12 +282,53 @@ function MessagesCenterAuthenticated() {
     }, 3500);
   }, []);
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+    if (!allowedTypes.includes(file.type)) {
+      showToast("Invalid File Type", "Please choose a JPG, PNG, WebP image or PDF document.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      showToast("File Too Large", "Attachment size must be under 10 MB.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    const isImg = file.type.startsWith("image/");
+    setPendingAttachment({
+      file,
+      previewUrl: isImg ? URL.createObjectURL(file) : undefined,
+    });
+    showToast("File Ready", `${file.name} attached.`);
+  };
+
+  const handleRemoveAttachment = () => {
+    if (pendingAttachment?.previewUrl) {
+      URL.revokeObjectURL(pendingAttachment.previewUrl);
+    }
+    setPendingAttachment(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   // Fetch conversations
   const fetchMine = useCallback(async () => {
+    if (!isSignedIn) {
+      setItems(DEFAULT_CONVERSATIONS);
+      return DEFAULT_CONVERSATIONS;
+    }
     try {
       const token = await getToken().catch(() => null);
+      if (!token) {
+        setItems(DEFAULT_CONVERSATIONS);
+        return DEFAULT_CONVERSATIONS;
+      }
       const res = await fetchApi("/conversations", {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         const data = await res.json();
@@ -233,7 +342,7 @@ function MessagesCenterAuthenticated() {
     }
     setItems(DEFAULT_CONVERSATIONS);
     return DEFAULT_CONVERSATIONS;
-  }, [getToken]);
+  }, [getToken, isSignedIn]);
 
   // Handle Initial Route Selection
   useEffect(() => {
@@ -364,18 +473,61 @@ function MessagesCenterAuthenticated() {
   const handleSendMessage = async (e?: FormEvent) => {
     if (e) e.preventDefault();
     const text = draft.trim();
-    if (!text || sending) return;
+    if ((!text && !pendingAttachment) || sending) return;
 
     setSending(true);
+    let uploadedAttachment: MessageAttachment | undefined = undefined;
+
+    if (pendingAttachment) {
+      try {
+        const token = await getToken().catch(() => null);
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", pendingAttachment.file);
+
+        const uploadRes = await fetch("/api/v1/conversations/upload", {
+          method: "POST",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          body: uploadFormData,
+        });
+
+        if (uploadRes.ok) {
+          const uploadData = await uploadRes.json();
+          if (uploadData?.url) {
+            uploadedAttachment = {
+              url: uploadData.url,
+              filename: uploadData.filename || pendingAttachment.file.name,
+              contentType: uploadData.contentType || pendingAttachment.file.type,
+              sizeBytes: uploadData.sizeBytes || pendingAttachment.file.size,
+              publicId: uploadData.publicId,
+            };
+          }
+        }
+      } catch (err) {
+        console.warn("Upload error, using local fallback preview", err);
+      }
+
+      if (!uploadedAttachment && pendingAttachment) {
+        uploadedAttachment = {
+          url: pendingAttachment.previewUrl || URL.createObjectURL(pendingAttachment.file),
+          filename: pendingAttachment.file.name,
+          contentType: pendingAttachment.file.type,
+          sizeBytes: pendingAttachment.file.size,
+        };
+      }
+    }
+
     const newMsg: Message = {
       _id: `msg-${Date.now()}`,
       senderId: user?.id || "user_buyer_current",
       text,
+      attachment: uploadedAttachment,
       sentAt: new Date().toISOString(),
     };
 
     setCustomMessages((prev) => [...prev, newMsg]);
     setDraft("");
+    setPendingAttachment(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
 
     setTimeout(() => {
       streamBottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -392,6 +544,7 @@ function MessagesCenterAuthenticated() {
         body: JSON.stringify({
           conversationId: activeConversation._id,
           text,
+          attachment: uploadedAttachment,
         }),
       });
     } catch {
@@ -1103,7 +1256,8 @@ function MessagesCenterAuthenticated() {
                     return (
                       <div key={m._id} className="flex flex-col items-end gap-1 max-w-[85%] self-end">
                         <div className="bg-primary text-on-primary rounded-2xl rounded-tr-xs px-4 py-3 shadow-md">
-                          <p className="font-body-md text-body-md m-0 leading-relaxed">{m.text}</p>
+                          {renderMessageAttachment(m.attachment, true)}
+                          {m.text && <p className="font-body-md text-body-md m-0 leading-relaxed whitespace-pre-wrap">{m.text}</p>}
                         </div>
                         <div className="flex items-center gap-1 text-on-surface-variant font-label-sm text-[11px] px-1">
                           <span>{formatRelativeTime(m.sentAt)}</span>
@@ -1127,7 +1281,8 @@ function MessagesCenterAuthenticated() {
                         </span>
                       </div>
                       <div className="bg-surface-container-low text-on-surface rounded-2xl rounded-tl-xs px-4 py-3 shadow-xs border border-outline-variant/30">
-                        <p className="font-body-md text-sm leading-relaxed m-0 text-on-surface">{m.text}</p>
+                        {renderMessageAttachment(m.attachment, false)}
+                        {m.text && <p className="font-body-md text-sm leading-relaxed m-0 text-on-surface whitespace-pre-wrap">{m.text}</p>}
                       </div>
                       <span className="text-on-surface-variant font-label-sm text-[11px] px-1">
                         {formatRelativeTime(m.sentAt)}
@@ -1374,9 +1529,12 @@ function MessagesCenterAuthenticated() {
                       className="flex flex-col items-end gap-1 max-w-[85%] self-end animate-in slide-in-from-bottom duration-200"
                     >
                       <div className="bg-primary text-on-primary rounded-2xl rounded-tr-xs px-4 py-3 shadow-md">
-                        <p className="font-body-md text-body-md m-0 leading-relaxed whitespace-pre-wrap">
-                          {msg.text}
-                        </p>
+                        {renderMessageAttachment(msg.attachment, true)}
+                        {msg.text && (
+                          <p className="font-body-md text-body-md m-0 leading-relaxed whitespace-pre-wrap">
+                            {msg.text}
+                          </p>
+                        )}
                       </div>
                       <div className="flex items-center gap-1 text-on-surface-variant font-label-sm text-[11px] px-1">
                         <span>{formatRelativeTime(msg.sentAt)}</span>
@@ -1425,17 +1583,55 @@ function MessagesCenterAuthenticated() {
                 </div>
 
                 <div className="stitch-composer-wrap">
+                  {/* Selected Attachment Preview Badge */}
+                  {pendingAttachment && (
+                    <div className="flex items-center gap-2.5 px-3 py-2 bg-surface-container-low rounded-xl mb-2 border border-outline-variant/40 animate-in slide-in-from-bottom duration-200">
+                      {pendingAttachment.previewUrl ? (
+                        <img
+                          src={pendingAttachment.previewUrl}
+                          alt="Preview"
+                          className="w-10 h-10 object-cover rounded-lg border border-outline-variant/30 shrink-0"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-950/60 text-red-600 flex items-center justify-center font-bold text-lg shrink-0">
+                          📄
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0 text-left">
+                        <p className="text-xs font-bold text-on-surface truncate m-0">{pendingAttachment.file.name}</p>
+                        <p className="text-[11px] text-on-surface-variant m-0">
+                          {formatFileSize(pendingAttachment.file.size)} • Ready to send
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveAttachment}
+                        className="w-7 h-7 flex items-center justify-center rounded-full text-on-surface-variant hover:text-red-500 hover:bg-surface-container transition-colors cursor-pointer border-0 bg-transparent"
+                        aria-label="Remove attachment"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">close</span>
+                      </button>
+                    </div>
+                  )}
+
                   <form
                     className="stitch-composer-form"
                     onSubmit={(e) => void handleSendMessage(e)}
                   >
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,application/pdf"
+                      style={{ display: "none" }}
+                      onChange={handleFileSelect}
+                    />
+
                     <button
                       aria-label="Attach documents or photos"
-                      className="stitch-composer-icon-btn"
+                      className={`stitch-composer-icon-btn ${pendingAttachment ? "text-primary" : ""}`}
                       type="button"
-                      onClick={() =>
-                        alert("Document Attachment: You can attach RERA documents, title deeds, or bank sanction letters.")
-                      }
+                      onClick={() => fileInputRef.current?.click()}
+                      title="Attach photo (JPG, PNG, WebP) or document (PDF)"
                     >
                       <span className="material-symbols-outlined text-[20px]">attach_file</span>
                     </button>
@@ -1460,7 +1656,7 @@ function MessagesCenterAuthenticated() {
                       aria-label="Send message"
                       className="stitch-composer-send-btn"
                       type="submit"
-                      disabled={sending || !draft.trim()}
+                      disabled={sending || (!draft.trim() && !pendingAttachment)}
                     >
                       <span className="material-symbols-outlined text-[20px]">send</span>
                     </button>

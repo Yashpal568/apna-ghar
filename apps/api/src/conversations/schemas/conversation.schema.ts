@@ -6,7 +6,14 @@ export type ConversationDocument = HydratedDocument<Conversation>;
 @Schema({ _id: true, timestamps: true })
 export class ConversationMessage {
   @Prop({ required: true, trim: true }) senderId!: string;
-  @Prop({ required: true, trim: true, maxlength: 4000 }) text!: string;
+  @Prop({ required: false, trim: true, maxlength: 4000, default: '' }) text!: string;
+  @Prop({ type: Object, required: false }) attachment?: {
+    url: string;
+    filename: string;
+    contentType: string;
+    sizeBytes?: number;
+    publicId?: string;
+  };
   @Prop({ type: Date, default: Date.now }) sentAt!: Date;
 }
 export const ConversationMessageSchema = SchemaFactory.createForClass(ConversationMessage);

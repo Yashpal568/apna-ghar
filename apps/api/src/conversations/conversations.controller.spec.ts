@@ -147,6 +147,48 @@ describe('ConversationsController', () => {
     );
   });
 
+  it('stores a message with an attachment and persists attachment metadata', async () => {
+    const conversation = {
+      _id: '507f1f77bcf86cd799439011',
+      participantIds: [buyer, owner],
+      messages: [] as Array<unknown>,
+      ownerId: owner,
+      buyerId: buyer,
+      unreadCountByUser: new Map<string, number>(),
+      lastMessageAt: new Date('2026-01-01T00:00:00.000Z'),
+      save: jest.fn().mockResolvedValue(undefined),
+    };
+    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    const attachment = {
+      url: 'https://res.cloudinary.com/example/image/upload/sample.jpg',
+      filename: 'property_doc.jpg',
+      contentType: 'image/jpeg',
+      sizeBytes: 102400,
+    };
+    const response = await controller.sendMessage(
+      { auth: { userId: buyer } },
+      '507f1f77bcf86cd799439011',
+      { text: 'Here are the docs', attachment },
+    );
+    expect(response.success).toBe(true);
+    expect(response.message.attachment).toEqual(expect.objectContaining(attachment));
+    expect(conversations.updateOne).toHaveBeenCalledWith(
+      { _id: expect.anything(), participantIds: buyer },
+      expect.objectContaining({
+        $push: { messages: expect.objectContaining({ attachment: expect.objectContaining(attachment) }) },
+      }),
+    );
+  });
+
+  it('rejects unsupported file formats on attachment upload', async () => {
+    await expect(
+      controller.uploadAttachment(
+        { auth: { userId: buyer } },
+        { buffer: Buffer.from('exe'), mimetype: 'application/x-msdownload', size: 100 },
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
   it('does not allow a non-participant to send a message', async () => {
     const conversation = {
       participantIds: [buyer, owner],

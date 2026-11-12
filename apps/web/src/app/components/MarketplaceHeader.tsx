@@ -321,12 +321,12 @@ export default function MarketplaceHeader({
                 <ThemePicker />
               </div>
 
-              <a href="/">Home</a>
-              <a href="/search">Browse all properties</a>
-              <a href="/search?transaction=buy">Buy a property</a>
-              <a href="/search?transaction=rent">Rent a property</a>
-              <a href="/search?type=commercial">Commercial spaces</a>
-              <a href="/search?type=plot">Plots &amp; land</a>
+              <a href="/" onClick={() => setMenuOpen(false)}>Home</a>
+              <a href="/search" onClick={() => setMenuOpen(false)}>Browse all properties</a>
+              <a href="/search?transaction=buy" onClick={() => setMenuOpen(false)}>Buy a property</a>
+              <a href="/search?transaction=rent" onClick={() => setMenuOpen(false)}>Rent a property</a>
+              <a href="/search?type=commercial" onClick={() => setMenuOpen(false)}>Commercial spaces</a>
+              <a href="/search?type=plot" onClick={() => setMenuOpen(false)}>Plots &amp; land</a>
 
               {/* Mobile Drawer Auth Actions */}
               {!isLoaded ? (
@@ -334,11 +334,11 @@ export default function MarketplaceHeader({
               ) : isSignedIn ? (
                 <>
                   <div className="agh-drawer-divider" />
-                  <a href="/saved">Saved homes</a>
-                  <a href="/my-listings">My listings</a>
-                  <a href="/messages">Messages</a>
-                  <a href="/profile">My profile</a>
-                  <a className="agh-drawer-sell" href="/list-property">
+                  <a href="/saved" onClick={() => setMenuOpen(false)}>Saved homes</a>
+                  <a href="/my-listings" onClick={() => setMenuOpen(false)}>My listings</a>
+                  <a href="/messages" onClick={() => setMenuOpen(false)}>Messages</a>
+                  <a href="/profile" onClick={() => setMenuOpen(false)}>My profile</a>
+                  <a className="agh-drawer-sell" href="/list-property" onClick={() => setMenuOpen(false)}>
                     Post a property
                   </a>
                   <button
@@ -353,10 +353,10 @@ export default function MarketplaceHeader({
               ) : (
                 <>
                   <div className="agh-drawer-divider" />
-                  <a href={signInHref} className="agh-drawer-signin">
+                  <a href={signInHref} className="agh-drawer-signin" onClick={() => setMenuOpen(false)}>
                     Sign in
                   </a>
-                  <a href={signUpHref} className="agh-drawer-signup">
+                  <a href={signUpHref} className="agh-drawer-signup" onClick={() => setMenuOpen(false)}>
                     Create free account
                   </a>
                 </>

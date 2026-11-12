@@ -20,7 +20,7 @@ export async function fetchApi(path: string, init?: RequestInit): Promise<Respon
   if (typeof window !== "undefined") {
     try {
       const res = await fetch(sameOriginUrl, init);
-      if (res.ok) return res;
+      if (res.ok || res.status === 401 || res.status === 403) return res;
       if (upstreamUrl !== sameOriginUrl) {
         return await fetch(upstreamUrl, init);
       }

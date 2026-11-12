@@ -1,7 +1,9 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, HttpException, HttpStatus, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IsIn, IsNumber, IsOptional, IsString, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { IsIn, IsNumber, IsOptional, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
+import { createHash } from 'node:crypto';
 import { Model, Types } from 'mongoose';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { Property } from '../properties/schemas/property.schema';
@@ -11,8 +13,18 @@ import { Message } from './schemas/message.schema';
 import { PropertyOffer } from './schemas/property-offer.schema';
 
 type RequestWithAuth = { auth: { userId: string } };
+
+export class MessageAttachmentDto {
+  @IsString() url!: string;
+  @IsString() filename!: string;
+  @IsString() contentType!: string;
+  @IsOptional() @IsNumber() sizeBytes?: number;
+  @IsOptional() @IsString() publicId?: string;
+}
+
 class SendMessageDto {
-  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MinLength(1) @MaxLength(4000) text!: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(4000) text?: string;
+  @IsOptional() @ValidateNested() @Type(() => MessageAttachmentDto) attachment?: MessageAttachmentDto;
 }
 class StartConversationDto {
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(4000) message?: string;
@@ -201,18 +213,99 @@ export class ConversationsController {
     return { success: true, unreadCount: 0 };
   }
 
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 10 * 1024 * 1024 } }))
+  async uploadAttachment(
+    @Req() request: RequestWithAuth,
+    @UploadedFile() file?: { buffer: Buffer; mimetype: string; size: number; originalname?: string },
+  ) {
+    if (!request.auth?.userId) throw new BadRequestException('Authenticated identity is missing');
+    if (!file) throw new BadRequestException('Choose a file to attach');
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+    if (!allowedMimes.includes(file.mimetype)) {
+      throw new BadRequestException('Only JPG, PNG, WebP images and PDF documents are allowed (up to 10MB)');
+    }
+
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+    const filename = file.originalname || (file.mimetype === 'application/pdf' ? 'document.pdf' : 'attachment.jpg');
+
+    if (cloudName && apiKey && apiSecret) {
+      try {
+        const timestamp = Math.floor(Date.now() / 1000);
+        const folder = 'apna-ghar/messages';
+        const resourceType = file.mimetype.startsWith('image/') ? 'image' : 'raw';
+        const signature = createHash('sha1')
+          .update(`folder=${folder}&timestamp=${timestamp}${apiSecret}`)
+          .digest('hex');
+
+        const form = new FormData();
+        form.append('file', new Blob([new Uint8Array(file.buffer)], { type: file.mimetype }), filename);
+        form.append('api_key', apiKey);
+        form.append('timestamp', String(timestamp));
+        form.append('folder', folder);
+        form.append('signature', signature);
+
+        const cloudinaryResponse = await fetch(
+          `https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/${resourceType}/upload`,
+          { method: 'POST', body: form },
+        );
+        const result = (await cloudinaryResponse.json().catch(() => null)) as {
+          secure_url?: string;
+          public_id?: string;
+          error?: { message?: string };
+        } | null;
+
+        if (cloudinaryResponse.ok && result?.secure_url) {
+          return {
+            url: result.secure_url,
+            filename,
+            contentType: file.mimetype,
+            sizeBytes: file.size,
+            publicId: result.public_id,
+          };
+        }
+      } catch {
+        // Fall back to data URI if Cloudinary is unreachable
+      }
+    }
+
+    // Data URI fallback
+    const base64Data = file.buffer.toString('base64');
+    return {
+      url: `data:${file.mimetype};base64,${base64Data}`,
+      filename,
+      contentType: file.mimetype,
+      sizeBytes: file.size,
+    };
+  }
+
   @Post(':conversationId/messages')
   async sendMessage(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string, @Body() body: SendMessageDto) {
     if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
-    const text = body.text?.trim();
-    if (!text) throw new BadRequestException('Write a message first.');
+    const text = body.text?.trim() || '';
+    const attachment = body.attachment;
+    if (!text && !attachment) throw new BadRequestException('Write a message first.');
     const conversation = await this.conversations.findById(conversationId).exec();
     if (!conversation) throw new NotFoundException('Conversation not found.');
     this.assertParticipant(conversation.participantIds, request.auth.userId);
     await this.consumeMessageQuota(request.auth.userId);
     const recipientId = conversation.ownerId === request.auth.userId ? conversation.buyerId : conversation.ownerId;
     const sentAt = new Date();
-    const message = { _id: new Types.ObjectId(), senderId: request.auth.userId, text, sentAt };
+    const message = {
+      _id: new Types.ObjectId(),
+      senderId: request.auth.userId,
+      text,
+      attachment: attachment ? {
+        url: attachment.url,
+        filename: attachment.filename,
+        contentType: attachment.contentType,
+        sizeBytes: attachment.sizeBytes,
+        publicId: attachment.publicId,
+      } : undefined,
+      sentAt,
+    };
     const result = await this.conversations.updateOne(
       { _id: new Types.ObjectId(conversationId), participantIds: request.auth.userId },
       {
@@ -223,7 +316,15 @@ export class ConversationsController {
     ).exec();
     await this.messages.updateOne(
       { _id: message._id },
-      { $setOnInsert: { conversationId: new Types.ObjectId(conversationId), senderId: message.senderId, text: message.text, sentAt } },
+      {
+        $setOnInsert: {
+          conversationId: new Types.ObjectId(conversationId),
+          senderId: message.senderId,
+          text: message.text,
+          attachment: message.attachment,
+          sentAt,
+        },
+      },
       { upsert: true },
     ).exec();
     if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');

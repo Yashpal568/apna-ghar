@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     return errorResponse("A valid request body is required.", 400);
   }
 
-  const { conversationId, propertyId, action, text, amount, message, offerId } = body as Record<string, unknown>;
+  const { conversationId, propertyId, action, text, amount, message, offerId, attachment } = body as Record<string, unknown>;
   if (typeof propertyId === "string" && propertyId.trim()) {
     return proxy(`${API_BASE}/conversations/property/${encodeURIComponent(propertyId.trim())}`, "POST", authorization, { message });
   }
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
 
   const id = encodeURIComponent(conversationId);
   let endpoint = `${API_BASE}/conversations/${id}/messages`;
-  let payload: Record<string, unknown> = { text };
+  let payload: Record<string, unknown> = { text, attachment };
 
   if (action === "offer") {
     endpoint = `${API_BASE}/conversations/${id}/offers`;

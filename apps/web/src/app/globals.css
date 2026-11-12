@@ -3942,7 +3942,7 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
 .agh-market-header-scope .agh-post-btn:focus-visible{outline:3px solid rgba(32,232,144,.45);outline-offset:2px}
 .agh-market-header-scope .agh-post-btn>span:first-child{font-size:17px;line-height:1}
 @media(max-width:1100px) and (min-width:761px){.agh-market-header-scope .agh-header-main{display:grid;grid-template-columns:auto minmax(180px,1fr) auto;gap:10px;padding-inline:16px}.agh-market-header-scope .agh-brand{min-width:0}.agh-market-header-scope .agh-top-search{grid-column:2;min-width:0;width:100%;max-width:none}.agh-market-header-scope .agh-desktop-nav{display:none}.agh-market-header-scope .agh-header-actions{grid-column:3;gap:6px}.agh-market-header-scope .agh-header-actions .agh-my-listings,.agh-market-header-scope .agh-header-actions .agh-icon-link{display:none}.agh-market-header-scope .agh-menu-toggle{display:grid}.agh-market-header-scope .agh-mobile-search{display:none}}
-@media(max-width:760px){.agh-market-header-scope{overflow:visible}.agh-market-header-scope .agh-header{width:100%;max-width:100%}.agh-market-header-scope .agh-header-main{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:8px;min-height:62px;padding:9px 12px}.agh-market-header-scope .agh-brand{min-width:0;flex:0 1 auto;max-width:calc(100% - 150px)}.agh-market-header-scope .agh-brand .brand-symbol{width:34px;height:30px;flex:0 0 34px}.agh-market-header-scope .agh-brand .brand-wordmark{font-size:17px;letter-spacing:-.5px}.agh-market-header-scope .agh-top-search,.agh-market-header-scope .agh-desktop-nav{display:none!important}.agh-market-header-scope .agh-header-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-left:auto;white-space:nowrap}.agh-market-header-scope .agh-header-actions .agh-my-listings,.agh-market-header-scope .agh-header-actions .agh-icon-link,.agh-market-header-scope .agh-header-actions .agh-account-btn{display:none!important}.agh-market-header-scope .agh-header-actions .agh-post-btn{min-height:38px;padding:0 13px;border-radius:11px;font-size:12px}.agh-market-header-scope .agh-header-actions .agh-post-btn>span:first-child{font-size:15px}.agh-market-header-scope .agh-header-actions .theme-picker,.agh-market-header-scope .agh-header-actions [class*="theme"]{max-width:42px}.agh-market-header-scope .agh-menu-toggle{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border-radius:11px;font-size:20px}.agh-market-header-scope .agh-mobile-search{display:block;width:100%;padding:0 12px 10px}.agh-market-header-scope .agh-mobile-search form{display:flex;align-items:center;gap:8px;width:100%;min-width:0;height:42px;padding:4px 5px 4px 12px;border:1px solid var(--color-border);border-radius:12px;background:var(--color-surface-subtle)}.agh-market-header-scope .agh-mobile-search input{min-width:0;flex:1;font-size:12px}.agh-market-header-scope .agh-mobile-search button{flex:0 0 auto;min-width:62px;height:32px;padding:0 12px;border:0;border-radius:9px;font-size:11px;font-weight:750;white-space:nowrap}.agh-market-header-scope .agh-mobile-drawer{width:min(340px,calc(100vw - 20px));right:10px;top:10px;max-height:calc(100dvh - 20px)}}
+@media(max-width:760px){.agh-market-header-scope{overflow:visible}.agh-market-header-scope .agh-header{width:100%;max-width:100%}.agh-market-header-scope .agh-header-main{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:8px;min-height:62px;padding:9px 12px}.agh-market-header-scope .agh-brand{min-width:0;flex:0 1 auto;max-width:calc(100% - 110px)}.agh-market-header-scope .agh-brand .brand-symbol{width:34px;height:30px;flex:0 0 34px}.agh-market-header-scope .agh-brand .brand-wordmark{font-size:17px;letter-spacing:-.5px}.agh-market-header-scope .agh-top-search,.agh-market-header-scope .agh-desktop-nav{display:none!important}.agh-market-header-scope .agh-header-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important;margin-left:auto!important;white-space:nowrap}.agh-market-header-scope .agh-header-actions .agh-my-listings,.agh-market-header-scope .agh-header-actions .agh-icon-link,.agh-market-header-scope .agh-header-actions .agh-account-btn,.agh-market-header-scope .agh-header-actions .agh-post-btn,.agh-market-header-scope .agh-header-actions .agh-saved-icon,.agh-market-header-scope .agh-header-actions .agh-auth-guest-actions,.agh-market-header-scope .agh-header-actions .agh-auth-user-actions,.agh-market-header-scope .agh-header-actions .agh-auth-skeleton{display:none!important}.agh-market-header-scope .agh-header-actions .theme-control{position:relative;display:inline-flex}.agh-market-header-scope .agh-header-actions .theme-trigger{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;min-height:38px;max-width:38px;padding:0;border:1px solid var(--color-border);border-radius:11px;background:var(--color-surface);color:var(--color-text);font-size:16px;cursor:pointer}.agh-market-header-scope .agh-header-actions .theme-trigger-label,.agh-market-header-scope .agh-header-actions .theme-trigger>span:last-child{display:none!important}.agh-market-header-scope .agh-menu-toggle{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border-radius:11px;font-size:20px}.agh-market-header-scope .agh-mobile-search{display:block;width:100%;padding:0 12px 10px}.agh-market-header-scope .agh-mobile-search form{display:flex;align-items:center;gap:8px;width:100%;min-width:0;height:42px;padding:4px 5px 4px 12px;border:1px solid var(--color-border);border-radius:12px;background:var(--color-surface-subtle)}.agh-market-header-scope .agh-mobile-search input{min-width:0;flex:1;font-size:12px}.agh-market-header-scope .agh-mobile-search button{flex:0 0 auto;min-width:62px;height:32px;padding:0 12px;border:0;border-radius:9px;font-size:11px;font-weight:750;white-space:nowrap}.agh-market-header-scope .agh-mobile-drawer{width:min(340px,calc(100vw - 20px));right:10px;top:10px;max-height:calc(100dvh - 20px)}}
 @media(max-width:360px){.agh-market-header-scope .agh-brand .brand-wordmark{font-size:15px}.agh-market-header-scope .agh-brand .brand-symbol{width:30px;flex-basis:30px}.agh-market-header-scope .agh-header-actions .agh-post-btn{padding-inline:10px}.agh-market-header-scope .agh-header-main{gap:6px;padding-inline:9px}}
 /* Listing wizard: prevent horizontal overflow and collapse all columns cleanly */
 .listing-page-redesign{width:100%;max-width:100%;overflow-x:clip}.listing-page-redesign .listing-workspace-heading,.listing-page-redesign .listing-layout-redesign{width:100%;min-width:0}.listing-page-redesign .listing-layout-redesign{grid-template-columns:minmax(0,1fr) minmax(260px,340px);align-items:start;gap:22px}.listing-page-redesign .listing-step-card,.listing-page-redesign .listing-sidebar-redesign{min-width:0}.listing-page-redesign .listing-fields,.listing-page-redesign .listing-fields-nested{grid-template-columns:repeat(2,minmax(0,1fr))}.listing-page-redesign input,.listing-page-redesign select,.listing-page-redesign textarea{max-width:100%;min-width:0}.listing-page-redesign .listing-live-preview{min-width:0;width:100%}.listing-page-redesign .listing-live-preview img,.listing-page-redesign .listing-live-preview video{max-width:100%}
@@ -4810,7 +4810,7 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
 @media(max-width:760px){
  .agh-market-header-scope .agh-mobile-search,
  .agh-market-header-scope .agh-top-search,
- .agh-market-header-scope .agh-header-actions{display:none!important}
+ /* agh-header-actions visible for theme on mobile */
  .agh-market-header-scope .agh-header-main{display:flex!important;justify-content:space-between!important;grid-template-columns:none!important}
  .agh-market-header-scope .agh-brand{margin-right:auto}
  .agh-market-header-scope .agh-menu-toggle{display:grid!important;flex:0 0 42px;margin-left:auto}
@@ -4924,7 +4924,7 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
  .agh-market-header-scope .agh-top-search,
  .agh-market-header-scope .agh-desktop-nav,
  .agh-market-header-scope .agh-mobile-search,
- .agh-market-header-scope .agh-header-actions{display:none!important}
+ /* agh-header-actions visible for theme on mobile */
  .agh-market-header-scope .agh-brand{min-width:0!important;max-width:calc(100% - 56px)!important;margin-right:auto!important}
  .agh-market-header-scope .agh-menu-toggle{display:grid!important;flex:0 0 42px!important;margin-left:auto!important}
  .agh-home-redesign .agh-home-hero{background:transparent!important}
@@ -7318,5 +7318,154 @@ body:has(.agh-home-redesign) .ag-bottom-nav{display:none!important}
   .agh-market-header-scope .agh-auth-guest-actions,
   .agh-market-header-scope .agh-user-menu-container {
     display: none !important;
+  }
+}
+
+
+/* ==========================================================================
+   MOBILE HEADER & THEMEPICKER POLISH (Part A)
+   ========================================================================== */
+.theme-control {
+  position: relative;
+  display: inline-flex;
+}
+
+.theme-menu {
+  position: absolute !important;
+  z-index: 1200 !important;
+  top: calc(100% + 8px) !important;
+  right: 0 !important;
+  left: auto !important;
+  width: 230px !important;
+  min-width: 220px !important;
+  max-width: calc(100vw - 24px) !important;
+  padding: 10px !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 16px !important;
+  background: var(--color-surface) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22) !important;
+  box-sizing: border-box !important;
+}
+
+.theme-menu > p {
+  margin: 4px 8px 8px !important;
+  color: var(--color-muted) !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+}
+
+.theme-option {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 42px !important;
+  padding: 9px 12px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  text-align: left !important;
+  color: var(--color-text) !important;
+  background: transparent !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+}
+
+.theme-option:hover,
+.theme-option.is-selected {
+  background: var(--color-surface-subtle) !important;
+}
+
+.theme-swatch {
+  display: inline-block !important;
+  flex: 0 0 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  border: 1.5px solid var(--color-border) !important;
+  border-radius: 50% !important;
+  max-width: 18px !important;
+}
+
+.theme-check {
+  margin-left: auto !important;
+  color: var(--color-green) !important;
+  font-weight: 900 !important;
+  font-size: 14px !important;
+  flex: 0 0 auto !important;
+  max-width: none !important;
+}
+
+@media (max-width: 760px) {
+  .agh-market-header-scope .agh-header-main {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    min-height: 58px !important;
+    width: 100% !important;
+  }
+  .agh-market-header-scope .agh-brand {
+    min-width: 0 !important;
+    max-width: calc(100% - 105px) !important;
+    margin-right: auto !important;
+  }
+  .agh-market-header-scope .agh-header-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+    margin-left: auto !important;
+    min-width: 0 !important;
+  }
+  .agh-market-header-scope .agh-header-actions .agh-auth-guest-actions,
+  .agh-market-header-scope .agh-header-actions .agh-auth-user-actions,
+  .agh-market-header-scope .agh-header-actions .agh-auth-skeleton,
+  .agh-market-header-scope .agh-header-actions .agh-post-btn,
+  .agh-market-header-scope .agh-header-actions .agh-my-listings,
+  .agh-market-header-scope .agh-header-actions .agh-icon-link,
+  .agh-market-header-scope .agh-header-actions .agh-account-btn,
+  .agh-market-header-scope .agh-header-actions .agh-saved-icon {
+    display: none !important;
+  }
+  .agh-market-header-scope .agh-header-actions .theme-control {
+    position: relative !important;
+    display: inline-flex !important;
+  }
+  .agh-market-header-scope .agh-header-actions .theme-trigger {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-width: 38px !important;
+    padding: 0 !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 11px !important;
+    background: var(--color-surface) !important;
+    color: var(--color-text) !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+  }
+  .agh-market-header-scope .agh-header-actions .theme-trigger-label,
+  .agh-market-header-scope .agh-header-actions .theme-trigger > span:last-child {
+    display: none !important;
+  }
+  .agh-market-header-scope .agh-menu-toggle {
+    display: grid !important;
+    place-items: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    flex: 0 0 38px !important;
+    border-radius: 11px !important;
+    font-size: 20px !important;
+    margin-left: 2px !important;
   }
 }
