@@ -19,7 +19,11 @@ export async function OPTIONS() {
   return new NextResponse(null, { status: 204, headers });
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { reportId: string } }) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ reportId: string }> }
+) {
+  const { reportId } = await params;
   const auth = request.headers.get("authorization");
   const forwardHeaders: Record<string, string> = {
     Accept: "application/json",
@@ -29,7 +33,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { report
 
   try {
     const body = await request.text().catch(() => "{}");
-    const res = await fetch(`${API_BASE}/property-reports/${params.reportId}/status`, {
+    const res = await fetch(`${API_BASE}/property-reports/${reportId}/status`, {
       method: "PATCH",
       headers: forwardHeaders,
       body,

@@ -20,7 +20,7 @@ export async function OPTIONS() {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { propertyId: string } }
+  { params }: { params: Promise<{ propertyId: string }> }
 ) {
   const authorization = request.headers.get("authorization") || "";
   if (!authorization.startsWith("Bearer ")) {
@@ -30,7 +30,8 @@ export async function POST(
     );
   }
 
-  const propertyId = params.propertyId?.trim();
+  const { propertyId: rawPropertyId } = await params;
+  const propertyId = rawPropertyId?.trim();
   if (!propertyId) {
     return NextResponse.json(
       { message: "Property ID is required." },

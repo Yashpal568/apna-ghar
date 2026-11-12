@@ -19,8 +19,13 @@ export async function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: corsHeaders });
 }
 
-async function forward(request: NextRequest, params: { path: string[] }) {
-  const path = params.path.join("/");
+type RouteContext = {
+  params: Promise<{ path: string[] }>;
+};
+
+async function forward(request: NextRequest, resolvedParams: { path?: string[] }) {
+  const pathParts = Array.isArray(resolvedParams?.path) ? resolvedParams.path : [];
+  const path = pathParts.join("/");
   const url = `${API_BASE}/admin/${path}${request.nextUrl.search}`;
   const auth = request.headers.get("authorization");
 
@@ -61,18 +66,22 @@ async function forward(request: NextRequest, params: { path: string[] }) {
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { path: string[] } }) {
-  return forward(request, params);
+export async function GET(request: NextRequest, { params }: RouteContext) {
+  const resolved = await params;
+  return forward(request, resolved);
 }
 
-export async function POST(request: NextRequest, { params }: { params: { path: string[] } }) {
-  return forward(request, params);
+export async function POST(request: NextRequest, { params }: RouteContext) {
+  const resolved = await params;
+  return forward(request, resolved);
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { path: string[] } }) {
-  return forward(request, params);
+export async function PATCH(request: NextRequest, { params }: RouteContext) {
+  const resolved = await params;
+  return forward(request, resolved);
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { path: string[] } }) {
-  return forward(request, params);
+export async function DELETE(request: NextRequest, { params }: RouteContext) {
+  const resolved = await params;
+  return forward(request, resolved);
 }
