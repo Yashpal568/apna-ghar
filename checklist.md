@@ -53,13 +53,18 @@ This checklist tracks verified repository automation separately from manual envi
 
 ## Environment readiness
 
-- [x] Cloudflare web URL loads the latest version (`e1ecdd2`).
+- [x] Cloudflare web URL loads the latest version (`8e124d8`).
 - [x] Render/NestJS API health endpoint responds successfully (`/health` returns 200).
 - [x] API can connect to MongoDB Atlas (`/health/ready` reports database connected).
 - [ ] Cloudinary upload credentials and upload path work.
 - [x] Clerk Development Instance keys are configured consistently in web and API.
 - [x] Clerk development mode is used for test accounts only; it is not treated as production authentication for a public launch.
 - [x] Payments remain disabled for the free launch.
+- [x] Authentication-aware global navbar verified:
+  - [x] Logged-out state: displays Sign In and Sign Up; hides Post Property, user menu, and Sign Out.
+  - [x] Logged-in state: displays Post Property and user profile/avatar menu with account links and Sign Out; hides Sign In and Sign Up.
+  - [x] Auth loading state: renders layout-stable placeholder skeleton without shifts.
+  - [x] Dynamic session transitions: Sign In, Sign Out, and protected route redirection (`/list-property`) verified live in Chrome.
 
 ## Milestone M4 Live Browser Acceptance
 
