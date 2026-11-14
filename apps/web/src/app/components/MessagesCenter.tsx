@@ -166,7 +166,12 @@ function MessagesCenterAuthenticated() {
 
   const [items, setItems] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selected, setSelected] = useState<string>("");
+  const [selected, setSelected] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return new URLSearchParams(window.location.search).get("conversation") || "";
+    }
+    return "";
+  });
   const [searchText, setSearchText] = useState("");
   const [activeFilter, setActiveFilter] = useState<"all" | "unread" | "offers">("all");
   const [propertyInfo, setPropertyInfo] = useState<PropertySummary | null>(null);
@@ -291,9 +296,11 @@ function MessagesCenterAuthenticated() {
 
       if (requested && list.some((c) => c._id === requested)) {
         setSelected(requested);
-      } else if (isDesktop && list.length > 0 && list[0]?._id) {
-        setSelected(list[0]._id);
-      } else {
+      } else if (isDesktop && list.length > 0) {
+        setSelected((prev) => (prev && list.some((c) => c._id === prev) ? prev : list[0]?._id || ""));
+      } else if (!isDesktop && requested && list.some((c) => c._id === requested)) {
+        setSelected(requested);
+      } else if (!isDesktop) {
         setSelected("");
       }
     })();
@@ -839,8 +846,10 @@ function MessagesCenterAuthenticated() {
                       </p>
 
                       <div className="flex items-center gap-1.5 mt-1.5">
-                        <span className="px-1.5 py-0.2 rounded bg-primary/10 text-primary font-bold text-[9px] uppercase tracking-wider">
-                          {isUserOwner ? "Buyer" : "Owner"}
+                        <span className={`px-1.5 py-0.2 rounded font-bold text-[9px] uppercase tracking-wider ${
+                          isUserOwner ? "bg-primary/10 text-primary" : "bg-secondary-container text-on-secondary-container"
+                        }`}>
+                          {isUserOwner ? "Your Listing (Owner)" : "Your Inquiry (Buyer)"}
                         </span>
                         {conv.statusBadge && (
                           <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-extrabold text-[9.5px]">
@@ -896,18 +905,20 @@ function MessagesCenterAuthenticated() {
                   <div className="min-w-0 pl-1">
                     <div className="flex items-center gap-1.5">
                       <h2 className="font-headline-sm text-sm sm:text-base text-on-surface truncate m-0 font-bold">
-                        {rawOwnerName}
+                        {isOwner ? "Inquiry from Buyer" : rawOwnerName}
                       </h2>
-                      <span className="material-symbols-outlined text-secondary text-[16px] shrink-0" title="Verified Owner">
+                      <span className="material-symbols-outlined text-secondary text-[16px] shrink-0" title="Verified">
                         verified
                       </span>
                       <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-secondary-container/60 text-on-secondary-container text-[10px] font-bold">
-                        {counterpartRole}
+                        {isOwner ? "Buyer Inquiry" : "Direct Owner"}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-on-surface-variant font-label-md text-xs truncate">
                       <span className="w-1.5 h-1.5 rounded-full bg-secondary shrink-0"></span>
-                      <span className="truncate">Active Negotiation • RBI Escrow Protected</span>
+                      <span className="truncate">
+                        {isOwner ? `Inquiry on your listing: ${propertyTitle}` : `Listing: ${propertyTitle}`}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -1102,8 +1113,10 @@ function MessagesCenterAuthenticated() {
                           </div>
 
                           <div className="flex items-center gap-1.5 mb-1">
-                            <span className="font-label-sm text-[9px] px-1.5 py-0.2 rounded bg-primary/10 text-primary font-bold uppercase tracking-wider shrink-0">
-                              {isUserOwner ? "Buyer" : "Owner"}
+                            <span className={`font-label-sm text-[9px] px-1.5 py-0.2 rounded font-bold uppercase tracking-wider shrink-0 ${
+                              isUserOwner ? "bg-primary/10 text-primary" : "bg-secondary-container text-on-secondary-container"
+                            }`}>
+                              {isUserOwner ? "Your Listing (Owner)" : "Your Inquiry (Buyer)"}
                             </span>
                             <span className="font-body-sm text-[11px] text-on-surface-variant truncate">
                               {conv.propertyTitle}
@@ -1209,18 +1222,22 @@ function MessagesCenterAuthenticated() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <h2 className="font-headline-sm text-sm sm:text-base text-on-surface truncate m-0 font-bold">
-                          {rawOwnerName}
+                          {isOwner ? "Inquiry from Buyer" : rawOwnerName}
                         </h2>
                         <span className="material-symbols-outlined text-secondary text-[16px] shrink-0" title="Verified">
                           verified
                         </span>
                         <span className="px-2 py-0.5 rounded-md bg-secondary-container/60 text-on-secondary-container text-[10px] font-bold">
-                          {counterpartRole}
+                          {isOwner ? "Buyer Inquiry on Your Property" : "Direct Owner"}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-on-surface-variant font-label-md text-xs truncate">
                         <span className="w-1.5 h-1.5 rounded-full bg-secondary shrink-0"></span>
-                        <span className="truncate">Active Negotiation • RBI Escrow Protected</span>
+                        <span className="truncate">
+                          {isOwner
+                            ? `Inquiry received on your listing: ${propertyTitle}`
+                            : `Active Discussion • Direct Owner: ${rawOwnerName}`}
+                        </span>
                       </div>
                     </div>
                   </div>
