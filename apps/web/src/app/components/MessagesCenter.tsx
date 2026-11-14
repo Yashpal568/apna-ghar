@@ -160,8 +160,9 @@ function renderMessageAttachment(att?: MessageAttachment, isMine = false) {
 }
 
 function MessagesCenterAuthenticated() {
-  const { getToken, isSignedIn } = useAuth();
-  const { user } = useUser();
+  const { getToken, isSignedIn, isLoaded: authLoaded } = useAuth();
+  const { user, isLoaded: userLoaded } = useUser();
+  const isLoaded = authLoaded && userLoaded;
 
   const [items, setItems] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -243,11 +244,13 @@ function MessagesCenterAuthenticated() {
 
   // Fetch real conversations from backend
   const fetchMine = useCallback(async () => {
+    if (!isLoaded) return [];
     if (!isSignedIn) {
       setItems([]);
       setLoading(false);
       return [];
     }
+    setLoading(true);
     try {
       const token = await getToken().catch(() => null);
       if (!token) {
@@ -262,19 +265,20 @@ function MessagesCenterAuthenticated() {
         const data = await res.json();
         const convList = Array.isArray(data) ? data : [];
         setItems(convList);
-        setLoading(false);
         return convList;
       }
     } catch (err) {
       console.error("Error fetching conversations:", err);
+    } finally {
+      setLoading(false);
     }
     setItems([]);
-    setLoading(false);
     return [];
-  }, [getToken, isSignedIn]);
+  }, [getToken, isSignedIn, isLoaded]);
 
   // Handle Initial Route Selection
   useEffect(() => {
+    if (!isLoaded) return;
     let cancelled = false;
     void (async () => {
       const list = await fetchMine();
@@ -296,7 +300,7 @@ function MessagesCenterAuthenticated() {
     return () => {
       cancelled = true;
     };
-  }, [fetchMine]);
+  }, [fetchMine, isLoaded]);
 
   // Keep desktop responsive sync
   useEffect(() => {
@@ -414,12 +418,12 @@ function MessagesCenterAuthenticated() {
   }, [activeConversation]);
 
   // Dynamic counterpart and property attributes
-  const isOwner = user?.id === activeConversation?.ownerId;
+  const isOwner = Boolean(user?.id && activeConversation?.ownerId === user.id);
   const counterpartRole = isOwner ? "Buyer" : "Direct Owner";
   const rawOwnerName = isOwner
-    ? "Buyer Inquiry"
+    ? "Verified Buyer"
     : propertyInfo?.contactName || activeConversation?.contactName || "Property Owner";
-  const ownerName = isOwner ? rawOwnerName : `${rawOwnerName} (Owner)`;
+  const ownerName = isOwner ? "Verified Buyer" : `${rawOwnerName} (Owner)`;
   const ownerPhone = propertyInfo?.contactPhone?.trim() || "";
   const propertyAskingPrice = propertyInfo?.priceAmount || 0;
   const propertyTitle =
@@ -760,9 +764,17 @@ function MessagesCenterAuthenticated() {
 
           {/* Conversations List on Mobile */}
           <div className="stitch-inbox-list">
-            {loading ? (
-              <div className="p-8 text-center text-outline text-xs">
-                Loading secure inbox…
+            {loading || !isLoaded ? (
+              <div className="p-4 space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-surface-container-low/60 animate-pulse">
+                    <div className="w-12 h-12 rounded-xl bg-surface-container shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3.5 bg-surface-container rounded w-3/4" />
+                      <div className="h-2.5 bg-surface-container/60 rounded w-1/2" />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : filteredItems.length === 0 ? (
               <div className="p-8 text-center flex flex-col items-center justify-center min-h-[50vh]">
@@ -785,7 +797,8 @@ function MessagesCenterAuthenticated() {
               filteredItems.map((conv) => {
                 const last = conv.messages?.[conv.messages.length - 1];
                 const thumb = conv.thumbUrl || VERIFIED_FALLBACK_IMG;
-                const owner = conv.contactName || (user?.id === conv.ownerId ? "Buyer Inquiry" : "Property Owner");
+                const isUserOwner = Boolean(user?.id && conv.ownerId === user.id);
+                const counterpart = isUserOwner ? "Buyer Inquiry" : conv.contactName || "Property Owner";
 
                 return (
                   <div
@@ -806,7 +819,7 @@ function MessagesCenterAuthenticated() {
                       <div className="flex items-center justify-between gap-1 mb-0.5">
                         <div className="flex items-center gap-1 min-w-0">
                           <span className="font-bold text-xs text-on-surface truncate">
-                            {owner}
+                            {counterpart}
                           </span>
                           <span className="material-symbols-outlined text-[13px] text-secondary shrink-0">
                             verified
@@ -826,6 +839,9 @@ function MessagesCenterAuthenticated() {
                       </p>
 
                       <div className="flex items-center gap-1.5 mt-1.5">
+                        <span className="px-1.5 py-0.2 rounded bg-primary/10 text-primary font-bold text-[9px] uppercase tracking-wider">
+                          {isUserOwner ? "Buyer" : "Owner"}
+                        </span>
                         {conv.statusBadge && (
                           <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-extrabold text-[9.5px]">
                             {conv.statusBadge}
@@ -1019,9 +1035,17 @@ function MessagesCenterAuthenticated() {
               </div>
 
               <div className="flex-1 overflow-y-auto p-2.5 space-y-2 stitch-custom-scrollbar">
-                {loading ? (
-                  <div className="p-6 text-center text-outline text-xs">
-                    Loading conversations…
+                {loading || !isLoaded ? (
+                  <div className="p-2 space-y-2.5">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-surface-container-low/60 animate-pulse">
+                        <div className="w-11 h-11 rounded-xl bg-surface-container shrink-0" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-3.5 bg-surface-container rounded w-3/4" />
+                          <div className="h-2.5 bg-surface-container/60 rounded w-1/2" />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ) : filteredItems.length === 0 ? (
                   <div className="p-6 text-center text-on-surface-variant flex flex-col items-center justify-center h-48">
@@ -1034,7 +1058,8 @@ function MessagesCenterAuthenticated() {
                 ) : (
                   filteredItems.map((conv) => {
                     const isSelected = conv._id === selected;
-                    const owner = conv.contactName || (user?.id === conv.ownerId ? "Buyer Inquiry" : "Property Owner");
+                    const isUserOwner = Boolean(user?.id && conv.ownerId === user.id);
+                    const owner = isUserOwner ? "Buyer Inquiry" : conv.contactName || "Property Owner";
                     const initials = owner.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase() || "AG";
                     const lastMsg = conv.messages?.[conv.messages.length - 1];
                     const unread = (user?.id && conv.unreadCountByUser?.[user.id]) || 0;
@@ -1078,7 +1103,7 @@ function MessagesCenterAuthenticated() {
 
                           <div className="flex items-center gap-1.5 mb-1">
                             <span className="font-label-sm text-[9px] px-1.5 py-0.2 rounded bg-primary/10 text-primary font-bold uppercase tracking-wider shrink-0">
-                              {user?.id === conv.ownerId ? "Buyer" : "Owner"}
+                              {isUserOwner ? "Buyer" : "Owner"}
                             </span>
                             <span className="font-body-sm text-[11px] text-on-surface-variant truncate">
                               {conv.propertyTitle}
@@ -1115,7 +1140,29 @@ function MessagesCenterAuthenticated() {
             </aside>
 
             {/* COLUMN 2: Center Chat Screen or Empty State */}
-            {items.length === 0 && !loading ? (
+            {loading || !isLoaded ? (
+              <main className="stitch-chat-main flex-1 flex flex-col justify-between p-6 bg-surface-container-lowest">
+                <div className="flex items-center gap-3 p-4 border-b border-outline-variant/30 animate-pulse">
+                  <div className="w-10 h-10 rounded-xl bg-surface-container shrink-0" />
+                  <div className="space-y-2 flex-1">
+                    <div className="h-4 bg-surface-container rounded w-48" />
+                    <div className="h-3 bg-surface-container/60 rounded w-32" />
+                  </div>
+                </div>
+                <div className="flex-1 p-6 space-y-4">
+                  <div className="flex justify-start">
+                    <div className="w-64 h-14 bg-surface-container-low rounded-2xl animate-pulse" />
+                  </div>
+                  <div className="flex justify-end">
+                    <div className="w-72 h-16 bg-primary/10 rounded-2xl animate-pulse" />
+                  </div>
+                  <div className="flex justify-start">
+                    <div className="w-56 h-12 bg-surface-container-low rounded-2xl animate-pulse" />
+                  </div>
+                </div>
+                <div className="h-12 bg-surface-container-low rounded-xl animate-pulse" />
+              </main>
+            ) : items.length === 0 ? (
               <main className="stitch-chat-main flex-1 flex flex-col items-center justify-center p-8 text-center bg-surface-container-lowest">
                 <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4 shadow-xs">
                   <span className="material-symbols-outlined text-[32px]">mark_chat_unread</span>
@@ -1383,6 +1430,11 @@ function MessagesCenterAuthenticated() {
                       if (isMine) {
                         return (
                           <div key={m._id || `msg-${m.sentAt}`} className="flex flex-col items-end gap-1 max-w-[85%] self-end">
+                            <div className="flex items-center gap-1.5 px-1 mb-0.5">
+                              <span className="font-label-sm text-[11px] text-primary font-bold">
+                                You ({isOwner ? "Owner" : "Buyer"})
+                              </span>
+                            </div>
                             <div className="bg-primary text-on-primary rounded-2xl rounded-tr-xs px-4 py-3 shadow-md">
                               {renderMessageAttachment(m.attachment, true)}
                               {m.text && <p className="font-body-md text-body-md m-0 leading-relaxed whitespace-pre-wrap">{m.text}</p>}
@@ -1402,10 +1454,10 @@ function MessagesCenterAuthenticated() {
                           <div className="flex items-center gap-1.5 px-1 mb-0.5">
                             <span className="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
                             <span className="font-label-sm text-xs text-on-surface font-bold">
-                              {rawOwnerName}
+                              {isOwner ? "Buyer" : rawOwnerName}
                             </span>
                             <span className="font-label-sm text-[10px] bg-secondary-container text-on-secondary-container px-1.5 py-0.2 rounded font-bold">
-                              Direct
+                              {isOwner ? "Verified Buyer" : "Direct Owner"}
                             </span>
                           </div>
                           <div className="bg-surface-container-low text-on-surface rounded-2xl rounded-tl-xs px-4 py-3 shadow-xs border border-outline-variant/30">
@@ -1548,7 +1600,18 @@ function MessagesCenterAuthenticated() {
             )}
 
             {/* COLUMN 3: RIGHT DETAILS DRAWER (Property & Safe Escrow Dossier) */}
-            {items.length === 0 && !loading ? (
+            {loading || !isLoaded ? (
+              <aside className="stitch-desktop-dossier-column stitch-custom-scrollbar p-6 space-y-4">
+                <div className="h-4 bg-surface-container rounded w-32 animate-pulse" />
+                <div className="w-full h-36 bg-surface-container rounded-xl animate-pulse" />
+                <div className="h-4 bg-surface-container rounded w-3/4 animate-pulse" />
+                <div className="h-3 bg-surface-container/60 rounded w-1/2 animate-pulse" />
+                <div className="pt-4 border-t border-outline-variant/30 space-y-2">
+                  <div className="h-3 bg-surface-container/50 rounded w-full animate-pulse" />
+                  <div className="h-3 bg-surface-container/50 rounded w-4/5 animate-pulse" />
+                </div>
+              </aside>
+            ) : items.length === 0 ? (
               <aside className="stitch-desktop-dossier-column stitch-custom-scrollbar flex flex-col items-center justify-center p-6 text-center text-on-surface-variant">
                 <span className="material-symbols-outlined text-[32px] text-outline mb-2">folder_open</span>
                 <p className="font-bold text-xs text-on-surface m-0 mb-1">No Property Selected</p>
