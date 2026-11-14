@@ -5665,7 +5665,7 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
  .agh-home-redesign .agh-home-mobile-nav a.post{color:#005bea!important}
 }
 @media(prefers-reduced-motion:reduce){.agh-home-redesign *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-.agh-home-redesign .agh-home-footer>div>strong{margin-bottom:5px!important;color:#0f172a!important;fo
+
 /* The search form now lives inside the navy hero, matching the Stitch composition */
 .agh-home-redesign .agh-stitch-hero>.agh-home-search-panel{
   width:min(100%,1060px)!important;max-width:1060px!important;margin:0 auto!important;
