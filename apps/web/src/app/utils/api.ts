@@ -18,23 +18,23 @@ export async function fetchApi(path: string, init?: RequestInit): Promise<Respon
   const upstreamUrl = `${configuredApiBase}${cleanPath}`;
 
   if (typeof window !== "undefined") {
-    if (configuredApiBase.startsWith("http")) {
-      try {
-        const res = await fetch(upstreamUrl, init);
-        if (res.ok || res.status === 401 || res.status === 403) return res;
-      } catch {
-        // Fall back to same-origin proxy
-      }
-    }
+    // 1. In browser, try same-origin proxy first for fast response and zero CORS/IPv6 issues
     try {
       const res = await fetch(sameOriginUrl, init);
-      if (res.ok || res.status === 401 || res.status === 403) return res;
-      if (upstreamUrl !== sameOriginUrl) {
-        return await fetch(upstreamUrl, init);
+      if (res.ok || res.status === 401 || res.status === 403 || res.status === 400 || res.status === 422) {
+        return res;
       }
-      return res;
     } catch {
-      return await fetch(upstreamUrl, init);
+      // Fall through to try direct upstream
+    }
+
+    // 2. Direct upstream fallback if same-origin proxy is unreachable
+    if (upstreamUrl !== sameOriginUrl && configuredApiBase.startsWith("http")) {
+      try {
+        return await fetch(upstreamUrl, init);
+      } catch (err) {
+        throw err;
+      }
     }
   }
 
