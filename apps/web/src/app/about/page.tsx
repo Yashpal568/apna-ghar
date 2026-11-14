@@ -1,10 +1,26 @@
 import type { Metadata } from "next";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import { getCanonicalUrl, INDEXABLE_ROBOTS } from "../utils/seo";
 
 export const metadata: Metadata = {
-  title: "About Apna Ghar | Direct Owner Marketplace",
-  description: "Learn about Apna Ghar and our approach to making property discovery clearer and more accessible.",
+  title: "About Apna Ghar | Direct Owner Real Estate Platform",
+  description: "Learn about Apna Ghar, India's direct owner property marketplace offering 0% brokerage and verified property listings.",
+  alternates: {
+    canonical: getCanonicalUrl("/about"),
+  },
+  robots: INDEXABLE_ROBOTS,
+  openGraph: {
+    title: "About Apna Ghar | Direct Owner Real Estate Platform",
+    description: "Learn about Apna Ghar, India's direct owner property marketplace offering 0% brokerage and verified property listings.",
+    url: getCanonicalUrl("/about"),
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Apna Ghar | Direct Owner Real Estate Platform",
+    description: "Learn about Apna Ghar, India's direct owner property marketplace offering 0% brokerage and verified property listings.",
+  },
 };
 
 export default function AboutPage() {

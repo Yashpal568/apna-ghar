@@ -1,10 +1,26 @@
 import type { Metadata } from "next";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import { getCanonicalUrl, INDEXABLE_ROBOTS } from "../utils/seo";
 
 export const metadata: Metadata = {
-  title: "Property services | Apna Ghar",
-  description: "Explore Apna Ghar tools for buying, renting and publishing property listings.",
+  title: "Real Estate Services & Tools | Apna Ghar",
+  description: "Explore Apna Ghar tools for buying, renting and publishing direct-owner property listings with 0% brokerage.",
+  alternates: {
+    canonical: getCanonicalUrl("/services"),
+  },
+  robots: INDEXABLE_ROBOTS,
+  openGraph: {
+    title: "Real Estate Services & Tools | Apna Ghar",
+    description: "Explore Apna Ghar tools for buying, renting and publishing direct-owner property listings with 0% brokerage.",
+    url: getCanonicalUrl("/services"),
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Real Estate Services & Tools | Apna Ghar",
+    description: "Explore Apna Ghar tools for buying, renting and publishing direct-owner property listings with 0% brokerage.",
+  },
 };
 
 const services = [

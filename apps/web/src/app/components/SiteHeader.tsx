@@ -54,7 +54,15 @@ export default function SiteHeader({ active = "home", searchValue, onSearchChang
     if (typeof window === "undefined") return;
     const computeActiveFromUrl = () => {
       const path = window.location.pathname;
-      if (path.startsWith("/search")) {
+      if (path === "/commercial") {
+        setUrlActive("commercial");
+      } else if (path === "/plots" || path === "/plot") {
+        setUrlActive("plots");
+      } else if (path === "/buy") {
+        setUrlActive("buy");
+      } else if (path === "/rent") {
+        setUrlActive("rent");
+      } else if (path.startsWith("/search")) {
         const sp = new URLSearchParams(window.location.search);
         const t = (sp.get("type") || sp.get("categoryId") || "").trim().toLowerCase();
         const tx = (sp.get("transaction") || "").trim().toLowerCase();

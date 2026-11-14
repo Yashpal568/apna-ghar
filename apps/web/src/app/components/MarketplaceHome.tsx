@@ -234,8 +234,8 @@ function MarketplaceHomeContent({ isSignedIn, getToken }: { isSignedIn: boolean;
 
     <footer className="agh-home-footer">
       <div className="agh-home-footer-brand"><a href="/"><BrandLogo/></a><p>India's next-generation direct marketplace connecting homeowners and buyers without middleman commissions.</p><span>✓ &nbsp; Zero Brokerage Marketplace</span></div>
-      <div><strong>Top Real Estate Hubs</strong><a href="/search?location=Mumbai">Mumbai Metropolitan</a><a href="/search?location=Bengaluru">Bengaluru Tech Corridors</a><a href="/search?location=Delhi">Delhi NCR &amp; Gurgaon</a><a href="/search?location=Hyderabad">Hyderabad Financial District</a><a href="/search?location=Pune">Pune IT Hub</a></div>
-      <div><strong>Explore Properties</strong><a href="/search?type=apartment">Ready-to-Move Apartments</a><a href="/search?type=house">Villas &amp; Houses</a><a href="/search?type=plot">Gated Community Plots</a><a href="/search?type=commercial">Commercial Spaces</a><a href="/search?type=pg">PG &amp; Co-living</a></div>
+      <div><strong>Top Real Estate Hubs</strong><a href="/mumbai">Mumbai Metropolitan</a><a href="/bengaluru">Bengaluru Tech Corridors</a><a href="/delhi">Delhi NCR &amp; Gurgaon</a><a href="/hyderabad">Hyderabad Financial District</a><a href="/pune">Pune IT Hub</a></div>
+      <div><strong>Explore Properties</strong><a href="/apartments">Ready-to-Move Apartments</a><a href="/houses">Villas &amp; Houses</a><a href="/plots">Gated Community Plots</a><a href="/commercial">Commercial Spaces</a><a href="/pg">PG &amp; Co-living</a></div>
       <div><strong>Legal &amp; Support</strong><a href="/about">About Apna Ghar</a><a href="/privacy">Privacy Protection</a><a href="/terms">Terms of Discovery</a><a href="/contact">Support &amp; Contact</a></div>
       <div className="agh-home-footer-bottom"><span>© {new Date().getFullYear()} Apna Ghar PropTech. All rights reserved.</span><span>VERIFIED SECURITY &nbsp; ◈ &nbsp; Secure account access</span></div>
     </footer>

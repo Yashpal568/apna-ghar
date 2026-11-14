@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { SignUp } from "@clerk/nextjs";
 import SiteHeader from "../../components/SiteHeader";
+import { NOINDEX_ROBOTS } from "../../utils/seo";
 
-export const metadata = { title: "Create account | Apna Ghar" };
+export const metadata: Metadata = {
+  title: "Create account | Apna Ghar",
+  robots: NOINDEX_ROBOTS,
+};
 
 export default function SignUpPage() {
   const configured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);

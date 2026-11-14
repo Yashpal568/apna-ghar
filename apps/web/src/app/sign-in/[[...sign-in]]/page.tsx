@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import { SignIn } from "@clerk/nextjs";
 import SiteHeader from "../../components/SiteHeader";
 import SiteFooter from "../../components/SiteFooter";
+import { NOINDEX_ROBOTS } from "../../utils/seo";
 
-export const metadata = { title: "Sign in | Apna Ghar" };
+export const metadata: Metadata = {
+  title: "Sign in | Apna Ghar",
+  robots: NOINDEX_ROBOTS,
+};
 
 export default function SignInPage() {
   const configured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);

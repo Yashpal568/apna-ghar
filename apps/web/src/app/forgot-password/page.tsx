@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import SiteHeader from "../components/SiteHeader";
+import { NOINDEX_ROBOTS } from "../utils/seo";
 
-export const metadata: Metadata = { title: "Reset password | Apna Ghar" };
+export const metadata: Metadata = {
+  title: "Reset password | Apna Ghar",
+  robots: NOINDEX_ROBOTS,
+};
 
 export default function ForgotPasswordPage() {
   return (

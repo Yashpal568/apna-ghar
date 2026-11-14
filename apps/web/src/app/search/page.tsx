@@ -2,21 +2,22 @@ import type { Metadata } from "next";
 import PropertySearchResults from "../components/PropertySearchResults";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import {
+  SITE_NAME,
+  INDEXABLE_ROBOTS,
+  getCanonicalUrl,
+  generateBreadcrumbSchema,
+} from "../utils/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: {
-    location?: string;
-    type?: string;
-    transaction?: string;
-  };
+export async function generateMetadata(props: {
+  searchParams?: Promise<Record<string, string | undefined>> | Record<string, string | undefined>;
 }): Promise<Metadata> {
-  const loc = searchParams.location?.trim();
-  const rawType = searchParams.type?.trim();
+  const sp = (await Promise.resolve(props?.searchParams)) || {};
+  const loc = sp.location?.trim();
+  const rawType = sp.type?.trim();
   const typeMap: Record<string, string> = {
     apartment: "Flats & Apartments",
     apartments: "Flats & Apartments",
@@ -30,7 +31,7 @@ export async function generateMetadata({
     villas: "Luxury Villas",
   };
   const categoryLabel = rawType && rawType !== "all property types" ? typeMap[rawType.toLowerCase()] || rawType : "";
-  const tx = searchParams.transaction === "rent" ? "for Rent" : "for Sale";
+  const tx = sp.transaction === "rent" ? "for Rent" : "for Sale";
 
   let title = "Explore Properties across India | Apna Ghar";
   let description = "Explore verified direct owner property listings across India without agent commission.";
@@ -46,13 +47,39 @@ export async function generateMetadata({
     description = `Compare verified direct owner ${categoryLabel.toLowerCase()} ${tx} across top cities in India.`;
   }
 
+  // Prevent indexing of duplicate faceted filter permutations (minPrice, maxPrice, furnishing, sort, etc.)
+  const hasFacetedFilters = Boolean(
+    sp.minPrice ||
+      sp.maxPrice ||
+      sp.minBedrooms ||
+      sp.minBathrooms ||
+      sp.furnishing ||
+      sp.sort ||
+      (sp.page && sp.page !== "1")
+  );
+
+  const robots = hasFacetedFilters
+    ? {
+        index: false,
+        follow: true,
+      }
+    : INDEXABLE_ROBOTS;
+
+  const canonicalUrl = getCanonicalUrl("/search");
+
   return {
     title,
     description,
+    robots,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
-      siteName: "Apna Ghar",
+      url: canonicalUrl,
+      siteName: SITE_NAME,
+      locale: "en_IN",
       type: "website",
     },
     twitter: {

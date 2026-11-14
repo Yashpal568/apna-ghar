@@ -134,16 +134,16 @@ export default function MarketplaceHeader({
             <a className={active === "search" ? "active" : ""} href="/search">
               Browse properties
             </a>
-            <a className={active === "buy" ? "active" : ""} href="/search?transaction=buy">
+            <a className={active === "buy" ? "active" : ""} href="/buy">
               Buy
             </a>
-            <a className={active === "rent" ? "active" : ""} href="/search?transaction=rent">
+            <a className={active === "rent" ? "active" : ""} href="/rent">
               Rent
             </a>
-            <a className={active === "commercial" ? "active" : ""} href="/search?type=commercial">
+            <a className={active === "commercial" ? "active" : ""} href="/commercial">
               Commercial
             </a>
-            <a className={active === "plots" || active === "plot" ? "active" : ""} href="/search?type=plot">
+            <a className={active === "plots" || active === "plot" ? "active" : ""} href="/plots">
               Plots
             </a>
             <a className={active === "messages" ? "active" : ""} href="/messages">
@@ -444,10 +444,10 @@ export default function MarketplaceHeader({
 
               <a className={active === "home" ? "active" : ""} href="/" onClick={() => setMenuOpen(false)}>Home</a>
               <a className={active === "search" ? "active" : ""} href="/search" onClick={() => setMenuOpen(false)}>Browse all properties</a>
-              <a className={active === "buy" ? "active" : ""} href="/search?transaction=buy" onClick={() => setMenuOpen(false)}>Buy a property</a>
-              <a className={active === "rent" ? "active" : ""} href="/search?transaction=rent" onClick={() => setMenuOpen(false)}>Rent a property</a>
-              <a className={active === "commercial" ? "active" : ""} href="/search?type=commercial" onClick={() => setMenuOpen(false)}>Commercial spaces</a>
-              <a className={active === "plots" || active === "plot" ? "active" : ""} href="/search?type=plot" onClick={() => setMenuOpen(false)}>Plots &amp; land</a>
+              <a className={active === "buy" ? "active" : ""} href="/buy" onClick={() => setMenuOpen(false)}>Buy a property</a>
+              <a className={active === "rent" ? "active" : ""} href="/rent" onClick={() => setMenuOpen(false)}>Rent a property</a>
+              <a className={active === "commercial" ? "active" : ""} href="/commercial" onClick={() => setMenuOpen(false)}>Commercial spaces</a>
+              <a className={active === "plots" || active === "plot" ? "active" : ""} href="/plots" onClick={() => setMenuOpen(false)}>Plots &amp; land</a>
 
               {/* Mobile Drawer Auth Actions */}
               {!isLoaded ? (

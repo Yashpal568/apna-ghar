@@ -3,15 +3,51 @@ import { ClerkProvider } from '@clerk/nextjs';
 import Script from 'next/script';
 import './globals.css';
 import MobileBottomNav from './components/MobileBottomNav';
+import {
+  SITE_URL,
+  SITE_NAME,
+  DEFAULT_TITLE,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+  INDEXABLE_ROBOTS,
+  generateRootSchemas,
+} from './utils/seo';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Apna Ghar | Find a place to call home',
+    default: DEFAULT_TITLE,
     template: '%s | Apna Ghar',
   },
-  description: 'Discover homes, flats, villas and plots for sale on Apna Ghar.',
-  applicationName: 'Apna Ghar',
+  description: DEFAULT_DESCRIPTION,
+  applicationName: SITE_NAME,
   icons: { icon: '/icon.svg', shortcut: '/icon.svg', apple: '/icon.svg' },
+  robots: INDEXABLE_ROBOTS,
+  openGraph: {
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    locale: 'en_IN',
+    type: 'website',
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 512,
+        height: 512,
+        alt: 'Apna Ghar Direct Owner Marketplace',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
+  },
+  alternates: {
+    canonical: '/',
+  },
 };
 
 export default function RootLayout({
@@ -24,6 +60,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateRootSchemas()),
+          }}
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=swap" rel="stylesheet" />
