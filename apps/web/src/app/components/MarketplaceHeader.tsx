@@ -128,7 +128,7 @@ export default function MarketplaceHeader({
 
           {/* Desktop Navigation Links */}
           <nav className="agh-desktop-nav" aria-label="Main navigation">
-            <a className={active === "search" || active === "home" ? "active" : ""} href="/search">
+            <a className={active === "search" ? "active" : ""} href="/search">
               Browse properties
             </a>
             <a className={active === "buy" ? "active" : ""} href="/search?transaction=buy">
@@ -137,8 +137,12 @@ export default function MarketplaceHeader({
             <a className={active === "rent" ? "active" : ""} href="/search?transaction=rent">
               Rent
             </a>
-            <a href="/search?type=commercial">Commercial</a>
-            <a href="/search?type=plot">Plots</a>
+            <a className={active === "commercial" ? "active" : ""} href="/search?type=commercial">
+              Commercial
+            </a>
+            <a className={active === "plots" || active === "plot" ? "active" : ""} href="/search?type=plot">
+              Plots
+            </a>
             <a className={active === "messages" ? "active" : ""} href="/messages">
               Messages
             </a>
@@ -321,12 +325,12 @@ export default function MarketplaceHeader({
                 <ThemePicker />
               </div>
 
-              <a href="/" onClick={() => setMenuOpen(false)}>Home</a>
-              <a href="/search" onClick={() => setMenuOpen(false)}>Browse all properties</a>
-              <a href="/search?transaction=buy" onClick={() => setMenuOpen(false)}>Buy a property</a>
-              <a href="/search?transaction=rent" onClick={() => setMenuOpen(false)}>Rent a property</a>
-              <a href="/search?type=commercial" onClick={() => setMenuOpen(false)}>Commercial spaces</a>
-              <a href="/search?type=plot" onClick={() => setMenuOpen(false)}>Plots &amp; land</a>
+              <a className={active === "home" ? "active" : ""} href="/" onClick={() => setMenuOpen(false)}>Home</a>
+              <a className={active === "search" ? "active" : ""} href="/search" onClick={() => setMenuOpen(false)}>Browse all properties</a>
+              <a className={active === "buy" ? "active" : ""} href="/search?transaction=buy" onClick={() => setMenuOpen(false)}>Buy a property</a>
+              <a className={active === "rent" ? "active" : ""} href="/search?transaction=rent" onClick={() => setMenuOpen(false)}>Rent a property</a>
+              <a className={active === "commercial" ? "active" : ""} href="/search?type=commercial" onClick={() => setMenuOpen(false)}>Commercial spaces</a>
+              <a className={active === "plots" || active === "plot" ? "active" : ""} href="/search?type=plot" onClick={() => setMenuOpen(false)}>Plots &amp; land</a>
 
               {/* Mobile Drawer Auth Actions */}
               {!isLoaded ? (

@@ -83,8 +83,30 @@ export class PropertiesService {
     const filter: FilterQuery<PropertyDocument> = { status: 'active', deletedAt: null };
     if (query.city) filter['location.city'] = new RegExp(this.escapeRegex(query.city), 'i');
     if (query.locality) filter['location.locality'] = new RegExp(this.escapeRegex(query.locality), 'i');
-    if (query.categoryId) filter.categoryId = query.categoryId;
-    if (query.listingType) filter.listingType = query.listingType;
+    if (query.state) filter['location.state'] = new RegExp(this.escapeRegex(query.state), 'i');
+
+    const rawCategory = query.categoryId || query.type;
+    if (rawCategory && rawCategory !== 'all' && rawCategory !== 'all property types') {
+      const catLower = rawCategory.toLowerCase().trim();
+      const CATEGORY_MAP: Record<string, string[]> = {
+        apartment: ['apartment', 'apartments', '6ae3438b927d87c0475f2369'],
+        apartments: ['apartment', 'apartments', '6ae3438b927d87c0475f2369'],
+        house: ['house', 'houses', '6ae3438b927d87c0475f236a'],
+        houses: ['house', 'houses', '6ae3438b927d87c0475f236a'],
+        villa: ['villa', 'villas', '6ae3438b927d87c0475f236b'],
+        villas: ['villa', 'villas', '6ae3438b927d87c0475f236b'],
+        plot: ['plot', 'plots', 'land', '6ae3438b927d87c0475f236c'],
+        plots: ['plot', 'plots', 'land', '6ae3438b927d87c0475f236c'],
+        commercial: ['commercial', 'office', 'shop', 'shops', 'offices', '6ae3438b927d87c0475f236d'],
+        pg: ['pg', 'co-living', 'coliving', '6ae3438b927d87c0475f236e'],
+      };
+      const matched = CATEGORY_MAP[catLower] || [rawCategory];
+      filter.categoryId = matched.length === 1 ? matched[0] : { $in: matched };
+    }
+
+    if (query.listingType && query.listingType !== 'all') {
+      filter.listingType = query.listingType;
+    }
     if (query.minBedrooms !== undefined) filter.bedrooms = { $gte: query.minBedrooms };
     if (query.minBathrooms !== undefined) filter.bathrooms = { $gte: query.minBathrooms };
     if (query.furnishing) filter.furnishing = query.furnishing;
@@ -95,11 +117,20 @@ export class PropertiesService {
     }
     if (query.q) {
       const expression = new RegExp(this.escapeRegex(query.q), 'i');
-      filter.$or = [{ title: expression }, { description: expression }, { 'location.city': expression }, { 'location.locality': expression }];
+      filter.$or = [
+        { title: expression },
+        { description: expression },
+        { 'location.city': expression },
+        { 'location.locality': expression },
+        { 'location.state': expression },
+        { 'location.addressText': expression },
+      ];
     }
 
-    const sort: Record<string, SortOrder> = query.sort === 'price_asc' ? { priceAmount: 1 }
-      : query.sort === 'price_desc' ? { priceAmount: -1 }
+    const sort: Record<string, SortOrder> = query.sort === 'price_asc'
+      ? { priceAmount: 1 }
+      : query.sort === 'price_desc'
+      ? { priceAmount: -1 }
       : { publishedAt: -1 };
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;

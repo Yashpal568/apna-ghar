@@ -20,7 +20,7 @@ function errorResponse(message: string, status: number) {
 
 async function forward(url: string, init: RequestInit = {}) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 12_000);
+  const timeout = setTimeout(() => controller.abort(), 20_000);
   try {
     const response = await fetch(url, {
       ...init,
@@ -31,7 +31,8 @@ async function forward(url: string, init: RequestInit = {}) {
     const payload = await response.json().catch(() => null);
     if (payload === null) return errorResponse("Property service returned an invalid response.", 502);
     return NextResponse.json(payload, { status: response.status, headers });
-  } catch {
+  } catch (err) {
+    console.error("Forward error to", url, err);
     return errorResponse("Property service is temporarily unavailable. Please try again.", 503);
   } finally {
     clearTimeout(timeout);

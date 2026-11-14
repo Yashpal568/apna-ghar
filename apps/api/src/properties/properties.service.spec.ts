@@ -96,11 +96,11 @@ describe('PropertiesService', () => {
     } as never);
     const filter = model.find.mock.calls[0][0];
     expect(filter).toEqual(expect.objectContaining({
-      status: 'active', deletedAt: null, categoryId: 'apartment',
+      status: 'active', deletedAt: null, categoryId: { $in: expect.arrayContaining(['apartment']) },
       listingType: 'rent', bedrooms: { $gte: 2 }, bathrooms: { $gte: 1 },
       furnishing: 'furnished', priceAmount: { $gte: 10000, $lte: 25000 },
     }));
-    expect(filter.$or).toHaveLength(4);
+    expect(filter.$or).toHaveLength(6);
     expect(filter.$or[0].title).toBeInstanceOf(RegExp);
     expect(filter.$or[0].title.test('North Park apartment')).toBe(true);
     expect(filter.$or[0].title.test('NorthX Park apartment')).toBe(false);

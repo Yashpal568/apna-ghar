@@ -73,11 +73,12 @@ export default function SearchPage({
     minBathrooms?: string;
     furnishing?: string;
     sort?: string;
+    page?: string;
   };
 }) {
-  const location = searchParams.location?.trim() || "";
-  const rawType = searchParams.type && searchParams.type !== "any" ? searchParams.type : "all property types";
-  const type =
+  const loc = searchParams.location?.trim() || "";
+  const rawType = (searchParams.type || "").trim().toLowerCase();
+  const normalizedCategory =
     rawType === "apartments"
       ? "apartment"
       : rawType === "houses"
@@ -86,26 +87,73 @@ export default function SearchPage({
       ? "plot"
       : rawType === "villas"
       ? "villa"
+      : rawType === "any" || rawType === "all" || rawType === "all property types"
+      ? ""
       : rawType;
-  const transaction = searchParams.transaction === "rent" ? "rent" : "buy";
+
+  const rawTx = (searchParams.transaction || "").trim().toLowerCase();
+  const transaction = rawTx === "rent" ? "rent" : rawTx === "buy" || rawTx === "sale" ? "buy" : "all";
+
+  // Determine navbar active tab indicator
+  let headerActive = "search";
+  if (normalizedCategory === "commercial") {
+    headerActive = "commercial";
+  } else if (normalizedCategory === "plot") {
+    headerActive = "plots";
+  } else if (transaction === "buy") {
+    headerActive = "buy";
+  } else if (transaction === "rent") {
+    headerActive = "rent";
+  }
 
   return (
     <div className="search-page-wrapper">
-      <SiteHeader active="search" searchValue={location} />
+      <SiteHeader active={headerActive} searchValue={loc} />
       <main className="page-shell interior-page">
         <div className="breadcrumb">
           <a href="/">Home</a>
           <span>/</span>
           <span>Explore properties</span>
         </div>
+
         <section className="search-page-heading">
           <p className="eyebrow">
-            {location ? `PROPERTIES IN ${location.toUpperCase()}` : "YOUR SEARCH, YOUR PACE"}
+            {headerActive === "commercial"
+              ? "COMMERCIAL REAL ESTATE"
+              : headerActive === "plots"
+              ? "PLOTS & LAND ACQUISITIONS"
+              : transaction === "rent"
+              ? "HOMES FOR RENT"
+              : transaction === "buy"
+              ? "HOMES FOR SALE"
+              : loc
+              ? `PROPERTIES IN ${loc.toUpperCase()}`
+              : "ALL VERIFIED PROPERTIES"}
           </p>
           <h1>
-            {location ? (
+            {loc ? (
               <>
-                Homes in <em>{location}</em>
+                Properties in <em>{loc}</em>
+              </>
+            ) : headerActive === "commercial" ? (
+              <>
+                Commercial Spaces<br />
+                <em>Zero Brokerage.</em>
+              </>
+            ) : headerActive === "plots" ? (
+              <>
+                Plots &amp; Clear Land<br />
+                <em>Direct from Owners.</em>
+              </>
+            ) : transaction === "rent" ? (
+              <>
+                Rental Homes<br />
+                <em>Direct from Owners.</em>
+              </>
+            ) : transaction === "buy" ? (
+              <>
+                Properties for Sale<br />
+                <em>Save Brokerage.</em>
               </>
             ) : (
               <>
@@ -115,102 +163,24 @@ export default function SearchPage({
             )}
           </h1>
           <p>
-            {location
-              ? `Browse direct owner listings in ${location}. Filter by price, bedrooms and configuration.`
-              : "Browse with a clear head. Compare the details that matter to you."}
+            {loc
+              ? `Browse verified direct owner listings in ${loc}. Filter by price, bedrooms, furnishing and configuration.`
+              : headerActive === "commercial"
+              ? "Explore verified offices, retail shops, warehouses and co-working spaces across India without broker fees."
+              : headerActive === "plots"
+              ? "Discover residential, agricultural and commercial plots with clear titles and demarcation."
+              : transaction === "rent"
+              ? "Explore apartments, independent floors and houses for rent directly from verified landlords."
+              : transaction === "buy"
+              ? "Discover verified apartments, villas, and independent houses for sale with zero middleman commission."
+              : "Browse verified direct owner properties across India. Compare prices, specs and connect securely."}
           </p>
         </section>
-        <form action="/search" className="search-card search-page-form">
-          <div className="search-field">
-            <label htmlFor="location">Location</label>
-            <input
-              id="location"
-              name="location"
-              defaultValue={location}
-              placeholder="City, area or PIN code"
-            />
-          </div>
-          <div className="search-field">
-            <label htmlFor="transaction">Looking to</label>
-            <select id="transaction" name="transaction" defaultValue={transaction}>
-              <option value="buy">Buy</option>
-              <option value="rent">Rent</option>
-            </select>
-          </div>
-          <div className="search-field">
-            <label htmlFor="type">Property type</label>
-            <select id="type" name="type" defaultValue={type}>
-              <option value="all property types">All types</option>
-              <option value="apartment">Apartment / flat</option>
-              <option value="house">Independent house</option>
-              <option value="villa">Villa</option>
-              <option value="plot">Plot / land</option>
-              <option value="commercial">Commercial property</option>
-              <option value="pg">PG &amp; Co-living</option>
-            </select>
-          </div>
-          <div className="search-field">
-            <label htmlFor="minPrice">Min price (₹)</label>
-            <input
-              id="minPrice"
-              name="minPrice"
-              type="number"
-              min="0"
-              inputMode="numeric"
-              defaultValue={searchParams.minPrice}
-              placeholder="No minimum"
-            />
-          </div>
-          <div className="search-field">
-            <label htmlFor="maxPrice">Max price (₹)</label>
-            <input
-              id="maxPrice"
-              name="maxPrice"
-              type="number"
-              min="0"
-              inputMode="numeric"
-              defaultValue={searchParams.maxPrice}
-              placeholder="No maximum"
-            />
-          </div>
-          <div className="search-field">
-            <label htmlFor="minBedrooms">Bedrooms</label>
-            <select id="minBedrooms" name="minBedrooms" defaultValue={searchParams.minBedrooms || ""}>
-              <option value="">Any bedrooms</option>
-              <option value="1">1+ bedroom</option>
-              <option value="2">2+ bedrooms</option>
-              <option value="3">3+ bedrooms</option>
-              <option value="4">4+ bedrooms</option>
-              <option value="5">5+ bedrooms</option>
-            </select>
-          </div>
-          <div className="search-field">
-            <label htmlFor="minBathrooms">Bathrooms</label>
-            <select id="minBathrooms" name="minBathrooms" defaultValue={searchParams.minBathrooms || ""}>
-              <option value="">Any bathrooms</option>
-              <option value="1">1+ bathroom</option>
-              <option value="2">2+ bathrooms</option>
-              <option value="3">3+ bathrooms</option>
-              <option value="4">4+ bathrooms</option>
-            </select>
-          </div>
-          <div className="search-field">
-            <label htmlFor="furnishing">Furnishing</label>
-            <select id="furnishing" name="furnishing" defaultValue={searchParams.furnishing || ""}>
-              <option value="">Any furnishing</option>
-              <option value="furnished">Furnished</option>
-              <option value="semi-furnished">Semi-furnished</option>
-              <option value="unfurnished">Unfurnished</option>
-            </select>
-          </div>
-          <button className="button button-primary" type="submit">
-            Update search ↗
-          </button>
-        </form>
+
         <PropertySearchResults
-          location={location}
+          location={loc}
           transaction={transaction}
-          category={type}
+          category={normalizedCategory}
           minPrice={searchParams.minPrice}
           maxPrice={searchParams.maxPrice}
           minBedrooms={searchParams.minBedrooms}
@@ -218,6 +188,7 @@ export default function SearchPage({
           furnishing={searchParams.furnishing}
           initialSort={searchParams.sort}
         />
+
         <SiteFooter />
       </main>
     </div>

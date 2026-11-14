@@ -8,8 +8,10 @@ export class ListPropertiesQueryDto {
 
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(80) city?: string;
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(80) locality?: string;
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(80) state?: string;
   @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(80) categoryId?: string;
-  @IsOptional() @IsIn(['sale', 'rent']) listingType?: 'sale' | 'rent';
+  @IsOptional() @Transform(({ value }) => typeof value === 'string' ? value.trim() : value) @IsString() @MaxLength(80) type?: string;
+  @IsOptional() @IsIn(['sale', 'rent', 'all']) listingType?: 'sale' | 'rent' | 'all';
 
   @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(100000000000)
   minPrice?: number;

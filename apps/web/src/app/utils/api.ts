@@ -18,6 +18,14 @@ export async function fetchApi(path: string, init?: RequestInit): Promise<Respon
   const upstreamUrl = `${configuredApiBase}${cleanPath}`;
 
   if (typeof window !== "undefined") {
+    if (configuredApiBase.startsWith("http")) {
+      try {
+        const res = await fetch(upstreamUrl, init);
+        if (res.ok || res.status === 401 || res.status === 403) return res;
+      } catch {
+        // Fall back to same-origin proxy
+      }
+    }
     try {
       const res = await fetch(sameOriginUrl, init);
       if (res.ok || res.status === 401 || res.status === 403) return res;
