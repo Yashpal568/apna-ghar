@@ -6871,12 +6871,8 @@ body:has(.auth-page) .ag-bottom-nav,
 /* Tablet landscape & medium screens (1024px to 1200px) */
 @media (max-width: 1200px) and (min-width: 981px){
   .agh-market-header-scope .agh-top-search{
-    flex-basis: 200px !important;
-    max-width: 220px !important;
-  }
-  .agh-market-header-scope .agh-desktop-nav a[href*="commercial"],
-  .agh-market-header-scope .agh-desktop-nav a[href*="plot"]{
-    display: none !important;
+    flex-basis: 180px !important;
+    max-width: 200px !important;
   }
 }
 

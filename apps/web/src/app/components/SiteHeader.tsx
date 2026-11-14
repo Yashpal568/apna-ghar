@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useAuth, useClerk, useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import MarketplaceHeader from "./MarketplaceHeader";
@@ -47,6 +48,37 @@ function AuthenticatedHeader({
 
 export default function SiteHeader({ active = "home", searchValue, onSearchChange }: Props) {
   const pathname = usePathname();
+  const [urlActive, setUrlActive] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const computeActiveFromUrl = () => {
+      const path = window.location.pathname;
+      if (path.startsWith("/search")) {
+        const sp = new URLSearchParams(window.location.search);
+        const t = (sp.get("type") || sp.get("categoryId") || "").trim().toLowerCase();
+        const tx = (sp.get("transaction") || "").trim().toLowerCase();
+        if (t === "commercial") {
+          setUrlActive("commercial");
+        } else if (t === "plot" || t === "plots") {
+          setUrlActive("plots");
+        } else if (tx === "buy") {
+          setUrlActive("buy");
+        } else if (tx === "rent") {
+          setUrlActive("rent");
+        } else {
+          setUrlActive("search");
+        }
+      } else {
+        setUrlActive(null);
+      }
+    };
+
+    computeActiveFromUrl();
+    window.addEventListener("popstate", computeActiveFromUrl);
+    return () => window.removeEventListener("popstate", computeActiveFromUrl);
+  }, [pathname]);
+
   const current =
     active !== "home"
       ? active
@@ -64,10 +96,12 @@ export default function SiteHeader({ active = "home", searchValue, onSearchChang
                 ? "account"
                 : "home";
 
+  const effectiveActive = urlActive ?? current;
+
   if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
     return (
       <MarketplaceHeader
-        active={current}
+        active={effectiveActive}
         isLoaded={true}
         isSignedIn={false}
         user={null}
@@ -80,7 +114,7 @@ export default function SiteHeader({ active = "home", searchValue, onSearchChang
 
   return (
     <AuthenticatedHeader
-      active={current}
+      active={effectiveActive}
       searchValue={searchValue}
       onSearchChange={onSearchChange}
       pathname={pathname}

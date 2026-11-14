@@ -219,14 +219,15 @@ export default function PropertySearchResults({
     propFurnishing,
   ]);
 
-  // Handle browser back/forward buttons
+  // Handle browser back/forward buttons and initial mount URL synchronization
   useEffect(() => {
-    const handlePopState = () => {
+    const handleUrlSync = () => {
       const sp = new URLSearchParams(window.location.search);
       const loc = sp.get("location") || "";
       const rawTx = (sp.get("transaction") || "").toLowerCase();
       const tx = rawTx === "rent" ? "rent" : rawTx === "buy" || rawTx === "sale" ? "buy" : "all";
-      const cat = sp.get("type") || sp.get("categoryId") || "";
+      const rawCat = (sp.get("type") || sp.get("categoryId") || "").toLowerCase();
+      const cat = normalizeCategory(rawCat) || "";
       const minP = sp.get("minPrice") || "";
       const maxP = sp.get("maxPrice") || "";
       const beds = sp.get("minBedrooms") || "";
@@ -256,8 +257,14 @@ export default function PropertySearchResults({
         furnishing: furn,
       });
     };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
+
+    // If query string has parameters, synchronize immediately on mount
+    if (typeof window !== "undefined" && window.location.search && window.location.search.length > 1) {
+      handleUrlSync();
+    }
+
+    window.addEventListener("popstate", handleUrlSync);
+    return () => window.removeEventListener("popstate", handleUrlSync);
   }, []);
 
   // Update browser URL query string without full page reload
@@ -282,6 +289,7 @@ export default function PropertySearchResults({
     const qs = sp.toString();
     const nextUrl = qs ? `/search?${qs}` : "/search";
     window.history.pushState({}, "", nextUrl);
+    window.dispatchEvent(new Event("popstate"));
   };
 
   // Form submit handler

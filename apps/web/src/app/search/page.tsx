@@ -3,6 +3,9 @@ import PropertySearchResults from "../components/PropertySearchResults";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function generateMetadata({
   searchParams,
 }: {
