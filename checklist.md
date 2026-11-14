@@ -67,6 +67,17 @@ This checklist tracks verified repository automation separately from manual envi
   - [x] Auth loading state: renders layout-stable placeholder skeleton without shifts.
   - [x] Dynamic session transitions: Sign In, Sign Out, and protected route redirection (`/list-property`) verified live in Chrome.
 
+## Critical Security Fix — Private Multi-Tenant Messaging Isolation
+
+- [x] Edge middleware protection: Added `/messages(.*)` to `isProtectedRoute` in `apps/web/src/middleware.ts`; unauthenticated requests return `307` redirect to `/sign-in?redirect_url=/messages`.
+- [x] Eliminated prototype demo data leakage: Completely removed `DEFAULT_CONVERSATIONS`, static mock offer cards, and hardcoded participant names from `MessagesCenter.tsx`.
+- [x] Client session & cache isolation: Added automatic state flush when user ID changes or logs out; added strict `Cache-Control: private, no-cache, no-store, must-revalidate` on all conversation proxy endpoints.
+- [x] Backend participant isolation & ID enumeration prevention: Hardened `ConversationsController` to query `{ _id, participantIds: req.auth.userId }` on all mutating routes (`sendMessage`, `createOffer`, `counterOffer`), returning consistent 404s without disclosing conversation existence.
+- [x] All 14 API unit test suites (83 tests) and 3 e2e test suites (12 tests) passing.
+- [x] Monorepo full typecheck passed with 0 errors across API, Web, and Mobile.
+- [x] Incident documentation created at `docs/security/MESSAGING-PRIVACY-INCIDENT.md`.
+- [x] Multi-tenant acceptance report created at `docs/testing/MESSAGING-MULTITENANT-ACCEPTANCE.md`.
+
 ## Milestone M4 Live Browser Acceptance
 
 - [x] Tested all 8 admin routes live in Google Chrome (`/admin`, `/admin/users`, `/admin/listings`, `/admin/reports`, `/admin/categories`, `/admin/audit-logs`, `/admin/plans`, `/admin/settings`).

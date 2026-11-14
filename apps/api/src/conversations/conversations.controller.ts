@@ -287,9 +287,11 @@ export class ConversationsController {
     const text = body.text?.trim() || '';
     const attachment = body.attachment;
     if (!text && !attachment) throw new BadRequestException('Write a message first.');
-    const conversation = await this.conversations.findById(conversationId).exec();
+    const conversation = await this.conversations.findOne({
+      _id: new Types.ObjectId(conversationId),
+      participantIds: request.auth.userId,
+    }).exec();
     if (!conversation) throw new NotFoundException('Conversation not found.');
-    this.assertParticipant(conversation.participantIds, request.auth.userId);
     await this.consumeMessageQuota(request.auth.userId);
     const recipientId = conversation.ownerId === request.auth.userId ? conversation.buyerId : conversation.ownerId;
     const sentAt = new Date();
@@ -348,9 +350,11 @@ export class ConversationsController {
   @Post(':conversationId/offers')
   async createOffer(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string, @Body() body: CreateOfferDto) {
     if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
-    const conversation = await this.conversations.findById(conversationId).exec();
+    const conversation = await this.conversations.findOne({
+      _id: new Types.ObjectId(conversationId),
+      participantIds: request.auth.userId,
+    }).exec();
     if (!conversation) throw new NotFoundException('Conversation not found.');
-    this.assertParticipant(conversation.participantIds, request.auth.userId);
     if (conversation.buyerId !== request.auth.userId) {
       throw new ForbiddenException('Only the buyer can submit the initial property proposal. Use counter-offer to respond as the owner.');
     }
@@ -396,15 +400,13 @@ export class ConversationsController {
       participantIds: request.auth.userId,
     }).exec();
     if (!conversation) throw new NotFoundException('Conversation not found.');
-    this.assertParticipant(conversation.participantIds, request.auth.userId);
     const previous = await this.offers.findOne({
       _id: new Types.ObjectId(offerId),
       conversationId: new Types.ObjectId(conversationId),
+      recipientId: request.auth.userId,
+      status: 'pending',
     }).exec();
     if (!previous) throw new NotFoundException('Offer not found.');
-    if (previous.recipientId !== request.auth.userId || previous.status !== 'pending') {
-      throw new ForbiddenException('Only the recipient can counter a pending offer.');
-    }
     await this.consumeMessageQuota(request.auth.userId);
     const counter = await this.offers.create({
       conversationId: new Types.ObjectId(conversationId),

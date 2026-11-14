@@ -5,6 +5,7 @@ const isProtectedRoute = createRouteMatcher([
   "/my-listings(.*)",
   "/list-property(.*)",
   "/admin(.*)",
+  "/messages(.*)",
 ]);
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
@@ -13,7 +14,8 @@ const clerkHandler = clerkMiddleware(async (auth, request) => {
     const { userId } = await auth();
     if (!userId) {
       const signInUrl = new URL("/sign-in", request.url);
-      signInUrl.searchParams.set("redirect_url", request.url);
+      const target = request.nextUrl.pathname + request.nextUrl.search;
+      signInUrl.searchParams.set("redirect_url", target || "/messages");
       return NextResponse.redirect(signInUrl);
     }
 

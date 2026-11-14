@@ -11,7 +11,9 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept",
-  "Cache-Control": "no-store",
+  "Cache-Control": "private, no-cache, no-store, must-revalidate",
+  "Pragma": "no-cache",
+  "Expires": "0",
 };
 
 function errorResponse(message: string, status: number) {

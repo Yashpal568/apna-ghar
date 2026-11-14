@@ -134,7 +134,7 @@ describe('ConversationsController', () => {
       lastMessageAt: new Date('2026-01-01T00:00:00.000Z'),
       save: jest.fn().mockResolvedValue(undefined),
     };
-    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
     const response = await controller.sendMessage({ auth: { userId: buyer } }, '507f1f77bcf86cd799439011', { text: '  Is the property available?  ' });
     expect(response.success).toBe(true);
     expect(response.message).toEqual(expect.objectContaining({ senderId: buyer, text: 'Is the property available?' }));
@@ -158,7 +158,7 @@ describe('ConversationsController', () => {
       lastMessageAt: new Date('2026-01-01T00:00:00.000Z'),
       save: jest.fn().mockResolvedValue(undefined),
     };
-    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
     const attachment = {
       url: 'https://res.cloudinary.com/example/image/upload/sample.jpg',
       filename: 'property_doc.jpg',
@@ -189,15 +189,10 @@ describe('ConversationsController', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('does not allow a non-participant to send a message', async () => {
-    const conversation = {
-      participantIds: [buyer, owner],
-      messages: [],
-      save: jest.fn(),
-    };
-    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+  it('does not allow a non-participant to send a message and returns not found to prevent ID enumeration', async () => {
+    conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(null) });
     await expect(controller.sendMessage({ auth: { userId: 'user_stranger' } }, '507f1f77bcf86cd799439011', { text: 'Hello' }))
-      .rejects.toBeInstanceOf(ForbiddenException);
+      .rejects.toBeInstanceOf(NotFoundException);
     expect(conversations.updateOne).not.toHaveBeenCalled();
   });
 
@@ -237,7 +232,7 @@ describe('ConversationsController', () => {
       participantIds: [buyer, owner], ownerId: owner, buyerId: buyer,
       messages: [], unreadCountByUser: new Map<string, number>(), save: jest.fn(),
     };
-    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
     messageRateLimits.findOneAndUpdate
       .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(null) })
       .mockReturnValueOnce({ exec: jest.fn().mockResolvedValue(null) })
@@ -251,7 +246,7 @@ describe('ConversationsController', () => {
 
   it('creates a buyer proposal using the live property asking price', async () => {
     const conversation = { _id: '507f1f77bcf86cd799439012', propertyId: '507f1f77bcf86cd799439011', buyerId: buyer, ownerId: owner, participantIds: [buyer, owner] };
-    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
+    conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
     properties.findById.mockReturnValue(chain({ status: 'active', deletedAt: null, priceAmount: 5000000 }));
     offers.create.mockResolvedValue({ _id: '507f1f77bcf86cd799439013', amount: 4500000, status: 'pending' });
     const result = await controller.createOffer({ auth: { userId: buyer } }, '507f1f77bcf86cd799439012', { amount: 4500000, message: 'Can we close this week?' });
@@ -262,7 +257,7 @@ describe('ConversationsController', () => {
   });
 
   it('does not allow a seller to create the buyer initial proposal', async () => {
-    conversations.findById.mockReturnValue({ exec: jest.fn().mockResolvedValue({
+    conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue({
       propertyId: '507f1f77bcf86cd799439011', buyerId: buyer, ownerId: owner, participantIds: [buyer, owner],
     }) });
     await expect(controller.createOffer({ auth: { userId: owner } }, '507f1f77bcf86cd799439012', { amount: 4000000 }))
