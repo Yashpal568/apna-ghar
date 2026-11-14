@@ -107,7 +107,7 @@ export default function MarketplaceHeader({
 
   return (
     <div className="agh-market-header-scope">
-      <header className="agh-header">
+      <header className={`agh-header ${mobileSearchOpen ? "mobile-search-active" : ""}`}>
         <div className="agh-header-main">
           {/* Brand Logo */}
           <a className="agh-brand" href="/" aria-label="Apna Ghar home">
@@ -153,57 +153,33 @@ export default function MarketplaceHeader({
 
           {/* Desktop & Mobile Header Actions */}
           <div className="agh-header-actions">
-            {/* Mobile Search Toggle Icon (Mobile Screen Only) */}
+            {/* Mobile Search Trigger Icon (shadcn outline button) */}
             <button
               type="button"
-              className={`agh-mobile-search-toggle ${mobileSearchOpen ? "is-active" : ""}`}
+              className="agh-mobile-search-toggle"
               onClick={() => {
-                setMobileSearchOpen((prev) => {
-                  const next = !prev;
-                  if (next) {
-                    setMenuOpen(false);
-                    setTimeout(() => {
-                      mobileSearchInputRef.current?.focus();
-                    }, 120);
-                  }
-                  return next;
-                });
+                setMobileSearchOpen(true);
+                setMenuOpen(false);
+                setTimeout(() => {
+                  mobileSearchInputRef.current?.focus();
+                }, 100);
               }}
-              aria-expanded={mobileSearchOpen}
-              aria-controls="agh-mobile-search-bar"
-              aria-label={mobileSearchOpen ? "Close search bar" : "Open search bar"}
+              aria-label="Search properties"
             >
-              {mobileSearchOpen ? (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              ) : (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <circle cx="11" cy="11" r="7.5" />
-                  <line x1="21" y1="21" x2="16.5" y2="16.5" />
-                </svg>
-              )}
+              <svg
+                width="19"
+                height="19"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
             </button>
 
             <ThemePicker compact />
@@ -336,28 +312,99 @@ export default function MarketplaceHeader({
           </button>
         </div>
 
-        {/* Mobile Search Bar (Animated Expandable for Mobile Screen Only) */}
-        <div
-          className={`agh-mobile-search ${mobileSearchOpen ? "is-open" : ""}`}
-          id="agh-mobile-search-bar"
-        >
-          <form
-            action="/search"
-            method="GET"
-            onSubmit={() => setMobileSearchOpen(false)}
-          >
-            <span aria-hidden="true">⌕</span>
-            <input
-              ref={mobileSearchInputRef}
-              name="location"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder="Search city or locality…"
-              aria-label="Search properties"
-            />
-            <button type="submit">Search</button>
-          </form>
-        </div>
+        {/* Mobile Full In-Navbar Search Bar (Replaces Navbar on Mobile when Open) */}
+        {mobileSearchOpen && (
+          <div className="agh-mobile-search-bar" role="search" aria-label="Search properties">
+            <form
+              action="/search"
+              method="GET"
+              className="agh-mobile-search-form"
+              onSubmit={() => setMobileSearchOpen(false)}
+            >
+              {/* Back to normal navbar button (Lucide ArrowLeft) */}
+              <button
+                type="button"
+                className="agh-mobile-search-back"
+                onClick={() => setMobileSearchOpen(false)}
+                aria-label="Close search and return to navbar"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="m12 19-7-7 7-7" />
+                  <path d="M19 12H5" />
+                </svg>
+              </button>
+
+              {/* shadcn Input Box */}
+              <div className="agh-mobile-search-input-box">
+                <svg
+                  className="agh-mobile-search-icon"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input
+                  ref={mobileSearchInputRef}
+                  name="location"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  placeholder="Search city, locality, project..."
+                  aria-label="Search properties"
+                  autoComplete="off"
+                />
+                {value ? (
+                  <button
+                    type="button"
+                    className="agh-mobile-search-clear"
+                    onClick={() => {
+                      setValue("");
+                      mobileSearchInputRef.current?.focus();
+                    }}
+                    aria-label="Clear search text"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M18 6 6 18" />
+                      <path d="m6 6 12 12" />
+                    </svg>
+                  </button>
+                ) : null}
+              </div>
+
+              {/* shadcn Primary Submit Button */}
+              <button type="submit" className="agh-mobile-search-btn">
+                Search
+              </button>
+            </form>
+          </div>
+        )}
 
         {/* Mobile Navigation Drawer */}
         {menuOpen && (

@@ -5665,7 +5665,7 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
  .agh-home-redesign .agh-home-mobile-nav a.post{color:#005bea!important}
 }
 @media(prefers-reduced-motion:reduce){.agh-home-redesign *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-
+.agh-home-redesign .agh-home-footer>div>strong{margin-bottom:5px!important;color:#0f172a!important;fo
 /* The search form now lives inside the navy hero, matching the Stitch composition */
 .agh-home-redesign .agh-stitch-hero>.agh-home-search-panel{
   width:min(100%,1060px)!important;max-width:1060px!important;margin:0 auto!important;
@@ -6863,10 +6863,8 @@ body:has(.auth-page) .ag-bottom-nav,
   font-size: 22px !important;
   cursor: pointer !important;
 }
-.agh-market-header-scope .agh-mobile-search-toggle{
-  display: none !important;
-}
-.agh-market-header-scope .agh-mobile-search{
+.agh-market-header-scope .agh-mobile-search-toggle,
+.agh-market-header-scope .agh-mobile-search-bar{
   display: none !important;
 }
 
@@ -6878,122 +6876,36 @@ body:has(.auth-page) .ag-bottom-nav,
   }
 }
 
-/* Tablet portrait (768px to 980px) */
-@media (max-width: 980px) and (min-width: 768px){
-  .agh-market-header-scope .agh-header-main,
-  .agh-home-redesign .agh-market-header-scope .agh-header-main{
-    min-height: 64px !important;
-    padding: 8px 16px !important;
-  }
-  .agh-market-header-scope .agh-top-search,
-  .agh-market-header-scope .agh-desktop-nav{
-    display: none !important;
-  }
-  .agh-market-header-scope .agh-mobile-search-toggle{
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 38px !important;
-    height: 38px !important;
-    min-height: 38px !important;
-    max-width: 38px !important;
-    padding: 0 !important;
-    border: 1px solid var(--color-border) !important;
-    border-radius: 11px !important;
-    background: var(--color-surface) !important;
-    color: var(--color-text) !important;
-    cursor: pointer !important;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    flex-shrink: 0 !important;
-  }
-  .agh-market-header-scope .agh-mobile-search-toggle:hover{
-    background: var(--color-surface-hover, rgba(0, 0, 0, 0.04)) !important;
-    border-color: var(--color-primary) !important;
-  }
-  .agh-market-header-scope .agh-mobile-search-toggle.is-active{
-    background: var(--color-primary) !important;
-    border-color: var(--color-primary) !important;
-    color: #ffffff !important;
-  }
-  .agh-market-header-scope .agh-menu-toggle{
-    display: grid !important;
-  }
-  .agh-market-header-scope .agh-mobile-search{
-    display: block !important;
-    max-height: 0 !important;
-    opacity: 0 !important;
-    overflow: hidden !important;
-    padding: 0 16px !important;
-    margin: 0 !important;
-    pointer-events: none !important;
-    transform: translateY(-8px);
-    transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    will-change: max-height, opacity, transform;
-  }
-  .agh-market-header-scope .agh-mobile-search.is-open{
-    max-height: 64px !important;
-    opacity: 1 !important;
-    padding: 0 16px 10px !important;
-    pointer-events: auto !important;
-    transform: translateY(0);
-  }
-  .agh-market-header-scope .agh-mobile-search form{
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    min-height: 42px !important;
-    padding: 4px 6px 4px 12px !important;
-    border: 1px solid var(--color-border) !important;
-    border-radius: 12px !important;
-    background: var(--color-surface-subtle) !important;
-  }
-  .agh-market-header-scope .agh-mobile-search input{
-    flex: 1 !important;
-    border: 0 !important;
-    outline: 0 !important;
-    background: transparent !important;
-    color: var(--color-text) !important;
-    font-size: 13px !important;
-  }
-  .agh-market-header-scope .agh-mobile-search button{
-    min-height: 32px !important;
-    padding: 0 12px !important;
-    border: 0 !important;
-    border-radius: 8px !important;
-    background: var(--color-primary) !important;
-    color: #fff !important;
-    font-size: 11px !important;
-    font-weight: 700 !important;
-  }
-}
-
-/* Mobile (< 768px) */
-@media (max-width: 767px){
+/* Tablet portrait & Mobile (<= 980px) */
+@media (max-width: 980px){
+  /* 1. Header main row height & padding */
   .agh-market-header-scope .agh-header-main,
   .agh-home-redesign .agh-market-header-scope .agh-header-main{
     min-height: 58px !important;
     padding: 6px 12px !important;
     gap: 8px !important;
   }
+
   .agh-market-header-scope .agh-brand-word{
     font-size: 16px !important;
   }
   .agh-market-header-scope .agh-brand-word small{
     display: none !important;
   }
+
   .agh-market-header-scope .agh-top-search,
   .agh-market-header-scope .agh-desktop-nav,
   .agh-market-header-scope .agh-post-btn{
     display: none !important;
   }
+
   .agh-market-header-scope .agh-header-actions{
     display: flex !important;
     align-items: center !important;
     gap: 6px !important;
   }
+
+  /* 2. Mobile Search Trigger (shadcn outline button) */
   .agh-market-header-scope .agh-mobile-search-toggle{
     display: inline-flex !important;
     align-items: center !important;
@@ -7004,78 +6916,187 @@ body:has(.auth-page) .ag-bottom-nav,
     max-width: 38px !important;
     padding: 0 !important;
     border: 1px solid var(--color-border) !important;
-    border-radius: 11px !important;
+    border-radius: 10px !important;
     background: var(--color-surface) !important;
     color: var(--color-text) !important;
     cursor: pointer !important;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: all 0.15s ease-in-out !important;
     flex-shrink: 0 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
   }
   .agh-market-header-scope .agh-mobile-search-toggle:hover{
-    background: var(--color-surface-hover, rgba(0, 0, 0, 0.04)) !important;
-    border-color: var(--color-primary) !important;
+    background: var(--color-surface-hover, rgba(0, 0, 0, 0.05)) !important;
+    border-color: var(--color-text-subtle, var(--color-border)) !important;
+    color: var(--color-primary) !important;
   }
-  .agh-market-header-scope .agh-mobile-search-toggle.is-active{
-    background: var(--color-primary) !important;
-    border-color: var(--color-primary) !important;
-    color: #ffffff !important;
+  .agh-market-header-scope .agh-mobile-search-toggle:active{
+    transform: scale(0.96) !important;
   }
+
   .agh-market-header-scope .agh-menu-toggle{
     display: grid !important;
     width: 38px !important;
     height: 38px !important;
     flex: 0 0 38px !important;
   }
-  .agh-market-header-scope .agh-mobile-search{
-    display: block !important;
-    max-height: 0 !important;
-    opacity: 0 !important;
-    overflow: hidden !important;
-    padding: 0 12px !important;
-    margin: 0 !important;
-    pointer-events: none !important;
-    transform: translateY(-8px);
-    transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    will-change: max-height, opacity, transform;
+
+  /* 3. IN-NAVBAR SEARCH REPLACEMENT: when search is open, navbar main row is replaced */
+  .agh-market-header-scope .agh-header.mobile-search-active .agh-header-main{
+    display: none !important;
   }
-  .agh-market-header-scope .agh-mobile-search.is-open{
-    max-height: 60px !important;
-    opacity: 1 !important;
-    padding: 0 12px 10px !important;
-    pointer-events: auto !important;
-    transform: translateY(0);
+
+  .agh-market-header-scope .agh-mobile-search-bar{
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 58px !important;
+    padding: 8px 12px !important;
+    box-sizing: border-box !important;
+    background: var(--color-surface) !important;
+    animation: aghShadcnSearchFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   }
-  .agh-market-header-scope .agh-mobile-search form{
+
+  @keyframes aghShadcnSearchFadeIn{
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.99);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .agh-market-header-scope .agh-mobile-search-form{
     display: flex !important;
     align-items: center !important;
     gap: 8px !important;
-    min-height: 40px !important;
-    padding: 4px 6px 4px 10px !important;
-    border: 1px solid var(--color-border) !important;
-    border-radius: 12px !important;
-    background: var(--color-surface-subtle) !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
-  .agh-market-header-scope .agh-mobile-search input{
+
+  /* Back to navbar button (shadcn ghost button with Lucide ArrowLeft) */
+  .agh-market-header-scope .agh-mobile-search-back{
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    background: transparent !important;
+    color: var(--color-text) !important;
+    cursor: pointer !important;
+    transition: background 0.15s ease, transform 0.1s ease !important;
+    flex-shrink: 0 !important;
+  }
+  .agh-market-header-scope .agh-mobile-search-back:hover{
+    background: var(--color-surface-hover, rgba(0, 0, 0, 0.06)) !important;
+  }
+  .agh-market-header-scope .agh-mobile-search-back:active{
+    transform: scale(0.94) !important;
+  }
+
+  /* shadcn Input Box */
+  .agh-market-header-scope .agh-mobile-search-input-box{
+    display: flex !important;
+    align-items: center !important;
     flex: 1 !important;
     min-width: 0 !important;
+    height: 40px !important;
+    padding: 0 10px 0 12px !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 10px !important;
+    background: var(--color-surface-subtle) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease !important;
+    gap: 8px !important;
+  }
+  .agh-market-header-scope .agh-mobile-search-input-box:focus-within{
+    border-color: var(--color-primary) !important;
+    background: var(--color-surface) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent) !important;
+  }
+
+  /* Prefix Lucide Search Icon */
+  .agh-market-header-scope .agh-mobile-search-icon{
+    flex-shrink: 0 !important;
+    color: var(--color-muted) !important;
+    transition: color 0.18s ease !important;
+  }
+  .agh-market-header-scope .agh-mobile-search-input-box:focus-within .agh-mobile-search-icon{
+    color: var(--color-primary) !important;
+  }
+
+  /* Search Input Field */
+  .agh-market-header-scope .agh-mobile-search-input-box input{
+    flex: 1 !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    padding: 0 !important;
     border: 0 !important;
     outline: 0 !important;
     background: transparent !important;
     color: var(--color-text) !important;
-    font-size: 12px !important;
+    font-size: 14px !important;
+    font-weight: 450 !important;
+    font-family: inherit !important;
+    line-height: normal !important;
   }
-  .agh-market-header-scope .agh-mobile-search button{
-    min-height: 30px !important;
-    padding: 0 10px !important;
+  .agh-market-header-scope .agh-mobile-search-input-box input::placeholder{
+    color: var(--color-muted) !important;
+    font-size: 13.5px !important;
+  }
+
+  /* Clear 'X' Button */
+  .agh-market-header-scope .agh-mobile-search-clear{
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    padding: 0 !important;
     border: 0 !important;
-    border-radius: 8px !important;
+    border-radius: 50% !important;
+    background: var(--color-border) !important;
+    color: var(--color-muted) !important;
+    cursor: pointer !important;
+    transition: background 0.15s ease, color 0.15s ease !important;
+    flex-shrink: 0 !important;
+  }
+  .agh-market-header-scope .agh-mobile-search-clear:hover{
+    background: var(--color-text) !important;
+    color: var(--color-surface) !important;
+  }
+
+  /* Submit Search Button (shadcn primary button) */
+  .agh-market-header-scope .agh-mobile-search-btn{
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 38px !important;
+    padding: 0 14px !important;
+    border: 0 !important;
+    border-radius: 9px !important;
     background: var(--color-primary) !important;
-    color: #fff !important;
-    font-size: 11px !important;
-    font-weight: 700 !important;
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    box-shadow: 0 1px 3px rgba(6, 76, 192, 0.28) !important;
+    transition: opacity 0.15s ease, transform 0.1s ease !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+  .agh-market-header-scope .agh-mobile-search-btn:hover{
+    opacity: 0.92 !important;
+  }
+  .agh-market-header-scope .agh-mobile-search-btn:active{
+    transform: scale(0.97) !important;
   }
 }
 
@@ -7726,6 +7747,9 @@ body:has(.auth-page) .ag-bottom-nav,
     padding: 8px 12px !important;
     min-height: 58px !important;
     width: 100% !important;
+  }
+  .agh-market-header-scope .agh-header.mobile-search-active .agh-header-main {
+    display: none !important;
   }
   .agh-market-header-scope .agh-brand {
     min-width: 0 !important;
