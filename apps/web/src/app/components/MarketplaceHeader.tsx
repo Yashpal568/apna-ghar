@@ -36,7 +36,9 @@ export default function MarketplaceHeader({
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const [query, setQuery] = useState("");
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
 
   const value = searchValue ?? query;
   const setValue = onSearchChange ?? setQuery;
@@ -47,6 +49,7 @@ export default function MarketplaceHeader({
       if (e.key === "Escape") {
         setMenuOpen(false);
         setUserMenuOpen(false);
+        setMobileSearchOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -148,8 +151,61 @@ export default function MarketplaceHeader({
             </a>
           </nav>
 
-          {/* Desktop Header Actions */}
+          {/* Desktop & Mobile Header Actions */}
           <div className="agh-header-actions">
+            {/* Mobile Search Toggle Icon (Mobile Screen Only) */}
+            <button
+              type="button"
+              className={`agh-mobile-search-toggle ${mobileSearchOpen ? "is-active" : ""}`}
+              onClick={() => {
+                setMobileSearchOpen((prev) => {
+                  const next = !prev;
+                  if (next) {
+                    setMenuOpen(false);
+                    setTimeout(() => {
+                      mobileSearchInputRef.current?.focus();
+                    }, 120);
+                  }
+                  return next;
+                });
+              }}
+              aria-expanded={mobileSearchOpen}
+              aria-controls="agh-mobile-search-bar"
+              aria-label={mobileSearchOpen ? "Close search bar" : "Open search bar"}
+            >
+              {mobileSearchOpen ? (
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              ) : (
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="7.5" />
+                  <line x1="21" y1="21" x2="16.5" y2="16.5" />
+                </svg>
+              )}
+            </button>
+
             <ThemePicker compact />
 
             {/* STATE C: Authentication Loading Placeholder */}
@@ -265,7 +321,13 @@ export default function MarketplaceHeader({
           <button
             className="agh-menu-toggle"
             type="button"
-            onClick={() => setMenuOpen((v) => !v)}
+            onClick={() => {
+              setMenuOpen((v) => {
+                const next = !v;
+                if (next) setMobileSearchOpen(false);
+                return next;
+              });
+            }}
             aria-expanded={menuOpen}
             aria-controls="agh-mobile-drawer"
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -274,11 +336,19 @@ export default function MarketplaceHeader({
           </button>
         </div>
 
-        {/* Mobile Search Bar */}
-        <div className="agh-mobile-search">
-          <form action="/search" method="GET">
+        {/* Mobile Search Bar (Animated Expandable for Mobile Screen Only) */}
+        <div
+          className={`agh-mobile-search ${mobileSearchOpen ? "is-open" : ""}`}
+          id="agh-mobile-search-bar"
+        >
+          <form
+            action="/search"
+            method="GET"
+            onSubmit={() => setMobileSearchOpen(false)}
+          >
             <span aria-hidden="true">⌕</span>
             <input
+              ref={mobileSearchInputRef}
               name="location"
               value={value}
               onChange={(e) => setValue(e.target.value)}

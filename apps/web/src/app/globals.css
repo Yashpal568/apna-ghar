@@ -4757,7 +4757,6 @@ html[data-theme="amoled"] .agh-market .agh-seller-banner { background:linear-gra
  .agh-market-header-scope .agh-top-search,.agh-market-header-scope .agh-desktop-nav{display:none!important}
  .agh-market-header-scope .agh-header-actions{margin-left:auto;gap:6px}
  .agh-market-header-scope .agh-menu-toggle{display:grid!important}
- .agh-market-header-scope .agh-mobile-search{display:block!important;padding:0 16px 11px!important}
  .agh-home-redesign .agh-home-hero{padding:20px 16px 18px}
  .agh-home-hero-carousel{inset:-10px}
  .agh-home-hero-carousel:after{background:linear-gradient(90deg,color-mix(in srgb,var(--color-surface) 88%,transparent),color-mix(in srgb,var(--color-surface) 77%,transparent)),linear-gradient(180deg,color-mix(in srgb,var(--color-surface) 20%,transparent),color-mix(in srgb,var(--color-surface) 85%,transparent));backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
@@ -6864,6 +6863,9 @@ body:has(.auth-page) .ag-bottom-nav,
   font-size: 22px !important;
   cursor: pointer !important;
 }
+.agh-market-header-scope .agh-mobile-search-toggle{
+  display: none !important;
+}
 .agh-market-header-scope .agh-mobile-search{
   display: none !important;
 }
@@ -6887,12 +6889,56 @@ body:has(.auth-page) .ag-bottom-nav,
   .agh-market-header-scope .agh-desktop-nav{
     display: none !important;
   }
+  .agh-market-header-scope .agh-mobile-search-toggle{
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-width: 38px !important;
+    padding: 0 !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 11px !important;
+    background: var(--color-surface) !important;
+    color: var(--color-text) !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    flex-shrink: 0 !important;
+  }
+  .agh-market-header-scope .agh-mobile-search-toggle:hover{
+    background: var(--color-surface-hover, rgba(0, 0, 0, 0.04)) !important;
+    border-color: var(--color-primary) !important;
+  }
+  .agh-market-header-scope .agh-mobile-search-toggle.is-active{
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
+  }
   .agh-market-header-scope .agh-menu-toggle{
     display: grid !important;
   }
   .agh-market-header-scope .agh-mobile-search{
     display: block !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    padding: 0 16px !important;
+    margin: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(-8px);
+    transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: max-height, opacity, transform;
+  }
+  .agh-market-header-scope .agh-mobile-search.is-open{
+    max-height: 64px !important;
+    opacity: 1 !important;
     padding: 0 16px 10px !important;
+    pointer-events: auto !important;
+    transform: translateY(0);
   }
   .agh-market-header-scope .agh-mobile-search form{
     display: flex !important;
@@ -6948,6 +6994,32 @@ body:has(.auth-page) .ag-bottom-nav,
     align-items: center !important;
     gap: 6px !important;
   }
+  .agh-market-header-scope .agh-mobile-search-toggle{
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-width: 38px !important;
+    padding: 0 !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 11px !important;
+    background: var(--color-surface) !important;
+    color: var(--color-text) !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    flex-shrink: 0 !important;
+  }
+  .agh-market-header-scope .agh-mobile-search-toggle:hover{
+    background: var(--color-surface-hover, rgba(0, 0, 0, 0.04)) !important;
+    border-color: var(--color-primary) !important;
+  }
+  .agh-market-header-scope .agh-mobile-search-toggle.is-active{
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
+  }
   .agh-market-header-scope .agh-menu-toggle{
     display: grid !important;
     width: 38px !important;
@@ -6956,7 +7028,25 @@ body:has(.auth-page) .ag-bottom-nav,
   }
   .agh-market-header-scope .agh-mobile-search{
     display: block !important;
-    padding: 0 12px 8px !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    padding: 0 12px !important;
+    margin: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(-8px);
+    transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: max-height, opacity, transform;
+  }
+  .agh-market-header-scope .agh-mobile-search.is-open{
+    max-height: 60px !important;
+    opacity: 1 !important;
+    padding: 0 12px 10px !important;
+    pointer-events: auto !important;
+    transform: translateY(0);
   }
   .agh-market-header-scope .agh-mobile-search form{
     display: flex !important;
@@ -7639,7 +7729,7 @@ body:has(.auth-page) .ag-bottom-nav,
   }
   .agh-market-header-scope .agh-brand {
     min-width: 0 !important;
-    max-width: calc(100% - 105px) !important;
+    max-width: calc(100% - 145px) !important;
     margin-right: auto !important;
   }
   .agh-market-header-scope .agh-header-actions {
