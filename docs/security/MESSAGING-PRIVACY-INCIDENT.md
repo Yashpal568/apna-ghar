@@ -102,3 +102,4 @@ To prevent cross-session leakage when users share a browser or switch accounts:
 - **Recommendations:**
   - Prohibit hardcoded mock/seed objects in production UI components via ESLint rules or PR review checklist.
   - Maintain the automated route-guard checklist across future milestone feature additions.
+
