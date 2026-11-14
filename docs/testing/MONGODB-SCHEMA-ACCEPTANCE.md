@@ -247,3 +247,4 @@ The Apna Ghar platform utilizes **11 Mongoose database collections/schemas** to 
 | Soft Delete Support | **PASS** | `Property` schema supports soft deletions with `deletedAt` timestamps. |
 | High-Performance Indexing | **PASS** | All high-traffic query paths (sorting, search by city, status, participant filtering) are backed by compound indexes. |
 | Automated Test Suite | **PASS** | `test/schema-validation.spec.ts` passes 36/36 test cases cleanly. |
+

@@ -43,3 +43,4 @@ describe('Categories Module Endpoints (e2e)', () => {
     expect(mockCategoriesService.listActive).toHaveBeenCalled();
   });
 });
+
