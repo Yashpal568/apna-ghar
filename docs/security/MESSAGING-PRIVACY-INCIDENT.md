@@ -96,10 +96,26 @@ To prevent cross-session leakage when users share a browser or switch accounts:
 
 ---
 
-## 7. Remaining Risks & Recommendations
+## 7. Deployment & Production Verification Matrix
 
-- **Risk Level:** **LOW.**
-- **Recommendations:**
-  - Prohibit hardcoded mock/seed objects in production UI components via ESLint rules or PR review checklist.
-  - Maintain the automated route-guard checklist across future milestone feature additions.
+| Component | Target URL | Expected Commit | Live Verification Details | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **GitHub Synchronization** | `https://github.com/Yashpal568/apna-ghar` | `2ccf391` / `abfa8e8` | Commits `abfa8e8` and `2ccf391` cleanly pushed to `origin/main` and `origin/feat/m1-foundation-completion`. | **PASS** |
+| **Cloudflare Worker** | `https://apna-ghar-web.yash38688.workers.dev` | `2ccf391` | Live HTML confirms `data-build-sha="2ccf391f0d104012be1011f7e5f7ff67a5b8f5cf"`. GitHub Actions Run #158 & #159 completed with success. | **PASS** |
+| **Render API** | `https://apna-ghar-api-j4fo.onrender.com/api/v1` | `abfa8e8` | `/health` returns `200 OK`, `/health/ready` returns `checks: { database: 'connected' }`. Unauthenticated requests to all messaging routes return `401 Unauthorized`. | **PASS** |
+| **Unauthenticated Redirect** | `/messages` & `/messages?conversation=...` | Edge Middleware | Immediate `307 Temporary Redirect` to `/sign-in?redirect_url=...`. Zero conversation or participant data rendered. Verified on Desktop (1280x800) and Mobile (390x844). | **PASS** |
+| **API Boundary Security** | `/api/v1/conversations/*` | Hardened Controller | Queries strictly scoped to `request.auth.userId`. Non-participants receive consistent 404 denials; zero ID enumeration. | **PASS** |
+| **Attachment Protection** | `/api/v1/conversations/upload` | ClerkAuthGuard | Unauthenticated uploads strictly rejected with `401 Unauthorized`. Allowed MIME validation and size limits enforced. | **PASS** |
+| **Two-Account Interactive Test** | Live Clerk Dev Mode | Interactive sessions | Browser acceptance verified authenticated empty inbox and sign-out cache clearance. Simultaneous multi-user interactive flow in live browser is marked BLOCKED due to Clerk development instance email OTP/OAuth credential requirements. | **BLOCKED** |
+
+---
+
+## 8. Final Status Summary
+
+- **CODE FIX:** **PASS**
+- **GITHUB PUSH:** **PASS**
+- **CLOUDFLARE DEPLOYMENT:** **PASS**
+- **RENDER DEPLOYMENT:** **PASS**
+- **PRODUCTION SECURITY TEST:** **PASS**
+- **TWO-ACCOUNT ISOLATION:** **BLOCKED** (Simultaneous interactive browser login in Clerk Dev Mode; backend query isolation verified via 83/83 unit and 12/12 e2e automated tests)
 

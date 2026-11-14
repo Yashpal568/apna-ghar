@@ -124,6 +124,13 @@ Browser testing was conducted live against the production Cloudflare deployment 
 
 ---
 
-## 4. Final Sign-Off
+## 4. Final Sign-Off & Status Matrix
 
-All 10 critical security criteria are **PASS**. Private multi-tenant messaging isolation is fully verified and enforced across edge middleware, Next.js client rendering, API proxy routes, and the NestJS backend database queries.
+| Gate | Status | Verification Evidence |
+| :--- | :--- | :--- |
+| **CODE FIX** | **PASS** | Edge route protection in `middleware.ts`, prototype mock data deleted from `MessagesCenter.tsx`, and MongoDB participant query scoping in `conversations.controller.ts`. |
+| **GITHUB PUSH** | **PASS** | Commits `abfa8e8` and `2ccf391` pushed to `origin/main` and `origin/feat/m1-foundation-completion`. |
+| **CLOUDFLARE DEPLOYMENT** | **PASS** | Cloudflare Workers deployed via GitHub Actions runs #158 and #159; live `data-build-sha="2ccf391f0d104012be1011f7e5f7ff67a5b8f5cf"` verified on live endpoint. |
+| **RENDER DEPLOYMENT** | **PASS** | Render backend live at `https://apna-ghar-api-j4fo.onrender.com/api/v1`; `/health` reports `200 OK`, `/ready` confirms database connection. All unauthenticated messaging requests return `401 Unauthorized`. |
+| **PRODUCTION SECURITY TEST** | **PASS** | Live browser and curl tests confirm `307` redirect on `/messages` and `/messages?conversation=...` on Desktop and Mobile; zero mock data leakage; 401 on proxy & API. |
+| **TWO-ACCOUNT ISOLATION** | **BLOCKED** | Single authenticated user empty inbox verified live; simultaneous interactive two-account browser test blocked by Clerk Dev Mode OTP/OAuth requirements; backend database participant isolation verified via 83/83 unit and 12/12 e2e automated tests. |
