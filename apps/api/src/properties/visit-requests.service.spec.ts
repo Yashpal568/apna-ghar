@@ -134,5 +134,61 @@ describe('VisitRequestsService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(requestsModel.create).not.toHaveBeenCalled();
   });
+
+  describe('updateStatus', () => {
+    const requestId = '507f1f77bcf86cd799439022';
+    let mockVisitDoc: { userId: string; propertyId: string; status: string; save: jest.Mock };
+
+    beforeEach(() => {
+      mockVisitDoc = {
+        userId: buyerId,
+        propertyId,
+        status: 'requested',
+        save: jest.fn().mockResolvedValue(true),
+      };
+      (requestsModel as any).findById = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mockVisitDoc),
+      });
+      propertiesModel.findOne.mockReturnValue({
+        select: () => ({
+          lean: () => ({
+            exec: async () => ({ _id: propertyId, ownerId }),
+          }),
+        }),
+      });
+    });
+
+    it('allows owner to confirm a visit request', async () => {
+      const result = await service.updateStatus(ownerId, requestId, 'confirmed');
+      expect(mockVisitDoc.status).toBe('confirmed');
+      expect(mockVisitDoc.save).toHaveBeenCalled();
+    });
+
+    it('allows owner to decline a visit request', async () => {
+      const result = await service.updateStatus(ownerId, requestId, 'declined');
+      expect(mockVisitDoc.status).toBe('declined');
+      expect(mockVisitDoc.save).toHaveBeenCalled();
+    });
+
+    it('allows buyer to cancel their own visit request', async () => {
+      const result = await service.updateStatus(buyerId, requestId, 'cancelled');
+      expect(mockVisitDoc.status).toBe('cancelled');
+      expect(mockVisitDoc.save).toHaveBeenCalled();
+    });
+
+    it('prevents buyer from confirming the visit request', async () => {
+      await expect(service.updateStatus(buyerId, requestId, 'confirmed')).rejects.toThrow();
+      expect(mockVisitDoc.save).not.toHaveBeenCalled();
+    });
+
+    it('prevents stranger from updating the visit request', async () => {
+      await expect(service.updateStatus('stranger_user', requestId, 'confirmed')).rejects.toThrow();
+      expect(mockVisitDoc.save).not.toHaveBeenCalled();
+    });
+
+    it('throws BadRequestException for invalid status', async () => {
+      await expect(service.updateStatus(ownerId, requestId, 'invalid_status')).rejects.toThrow();
+    });
+  });
 });
 

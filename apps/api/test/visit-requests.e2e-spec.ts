@@ -45,6 +45,15 @@ describe('Visit Requests Module Endpoints (e2e)', () => {
         status: 'requested',
       };
     }),
+    updateStatus: jest.fn().mockImplementation(async (userId: string, id: string, status: string) => {
+      if (id === 'non_existent') return null;
+      return {
+        _id: id,
+        userId: 'buyer_user_1',
+        propertyId: '507f1f77bcf86cd799439011',
+        status,
+      };
+    }),
   };
 
   beforeAll(async () => {
@@ -134,6 +143,34 @@ describe('Visit Requests Module Endpoints (e2e)', () => {
       body: JSON.stringify({ preferredDate: '2026-12-20', preferredTime: '14:30' }),
     });
     expect(res.status).toBe(404);
+  });
+
+  it('6. PATCH /api/v1/visit-requests/:id/status - owner confirms visit request', async () => {
+    const res = await fetch(`${await app.getUrl()}/api/v1/visit-requests/507f1f77bcf86cd799439022/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer token' },
+      body: JSON.stringify({ status: 'confirmed' }),
+    });
+    expect(res.status).toBe(200);
+    expect(mockVisitRequestsService.updateStatus).toHaveBeenCalledWith(
+      'user_buyer_1',
+      '507f1f77bcf86cd799439022',
+      'confirmed',
+    );
+  });
+
+  it('7. PATCH /api/v1/visit-requests/:id/respond - owner accepts visit request via respond endpoint', async () => {
+    const res = await fetch(`${await app.getUrl()}/api/v1/visit-requests/507f1f77bcf86cd799439022/respond`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer token' },
+      body: JSON.stringify({ action: 'accept' }),
+    });
+    expect(res.status).toBe(200);
+    expect(mockVisitRequestsService.updateStatus).toHaveBeenCalledWith(
+      'user_buyer_1',
+      '507f1f77bcf86cd799439022',
+      'accept',
+    );
   });
 
   it('Security: Rejects unauthenticated request with 401', async () => {
