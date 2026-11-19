@@ -25,12 +25,24 @@ type MessageAttachment = {
 type Message = {
   _id?: string;
   senderId: string;
+  recipientId?: string;
   text: string;
   sentAt: string;
   isOfferProposal?: boolean;
   offerAmount?: number;
   offerValidity?: string;
+  offerStatus?: string;
   attachment?: MessageAttachment;
+};
+
+type VisitRequestInfo = {
+  _id: string;
+  userId: string;
+  propertyId: string;
+  preferredDate: string;
+  preferredTime: string;
+  message?: string;
+  status: "requested" | "confirmed" | "declined" | "cancelled";
 };
 
 type Conversation = {
@@ -197,6 +209,9 @@ function MessagesCenterAuthenticated() {
   const [currentCounterVal, setCurrentCounterVal] = useState<number>(0);
   const [currentValidity, setCurrentValidity] = useState<"24 Hours" | "48 Hours">("48 Hours");
 
+  // In-person Walkthrough / Visit Request state
+  const [activeVisitRequest, setActiveVisitRequest] = useState<VisitRequestInfo | null>(null);
+
   // Floating Toast
   const [toast, setToast] = useState<{ visible: boolean; title: string; desc: string }>({
     visible: false,
@@ -357,10 +372,48 @@ function MessagesCenterAuthenticated() {
         const res = await fetchApi(`/conversations/${encodeURIComponent(selected)}/messages`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        const offersRes = await fetchApi(`/conversations/${encodeURIComponent(selected)}/offers`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }).catch(() => null);
+
         if (res.ok && !cancelled) {
           const data = await res.json();
-          if (Array.isArray(data?.messages)) {
-            setMessages(data.messages);
+          let combined: Message[] = Array.isArray(data?.messages) ? data.messages : [];
+
+          if (offersRes && offersRes.ok) {
+            const offersData = await offersRes.json().catch(() => null);
+            if (Array.isArray(offersData)) {
+              const offerMsgs: Message[] = offersData.map((o: any) => ({
+                _id: o._id,
+                senderId: o.senderId,
+                recipientId: o.recipientId,
+                text: o.message || `Formal proposal of ₹${Number(o.amount).toLocaleString("en-IN")} submitted with token escrow.`,
+                sentAt: o.createdAt || new Date().toISOString(),
+                isOfferProposal: true,
+                offerAmount: o.amount,
+                offerStatus: o.status,
+              }));
+              combined = [...combined, ...offerMsgs].sort(
+                (a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()
+              );
+            }
+          }
+          setMessages(combined);
+        }
+
+        // Fetch property visit requests
+        const isCurrentOwner = Boolean(user?.id && conv?.ownerId === user.id);
+        const visitRes = await fetchApi(
+          isCurrentOwner ? `/visit-requests/received` : `/visit-requests`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        ).catch(() => null);
+        if (visitRes && visitRes.ok && !cancelled) {
+          const visitData = await visitRes.json().catch(() => null);
+          if (Array.isArray(visitData)) {
+            const match = visitData.find(
+              (v: any) => v.propertyId === conv?.propertyId
+            );
+            setActiveVisitRequest(match || null);
           }
         }
       } catch (err) {
@@ -590,6 +643,103 @@ function MessagesCenterAuthenticated() {
       void fetchMine();
     } catch (err) {
       console.warn("Offer submission fallback:", err);
+    }
+  };
+
+  // Respond to Offer (Accept / Reject)
+  const handleRespondToOffer = async (offerId: string, action: "accept" | "reject") => {
+    if (!selected) return;
+    try {
+      const token = await getToken().catch(() => null);
+      const res = await fetchApi(
+        `/conversations/${encodeURIComponent(selected)}/offers/${encodeURIComponent(offerId)}/respond`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ action }),
+        }
+      );
+      if (res.ok) {
+        showToast(
+          action === "accept" ? "Offer Accepted!" : "Offer Declined",
+          action === "accept"
+            ? "Agreement reached. Zero-brokerage terms apply."
+            : "Proposal declined."
+        );
+        setMessages((prev) =>
+          prev.map((m) =>
+            m._id === offerId
+              ? { ...m, offerStatus: action === "accept" ? "accepted" : "rejected" }
+              : m
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Failed to respond to offer:", err);
+    }
+  };
+
+  // Create Property Walkthrough / Visit Request
+  const handleCreateVisitRequest = async (preferredDate: string, preferredTime: string) => {
+    if (!activeConversation?.propertyId) return;
+    try {
+      const token = await getToken().catch(() => null);
+      const res = await fetchApi(
+        `/visit-requests/${encodeURIComponent(activeConversation.propertyId)}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            preferredDate,
+            preferredTime,
+            message: "Requesting walkthrough tour via Apna Ghar direct connect.",
+          }),
+        }
+      );
+      if (res.ok) {
+        const created = await res.json();
+        setActiveVisitRequest(created);
+        showToast(
+          "Walkthrough Requested!",
+          `Inspection slot proposed for ${preferredDate} at ${preferredTime}.`
+        );
+      }
+    } catch (err) {
+      console.error("Failed to create visit request:", err);
+    }
+  };
+
+  // Confirm or Decline Property Visit Request
+  const handleUpdateVisitStatus = async (status: "confirmed" | "declined") => {
+    if (!activeVisitRequest?._id) return;
+    try {
+      const token = await getToken().catch(() => null);
+      const res = await fetchApi(
+        `/visit-requests/${encodeURIComponent(activeVisitRequest._id)}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ status }),
+        }
+      );
+      if (res.ok) {
+        showToast(
+          status === "confirmed" ? "Visit Confirmed!" : "Visit Declined",
+          `Inspection slot updated to ${status}.`
+        );
+        setActiveVisitRequest((prev) => (prev ? { ...prev, status } : null));
+      }
+    } catch (err) {
+      console.error("Failed to update visit status:", err);
     }
   };
 
@@ -1413,6 +1563,11 @@ function MessagesCenterAuthenticated() {
                       const isMine = m.senderId === user?.id;
 
                       if (m.isOfferProposal) {
+                        const isRecipient = m.recipientId === user?.id || (isOwner && m.senderId !== user?.id);
+                        const isPending = !m.offerStatus || m.offerStatus === "pending";
+                        const isAccepted = m.offerStatus === "accepted";
+                        const isRejected = m.offerStatus === "rejected";
+
                         return (
                           <div
                             key={m._id || `offer-${m.sentAt}`}
@@ -1448,6 +1603,45 @@ function MessagesCenterAuthenticated() {
                                 Escrow Protected
                               </span>
                             </div>
+
+                            {/* Status Badges & Recipient Action Controls */}
+                            {isAccepted && (
+                              <div className="flex items-center gap-1.5 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-bold text-xs">
+                                <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                                Offer Accepted • Binding Zero Brokerage Terms
+                              </div>
+                            )}
+                            {isRejected && (
+                              <div className="flex items-center gap-1.5 p-2 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-bold text-xs">
+                                <span className="material-symbols-outlined text-[16px]">cancel</span>
+                                Proposal Declined
+                              </div>
+                            )}
+                            {isPending && isRecipient && (
+                              <div className="flex items-center gap-2 pt-2 border-t border-outline-variant/30">
+                                <button
+                                  type="button"
+                                  onClick={() => m._id && void handleRespondToOffer(m._id, "accept")}
+                                  className="flex-1 py-2 px-3 rounded-xl bg-secondary text-on-secondary font-bold text-xs flex items-center justify-center gap-1 cursor-pointer hover:bg-secondary-container transition-all border-none"
+                                >
+                                  <span className="material-symbols-outlined text-[15px]">check</span>
+                                  Accept Offer
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => m._id && void handleRespondToOffer(m._id, "reject")}
+                                  className="py-2 px-3 rounded-xl bg-surface-container-high text-on-surface font-bold text-xs flex items-center justify-center gap-1 cursor-pointer hover:bg-surface-container transition-all border-none"
+                                >
+                                  Decline
+                                </button>
+                              </div>
+                            )}
+                            {isPending && !isRecipient && (
+                              <div className="flex items-center gap-1.5 p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 font-medium text-xs">
+                                <span className="material-symbols-outlined text-[15px]">hourglass_top</span>
+                                Pending Counterpart Response
+                              </div>
+                            )}
                           </div>
                         );
                       }
@@ -1503,6 +1697,14 @@ function MessagesCenterAuthenticated() {
                 {/* Bottom Interactive Anchor (Composer + Suggestions) */}
                 <div className="stitch-bottom-anchor">
                   <div className="stitch-chips-tray">
+                    <button
+                      type="button"
+                      className="stitch-chip-btn bg-primary text-on-primary font-bold flex items-center gap-1 shadow-xs hover:bg-primary-container"
+                      onClick={() => setOfferModalOpen(true)}
+                    >
+                      <span className="material-symbols-outlined text-[15px]">handshake</span>
+                      Make Formal Offer
+                    </button>
                     <button
                       type="button"
                       className="stitch-chip-btn bg-secondary-container text-on-secondary-container font-bold"
@@ -1722,6 +1924,15 @@ function MessagesCenterAuthenticated() {
                       </span>
                     </div>
                   )}
+
+                  <button
+                    type="button"
+                    onClick={() => setOfferModalOpen(true)}
+                    className="w-full mt-3 py-2 px-3 rounded-xl bg-primary text-on-primary font-label-md text-xs font-bold hover:bg-primary-container transition-all flex items-center justify-center gap-1.5 border-none cursor-pointer shadow-xs"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">handshake</span>
+                    Make Formal Offer
+                  </button>
                 </div>
 
                 {/* Card 2: RBI Escrow Safety Shield */}
@@ -1809,24 +2020,63 @@ function MessagesCenterAuthenticated() {
                   <p className="font-body-sm text-[11px] text-on-surface-variant m-0 mb-3">
                     Coordinate a convenient walkthrough slot with {rawOwnerName}.
                   </p>
+
+                  {/* Active Visit Request Status */}
+                  {activeVisitRequest && (
+                    <div className="p-2.5 rounded-xl bg-surface-container-low mb-3 border border-outline-variant/30">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-label-sm text-[10px] uppercase font-bold text-outline">
+                          Walkthrough Tour
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${
+                            activeVisitRequest.status === "confirmed"
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400"
+                              : activeVisitRequest.status === "declined"
+                              ? "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-400"
+                              : "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400"
+                          }`}
+                        >
+                          {activeVisitRequest.status.toUpperCase()}
+                        </span>
+                      </div>
+                      <p className="font-bold text-xs text-on-surface m-0 mb-1">
+                        📅 {activeVisitRequest.preferredDate} at {activeVisitRequest.preferredTime}
+                      </p>
+
+                      {isOwner && activeVisitRequest.status === "requested" && (
+                        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-outline-variant/30">
+                          <button
+                            type="button"
+                            onClick={() => void handleUpdateVisitStatus("confirmed")}
+                            className="flex-1 py-1.5 px-2 rounded-lg bg-secondary text-on-secondary font-bold text-xs flex items-center justify-center gap-1 border-none cursor-pointer"
+                          >
+                            ✓ Confirm Slot
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void handleUpdateVisitStatus("declined")}
+                            className="py-1.5 px-2 rounded-lg bg-surface-container-high text-on-surface font-bold text-xs border-none cursor-pointer"
+                          >
+                            Decline
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-2 gap-2 mb-2.5">
                     <button
                       type="button"
                       className="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface text-center font-label-sm text-[10.5px] font-bold border-none cursor-pointer transition-colors"
-                      onClick={() => {
-                        setDraft("Hello, could we schedule a walkthrough for Saturday at 11:00 AM?");
-                        if (inputRef.current) inputRef.current.focus();
-                      }}
+                      onClick={() => void handleCreateVisitRequest("2026-11-28", "11:00")}
                     >
                       Sat • 11:00 AM
                     </button>
                     <button
                       type="button"
                       className="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface text-center font-label-sm text-[10.5px] font-bold border-none cursor-pointer transition-colors"
-                      onClick={() => {
-                        setDraft("Hello, could we schedule a walkthrough for Sunday at 4:00 PM?");
-                        if (inputRef.current) inputRef.current.focus();
-                      }}
+                      onClick={() => void handleCreateVisitRequest("2026-11-29", "16:00")}
                     >
                       Sun • 4:00 PM
                     </button>
@@ -1834,13 +2084,10 @@ function MessagesCenterAuthenticated() {
                   <button
                     type="button"
                     className="w-full py-2 rounded-xl bg-primary text-on-primary font-label-md text-xs font-bold transition-all flex items-center justify-center gap-1 border-none cursor-pointer shadow-xs hover:bg-primary-container"
-                    onClick={() => {
-                      setDraft("Hello, what days and times are convenient for an in-person inspection?");
-                      if (inputRef.current) inputRef.current.focus();
-                    }}
+                    onClick={() => void handleCreateVisitRequest("2026-11-28", "11:00")}
                   >
                     <span className="material-symbols-outlined text-[16px]">calendar_add_on</span>
-                    Request Walkthrough
+                    Schedule Walkthrough
                   </button>
                 </div>
               </aside>

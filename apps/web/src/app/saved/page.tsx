@@ -82,7 +82,10 @@ export default function SavedPage() {
   useEffect(() => {
     const controller = new AbortController();
     void load(controller.signal);
-    const refresh = () => { void load(); };
+    const refresh = (e: Event) => {
+      if ((e as CustomEvent)?.detail?.source === "saved-page-remove") return;
+      void load();
+    };
     window.addEventListener("apna-ghar-saved-change", refresh);
     window.addEventListener("storage", refresh);
     return () => {
@@ -99,7 +102,6 @@ export default function SavedPage() {
     setNotice("");
     setRemovingId(home._id);
     localStorage.setItem("apna-ghar-saved-homes", JSON.stringify(next));
-    window.dispatchEvent(new Event("apna-ghar-saved-change"));
     try {
       if (isSignedIn) {
         const token = await getToken();
@@ -110,6 +112,9 @@ export default function SavedPage() {
         });
         if (!response.ok) throw new Error("Could not remove this saved home from your account.");
       }
+      window.dispatchEvent(
+        new CustomEvent("apna-ghar-saved-change", { detail: { source: "saved-page-remove" } })
+      );
     } catch (error) {
       setHomes(previous);
       localStorage.setItem("apna-ghar-saved-homes", JSON.stringify(previous));
