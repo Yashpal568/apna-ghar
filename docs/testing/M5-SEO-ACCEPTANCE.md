@@ -301,8 +301,8 @@ Time:        4.006 s
 ## 12. FINAL PRODUCTION VERIFICATION
 
 **Audited Production Worker:** `https://apna-ghar-web.yash38688.workers.dev`  
-**GitHub Actions Deployment Run:** `43685139358` / `43599879523`  
-**Verified Active Commit:** `12b47ae` / `ff5d858`  
+**GitHub Actions Deployment Run:** `44475582661` (commit `1cfb1b4`), `43685139358` (commit `12b47ae`), `43599879523` (commit `ff5d858`)  
+**Verified Active Commit:** `1cfb1b4`  
 **Audit Timestamp:** November 19, 2026  
 
 ### 12.1 GitHub Actions Deployment Run Verification
@@ -310,8 +310,8 @@ Inspected `.github/workflows/deploy-cloudflare.yml` and queried the GitHub Actio
 
 | Workflow Metric | Verification Evidence | Result |
 |---|---|:---:|
-| **Latest Workflow Runs** | Run ID `43685139358` (head commit `12b47ae`), Run ID `43599879523` (head commit `ff5d858`) | **PASS** |
-| **Workflow Completion Status** | `status: "completed"`, `conclusion: "success"` for both runs | **PASS** |
+| **Latest Workflow Runs** | Run ID `44475582661` (head commit `1cfb1b4`), Run ID `43685139358` (head commit `12b47ae`), Run ID `43599879523` (head commit `ff5d858`) | **PASS** |
+| **Workflow Completion Status** | `status: "completed"`, `conclusion: "success"` across all production runs | **PASS** |
 | **Build Job Execution** | `npm ci --include=dev` & OpenNext build succeeded with zero errors | **PASS** |
 | **Deployment Job Execution** | Cloudflare Worker successfully deployed with OpenNext assets bound to ASSETS | **PASS** |
 | **Live Commit Verification Step** | `Verify deployed Worker serves this exact commit` step passed with HTTP 200 | **PASS** |
