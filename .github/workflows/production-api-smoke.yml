@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Verify production liveness and MongoDB readiness
         env:
-          API_BASE_URL: https://apna-ghar-api-j4fo.onrender.com/api/v1
+          API_BASE_URL: https://apna-ghar-api-w0dk.onrender.com/api/v1
         run: |
           set -euo pipefail
           curl --retry 10 --retry-all-errors --retry-delay 12 --max-time 25 -fsS "$API_BASE_URL/health" -o /tmp/health.json
