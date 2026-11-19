@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getResolvedApiBase } from "../../../utils/api";
 
 const DEFAULT_CATEGORIES = [
   { key: "apartment", label: "Apartments & flats", icon: "⌂", sortOrder: 1 },
@@ -9,10 +10,7 @@ const DEFAULT_CATEGORIES = [
   { key: "pg", label: "PG & coliving", icon: "▧", sortOrder: 6 },
 ];
 
-const RENDER_API = (
-  process.env.INTERNAL_API_URL ||
-  "https://apna-ghar-api-w0dk.onrender.com/api/v1"
-).replace(/\/$/, "");
+const RENDER_API = getResolvedApiBase();
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from './utils/seo';
+import { getResolvedApiBase } from './utils/api';
 
 const STATIC_ROUTES: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] }[] = [
   { path: '', priority: 1.0, changeFrequency: 'daily' },
@@ -36,9 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Fetch dynamic published properties
   try {
-    const apiBase = (
-      process.env.NEXT_PUBLIC_API_BASE_URL || 'https://apna-ghar-api-w0dk.onrender.com/api/v1'
-    ).replace(/\/$/, '');
+    const apiBase = getResolvedApiBase();
 
     const res = await fetch(`${apiBase}/properties?limit=500`, {
       headers: { Accept: 'application/json' },

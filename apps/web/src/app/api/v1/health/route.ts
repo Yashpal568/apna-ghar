@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
+import { getResolvedApiBase } from "../../../utils/api";
 
-const RENDER_API = (
-  process.env.INTERNAL_API_URL ||
-  "https://apna-ghar-api-w0dk.onrender.com/api/v1"
-).replace(/\/$/, "");
+const RENDER_API = getResolvedApiBase();
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

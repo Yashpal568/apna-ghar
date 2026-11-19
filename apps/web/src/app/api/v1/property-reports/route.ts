@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getResolvedApiBase } from "../../../utils/api";
 
-const API_BASE = (
-  process.env.INTERNAL_API_URL ||
-  process.env.API_UPSTREAM_URL ||
-  (process.env.NODE_ENV !== "production" ? "http://localhost:4000/api/v1" : "") ||
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "https://apna-ghar-api-w0dk.onrender.com/api/v1"
-).replace(/\/$/, "");
+const API_BASE = getResolvedApiBase();
 
 const headers = {
   "Access-Control-Allow-Origin": "*",

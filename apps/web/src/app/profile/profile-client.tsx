@@ -5,13 +5,11 @@ import { useAuth, useClerk, useUser } from "@clerk/nextjs";
 import AccountSettingsPanel from "../components/AccountSettingsPanel";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import { getResolvedApiBase } from "../utils/api";
 
 type Profile = { name: string; email: string; phone: string; city: string; about: string };
 const blank: Profile = { name: "", email: "", phone: "", city: "", about: "" };
-const configuredApi = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
-const api = (configuredApi || (process.env.NODE_ENV === "development"
-  ? "http://localhost:4000/api/v1"
-  : "https://apna-ghar-api-w0dk.onrender.com/api/v1")).replace(/\/$/, "");
+const api = getResolvedApiBase();
 const fallbackPhoto = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=95";
 function friendlyProfileError(detail: string) {
   if (detail === "Authentication is not configured") return "Profile sync is unavailable because the API is missing its Clerk secret configuration. Set CLERK_SECRET_KEY in the API host to the same Clerk instance used by this website, then redeploy. Your changes are not synced yet.";

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getResolvedApiBase } from "../utils/api";
 
 type Property = {
   _id: string; slug: string; title: string; description: string; listingType: "sale" | "rent";
@@ -8,7 +9,7 @@ type Property = {
   areaValue: number; areaUnit: string; bedrooms?: number; bathrooms?: number; parkingCount?: number;
   furnishing?: string; amenities?: string[]; imageUrls?: string[]; publishedAt?: string;
 };
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-w0dk.onrender.com/api/v1").replace(/\/$/, "");
+const apiBase = getResolvedApiBase();
 const money = (amount: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 
 export default function PropertyDetailData({ identifier }: { identifier: string }) {

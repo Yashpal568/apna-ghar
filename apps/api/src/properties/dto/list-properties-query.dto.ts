@@ -3,6 +3,9 @@ import { IsIn, IsInt, IsNumber, IsOptional, IsString, Max, Min, MaxLength } from
 
 export class ListPropertiesQueryDto {
   @IsOptional() @IsString() @MaxLength(120)
+  id?: string;
+
+  @IsOptional() @IsString() @MaxLength(120)
   @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
   q?: string;
 

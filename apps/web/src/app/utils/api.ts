@@ -1,7 +1,18 @@
-export const configuredApiBase = (
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "https://apna-ghar-api-w0dk.onrender.com/api/v1"
-).replace(/\/$/, "");
+export function getResolvedApiBase(): string {
+  const candidates = [
+    process.env.INTERNAL_API_URL,
+    process.env.API_UPSTREAM_URL,
+    process.env.NEXT_PUBLIC_API_BASE_URL,
+  ];
+  for (const candidate of candidates) {
+    if (candidate && typeof candidate === "string" && !candidate.includes("j4fo.onrender.com")) {
+      return candidate.replace(/\/$/, "");
+    }
+  }
+  return "https://apna-ghar-api-w0dk.onrender.com/api/v1";
+}
+
+export const configuredApiBase = getResolvedApiBase();
 
 export function getApiEndpoint(path: string): string {
   const cleanPath = path.startsWith("/") ? path : `/${path}`;

@@ -10,6 +10,7 @@ import {
   generatePropertySchema,
   PropertySchemaData,
 } from "../../utils/seo";
+import { getResolvedApiBase } from "../../utils/api";
 
 export const dynamic = "force-dynamic";
 
@@ -44,10 +45,7 @@ async function fetchProperty(id: string): Promise<{ property: PropertySchemaData
     return { property: null, notFound: true };
   }
   try {
-    const apiBase = (
-      process.env.NEXT_PUBLIC_API_BASE_URL ||
-      "https://apna-ghar-api-w0dk.onrender.com/api/v1"
-    ).replace(/\/$/, "");
+    const apiBase = getResolvedApiBase();
     const res = await fetch(`${apiBase}/properties/${encodeURIComponent(id)}`, {
       cache: "no-store",
       headers: { Accept: "application/json" },

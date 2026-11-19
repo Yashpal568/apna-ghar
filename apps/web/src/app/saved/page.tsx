@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import { getResolvedApiBase } from "../utils/api";
 
 type Home = {
   _id: string;
@@ -20,7 +21,7 @@ type Home = {
   location?: { city?: string; state?: string; locality?: string };
 };
 
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-w0dk.onrender.com/api/v1").replace(/\/$/, "");
+const apiBase = getResolvedApiBase();
 const money = (n: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n);
 
 function readLocalHomes(): Home[] {

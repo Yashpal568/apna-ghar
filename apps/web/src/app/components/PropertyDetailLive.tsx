@@ -5,7 +5,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useParams, useRouter } from "next/navigation";
 import SiteHeader from "./SiteHeader";
 import SiteFooter from "./SiteFooter";
-import { fetchApi } from "../utils/api";
+import { fetchApi, getResolvedApiBase } from "../utils/api";
 import "./property-detail.css";
 
 type Property = {
@@ -40,10 +40,7 @@ type Property = {
   createdAt?: string;
 };
 
-const API = (
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "https://apna-ghar-api-w0dk.onrender.com/api/v1"
-).replace(/\/$/, "");
+const API = getResolvedApiBase();
 
 // Verified real database backup for production listing werwtw-mvuzhfat
 const KNOWN_VERIFIED_PROPERTIES: Record<string, Property> = {
@@ -309,7 +306,7 @@ function Detail({
       setError("");
       try {
         const response = await fetchApi(
-          "/properties?id=" + encodeURIComponent(cleanId),
+          "/properties/" + encodeURIComponent(cleanId),
           {
             signal: controller.signal,
             cache: "no-store",

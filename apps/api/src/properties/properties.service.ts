@@ -1,6 +1,6 @@
 import { Injectable, Optional } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, SortOrder } from 'mongoose';
+import { FilterQuery, Model, SortOrder, isValidObjectId } from 'mongoose';
 import { ListPropertiesQueryDto } from './dto/list-properties-query.dto';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { Property, PropertyDocument } from './schemas/property.schema';
@@ -81,6 +81,14 @@ export class PropertiesService {
 
   async list(query: ListPropertiesQueryDto) {
     const filter: FilterQuery<PropertyDocument> = { status: 'active', deletedAt: null };
+    if (query.id) {
+      const cleanId = query.id.trim();
+      if (isValidObjectId(cleanId)) {
+        filter.$or = [{ _id: cleanId }, { slug: cleanId }];
+      } else {
+        filter.slug = cleanId;
+      }
+    }
     if (query.city) filter['location.city'] = new RegExp(this.escapeRegex(query.city), 'i');
     if (query.locality) filter['location.locality'] = new RegExp(this.escapeRegex(query.locality), 'i');
     if (query.state) filter['location.state'] = new RegExp(this.escapeRegex(query.state), 'i');

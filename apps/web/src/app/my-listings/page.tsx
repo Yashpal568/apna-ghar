@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import { getResolvedApiBase } from "../utils/api";
 
 type Listing = {
   _id: string;
@@ -22,7 +23,7 @@ type Listing = {
   viewsCount?: number;
 };
 
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-w0dk.onrender.com/api/v1").replace(/\/$/, "");
+const apiBase = getResolvedApiBase();
 const money = (amount: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 
 function ListingCard({ listing, getToken, onChanged }: { listing: Listing; getToken: () => Promise<string | null>; onChanged: () => void }) {
