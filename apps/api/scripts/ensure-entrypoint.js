@@ -43,7 +43,7 @@ const relativeTarget = path.relative(apiDist, preferred).split(path.sep).join('/
 const requireTarget = relativeTarget.startsWith('.') ? relativeTarget : './' + relativeTarget;
 fs.writeFileSync(
   path.join(apiDist, 'main.js'),
-  'require(' + JSON.stringify(requireTarget) + ');\\n',
+  `require(${JSON.stringify(requireTarget)});\n`,
   'utf8'
 );
 
