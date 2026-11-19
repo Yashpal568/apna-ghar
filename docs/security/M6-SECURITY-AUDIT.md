@@ -145,6 +145,26 @@ The security hardening encompassed eight core domains:
 - **Error Information Leakage:** `HttpExceptionFilter` logs internal error stacks on the server while returning sanitized `Internal server error` responses to the client.
 - **Audit Log Immutability:** `AuditLogSchema` is configured with `timestamps: { createdAt: true, updatedAt: false }`. No update or delete endpoints exist in the API, ensuring tamper-proof audit trails for administrative actions.
 
+### 3.9 In-Memory Rate Limiter Architecture & Multi-Instance Limitations
+
+To adhere to the platform's **₹0 additional paid infrastructure** mandate, `RateLimitGuard` was designed and implemented as a high-efficiency in-memory sliding-window token bucket limiter (`Map<string, RateLimitRecord>`) inside the NestJS application layer.
+
+#### Implementation Guarantees:
+- **Zero Additional Cost:** Requires no paid Redis cluster, Memcached instance, or third-party WAF subscription.
+- **Automatic Memory Cleanup:** A periodic sweep purges expired keys every 60 seconds, preventing unbounded RAM growth.
+- **Spoof-Resistant Keying:**
+  - Authenticated operations are keyed by `user:<userId>`. An attacker rotating proxy IP headers cannot bypass the quota.
+  - Unauthenticated requests check Cloudflare's edge-authenticated `cf-connecting-ip` header followed by Express `req.ip` (`trust proxy: 1`).
+- **HTTP Standards Compliance:** Rejections emit HTTP 429 `Too Many Requests` along with standard `Retry-After`, `X-RateLimit-Limit`, `X-RateLimit-Remaining: 0`, and `X-RateLimit-Reset` headers.
+
+#### Known Limitations & Operational Considerations:
+1. **Multi-Instance Isolation Boundary:**
+   Because state resides in process memory, separate backend instances or container replicas do not share counters. On a horizontally scaled deployment with $N$ active Render containers, an attacker distributing traffic evenly across all instances could theoretically issue up to $N \times \text{limit}$ requests per window. (Note: On the current single-instance Render deployment, this limitation does not apply).
+2. **Container Restarts & Cold Starts:**
+   Rate limit counters are ephemeral and reset whenever the Render service restarts, deploys a new commit, or recovers from a sleep cycle.
+3. **Zero-Cost Scaling Path (Future Expansion):**
+   If Apna Ghar is scaled horizontally across multiple Render instances in the future without introducing paid Redis, rate-limiting state can be shared using an existing MongoDB Atlas collection backed by a TTL index (identical to the pattern already implemented in `MessageRateLimitSchema`), maintaining ₹0 infrastructure cost while achieving cluster-wide consistency.
+
 ---
 
 ## 4. Summary of Verification Evidence
