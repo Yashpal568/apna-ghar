@@ -3,341 +3,306 @@
 import { useAuth } from "@clerk/nextjs";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import AdminNav from "../components/AdminNav";
-import ThemePicker from "../../components/ThemePicker";
+import AdminShell from "../components/AdminShell";
+import { AdminReportRecord, fetchAdminApi } from "../lib/adminApi";
 
-type Report = {
-  _id: string;
-  propertyId: string;
-  reporterId: string;
-  reason: string;
-  details?: string;
-  status: "open" | "reviewing" | "resolved" | "dismissed";
-  resolutionNotes?: string;
-  createdAt?: string;
-};
-
-const api = "/api/v1";
-const reasons: Record<string, string> = {
-  misleading: "Misleading listing",
-  duplicate: "Duplicate listing",
-  scam: "Possible scam",
-  wrong_information: "Incorrect information",
-  inappropriate: "Inappropriate content",
-  other: "Other",
+const REASONS: Record<string, { label: string; color: string }> = {
+  misleading: { label: "Misleading Listing", color: "amber" },
+  duplicate: { label: "Duplicate Listing", color: "blue" },
+  scam: { label: "Possible Scam", color: "rose" },
+  wrong_information: { label: "Incorrect Info", color: "amber" },
+  inappropriate: { label: "Inappropriate Content", color: "rose" },
+  other: { label: "Other Community Issue", color: "default" },
 };
 
 export default function AdminReportsPage() {
-  const { isSignedIn, getToken } = useAuth();
-  const [reports, setReports] = useState<Report[]>([]);
-  const [status, setStatus] = useState("open");
+  const { isSignedIn, isLoaded, getToken } = useAuth();
+  const [reports, setReports] = useState<AdminReportRecord[]>([]);
+  const [statusTab, setStatusTab] = useState<"open" | "reviewing" | "resolved" | "dismissed">("open");
   const [loading, setLoading] = useState(true);
-  const [busyId, setBusyId] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
   // Resolution modal
-  const [resolvingReport, setResolvingReport] = useState<{ id: string; status: Report["status"] } | null>(null);
+  const [resolvingReport, setResolvingReport] = useState<AdminReportRecord | null>(null);
+  const [nextStatus, setNextStatus] = useState<AdminReportRecord["status"]>("resolved");
   const [resolutionNotes, setResolutionNotes] = useState("");
+  const [submittingRes, setSubmittingRes] = useState(false);
 
-  const load = useCallback(async () => {
+  const fetchReports = useCallback(async () => {
+    if (!isSignedIn) return;
     setLoading(true);
     setError("");
     try {
       const token = await getToken();
-      if (!token || !isSignedIn) throw new Error("Sign in with an authorized admin account to view reports.");
-      const response = await fetch(api + "/property-reports/admin" + (status ? "?status=" + encodeURIComponent(status) : ""), {
-        headers: { Authorization: "Bearer " + token, Accept: "application/json" },
-        cache: "no-store",
-      });
-      const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Could not load the moderation queue.");
-      setReports(Array.isArray(body) ? body : []);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not load reports.");
+      if (!token) throw new Error("Authentication token required.");
+
+      const data = await fetchAdminApi<AdminReportRecord[]>(
+        `/reports?status=${encodeURIComponent(statusTab)}`,
+        token
+      );
+      setReports(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load safety reports queue.");
     } finally {
       setLoading(false);
     }
-  }, [getToken, isSignedIn, status]);
+  }, [getToken, isSignedIn, statusTab]);
 
   useEffect(() => {
-    if (isSignedIn) void load();
-  }, [isSignedIn, load]);
+    if (isLoaded && isSignedIn) {
+      void fetchReports();
+    } else if (isLoaded && !isSignedIn) {
+      setLoading(false);
+    }
+  }, [isLoaded, isSignedIn, fetchReports]);
 
-  async function updateStatus(reportId: string, nextStatus: Report["status"], notes = "") {
-    setBusyId(reportId);
+  const handleResolveSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resolvingReport) return;
+
+    setSubmittingRes(true);
     setError("");
     setNotice("");
     try {
       const token = await getToken();
-      if (!token) throw new Error("Your session has expired. Sign in again.");
-      const response = await fetch(api + "/property-reports/admin/" + encodeURIComponent(reportId) + "/status", {
+      await fetchAdminApi(`/reports/${encodeURIComponent(resolvingReport._id)}/status`, token, {
         method: "POST",
-        headers: { Authorization: "Bearer " + token, "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ status: nextStatus, notes: notes.trim() }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: nextStatus,
+          notes: resolutionNotes.trim(),
+        }),
       });
-      const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(typeof body.message === "string" ? body.message : "Could not update this report.");
-      setNotice(`Report status updated to "${nextStatus}".`);
+
+      setNotice(`Safety report updated to status "${nextStatus}".`);
       setResolvingReport(null);
       setResolutionNotes("");
-      await load();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not update report.");
+      await fetchReports();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update safety report.");
     } finally {
-      setBusyId("");
+      setSubmittingRes(false);
     }
-  }
-
-  if (!isSignedIn) {
-    return (
-      <main className="admin-page">
-        <AdminNav activeSection="reports" />
-        <section className="admin-main">
-          <div className="admin-warning">
-            <strong>Admin sign-in required</strong>
-            <span>Sign in with an account authorized by the API administrator to access reports.</span>
-            <div style={{ marginTop: 10 }}>
-              <Link className="button button-primary" href="/sign-in?redirect_url=%2Fadmin%2Freports">
-                Sign in
-              </Link>
-            </div>
-          </div>
-        </section>
-      </main>
-    );
-  }
+  };
 
   return (
-    <main className="admin-page">
-      <AdminNav activeSection="reports" />
-      <section className="admin-main">
-        <header className="admin-topbar">
-          <div>
-            <p className="eyebrow">TRUST & SAFETY</p>
-            <h1>Safety reports</h1>
-            <p style={{ margin: "4px 0 0", fontSize: 11, color: "var(--color-muted)" }}>
-              Review user-submitted reports and update their workflow status.
-            </p>
-          </div>
-          <div className="admin-top-actions">
-            <ThemePicker compact />
-            <button className="button button-outline" type="button" onClick={() => void load()} disabled={loading} style={{ fontSize: 11 }}>
-              {loading ? "Refreshing…" : "↻ Refresh queue"}
-            </button>
-          </div>
-        </header>
-
-        <div className="admin-warning">
-          <strong>Moderation discipline</strong>
-          <span>
-            Changing a report status records a resolution audit log. If a listing requires hiding or removal, moderate it from the{" "}
-            <Link href="/admin/listings" style={{ color: "var(--color-primary)", fontWeight: 700 }}>
-              Listings panel
-            </Link>
-            .
-          </span>
-        </div>
-
-        <div className="admin-panel">
-          <div className="admin-panel-head">
-            <div>
-              <h2>Report queue</h2>
-              <p>{loading ? "Loading reports…" : `${reports.length} reports in this view`}</p>
-            </div>
-            <label className="report-filter-label" style={{ fontSize: 11 }}>
-              Status{" "}
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                style={{
-                  padding: "5px 10px",
-                  fontSize: 11,
-                  borderRadius: 6,
-                  border: "1px solid var(--color-border)",
-                  background: "var(--color-bg)",
-                  color: "var(--color-text)",
-                }}
-              >
-                <option value="open">Open</option>
-                <option value="reviewing">Reviewing</option>
-                <option value="resolved">Resolved</option>
-                <option value="dismissed">Dismissed</option>
-                <option value="">All statuses</option>
-              </select>
-            </label>
-          </div>
-
-          {error && (
-            <div className="admin-warning" role="alert" style={{ marginTop: 14 }}>
-              <strong>Could not load moderation data</strong>
-              <span>{error}</span>
-              <div style={{ marginTop: 8 }}>
-                <button className="button button-outline" onClick={() => void load()}>
-                  Try again
-                </button>
-              </div>
-            </div>
-          )}
-
-          {notice && <p className="form-notice" role="status" style={{ margin: "12px 0" }}>{notice}</p>}
-
-          {loading ? (
-            <div className="report-list-skeleton" aria-label="Loading reports" style={{ marginTop: 16 }}>
-              <div />
-              <div />
-              <div />
-            </div>
-          ) : !error && !reports.length ? (
-            <div className="admin-queue-empty">
-              <span>✓</span>
-              <div>
-                <b>No reports in this status</b>
-                <p>This is a live API result. New reports will appear after a refresh.</p>
-              </div>
-            </div>
-          ) : (
-            <div className="admin-report-list" style={{ marginTop: 16 }}>
-              {reports.map((report) => (
-                <article className="admin-report-card" key={report._id}>
-                  <div className="admin-report-heading">
-                    <div>
-                      <span className={"report-status report-status-" + report.status}>{report.status.replace("_", " ")}</span>
-                      <h3>{reasons[report.reason] || report.reason}</h3>
-                    </div>
-                    <time style={{ fontSize: 10, color: "var(--color-muted)" }}>
-                      {report.createdAt ? new Date(report.createdAt).toLocaleString() : "Date unavailable"}
-                    </time>
-                  </div>
-                  <dl style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, fontSize: 10, margin: "12px 0" }}>
-                    <div>
-                      <dt style={{ color: "var(--color-muted)" }}>Property ID</dt>
-                      <dd style={{ margin: "2px 0 0", fontWeight: 600 }}>
-                        <Link href={`/admin/listings?q=${encodeURIComponent(report.propertyId)}`} style={{ color: "var(--color-primary)" }}>
-                          {report.propertyId} ↗
-                        </Link>
-                      </dd>
-                    </div>
-                    <div>
-                      <dt style={{ color: "var(--color-muted)" }}>Report ID</dt>
-                      <dd style={{ margin: "2px 0 0" }}>{report._id}</dd>
-                    </div>
-                    <div>
-                      <dt style={{ color: "var(--color-muted)" }}>Reporter ID</dt>
-                      <dd style={{ margin: "2px 0 0" }}>{report.reporterId}</dd>
-                    </div>
-                  </dl>
-                  {report.details && <p className="admin-report-details" style={{ fontSize: 11, margin: "8px 0" }}>{report.details}</p>}
-                  {report.resolutionNotes && (
-                    <div style={{ padding: 8, background: "var(--color-bg)", borderRadius: 6, fontSize: 10, margin: "8px 0" }}>
-                      <strong>Resolution Notes:</strong> {report.resolutionNotes}
-                    </div>
-                  )}
-                  <div className="admin-report-actions" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12 }}>
-                    <label style={{ fontSize: 10 }}>
-                      Update status:{" "}
-                      <select
-                        value={report.status}
-                        disabled={busyId === report._id}
-                        onChange={(e) => {
-                          const next = e.target.value as Report["status"];
-                          if (next === "resolved" || next === "dismissed") {
-                            setResolvingReport({ id: report._id, status: next });
-                            setResolutionNotes("");
-                          } else {
-                            void updateStatus(report._id, next);
-                          }
-                        }}
-                        style={{ padding: "4px 8px", fontSize: 10, borderRadius: 4, border: "1px solid var(--color-border)", background: "var(--color-bg)", color: "var(--color-text)" }}
-                      >
-                        <option value="open">Open</option>
-                        <option value="reviewing">Reviewing</option>
-                        <option value="resolved">Resolved</option>
-                        <option value="dismissed">Dismissed</option>
-                      </select>
-                    </label>
-                    <Link
-                      href={`/admin/listings?q=${encodeURIComponent(report.propertyId)}`}
-                      className="button button-outline"
-                      style={{ padding: "4px 8px", fontSize: 9 }}
-                    >
-                      Moderate Property ↗
-                    </Link>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Modal: Resolution Notes */}
-        {resolvingReport && (
-          <div
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(0,0,0,0.6)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 9999,
-              padding: 20,
-            }}
+    <AdminShell
+      activeSection="reports"
+      title="Safety Reports Moderation Queue"
+      description="Review user-flagged property listings, potential scams, and community safety inquiries in real time."
+      pendingReportsCount={reports.filter((r) => r.status === "open").length}
+      actions={
+        <div className="shadcn-admin-action-row">
+          <button
+            type="button"
+            className="shadcn-admin-btn is-outline"
+            onClick={() => void fetchReports()}
+            disabled={loading}
           >
-            <div
-              style={{
-                background: "var(--color-surface)",
-                border: "1px solid var(--color-border)",
-                borderRadius: 12,
-                maxWidth: 440,
-                width: "100%",
-                padding: 24,
-                boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-              }}
-            >
-              <h2 style={{ margin: "0 0 10px", fontSize: 16 }}>Mark Report as {resolvingReport.status}</h2>
-              <p style={{ fontSize: 11, color: "var(--color-text-secondary)", margin: "0 0 16px" }}>
-                Enter optional resolution notes or actions taken regarding this report:
+            ↻ Refresh Queue
+          </button>
+        </div>
+      }
+    >
+      {/* Notice & Error */}
+      {notice && (
+        <div className="shadcn-admin-banner is-success" role="status">
+          <span>✓ {notice}</span>
+          <button type="button" onClick={() => setNotice("")} className="shadcn-admin-banner-close">×</button>
+        </div>
+      )}
+      {error && (
+        <div className="shadcn-admin-banner is-error" role="alert">
+          <span>✕ {error}</span>
+          <button type="button" onClick={() => setError("")} className="shadcn-admin-banner-close">×</button>
+        </div>
+      )}
+
+      {/* STATUS TABS (SHADCN STUDIO SEGMENTED TABS) */}
+      <div className="shadcn-admin-tabs">
+        <button
+          type="button"
+          className={`shadcn-admin-tab ${statusTab === "open" ? "is-active" : ""}`}
+          onClick={() => setStatusTab("open")}
+        >
+          <span>Open Needs Review</span>
+        </button>
+        <button
+          type="button"
+          className={`shadcn-admin-tab ${statusTab === "reviewing" ? "is-active" : ""}`}
+          onClick={() => setStatusTab("reviewing")}
+        >
+          <span>Under Review</span>
+        </button>
+        <button
+          type="button"
+          className={`shadcn-admin-tab ${statusTab === "resolved" ? "is-active" : ""}`}
+          onClick={() => setStatusTab("resolved")}
+        >
+          <span>Resolved</span>
+        </button>
+        <button
+          type="button"
+          className={`shadcn-admin-tab ${statusTab === "dismissed" ? "is-active" : ""}`}
+          onClick={() => setStatusTab("dismissed")}
+        >
+          <span>Dismissed</span>
+        </button>
+      </div>
+
+      {/* REPORTS LIST */}
+      <div className="shadcn-admin-card">
+        <div className="shadcn-admin-table-wrap">
+          <table className="shadcn-admin-table">
+            <thead>
+              <tr>
+                <th>Violation Category</th>
+                <th>Target Property</th>
+                <th>Reporter / Submitter</th>
+                <th>Report Details</th>
+                <th>Reported On</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="shadcn-admin-table-empty">
+                    Loading moderation queue from API…
+                  </td>
+                </tr>
+              ) : !reports.length ? (
+                <tr>
+                  <td colSpan={6} className="shadcn-admin-table-empty">
+                    No safety reports in &quot;{statusTab}&quot; status. Marketplace is clean.
+                  </td>
+                </tr>
+              ) : (
+                reports.map((rep) => {
+                  const meta = REASONS[rep.reason] || { label: rep.reason, color: "default" };
+                  return (
+                    <tr key={rep._id}>
+                      <td>
+                        <span className={`shadcn-admin-report-pill is-${meta.color}`}>
+                          {meta.label}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="shadcn-admin-table-primary-cell">
+                          <code className="shadcn-admin-code-id">{rep.propertyId}</code>
+                          <Link
+                            href={`/property/${rep.propertyId}`}
+                            target="_blank"
+                            className="shadcn-admin-cell-link"
+                          >
+                            View Listing ↗
+                          </Link>
+                        </div>
+                      </td>
+                      <td>
+                        <code className="shadcn-admin-code-id">{rep.reporterId}</code>
+                      </td>
+                      <td>
+                        <p className="shadcn-admin-cell-desc">
+                          {rep.details || "No additional text provided by reporter."}
+                        </p>
+                        {rep.resolutionNotes && (
+                          <div className="shadcn-admin-resolution-note-preview">
+                            <small>Admin note:</small> {rep.resolutionNotes}
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <span className="shadcn-admin-cell-time">
+                          {rep.createdAt ? new Date(rep.createdAt).toLocaleString() : "—"}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="shadcn-admin-table-actions">
+                          <button
+                            type="button"
+                            className="shadcn-admin-btn is-xs is-primary"
+                            onClick={() => {
+                              setResolvingReport(rep);
+                              setNextStatus(rep.status === "open" ? "resolved" : rep.status);
+                              setResolutionNotes(rep.resolutionNotes || "");
+                            }}
+                          >
+                            Moderate
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* RESOLUTION DIALOG MODAL */}
+      {resolvingReport && (
+        <div className="shadcn-admin-modal-backdrop">
+          <div className="shadcn-admin-modal-dialog">
+            <div className="shadcn-admin-modal-head">
+              <h3>Moderate Safety Report</h3>
+              <button type="button" onClick={() => setResolvingReport(null)} className="shadcn-admin-modal-close">×</button>
+            </div>
+            <form onSubmit={handleResolveSubmit} className="shadcn-admin-modal-body">
+              <p>
+                Report for property ID <code>{resolvingReport.propertyId}</code> (Reason:{" "}
+                <strong>{REASONS[resolvingReport.reason]?.label || resolvingReport.reason}</strong>).
               </p>
 
-              <textarea
-                placeholder="Resolution notes (e.g. verified listing authenticity, or removed seller duplicate)..."
-                value={resolutionNotes}
-                onChange={(e) => setResolutionNotes(e.target.value)}
-                rows={3}
-                style={{
-                  width: "100%",
-                  padding: 8,
-                  fontSize: 11,
-                  borderRadius: 6,
-                  border: "1px solid var(--color-border)",
-                  background: "var(--color-bg)",
-                  color: "var(--color-text)",
-                }}
-              />
+              <div className="shadcn-admin-field">
+                <label htmlFor="next-status-select">Set Resolution Status:</label>
+                <select
+                  id="next-status-select"
+                  className="shadcn-admin-select"
+                  value={nextStatus}
+                  onChange={(e) => setNextStatus(e.target.value as AdminReportRecord["status"])}
+                >
+                  <option value="reviewing">Under Review (Investigating)</option>
+                  <option value="resolved">Resolved (Action Taken / Verified)</option>
+                  <option value="dismissed">Dismissed (No Violation Found)</option>
+                </select>
+              </div>
 
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 16 }}>
+              <div className="shadcn-admin-field">
+                <label htmlFor="res-notes">Resolution Notes (Logged to database):</label>
+                <textarea
+                  id="res-notes"
+                  rows={3}
+                  className="shadcn-admin-textarea"
+                  placeholder="Explain findings, outcome, or notes for recordkeeping…"
+                  value={resolutionNotes}
+                  onChange={(e) => setResolutionNotes(e.target.value)}
+                />
+              </div>
+
+              <div className="shadcn-admin-modal-actions">
                 <button
                   type="button"
-                  className="button button-outline"
+                  className="shadcn-admin-btn is-ghost"
                   onClick={() => setResolvingReport(null)}
-                  style={{ fontSize: 11 }}
+                  disabled={submittingRes}
                 >
                   Cancel
                 </button>
                 <button
-                  type="button"
-                  className="button button-primary"
-                  onClick={() => void updateStatus(resolvingReport.id, resolvingReport.status, resolutionNotes)}
-                  style={{ fontSize: 11 }}
+                  type="submit"
+                  className="shadcn-admin-btn is-primary"
+                  disabled={submittingRes}
                 >
-                  Save & Update
+                  {submittingRes ? "Saving…" : "Save Resolution"}
                 </button>
               </div>
-            </div>
+            </form>
           </div>
-        )}
-      </section>
-    </main>
+        </div>
+      )}
+    </AdminShell>
   );
 }

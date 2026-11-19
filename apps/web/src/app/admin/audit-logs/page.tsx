@@ -2,25 +2,12 @@
 
 import { useAuth } from "@clerk/nextjs";
 import { useCallback, useEffect, useState } from "react";
-import AdminNav from "../components/AdminNav";
-import ThemePicker from "../../components/ThemePicker";
-
-type AuditEntry = {
-  _id: string;
-  adminUserId: string;
-  action: string;
-  targetType: string;
-  targetId: string;
-  reason: string;
-  details?: Record<string, unknown>;
-  createdAt: string;
-};
-
-const api = "/api/v1";
+import AdminShell from "../components/AdminShell";
+import { AdminAuditRecord, fetchAdminApi } from "../lib/adminApi";
 
 export default function AdminAuditLogsPage() {
-  const { isSignedIn, getToken } = useAuth();
-  const [logs, setLogs] = useState<AuditEntry[]>([]);
+  const { isSignedIn, isLoaded, getToken } = useAuth();
+  const [logs, setLogs] = useState<AdminAuditRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -28,11 +15,13 @@ export default function AdminAuditLogsPage() {
   const [actionFilter, setActionFilter] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   // Inspector modal for metadata details
-  const [selectedEntry, setSelectedEntry] = useState<AuditEntry | null>(null);
+  const [selectedEntry, setSelectedEntry] = useState<AdminAuditRecord | null>(null);
 
   const fetchLogs = useCallback(async () => {
+    if (!isSignedIn) return;
     setLoading(true);
     setError("");
     try {
@@ -45,270 +34,277 @@ export default function AdminAuditLogsPage() {
       params.set("page", String(page));
       params.set("limit", "20");
 
-      const res = await fetch(`${api}/admin/audit-logs?${params.toString()}`, {
-        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-        cache: "no-store",
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(typeof data.message === "string" ? data.message : "Failed to load audit logs.");
+      const data = await fetchAdminApi<{
+        items: AdminAuditRecord[];
+        pagination: { page: number; limit: number; total: number; pages: number };
+      }>(`/audit-logs?${params.toString()}`, token);
 
       setLogs(data.items || []);
       setTotalPages(data.pagination?.pages || 1);
+      setTotalCount(data.pagination?.total || 0);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load audit trail.");
     } finally {
       setLoading(false);
     }
-  }, [actionFilter, getToken, page, targetTypeFilter]);
+  }, [actionFilter, getToken, isSignedIn, page, targetTypeFilter]);
 
   useEffect(() => {
-    if (isSignedIn) {
+    if (isLoaded && isSignedIn) {
       void fetchLogs();
+    } else if (isLoaded && !isSignedIn) {
+      setLoading(false);
     }
-  }, [isSignedIn, fetchLogs]);
+  }, [isLoaded, isSignedIn, fetchLogs]);
 
   return (
-    <main className="admin-page">
-      <AdminNav activeSection="audit-logs" />
-      <section className="admin-main">
-        <header className="admin-topbar">
-          <div>
-            <p className="eyebrow">ACCOUNTABILITY & AUDIT</p>
-            <h1>Moderation Audit Trail</h1>
-          </div>
-          <div className="admin-top-actions">
-            <ThemePicker compact />
-            <button className="button button-outline" onClick={() => void fetchLogs()} disabled={loading} style={{ fontSize: 11 }}>
-              {loading ? "Refreshing..." : "↻ Refresh"}
-            </button>
-          </div>
-        </header>
-
-        {error && (
-          <div className="admin-warning" role="alert">
-            <strong>Error</strong>
-            <span>{error}</span>
-          </div>
-        )}
-
-        <div className="admin-policy-note" style={{ marginBottom: 20 }}>
-          <b>Tamper-Evident Records</b>
+    <AdminShell
+      activeSection="audit-logs"
+      title="Immutable Moderation Audit Trail"
+      description={`Tamper-evident log of all administrative actions, user suspensions, property removals, and category adjustments (${totalCount} entries).`}
+      actions={
+        <div className="shadcn-admin-action-row">
+          <button
+            type="button"
+            className="shadcn-admin-btn is-outline"
+            onClick={() => void fetchLogs()}
+            disabled={loading}
+          >
+            ↻ Refresh Logs
+          </button>
+        </div>
+      }
+    >
+      {/* Policy card */}
+      <div className="shadcn-admin-notice-card">
+        <div className="shadcn-admin-notice-icon">⌬</div>
+        <div>
+          <h4>Tamper-Evident Accountability</h4>
           <p>
-            Every admin intervention—including user suspensions, property removals, category adjustments, and safety report
-            resolutions—is logged here permanently with admin identification, timestamps, and stated reasons.
+            Every admin operation is permanently logged in MongoDB Atlas with authenticated admin identity, target resource, timestamp, stated justification, and state change details.
           </p>
         </div>
+      </div>
 
-        <div className="admin-panel">
-          <div className="admin-panel-head" style={{ flexWrap: "wrap", gap: 10 }}>
-            <div>
-              <h2>Audit Event Log</h2>
-              <p>Filter by target entity type or specific moderation action</p>
-            </div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <select
-                value={targetTypeFilter}
-                onChange={(e) => {
-                  setTargetTypeFilter(e.target.value);
-                  setPage(1);
-                }}
-                style={{ padding: "6px 10px", fontSize: 11, borderRadius: 6, border: "1px solid var(--color-border)", background: "var(--color-bg)", color: "var(--color-text)" }}
-              >
-                <option value="">All Targets</option>
-                <option value="user">User</option>
-                <option value="property">Property</option>
-                <option value="report">Report</option>
-                <option value="category">Category</option>
-              </select>
-              <select
-                value={actionFilter}
-                onChange={(e) => {
-                  setActionFilter(e.target.value);
-                  setPage(1);
-                }}
-                style={{ padding: "6px 10px", fontSize: 11, borderRadius: 6, border: "1px solid var(--color-border)", background: "var(--color-bg)", color: "var(--color-text)" }}
-              >
-                <option value="">All Actions</option>
-                <option value="user_suspend">user_suspend</option>
-                <option value="user_reactivate">user_reactivate</option>
-                <option value="property_hide">property_hide</option>
-                <option value="property_restore">property_restore</option>
-                <option value="property_remove">property_remove</option>
-                <option value="report_resolve">report_resolve</option>
-                <option value="report_dismiss">report_dismiss</option>
-                <option value="category_toggle">category_toggle</option>
-                <option value="category_update">category_update</option>
-              </select>
-            </div>
-          </div>
-
-          {loading ? (
-            <p style={{ color: "var(--color-muted)", fontSize: 11, padding: "30px 0", textAlign: "center" }}>Loading audit records...</p>
-          ) : !logs.length ? (
-            <div className="admin-table-empty">
-              <span>⌬</span>
-              <b>No audit entries match filter</b>
-              <p>When administrative actions are performed, they are recorded here immediately.</p>
-            </div>
-          ) : (
-            <div className="admin-table-wrap">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Timestamp</th>
-                    <th>Admin Subject</th>
-                    <th>Action</th>
-                    <th>Target</th>
-                    <th>Reason</th>
-                    <th>Details</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {logs.map((entry) => (
-                    <tr key={entry._id}>
-                      <td style={{ padding: "12px", fontSize: 10, color: "var(--color-muted)", whiteSpace: "nowrap" }}>
-                        {entry.createdAt ? new Date(entry.createdAt).toLocaleString() : "—"}
-                      </td>
-                      <td style={{ padding: "12px", fontSize: 10 }}>
-                        <code>{entry.adminUserId}</code>
-                      </td>
-                      <td style={{ padding: "12px", fontSize: 10, fontWeight: 700 }}>
-                        <span style={{ padding: "3px 6px", borderRadius: 4, background: "var(--color-surface-subtle)" }}>
-                          {entry.action}
-                        </span>
-                      </td>
-                      <td style={{ padding: "12px", fontSize: 10 }}>
-                        <b>{entry.targetType}</b>: <small>{entry.targetId}</small>
-                      </td>
-                      <td style={{ padding: "12px", fontSize: 10, maxWidth: 260 }}>
-                        {entry.reason || "—"}
-                      </td>
-                      <td style={{ padding: "12px", fontSize: 10 }}>
-                        {entry.details && Object.keys(entry.details).length > 0 ? (
-                          <button
-                            type="button"
-                            className="button button-outline"
-                            style={{ padding: "3px 7px", fontSize: 9 }}
-                            onClick={() => setSelectedEntry(entry)}
-                          >
-                            View
-                          </button>
-                        ) : (
-                          <span style={{ color: "var(--color-muted)", fontSize: 9 }}>None</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {totalPages > 1 && (
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
-              <span style={{ fontSize: 10, color: "var(--color-muted)" }}>
-                Page {page} of {totalPages}
-              </span>
-              <div style={{ display: "flex", gap: 8 }}>
-                <button
-                  type="button"
-                  className="button button-outline"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  style={{ fontSize: 10, padding: "5px 10px" }}
-                >
-                  Previous
-                </button>
-                <button
-                  type="button"
-                  className="button button-outline"
-                  disabled={page >= totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                  style={{ fontSize: 10, padding: "5px 10px" }}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Modal: Audit Entry Metadata Details */}
-        {selectedEntry && (
-          <div
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(0,0,0,0.6)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 9999,
-              padding: 20,
+      {/* FILTER BAR */}
+      <div className="shadcn-admin-filter-bar">
+        <div className="shadcn-admin-filter-selects" style={{ width: "100%" }}>
+          <select
+            className="shadcn-admin-select"
+            value={targetTypeFilter}
+            onChange={(e) => {
+              setTargetTypeFilter(e.target.value);
+              setPage(1);
             }}
           >
-            <div
-              style={{
-                background: "var(--color-surface)",
-                border: "1px solid var(--color-border)",
-                borderRadius: 12,
-                maxWidth: 480,
-                width: "100%",
-                padding: 24,
-                boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+            <option value="">All Target Types</option>
+            <option value="property">Property Listings</option>
+            <option value="user">User Accounts</option>
+            <option value="category">Categories</option>
+            <option value="report">Safety Reports</option>
+          </select>
+
+          <select
+            className="shadcn-admin-select"
+            value={actionFilter}
+            onChange={(e) => {
+              setActionFilter(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">All Actions</option>
+            <option value="property_remove">Property Removed</option>
+            <option value="property_restore">Property Restored</option>
+            <option value="property_hide">Property Hidden</option>
+            <option value="user_suspend">User Suspended</option>
+            <option value="user_reactivate">User Reactivated</option>
+            <option value="category_toggle">Category Toggled</option>
+            <option value="category_update">Category Updated</option>
+          </select>
+
+          <button
+            type="button"
+            className="shadcn-admin-btn is-secondary"
+            onClick={() => void fetchLogs()}
+          >
+            Filter
+          </button>
+
+          {(targetTypeFilter || actionFilter) && (
+            <button
+              type="button"
+              className="shadcn-admin-btn is-ghost"
+              onClick={() => {
+                setTargetTypeFilter("");
+                setActionFilter("");
+                setPage(1);
               }}
             >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-                <div>
-                  <h2 style={{ margin: 0, fontSize: 16 }}>Audit Event Details</h2>
-                  <small style={{ color: "var(--color-muted)", fontSize: 10 }}>Log ID: {selectedEntry._id}</small>
-                </div>
-                <button
-                  type="button"
-                  className="button button-outline"
-                  style={{ padding: "4px 8px", fontSize: 10 }}
-                  onClick={() => setSelectedEntry(null)}
-                >
-                  ✕ Close
-                </button>
-              </div>
+              Reset
+            </button>
+          )}
+        </div>
+      </div>
 
-              <div style={{ fontSize: 11, display: "grid", gap: 8, marginBottom: 16 }}>
-                <div>
-                  <strong>Admin ID:</strong> <code>{selectedEntry.adminUserId}</code>
-                </div>
-                <div>
-                  <strong>Action:</strong> {selectedEntry.action}
-                </div>
-                <div>
-                  <strong>Target:</strong> {selectedEntry.targetType} ({selectedEntry.targetId})
-                </div>
-                <div>
-                  <strong>Reason:</strong> {selectedEntry.reason || "None"}
-                </div>
-                <div>
-                  <strong>Timestamp:</strong> {new Date(selectedEntry.createdAt).toLocaleString()}
-                </div>
-              </div>
+      {/* AUDIT LOG TABLE */}
+      <div className="shadcn-admin-card">
+        <div className="shadcn-admin-table-wrap">
+          <table className="shadcn-admin-table">
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>Target Resource</th>
+                <th>Admin Operator</th>
+                <th>Stated Justification</th>
+                <th>Timestamp</th>
+                <th>Payload</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="shadcn-admin-table-empty">
+                    Loading audit trail from database…
+                  </td>
+                </tr>
+              ) : !logs.length ? (
+                <tr>
+                  <td colSpan={6} className="shadcn-admin-table-empty">
+                    No audit records found matching your filter criteria.
+                  </td>
+                </tr>
+              ) : (
+                logs.map((log) => (
+                  <tr key={log._id}>
+                    <td>
+                      <span className="shadcn-admin-action-pill">
+                        {log.action}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="shadcn-admin-table-primary-cell">
+                        <strong className="shadcn-admin-cell-title">
+                          {log.targetType.toUpperCase()}
+                        </strong>
+                        <code className="shadcn-admin-code-id">{log.targetId}</code>
+                      </div>
+                    </td>
+                    <td>
+                      <code className="shadcn-admin-code-id">{log.adminUserId}</code>
+                    </td>
+                    <td>
+                      <span className="shadcn-admin-cell-desc">
+                        {log.reason || "—"}
+                      </span>
+                    </td>
+                    <td>
+                      <span className="shadcn-admin-cell-time">
+                        {new Date(log.createdAt).toLocaleString()}
+                      </span>
+                    </td>
+                    <td>
+                      {log.details && Object.keys(log.details).length > 0 ? (
+                        <button
+                          type="button"
+                          className="shadcn-admin-btn is-xs is-outline"
+                          onClick={() => setSelectedEntry(log)}
+                        >
+                          Inspect
+                        </button>
+                      ) : (
+                        <span className="shadcn-admin-empty-sub">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-              <strong>Metadata Payload:</strong>
-              <pre
-                style={{
-                  background: "var(--color-bg)",
-                  border: "1px solid var(--color-border)",
-                  borderRadius: 6,
-                  padding: 10,
-                  fontSize: 10,
-                  overflowX: "auto",
-                  marginTop: 6,
-                }}
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="shadcn-admin-pagination">
+            <span className="shadcn-admin-pagination-info">
+              Showing page {page} of {totalPages} ({totalCount} total)
+            </span>
+            <div className="shadcn-admin-pagination-btns">
+              <button
+                type="button"
+                className="shadcn-admin-btn is-sm is-outline"
+                disabled={page <= 1 || loading}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
-                {JSON.stringify(selectedEntry.details, null, 2)}
-              </pre>
+                Previous
+              </button>
+              <button
+                type="button"
+                className="shadcn-admin-btn is-sm is-outline"
+                disabled={page >= totalPages || loading}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              >
+                Next
+              </button>
             </div>
           </div>
         )}
-      </section>
-    </main>
+      </div>
+
+      {/* JSON PAYLOAD INSPECTOR MODAL */}
+      {selectedEntry && (
+        <div className="shadcn-admin-modal-backdrop">
+          <div className="shadcn-admin-modal-dialog is-wide">
+            <div className="shadcn-admin-modal-head">
+              <h3>Audit Event Details: {selectedEntry.action}</h3>
+              <button type="button" onClick={() => setSelectedEntry(null)} className="shadcn-admin-modal-close">×</button>
+            </div>
+            <div className="shadcn-admin-modal-body">
+              <div className="shadcn-admin-specs-row">
+                <div className="shadcn-admin-spec-item">
+                  <small>Action</small>
+                  <strong>{selectedEntry.action}</strong>
+                </div>
+                <div className="shadcn-admin-spec-item">
+                  <small>Target Type</small>
+                  <strong>{selectedEntry.targetType}</strong>
+                </div>
+                <div className="shadcn-admin-spec-item">
+                  <small>Target ID</small>
+                  <code>{selectedEntry.targetId}</code>
+                </div>
+                <div className="shadcn-admin-spec-item">
+                  <small>Timestamp</small>
+                  <strong>{new Date(selectedEntry.createdAt).toLocaleString()}</strong>
+                </div>
+              </div>
+
+              <div className="shadcn-admin-field" style={{ marginTop: 14 }}>
+                <label>Stated Reason:</label>
+                <p className="shadcn-admin-desc-text">
+                  {selectedEntry.reason || "No stated reason recorded."}
+                </p>
+              </div>
+
+              <div className="shadcn-admin-field">
+                <label>State Change Diff / Raw Payload (JSON):</label>
+                <pre className="shadcn-admin-pre">
+                  {JSON.stringify(selectedEntry.details, null, 2)}
+                </pre>
+              </div>
+
+              <div className="shadcn-admin-modal-actions">
+                <button
+                  type="button"
+                  className="shadcn-admin-btn is-secondary"
+                  onClick={() => setSelectedEntry(null)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </AdminShell>
   );
 }

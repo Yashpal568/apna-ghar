@@ -2,24 +2,12 @@
 
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useCallback, useEffect, useState } from "react";
-import AdminNav from "../components/AdminNav";
-import ThemePicker from "../../components/ThemePicker";
-
-type UserRecord = {
-  clerkUserId: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-  city?: string;
-  about?: string;
-  role?: string;
-  accountStatus?: string;
-  createdAt?: string;
-  lastActiveAt?: string;
-};
+import Link from "next/link";
+import AdminShell from "../components/AdminShell";
+import { AdminUserRecord, fetchAdminApi } from "../lib/adminApi";
 
 type UserDetailsResponse = {
-  user: UserRecord;
+  user: AdminUserRecord;
   listings: Array<{
     _id: string;
     title: string;
@@ -32,12 +20,10 @@ type UserDetailsResponse = {
   listingsCount: number;
 };
 
-const api = "/api/v1";
-
 export default function AdminUsersPage() {
-  const { isSignedIn, getToken } = useAuth();
+  const { isSignedIn, isLoaded, getToken } = useAuth();
   const { user: currentClerkUser } = useUser();
-  const [users, setUsers] = useState<UserRecord[]>([]);
+  const [users, setUsers] = useState<AdminUserRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -47,9 +33,10 @@ export default function AdminUsersPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
-  // Modal states
-  const [actionUser, setActionUser] = useState<UserRecord | null>(null);
+  // Moderation modal
+  const [actionUser, setActionUser] = useState<AdminUserRecord | null>(null);
   const [actionType, setActionType] = useState<"suspend" | "reactivate" | null>(null);
   const [actionReason, setActionReason] = useState("");
   const [submittingAction, setSubmittingAction] = useState(false);
@@ -59,6 +46,7 @@ export default function AdminUsersPage() {
   const [loadingDetails, setLoadingDetails] = useState(false);
 
   const fetchUsers = useCallback(async () => {
+    if (!isSignedIn) return;
     setLoading(true);
     setError("");
     try {
@@ -72,37 +60,37 @@ export default function AdminUsersPage() {
       params.set("page", String(page));
       params.set("limit", "15");
 
-      const res = await fetch(`${api}/admin/users?${params.toString()}`, {
-        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-        cache: "no-store",
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(typeof data.message === "string" ? data.message : "Failed to load users.");
+      const data = await fetchAdminApi<{
+        items: AdminUserRecord[];
+        pagination: { page: number; limit: number; total: number; pages: number };
+      }>(`/users?${params.toString()}`, token);
 
       setUsers(data.items || []);
       setTotalPages(data.pagination?.pages || 1);
+      setTotalCount(data.pagination?.total || 0);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load user list.");
     } finally {
       setLoading(false);
     }
-  }, [getToken, page, roleFilter, search, statusFilter]);
+  }, [getToken, isSignedIn, page, roleFilter, search, statusFilter]);
 
   useEffect(() => {
-    if (isSignedIn) {
+    if (isLoaded && isSignedIn) {
       void fetchUsers();
+    } else if (isLoaded && !isSignedIn) {
+      setLoading(false);
     }
-  }, [isSignedIn, fetchUsers]);
+  }, [isLoaded, isSignedIn, fetchUsers]);
 
   const openUserDetails = async (userId: string) => {
     setLoadingDetails(true);
     try {
       const token = await getToken();
-      const res = await fetch(`${api}/admin/users/${encodeURIComponent(userId)}`, {
-        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(typeof data.message === "string" ? data.message : "Failed to load user details.");
+      const data = await fetchAdminApi<UserDetailsResponse>(
+        `/users/${encodeURIComponent(userId)}`,
+        token
+      );
       setDetailUser(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not load user details.");
@@ -111,13 +99,9 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleStatusSubmit = async (e: React.FormEvent) => {
+  const handleActionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!actionUser || !actionType) return;
-    if (actionType === "suspend" && !actionReason.trim()) {
-      setError("A reason must be provided to suspend an account.");
-      return;
-    }
+    if (!actionUser || !actionType || !actionReason.trim()) return;
 
     setSubmittingAction(true);
     setError("");
@@ -125,174 +109,227 @@ export default function AdminUsersPage() {
     try {
       const token = await getToken();
       const nextStatus = actionType === "suspend" ? "suspended" : "active";
-      const res = await fetch(`${api}/admin/users/${encodeURIComponent(actionUser.clerkUserId)}/status`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ status: nextStatus, reason: actionReason.trim() }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(typeof data.message === "string" ? data.message : "Failed to update account status.");
 
-      setNotice(`User ${actionUser.name || actionUser.clerkUserId} has been ${actionType === "suspend" ? "suspended" : "reactivated"}.`);
+      await fetchAdminApi(`/users/${encodeURIComponent(actionUser.clerkUserId)}/status`, token, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: nextStatus,
+          reason: actionReason.trim(),
+        }),
+      });
+
+      setNotice(`User account "${actionUser.name || actionUser.email}" has been ${actionType === "suspend" ? "suspended" : "reactivated"}.`);
       setActionUser(null);
       setActionType(null);
       setActionReason("");
+      if (detailUser?.user.clerkUserId === actionUser.clerkUserId) {
+        setDetailUser(null);
+      }
       await fetchUsers();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error executing status change.");
+      setError(err instanceof Error ? err.message : "User status update failed.");
     } finally {
       setSubmittingAction(false);
     }
   };
 
   return (
-    <main className="admin-page">
-      <AdminNav activeSection="users" />
-      <section className="admin-main">
-        <header className="admin-topbar">
-          <div>
-            <p className="eyebrow">ACCOUNTS & ROLES</p>
-            <h1>User Management</h1>
-          </div>
-          <div className="admin-top-actions">
-            <ThemePicker compact />
-            <button className="button button-outline" onClick={() => void fetchUsers()} disabled={loading} style={{ fontSize: 11 }}>
-              {loading ? "Refreshing..." : "↻ Refresh"}
+    <AdminShell
+      activeSection="users"
+      title="User Accounts Directory"
+      description={`Inspect registered buyer, owner, and administrator accounts (${totalCount} users recorded in database).`}
+      actions={
+        <div className="shadcn-admin-action-row">
+          <button
+            type="button"
+            className="shadcn-admin-btn is-outline"
+            onClick={() => void fetchUsers()}
+            disabled={loading}
+          >
+            ↻ Refresh
+          </button>
+        </div>
+      }
+    >
+      {/* Notice & Error Banners */}
+      {notice && (
+        <div className="shadcn-admin-banner is-success" role="status">
+          <span>✓ {notice}</span>
+          <button type="button" onClick={() => setNotice("")} className="shadcn-admin-banner-close">×</button>
+        </div>
+      )}
+      {error && (
+        <div className="shadcn-admin-banner is-error" role="alert">
+          <span>✕ {error}</span>
+          <button type="button" onClick={() => setError("")} className="shadcn-admin-banner-close">×</button>
+        </div>
+      )}
+
+      {/* FILTER BAR */}
+      <div className="shadcn-admin-filter-bar">
+        <div className="shadcn-admin-search-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <input
+            type="text"
+            className="shadcn-admin-search-input"
+            placeholder="Search by name, email, phone, city or Clerk ID…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && void fetchUsers()}
+          />
+          {search && (
+            <button type="button" className="shadcn-admin-input-clear" onClick={() => setSearch("")}>×</button>
+          )}
+        </div>
+
+        <div className="shadcn-admin-filter-selects">
+          <select
+            className="shadcn-admin-select"
+            value={roleFilter}
+            onChange={(e) => {
+              setRoleFilter(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">All Roles</option>
+            <option value="USER">Buyer / Regular User</option>
+            <option value="OWNER">Verified Owner</option>
+            <option value="ADMIN">Administrator</option>
+          </select>
+
+          <select
+            className="shadcn-admin-select"
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">All Account Statuses</option>
+            <option value="active">Active Accounts</option>
+            <option value="suspended">Suspended Accounts</option>
+          </select>
+
+          <button
+            type="button"
+            className="shadcn-admin-btn is-secondary"
+            onClick={() => void fetchUsers()}
+          >
+            Filter
+          </button>
+
+          {(search || roleFilter || statusFilter) && (
+            <button
+              type="button"
+              className="shadcn-admin-btn is-ghost"
+              onClick={() => {
+                setSearch("");
+                setRoleFilter("");
+                setStatusFilter("");
+                setPage(1);
+              }}
+            >
+              Reset
             </button>
-          </div>
-        </header>
+          )}
+        </div>
+      </div>
 
-        {error && (
-          <div className="admin-warning" role="alert">
-            <strong>Error</strong>
-            <span>{error}</span>
-          </div>
-        )}
+      {/* USERS TABLE */}
+      <div className="shadcn-admin-card">
+        <div className="shadcn-admin-table-wrap">
+          <table className="shadcn-admin-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>City</th>
+                <th>Registered</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="shadcn-admin-table-empty">
+                    Loading users from MongoDB…
+                  </td>
+                </tr>
+              ) : !users.length ? (
+                <tr>
+                  <td colSpan={6} className="shadcn-admin-table-empty">
+                    No users match your current search filters.
+                  </td>
+                </tr>
+              ) : (
+                users.map((u) => {
+                  const isSelf = currentClerkUser?.id === u.clerkUserId;
+                  const initials = (u.name || u.email || "U")
+                    .split(/\s+/)
+                    .slice(0, 2)
+                    .map((w) => w[0]?.toUpperCase())
+                    .join("");
 
-        {notice && (
-          <div className="admin-welcome" style={{ minHeight: "auto", padding: 16, marginBottom: 20 }}>
-            <div>
-              <p className="eyebrow">ACTION COMPLETED</p>
-              <h2 style={{ fontSize: 16, margin: 0 }}>{notice}</h2>
-            </div>
-          </div>
-        )}
-
-        <div className="admin-panel">
-          <div className="admin-panel-head" style={{ flexWrap: "wrap", gap: 10 }}>
-            <div>
-              <h2>User Directory</h2>
-              <p>Search by name, email, phone, or Clerk subject ID</p>
-            </div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                style={{ padding: "6px 12px", fontSize: 11, borderRadius: 6, border: "1px solid var(--color-border)", background: "var(--color-bg)", color: "var(--color-text)" }}
-              />
-              <select
-                value={roleFilter}
-                onChange={(e) => {
-                  setRoleFilter(e.target.value);
-                  setPage(1);
-                }}
-                style={{ padding: "6px 10px", fontSize: 11, borderRadius: 6, border: "1px solid var(--color-border)", background: "var(--color-bg)", color: "var(--color-text)" }}
-              >
-                <option value="">All Roles</option>
-                <option value="USER">USER</option>
-                <option value="OWNER">OWNER</option>
-                <option value="ADMIN">ADMIN</option>
-              </select>
-              <select
-                value={statusFilter}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value);
-                  setPage(1);
-                }}
-                style={{ padding: "6px 10px", fontSize: 11, borderRadius: 6, border: "1px solid var(--color-border)", background: "var(--color-bg)", color: "var(--color-text)" }}
-              >
-                <option value="">All Statuses</option>
-                <option value="active">Active</option>
-                <option value="suspended">Suspended</option>
-                <option value="deactivated">Deactivated</option>
-              </select>
-            </div>
-          </div>
-
-          {loading ? (
-            <p style={{ color: "var(--color-muted)", fontSize: 11, padding: "30px 0", textAlign: "center" }}>Loading user accounts...</p>
-          ) : !users.length ? (
-            <div className="admin-table-empty">
-              <span>⌕</span>
-              <b>No users found</b>
-              <p>Try modifying your search query or role filter.</p>
-            </div>
-          ) : (
-            <div className="admin-table-wrap">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Contact</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Joined</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((u) => {
-                    const isSelf = currentClerkUser?.id === u.clerkUserId;
-                    const isSuspended = u.accountStatus === "suspended";
-
-                    return (
-                      <tr key={u.clerkUserId}>
-                        <td style={{ padding: "12px" }}>
-                          <div style={{ fontSize: 11, fontWeight: 700 }}>
-                            {u.name || "Anonymous User"}
-                            {isSelf && <span style={{ marginLeft: 6, fontSize: 8, padding: "2px 5px", background: "var(--color-primary)", color: "#fff", borderRadius: 4 }}>YOU</span>}
+                  return (
+                    <tr key={u.clerkUserId}>
+                      <td>
+                        <div className="shadcn-admin-user-cell">
+                          <div className="shadcn-admin-user-cell-avatar">
+                            {initials}
                           </div>
-                          <small style={{ color: "var(--color-muted)", fontSize: 9 }}>{u.clerkUserId}</small>
-                        </td>
-                        <td style={{ padding: "12px", fontSize: 10 }}>
-                          <div>{u.email || "—"}</div>
-                          <small style={{ color: "var(--color-muted)" }}>{u.phone || u.city || ""}</small>
-                        </td>
-                        <td style={{ padding: "12px", fontSize: 10 }}>
-                          <span style={{ fontWeight: 700 }}>{u.role || "USER"}</span>
-                        </td>
-                        <td style={{ padding: "12px", fontSize: 10 }}>
-                          <span className={`report-status report-status-${u.accountStatus || "active"}`}>
-                            {u.accountStatus || "active"}
-                          </span>
-                        </td>
-                        <td style={{ padding: "12px", fontSize: 10, color: "var(--color-muted)" }}>
+                          <div className="shadcn-admin-user-cell-info">
+                            <strong className="shadcn-admin-cell-title">
+                              {u.name || "Anonymous User"}
+                            </strong>
+                            <span className="shadcn-admin-cell-sub">
+                              {u.email || u.clerkUserId}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span className={`shadcn-admin-role-pill is-${u.role?.toLowerCase() || "user"}`}>
+                          {u.role || "USER"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`shadcn-admin-status-pill is-${u.accountStatus || "active"}`}>
+                          {u.accountStatus === "suspended" ? "Suspended" : "Active"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="shadcn-admin-cell-text">
+                          {u.city || "—"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="shadcn-admin-cell-time">
                           {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "—"}
-                        </td>
-                        <td style={{ padding: "12px", fontSize: 10 }}>
-                          <div style={{ display: "flex", gap: 6 }}>
-                            <button
-                              type="button"
-                              className="button button-outline"
-                              style={{ padding: "4px 8px", fontSize: 9 }}
-                              onClick={() => void openUserDetails(u.clerkUserId)}
-                            >
-                              Details
-                            </button>
-                            {isSuspended ? (
+                        </span>
+                      </td>
+                      <td>
+                        <div className="shadcn-admin-table-actions">
+                          <button
+                            type="button"
+                            className="shadcn-admin-btn is-xs is-outline"
+                            onClick={() => void openUserDetails(u.clerkUserId)}
+                          >
+                            Details
+                          </button>
+                          {!isSelf && (
+                            u.accountStatus === "suspended" ? (
                               <button
                                 type="button"
-                                className="button button-outline"
-                                style={{ padding: "4px 8px", fontSize: 9, color: "var(--color-green)", borderColor: "var(--color-green)" }}
+                                className="shadcn-admin-btn is-xs is-emerald"
                                 onClick={() => {
                                   setActionUser(u);
                                   setActionType("reactivate");
-                                  setActionReason("");
+                                  setActionReason("Account restored upon review.");
                                 }}
                               >
                                 Reactivate
@@ -300,15 +337,7 @@ export default function AdminUsersPage() {
                             ) : (
                               <button
                                 type="button"
-                                className="button button-outline"
-                                disabled={isSelf}
-                                title={isSelf ? "Admins cannot suspend their own account" : ""}
-                                style={{
-                                  padding: "4px 8px",
-                                  fontSize: 9,
-                                  color: isSelf ? "var(--color-muted)" : "#DC2626",
-                                  borderColor: isSelf ? "var(--color-border)" : "#FCA5A5",
-                                }}
+                                className="shadcn-admin-btn is-xs is-danger"
                                 onClick={() => {
                                   setActionUser(u);
                                   setActionType("suspend");
@@ -317,246 +346,160 @@ export default function AdminUsersPage() {
                               >
                                 Suspend
                               </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {totalPages > 1 && (
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
-              <span style={{ fontSize: 10, color: "var(--color-muted)" }}>
-                Page {page} of {totalPages}
-              </span>
-              <div style={{ display: "flex", gap: 8 }}>
-                <button
-                  type="button"
-                  className="button button-outline"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  style={{ fontSize: 10, padding: "5px 10px" }}
-                >
-                  Previous
-                </button>
-                <button
-                  type="button"
-                  className="button button-outline"
-                  disabled={page >= totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                  style={{ fontSize: 10, padding: "5px 10px" }}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
+                            )
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
 
-        {/* Modal: Suspend / Reactivate */}
-        {actionUser && actionType && (
-          <div
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(0,0,0,0.6)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 9999,
-              padding: 20,
-            }}
-          >
-            <div
-              style={{
-                background: "var(--color-surface)",
-                border: "1px solid var(--color-border)",
-                borderRadius: 12,
-                maxWidth: 450,
-                width: "100%",
-                padding: 24,
-                boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-              }}
-            >
-              <h2 style={{ margin: "0 0 10px", fontSize: 18 }}>
-                {actionType === "suspend" ? "Suspend User Account" : "Reactivate User Account"}
-              </h2>
-              <p style={{ fontSize: 11, color: "var(--color-text-secondary)", margin: "0 0 16px" }}>
-                Target: <b>{actionUser.name || actionUser.clerkUserId}</b> ({actionUser.email || "No email"})
-              </p>
-
-              <form onSubmit={handleStatusSubmit}>
-                <label style={{ display: "block", fontSize: 11, fontWeight: 700, marginBottom: 6 }}>
-                  Moderation Reason:
-                  <textarea
-                    required={actionType === "suspend"}
-                    placeholder={
-                      actionType === "suspend"
-                        ? "Explain why this user account is being suspended..."
-                        : "Optional note on reactivation..."
-                    }
-                    value={actionReason}
-                    onChange={(e) => setActionReason(e.target.value)}
-                    rows={3}
-                    style={{
-                      width: "100%",
-                      marginTop: 6,
-                      padding: 8,
-                      fontSize: 11,
-                      borderRadius: 6,
-                      border: "1px solid var(--color-border)",
-                      background: "var(--color-bg)",
-                      color: "var(--color-text)",
-                    }}
-                  />
-                </label>
-
-                <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 18 }}>
-                  <button
-                    type="button"
-                    className="button button-outline"
-                    onClick={() => {
-                      setActionUser(null);
-                      setActionType(null);
-                    }}
-                    disabled={submittingAction}
-                    style={{ fontSize: 11 }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="button button-primary"
-                    disabled={submittingAction}
-                    style={{
-                      fontSize: 11,
-                      background: actionType === "suspend" ? "#DC2626" : "var(--color-green)",
-                      borderColor: actionType === "suspend" ? "#DC2626" : "var(--color-green)",
-                    }}
-                  >
-                    {submittingAction
-                      ? "Executing..."
-                      : actionType === "suspend"
-                      ? "Confirm Suspension"
-                      : "Confirm Reactivation"}
-                  </button>
-                </div>
-              </form>
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="shadcn-admin-pagination">
+            <span className="shadcn-admin-pagination-info">
+              Page {page} of {totalPages} ({totalCount} users)
+            </span>
+            <div className="shadcn-admin-pagination-btns">
+              <button
+                type="button"
+                className="shadcn-admin-btn is-sm is-outline"
+                disabled={page <= 1 || loading}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                className="shadcn-admin-btn is-sm is-outline"
+                disabled={page >= totalPages || loading}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              >
+                Next
+              </button>
             </div>
           </div>
         )}
+      </div>
 
-        {/* Modal: User Details & Listings Drawer */}
-        {detailUser && (
-          <div
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(0,0,0,0.6)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 9999,
-              padding: 20,
-            }}
-          >
-            <div
-              style={{
-                background: "var(--color-surface)",
-                border: "1px solid var(--color-border)",
-                borderRadius: 12,
-                maxWidth: 600,
-                width: "100%",
-                maxHeight: "85vh",
-                overflowY: "auto",
-                padding: 24,
-                boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-                <div>
-                  <h2 style={{ margin: 0, fontSize: 18 }}>{detailUser.user.name || "Anonymous User"}</h2>
-                  <small style={{ color: "var(--color-muted)", fontSize: 10 }}>{detailUser.user.clerkUserId}</small>
-                </div>
+      {/* SUSPEND / REACTIVATE MODAL */}
+      {actionUser && actionType && (
+        <div className="shadcn-admin-modal-backdrop">
+          <div className="shadcn-admin-modal-dialog">
+            <div className="shadcn-admin-modal-head">
+              <h3>
+                {actionType === "suspend" ? "Suspend User Account" : "Reactivate User Account"}
+              </h3>
+              <button type="button" onClick={() => setActionUser(null)} className="shadcn-admin-modal-close">×</button>
+            </div>
+            <form onSubmit={handleActionSubmit} className="shadcn-admin-modal-body">
+              <p>
+                You are about to {actionType} account{" "}
+                <strong>&quot;{actionUser.name || actionUser.email}&quot;</strong> (<code>{actionUser.clerkUserId}</code>).
+              </p>
+              <div className="shadcn-admin-field">
+                <label htmlFor="user-mod-reason">Reason for audit log (Required):</label>
+                <textarea
+                  id="user-mod-reason"
+                  rows={3}
+                  className="shadcn-admin-textarea"
+                  placeholder="State the reason for this account status change…"
+                  value={actionReason}
+                  onChange={(e) => setActionReason(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="shadcn-admin-modal-actions">
                 <button
                   type="button"
-                  className="button button-outline"
-                  style={{ padding: "4px 8px", fontSize: 10 }}
-                  onClick={() => setDetailUser(null)}
+                  className="shadcn-admin-btn is-ghost"
+                  onClick={() => setActionUser(null)}
+                  disabled={submittingAction}
                 >
-                  ✕ Close
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className={`shadcn-admin-btn ${actionType === "reactivate" ? "is-primary" : "is-destructive"}`}
+                  disabled={submittingAction || !actionReason.trim()}
+                >
+                  {submittingAction ? "Processing…" : `Confirm ${actionType === "suspend" ? "Suspension" : "Reactivation"}`}
                 </button>
               </div>
+            </form>
+          </div>
+        </div>
+      )}
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, fontSize: 11, marginBottom: 20 }}>
-                <div>
-                  <strong>Email:</strong> {detailUser.user.email || "—"}
-                </div>
-                <div>
-                  <strong>Phone:</strong> {detailUser.user.phone || "—"}
-                </div>
-                <div>
-                  <strong>City:</strong> {detailUser.user.city || "—"}
-                </div>
-                <div>
-                  <strong>Role:</strong> {detailUser.user.role || "USER"}
-                </div>
-                <div>
-                  <strong>Status:</strong>{" "}
-                  <span className={`report-status report-status-${detailUser.user.accountStatus || "active"}`}>
-                    {detailUser.user.accountStatus || "active"}
-                  </span>
-                </div>
-                <div>
-                  <strong>Joined:</strong>{" "}
-                  {detailUser.user.createdAt ? new Date(detailUser.user.createdAt).toLocaleDateString() : "—"}
+      {/* USER DETAILS SLIDE-OVER DRAWER */}
+      {detailUser && (
+        <div className="shadcn-admin-drawer-backdrop" onClick={() => setDetailUser(null)}>
+          <div className="shadcn-admin-drawer" onClick={(e) => e.stopPropagation()}>
+            <div className="shadcn-admin-drawer-head">
+              <div>
+                <span className="shadcn-admin-drawer-eyebrow">USER PROFILE INSPECTOR</span>
+                <h3 className="shadcn-admin-drawer-title">
+                  {detailUser.user.name || "Anonymous User"}
+                </h3>
+              </div>
+              <button type="button" onClick={() => setDetailUser(null)} className="shadcn-admin-drawer-close">×</button>
+            </div>
+
+            <div className="shadcn-admin-drawer-body">
+              <div className="shadcn-admin-section-box">
+                <h4>Account Details</h4>
+                <div className="shadcn-admin-user-details-list">
+                  <p><strong>Name:</strong> {detailUser.user.name || "N/A"}</p>
+                  <p><strong>Email:</strong> {detailUser.user.email || "N/A"}</p>
+                  <p><strong>Phone:</strong> {detailUser.user.phone || "N/A"}</p>
+                  <p><strong>City:</strong> {detailUser.user.city || "N/A"}</p>
+                  <p><strong>Role:</strong> <span className="shadcn-admin-role-pill is-subtle">{detailUser.user.role || "USER"}</span></p>
+                  <p><strong>Account Status:</strong> <span className={`shadcn-admin-status-pill is-${detailUser.user.accountStatus || "active"}`}>{detailUser.user.accountStatus || "active"}</span></p>
+                  <p><strong>Clerk ID:</strong> <code>{detailUser.user.clerkUserId}</code></p>
+                  <p><strong>Joined:</strong> {detailUser.user.createdAt ? new Date(detailUser.user.createdAt).toLocaleString() : "N/A"}</p>
                 </div>
               </div>
 
               {detailUser.user.about && (
-                <div style={{ fontSize: 11, marginBottom: 20, padding: 10, background: "var(--color-bg)", borderRadius: 6 }}>
-                  <strong>About:</strong>
-                  <p style={{ margin: "4px 0 0", color: "var(--color-text-secondary)" }}>{detailUser.user.about}</p>
+                <div className="shadcn-admin-section-box">
+                  <h4>About / Bio</h4>
+                  <p className="shadcn-admin-desc-text">{detailUser.user.about}</p>
                 </div>
               )}
 
-              <h3 style={{ fontSize: 14, margin: "0 0 10px" }}>Published Properties ({detailUser.listingsCount})</h3>
-              {!detailUser.listings.length ? (
-                <p style={{ fontSize: 11, color: "var(--color-muted)" }}>This user has not listed any properties.</p>
-              ) : (
-                <div className="admin-table-wrap">
-                  <table className="admin-table">
-                    <thead>
-                      <tr>
-                        <th>Title</th>
-                        <th>City</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {detailUser.listings.map((l) => (
-                        <tr key={l._id}>
-                          <td style={{ padding: "8px 10px", fontSize: 10, fontWeight: 600 }}>{l.title}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 9 }}>{l.location?.city || "—"}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 9 }}>₹{l.priceAmount?.toLocaleString("en-IN")}</td>
-                          <td style={{ padding: "8px 10px", fontSize: 9 }}>
-                            <span className={`report-status report-status-${l.status}`}>{l.status}</span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              {/* Owned listings by this user */}
+              <div className="shadcn-admin-section-box">
+                <h4>Published Properties ({detailUser.listingsCount})</h4>
+                {!detailUser.listings.length ? (
+                  <p className="shadcn-admin-empty-sub">This user has not published any property listings.</p>
+                ) : (
+                  <div className="shadcn-admin-user-listings-list">
+                    {detailUser.listings.map((item) => (
+                      <div key={item._id} className="shadcn-admin-user-listing-item">
+                        <div>
+                          <Link href={`/property/${item.slug}`} target="_blank" className="shadcn-admin-cell-title">
+                            {item.title}
+                          </Link>
+                          <span className="shadcn-admin-cell-sub">
+                            {item.location?.city || "Unspecified"} · ₹{item.priceAmount.toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                        <span className={`shadcn-admin-status-pill is-${item.status}`}>
+                          {item.status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        )}
-      </section>
-    </main>
+        </div>
+      )}
+    </AdminShell>
   );
 }

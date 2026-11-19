@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import AdminNav from "../components/AdminNav";
-import ThemePicker from "../../components/ThemePicker";
+import AdminShell from "../components/AdminShell";
 
 const sections: Record<string, { title: string; eyebrow: string; description: string; columns: string[] }> = {
   plans: {
@@ -30,97 +29,38 @@ export default async function AdminSectionPage({ params }: { params: Promise<{ s
   const isPlans = sectionKey === "plans";
 
   return (
-    <main className="admin-page">
-      <AdminNav activeSection={sectionKey as any} />
-      <section className="admin-main">
-        <header className="admin-topbar">
+    <AdminShell
+      activeSection={sectionKey as any}
+      title={section.title}
+      description={section.description}
+      actions={
+        <Link href={isPlans ? "/admin/plans" : "/admin/settings"} className="shadcn-admin-btn is-primary">
+          Open Dynamic Workspace →
+        </Link>
+      }
+    >
+      <div className="shadcn-admin-card">
+        <div className="shadcn-admin-card-head">
           <div>
-            <p className="eyebrow">{section.eyebrow}</p>
-            <h1>{section.title}</h1>
+            <h3 className="shadcn-admin-card-title">{section.title}</h3>
+            <p className="shadcn-admin-card-sub">
+              {isPlans ? "Community Zero-Brokerage Architecture" : "Platform Runtime Configuration"}
+            </p>
           </div>
-          <div className="admin-top-actions">
-            <ThemePicker compact />
-          </div>
-        </header>
-
-        <div className="admin-policy-note" style={{ marginBottom: 20 }}>
-          <b>{isPlans ? "Zero-Cost Free Launch Policy" : "System Configuration Scope"}</b>
-          <p>{section.description}</p>
         </div>
 
-        <section className="admin-panel">
-          <div className="admin-panel-head">
-            <div>
-              <h2>{section.title}</h2>
-              <p>{isPlans ? "Active Launch Tiers" : "Active Environment Controls"}</p>
-            </div>
-          </div>
-
-          <div className="admin-table-wrap">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  {section.columns.map((column) => (
-                    <th key={column}>{column}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {isPlans ? (
-                  <tr>
-                    <td style={{ padding: "12px", fontSize: 11, fontWeight: 700 }}>Free Community Tier</td>
-                    <td style={{ padding: "12px", fontSize: 11 }}>₹0 / month</td>
-                    <td style={{ padding: "12px", fontSize: 11 }}>Unlimited Search, Favorites, Messaging, Listing CRUD</td>
-                    <td style={{ padding: "12px", fontSize: 11 }}>
-                      <span className="report-status report-status-resolved">Disabled (Free Launch)</span>
-                    </td>
-                    <td style={{ padding: "12px", fontSize: 11 }}>
-                      <span className="report-status report-status-active">Active Everywhere</span>
-                    </td>
-                  </tr>
-                ) : (
-                  <>
-                    <tr>
-                      <td style={{ padding: "12px", fontSize: 11, fontWeight: 700 }}>
-                        <code>IMMEDIATE_PUBLISHING</code>
-                      </td>
-                      <td style={{ padding: "12px", fontSize: 11 }}>true</td>
-                      <td style={{ padding: "12px", fontSize: 11 }}>Properties Domain</td>
-                      <td style={{ padding: "12px", fontSize: 11 }}>
-                        <span className="report-status report-status-active">Enforced</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ padding: "12px", fontSize: 11, fontWeight: 700 }}>
-                        <code>CLERK_DEV_INSTANCE</code>
-                      </td>
-                      <td style={{ padding: "12px", fontSize: 11 }}>Active</td>
-                      <td style={{ padding: "12px", fontSize: 11 }}>Identity Provider</td>
-                      <td style={{ padding: "12px", fontSize: 11 }}>
-                        <span className="report-status report-status-active">Enforced</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ padding: "12px", fontSize: 11, fontWeight: 700 }}>
-                        <code>PAYMENTS_DISABLED</code>
-                      </td>
-                      <td style={{ padding: "12px", fontSize: 11 }}>true</td>
-                      <td style={{ padding: "12px", fontSize: 11 }}>Checkout & Subscriptions</td>
-                      <td style={{ padding: "12px", fontSize: 11 }}>
-                        <span className="report-status report-status-active">Enforced</span>
-                      </td>
-                    </tr>
-                  </>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <footer className="admin-footer">
-          <Link href="/admin">← Back to Overview</Link>
-        </footer>
-      </section>
-    </main>
+        <div style={{ padding: "16px 20px" }}>
+          <p style={{ margin: "0 0 16px", color: "var(--color-muted)", fontSize: 13 }}>
+            {section.description}
+          </p>
+          <Link
+            href={isPlans ? "/admin/plans" : "/admin/settings"}
+            className="shadcn-admin-btn is-primary"
+          >
+            Launch Interactive {section.title} Dashboard →
+          </Link>
+        </div>
+      </div>
+    </AdminShell>
   );
 }

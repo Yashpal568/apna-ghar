@@ -31,6 +31,7 @@ const clerkHandler = clerkMiddleware(async (auth, request) => {
         "user_3LSfCyLdR69L1O1ovcKkenvdrMK",
         "user_3LHtWTA9Vf1Il8C98rCZOut7xiu",
         "user_3LSgkWc0aC8JqvhF9CfR2AYdqCK",
+        "user_3M5biusuFzowIqINqQbezS6Jd8C",
       ];
       const adminIds = Array.from(new Set([...configuredAdmins, ...defaultAdmins]));
       if (!adminIds.includes(userId)) {
