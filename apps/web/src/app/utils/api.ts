@@ -1,6 +1,6 @@
 export const configuredApiBase = (
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "https://apna-ghar-api-j4fo.onrender.com/api/v1"
+  "https://apna-ghar-api-w0dk.onrender.com/api/v1"
 ).replace(/\/$/, "");
 
 export function getApiEndpoint(path: string): string {

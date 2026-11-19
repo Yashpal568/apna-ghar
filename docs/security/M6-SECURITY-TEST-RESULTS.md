@@ -4,7 +4,7 @@
 **Date:** November 19, 2026  
 **Environment:** Local Integration Environment / Monorepo Test Runner  
 **Node.js Version:** v22.14.0  
-**Status:** ALL TESTS PASSING (243/243 total tests passed)
+**Status:** ALL TESTS PASSING (280/280 total tests passed)
 
 ---
 
@@ -12,13 +12,13 @@
 
 | Test Suite Category | Total Suites | Passed | Failed | Skipped | Total Tests |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **API Unit, Schema & Security Tests** | 18 | 18 | 0 | 0 | **180** |
+| **API Unit, Schema & Security Tests** | 19 | 19 | 0 | 0 | **217** |
 | **API E2E Integration Tests** | 9 | 9 | 0 | 0 | **63** |
-| **Total Automated Tests** | **27** | **27** | **0** | **0** | **243** |
+| **Total Automated Tests** | **28** | **28** | **0** | **0** | **280** |
 
 ---
 
-## 2. API Unit, Schema & Security Test Suites (180 Tests)
+## 2. API Unit, Schema & Security Test Suites (217 Tests)
 
 Execution Command:
 ```bash
@@ -28,6 +28,52 @@ npm run test:api
 
 Terminal Output Evidence:
 ```text
+PASS test/two-account-messaging-isolation.spec.ts (12.656 s)
+  Apna Ghar M6 — Two-Account Messaging Isolation & Private Attachment Acceptance Suite
+    1. Two-Account Thread Creation & Isolation (Users A, B vs C)
+      ✓ 1.1 User A initiates inquiry on User B property, creating Conv 1 shared only between A and B
+      ✓ 1.2 User B initiates inquiry on User C property, creating Conv 2 shared only between B and C
+      ✓ 1.3 User A lists conversations: sees Conv 1, STRICTLY DOES NOT see Conv 2
+      ✓ 1.4 User C lists conversations: sees Conv 2, STRICTLY DOES NOT see Conv 1
+      ✓ 1.5 User B (participant in both) sees both Conv 1 and Conv 2
+    2. Cross-Account IDOR Access Denial (User C attempting Conv 1; User A attempting Conv 2)
+      ✓ 2.1 User C cannot get Conv 1 details (404 Not Found / IDOR defense)
+      ✓ 2.2 User C cannot get Conv 1 messages (404 Not Found)
+      ✓ 2.3 User C cannot send messages into Conv 1 (404 Not Found)
+      ✓ 2.4 User A cannot get Conv 2 details (404 Not Found)
+      ✓ 2.5 User A cannot get Conv 2 messages (404 Not Found)
+      ✓ 2.6 User A cannot send messages into Conv 2 (404 Not Found)
+    3. Offer Negotiation Authorization & Manipulation Defense
+      ✓ 3.1 User A (buyer) submits ₹2.40 Cr offer to User B in Conv 1
+      ✓ 3.2 User A (offer sender) CANNOT accept or reject their own offer (400)
+      ✓ 3.3 User A (offer sender) CANNOT counter their own offer (404 / 400)
+      ✓ 3.4 User C (unrelated third party) CANNOT accept or reject Offer 1 in Conv 1 (404 / IDOR)
+      ✓ 3.5 User C CANNOT counter Offer 1 in Conv 1 (404 / IDOR)
+      ✓ 3.6 User B (authorized recipient) successfully counters the offer to ₹2.45 Cr
+    4. Private Attachment Security & Access Control
+      ✓ 4.1 User A uploads a private PDF attachment (magic bytes %PDF verified)
+      ✓ 4.2 User C CANNOT steal or use User A attachment ID when sending in Conv 2 (400 rejection)
+      ✓ 4.3 User cannot forge client-supplied arbitrary public IDs without upload verification (400)
+      ✓ 4.4 User A successfully attaches their verified uploaded document in Conv 1
+      ✓ 4.5 User A and User B (participants) access attachment via Bearer token
+      ✓ 4.6 Authorized participant accesses attachment via valid short-lived signed URL
+      ✓ 4.7 User C (non-participant) CANNOT access attachment via Bearer token (404/403 IDOR rejection)
+      ✓ 4.8 Request without Bearer token and without signature returns 401 Unauthorized
+      ✓ 4.9 Expired signed URL returns 403 Forbidden
+      ✓ 4.10 Malformed or forged signature returns 403 Forbidden
+      ✓ 4.11 Participant can generate a fresh signed URL on demand
+    5. Upload Validation & Security Safeguards
+      ✓ 5.1 Rejects MIME spoofing (e.g. executable claiming to be JPEG)
+      ✓ 5.2 Rejects HTML / JavaScript polyglot claiming to be image
+      ✓ 5.3 Neutralizes directory traversal in filename (../../../../etc/passwd)
+      ✓ 5.4 Rejects unsupported file extensions (e.g. .exe, .sh, .bat)
+    6. Account Suspension Restrictions
+      ✓ 6.1 Suspended account profile status verified in MongoDB
+      ✓ 6.2 PropertyAuthGuard blocks suspended user from sending messages or uploads (HTTP 403)
+    7. Admin Authorization & Privilege Escalation Defense (Task 3)
+      ✓ 7.1 Normal user CANNOT escalate role to ADMIN via profile update input
+      ✓ 7.2 AdminAuthGuard blocks non-admin user (HTTP 403)
+      ✓ 7.3 AdminAuthGuard permits verified platform administrator
 PASS test/security-hardening.spec.ts (8.482 s)
   M6 Security Hardening Acceptance Suite
     1. Authentication Enforcement (ClerkAuthGuard & PropertyAuthGuard)

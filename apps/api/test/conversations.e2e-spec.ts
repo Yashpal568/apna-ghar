@@ -12,6 +12,7 @@ import { Property } from '../src/properties/schemas/property.schema';
 import { MessageRateLimit } from '../src/conversations/schemas/message-rate-limit.schema';
 import { Message } from '../src/conversations/schemas/message.schema';
 import { PropertyOffer } from '../src/conversations/schemas/property-offer.schema';
+import { UploadedAttachment } from '../src/conversations/schemas/uploaded-attachment.schema';
 
 function chainQuery<T>(value: T) {
   return {
@@ -175,6 +176,14 @@ describe('Conversations & Messaging Module Endpoints (e2e)', () => {
     }),
   };
 
+  const mockUploadedAttachmentModel = {
+    create: jest.fn().mockImplementation((doc) => Promise.resolve({ ...doc })),
+    findOne: jest.fn().mockReturnValue(chainQuery(null)),
+    updateOne: jest.fn().mockReturnValue({
+      exec: jest.fn().mockResolvedValue({ matchedCount: 1 }),
+    }),
+  };
+
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [ConversationsController],
@@ -184,6 +193,7 @@ describe('Conversations & Messaging Module Endpoints (e2e)', () => {
         { provide: getModelToken(MessageRateLimit.name), useValue: mockRateLimitModel },
         { provide: getModelToken(Message.name), useValue: mockMessageModel },
         { provide: getModelToken(PropertyOffer.name), useValue: mockOfferModel },
+        { provide: getModelToken(UploadedAttachment.name), useValue: mockUploadedAttachmentModel },
         { provide: ConfigService, useValue: { get: () => 'sk_test_mock' } },
       ],
     })

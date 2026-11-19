@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 const RENDER_API = (
   process.env.INTERNAL_API_URL ||
-  "https://apna-ghar-api-j4fo.onrender.com/api/v1"
+  "https://apna-ghar-api-w0dk.onrender.com/api/v1"
 ).replace(/\/$/, "");
 
 const corsHeaders = {

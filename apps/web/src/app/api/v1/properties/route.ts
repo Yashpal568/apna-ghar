@@ -4,7 +4,7 @@ const API_BASE = (
   process.env.INTERNAL_API_URL ||
   process.env.API_UPSTREAM_URL ||
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "https://apna-ghar-api-j4fo.onrender.com/api/v1"
+  "https://apna-ghar-api-w0dk.onrender.com/api/v1"
 ).replace(/\/$/, "");
 
 const headers = {

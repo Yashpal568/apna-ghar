@@ -18,7 +18,7 @@ type PropertySummary = {
   areaValue?: number;
   areaUnit?: string;
 };
-const API = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
+const API = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-w0dk.onrender.com/api/v1").replace(/\/$/, "");
 function unwrap(value: unknown, depth = 0): PropertySummary | null {
   if (!value || typeof value !== "object" || depth > 4) return null;
   const item = value as Record<string, unknown>;

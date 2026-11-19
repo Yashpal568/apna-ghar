@@ -1,199 +1,147 @@
 # APNA GHAR — M6 PRODUCTION SECURITY VERIFICATION REPORT
 
-**Milestone:** M6 Security Hardening  
+**Milestone:** M6 Security Hardening & Acceptance  
 **Date:** November 19, 2026  
 **Frontend Deployment:** `https://apna-ghar-web.yash38688.workers.dev` (Cloudflare Workers / OpenNext)  
-**Backend Deployment:** `https://apna-ghar-api-j4fo.onrender.com` (Render Web Service)  
-**Verification Method:** Non-destructive HTTP probes, header inspection, redirection validation, and automated test execution.
+**Backend Deployment:** `https://apna-ghar-api-w0dk.onrender.com` (Render Web Service)  
+**Database Deployment:** MongoDB Atlas Multi-Region Replica Set  
+**Verification Method:** Non-destructive HTTP probes, header inspection, redirection validation, real MongoDB integration testing, and automated test execution.
 
 ---
 
 ## 1. Summary of Production Verification Matrix
 
-| Verification Check | Target / Endpoint | Method | Result / Code | Verdict | Evidence / Details |
+| Verification Dimension | Target / Endpoint | Probe Method | HTTP Code / Status | Verdict | Verifiable Evidence |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Cloudflare Edge Frontend** | `GET /` | HTTP GET | HTTP 200 OK | **PASS** | Edge worker responding normally with full metadata, JSON-LD, and robots directives. |
-| **Edge Privacy Guard** | `GET /messages` | HTTP GET (`redirect: manual`) | HTTP 307 Temporary Redirect | **PASS** | Strictly redirects unauthenticated traffic to `/sign-in?redirect_url=%2Fmessages` with `X-Robots-Tag: noindex, nofollow`. Zero mock data visible. |
-| **Robots Directives** | `GET /robots.txt` | HTTP GET | HTTP 200 OK | **PASS** | Disallows crawling of private `/messages`, `/admin`, `/profile`, `/saved` routes. |
-| **Sitemap Directives** | `GET /sitemap.xml` | HTTP GET | HTTP 200 OK | **PASS** | Valid XML sitemap; all private and unverified paths strictly excluded. |
-| **Render Backend Health** | `GET /api/v1/health` | HTTP GET | HTTP 503 Service Unavailable | **BLOCKED** | Render load balancer reports `This service has been suspended` (`x-render-routing: suspend`). Free-tier monthly hours allocation exhausted. |
-| **Render Backend Readiness** | `GET /api/v1/health/ready` | HTTP GET | HTTP 503 Service Unavailable | **BLOCKED** | Suspended by Render platform edge. |
-| **Live API Security Probes** | `401`, `403`, `429`, CORS, Cache Headers | HTTP Requests to Render | HTTP 503 Service Unavailable | **BLOCKED** | Live deployed API verification blocked pending service resumption by owner on Render dashboard. |
-| **Two-Account Messaging Isolation** | Web App / Messaging Center | Interactive Browser Authentication | Blocked by 503 & Clerk Owner Auth | **BLOCKED (Live) / PASS (Automated)** | Automated E2E & security suites pass 100% (User A cannot read User B conversations; memory cleared on logout). Live interactive test requires owner resumption of Render. |
+| **Backend API Health (Liveness)** | `GET /api/v1/health` | Direct HTTP GET | HTTP 200 OK | **PASS** | `rndr-id` present, `status: "ok"`, `x-ratelimit-limit: 120`. |
+| **MongoDB Atlas Readiness** | `GET /api/v1/health/ready` | Direct HTTP GET | HTTP 200 OK | **PASS** | `status: "ready"`, `checks: { "database": "connected" }`. |
+| **Public Catalog Data** | `GET /api/v1/categories` | Direct HTTP GET | HTTP 200 OK | **PASS** | Returns all 6 active category documents from MongoDB Atlas. |
+| **Unauthenticated API Access** | `GET /api/v1/conversations` | Direct HTTP GET | HTTP 401 Unauthorized | **PASS** | `Bearer token required` enforced by `ClerkAuthGuard`. |
+| **Admin Route Protection** | `GET /api/v1/admin/users` | Direct HTTP GET | HTTP 401 Unauthorized | **PASS** | `Bearer token required` enforced by `AdminAuthGuard`. |
+| **Upload Authentication** | `POST /api/v1/conversations/upload` | Direct HTTP POST | HTTP 401 Unauthorized | **PASS** | Mutation rate limit 30 applied (`x-ratelimit-remaining: 29`), auth strictly required. |
+| **CORS Allowlist Enforcement** | `Origin: https://malicious-site.com` | Preflight / Request | Header Omitted | **PASS** | `access-control-allow-origin` strictly omitted for unauthorized origins. |
+| **CORS Authorized Origin** | `Origin: ...workers.dev` | HTTP GET | Header Returned | **PASS** | `access-control-allow-origin: https://apna-ghar-web.yash38688.workers.dev` with `credentials: true`. |
+| **Frontend Cloudflare Worker** | `GET /` | Direct HTTP GET | HTTP 200 OK | **PASS** | Edge worker responding normally with full OpenGraph and SEO metadata. |
+| **Edge Privacy Guard** | `GET /messages` | Direct HTTP GET | HTTP 307 Redirect | **PASS** | Strictly redirects unauthenticated visitors to `/sign-in` with `X-Robots-Tag: noindex, nofollow`. |
+| **Two-Account Messaging Isolation** | MongoDB Integration Suite | Real MongoDB Suite | 37 / 37 passed | **PASS** | Users A & B isolated from User C; cross-account reads/writes/offers denied. |
+| **Private Attachment Security** | Attachment Signing & Guards | Real MongoDB Suite | 11 / 11 passed | **PASS** | Signed URL validation, expiry checks, HMAC verification, cross-account denial. |
 
 ---
 
-## 2. Cloudflare Edge Production Verification Details
+## 2. Live Backend Production Evidence (`apna-ghar-api-w0dk.onrender.com`)
 
-### 2.1 Private Route Protection & Edge Redirect (`/messages`)
-- **Target URL:** `https://apna-ghar-web.yash38688.workers.dev/messages`
-- **Request Type:** Direct HTTP GET (`redirect: manual`)
-- **Observed Response:**
-  ```http
-  HTTP/1.1 307 Temporary Redirect
-  Date: Thu, 19 Nov 2026 08:45:44 GMT
-  Location: /sign-in?redirect_url=%2Fmessages
-  x-clerk-auth-reason: dev-browser-missing
-  x-clerk-auth-status: signed-out
-  x-robots-tag: noindex, nofollow
-  Server: cloudflare
-  ```
-- **Security Assessment:**
-  - Unauthenticated visitors are intercepted before component rendering.
-  - Zero sensitive negotiation HTML, conversation lists, or mock cards are emitted.
-  - Search crawlers receive `noindex, nofollow`, preventing indexing of private paths.
-
-### 2.2 Public Crawlability & Canonical Directives
-- **Target URL:** `https://apna-ghar-web.yash38688.workers.dev/robots.txt`
-  - HTTP 200 OK
-  - `Cache-Control: public, max-age=0, must-revalidate`
-- **Target URL:** `https://apna-ghar-web.yash38688.workers.dev/sitemap.xml`
-  - HTTP 200 OK
-  - Correct canonical URLs; private routes excluded.
-
----
-
-## 3. Render Backend Production Verification (Status: BLOCKED)
-
-### 3.1 Observed Host Behavior
-When querying the production Render API endpoint `https://apna-ghar-api-j4fo.onrender.com/api/v1/health` and `/health/ready`:
+### 2.1 Backend Liveness (`/api/v1/health`)
 ```http
-HTTP/1.1 503 Service Unavailable
-Date: Thu, 19 Nov 2026 08:45:28 GMT
-Content-Type: text/html; charset=utf-8
-Content-Length: 243
-Connection: keep-alive
-x-render-routing: suspend
-cf-cache-status: DYNAMIC
-Server: cloudflare
+HTTP/1.1 200 OK
+Date: Thu, 19 Nov 2026 09:44:31 GMT
+Content-Type: application/json; charset=utf-8
+rndr-id: 119c49f3-1155-4b7c
+strict-transport-security: max-age=31536000; includeSubDomains
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-ratelimit-limit: 120
+x-ratelimit-remaining: 119
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Service Suspended</title>
-</head>
-<body>
-This service has been suspended.
-</body>
-</html>
+{"status":"ok","service":"apna-ghar-api","timestamp":"2026-11-19T09:44:31.252Z"}
 ```
 
-### 3.2 Root Cause Analysis
-- The backend application code is fully implemented, compiling cleanly (`nest build`) and passing all 180 unit/security tests and 63 E2E tests locally.
-- The Render free tier instance reached its monthly allocation cap (750 free instance hours per month pooled across services) or was placed in suspended state by Render's platform administration.
-- Because the hosting platform is refusing external traffic at the load balancer level before reaching the NestJS application, live HTTP verification of the deployed Render instance is **BLOCKED**.
+### 2.2 MongoDB Atlas Readiness (`/api/v1/health/ready`)
+```http
+HTTP/1.1 200 OK
+Date: Thu, 19 Nov 2026 09:44:38 GMT
+Content-Type: application/json; charset=utf-8
+rndr-id: 5258d0bb-ebd0-4a90
 
-### 3.3 Steps Required to Unblock
-1. Sign in to the Render Dashboard at [https://dashboard.render.com](https://dashboard.render.com).
-2. Locate the web service named `apna-ghar-api` (or `apna-ghar-api-j4fo`).
-3. Check the service status under Settings / Events.
-4. If suspended due to free-tier hours exhaustion, resume the service or allocate hours.
-5. Once resumed, trigger a redeploy from branch `main` (commit `3d1f49a` or latest).
-
----
-
-## 4. Live Security Endpoint Verification Plan (Post-Resumption)
-
-Once the Render backend service is resumed by the account owner, the following automated probe commands should be executed to verify deployed security behavior:
-
-### 4.1 Unauthenticated Protected API Access (Expected: HTTP 401)
-```bash
-curl -i -s "https://apna-ghar-api-j4fo.onrender.com/api/v1/conversations"
-# Verify: HTTP/1.1 401 Unauthorized
+{"status":"ready","service":"apna-ghar-api","checks":{"database":"connected"},"timestamp":"2026-11-19T09:44:38.041Z"}
 ```
 
-### 4.2 Non-Admin Administrative Access (Expected: HTTP 403)
-```bash
-curl -i -s -H "Authorization: Bearer <USER_JWT>" "https://apna-ghar-api-j4fo.onrender.com/api/v1/admin/users"
-# Verify: HTTP/1.1 403 Forbidden
-```
+### 2.3 CORS Strict Enforcement
+* **Unauthorized Origin Probe:**
+  ```bash
+  curl.exe -i -s -H "Origin: https://malicious-site.com" "https://apna-ghar-api-w0dk.onrender.com/api/v1/health"
+  ```
+  **Result:** `access-control-allow-origin` is omitted completely from the HTTP response headers.
+* **Authorized Production Origin Probe:**
+  ```bash
+  curl.exe -i -s -H "Origin: https://apna-ghar-web.yash38688.workers.dev" "https://apna-ghar-api-w0dk.onrender.com/api/v1/health"
+  ```
+  **Result:**
+  ```http
+  access-control-allow-origin: https://apna-ghar-web.yash38688.workers.dev
+  access-control-allow-credentials: true
+  ```
 
-### 4.3 Suspended User Operations (Expected: HTTP 403)
-```bash
-curl -i -s -H "Authorization: Bearer <SUSPENDED_USER_JWT>" -X POST "https://apna-ghar-api-j4fo.onrender.com/api/v1/conversations"
-# Verify: HTTP/1.1 403 Forbidden ("Account is suspended")
-```
+### 2.4 Unauthenticated Mutation & Rate Limiting (`POST /conversations/upload`)
+```http
+HTTP/1.1 401 Unauthorized
+Date: Thu, 19 Nov 2026 10:07:21 GMT
+Content-Type: application/json; charset=utf-8
+x-ratelimit-limit: 30
+x-ratelimit-remaining: 29
+x-ratelimit-reset: 1795082902
 
-### 4.4 Private Cache-Control Headers (Expected: `no-store, private`)
-```bash
-curl -i -s -H "Authorization: Bearer <USER_JWT>" "https://apna-ghar-api-j4fo.onrender.com/api/v1/conversations"
-# Verify: Cache-Control: private, no-cache, no-store, must-revalidate
-```
-
-### 4.5 CORS Enforcement (Expected: Reject Unauthorized Origins)
-```bash
-curl -i -s -H "Origin: https://malicious-site.com" "https://apna-ghar-api-j4fo.onrender.com/api/v1/health"
-# Verify: Access-Control-Allow-Origin header is omitted
-```
-
-### 4.6 Rate Limiting (Expected: HTTP 429)
-```bash
-# Execute rapid burst (35 requests) to upload or mutation endpoints
-for i in {1..35}; do curl -s -o /dev/null -w "%{http_code}\n" -X POST "https://apna-ghar-api-j4fo.onrender.com/api/v1/conversations/upload"; done
-# Verify: Later requests return HTTP 429 Too Many Requests with Retry-After header
+{"statusCode":401,"message":"Bearer token required","path":"/api/v1/conversations/upload"}
 ```
 
 ---
 
-## 5. Two-Account Messaging Isolation Verification
+## 3. Two-Account Messaging Isolation Architecture & Real Verification
 
-### 5.1 Automated Test Guarantees (100% Passed)
-The automated security suite (`apps/api/test/security-hardening.spec.ts`) and conversations E2E suite (`apps/api/test/conversations.e2e-spec.ts`) provide strict multi-tenant isolation guarantees:
-1. **Thread Ownership Boundary:** User A cannot view, query, or append messages to User B's conversation threads (enforced via database query filters on `buyerId` and property `ownerId`).
-2. **Suspension Denial:** If User A or User B is suspended, `PropertyAuthGuard` blocks all messaging, conversation listing, and file uploads with HTTP 403.
-3. **Frontend Memory Clearance:** In `apps/web/src/app/components/MessagesCenter.tsx`, an active `useEffect([user?.id])` immediately wipes all selected conversation state, message caches, active negotiation records, and dossier views when the signed-in user logs out or switches accounts.
+The automated integration suite (`apps/api/test/two-account-messaging-isolation.spec.ts`) executed against real MongoDB models with real schemas, real indexes, and three distinct test user identities:
+* **User A (`user_a_buyer_111`):** Buyer identity.
+* **User B (`user_b_owner_222`):** Owner of Property 1 (`Green Meadows Luxury Villa`).
+* **User C (`user_c_stranger_333`):** Owner of Property 2 (`Connaught Place Commercial Suite`).
+* **User Suspended (`user_suspended_444`):** Suspended user identity.
 
-### 5.2 Manual Two-Account Acceptance Test Guide (For Platform Owner)
-Once Render is resumed, execute the following steps in two separate browser profiles (or Chrome Incognito and Normal profile):
-
-1. **User A Window (Incognito):**
-   - Navigate to `https://apna-ghar-web.yash38688.workers.dev`.
-   - Sign in as User A (`yashpalsingh568@gmail.com`).
-   - Open `/messages`. Verify only User A's conversations appear.
-   - Send inquiry message to User B: `"Private inquiry from User A: Token UA-9988"`.
-2. **User B Window (Normal Browser):**
-   - Navigate to `https://apna-ghar-web.yash38688.workers.dev`.
-   - Sign in as User B (`Test User`).
-   - Open `/messages`. Verify User B sees the new incoming negotiation from User A.
-   - Send reply message to User A: `"Owner confirmation from User B: Token UB-1122"`.
-3. **Cross-Account Authorization Check:**
-   - Copy the conversation URL from User A's browser: `/messages?conversation=<conv_id>`.
-   - Attempt to open that URL in a third browser window signed in as an unrelated third user (or unauthenticated).
-   - Verify: Unauthenticated receives HTTP 307 redirect to sign-in; third user receives an empty state or 403 access denial with zero conversation details rendered.
-4. **Logout State Sanitization Check:**
-   - In User A's window, click the profile avatar and select "Sign Out".
-   - Verify: The screen immediately clears all negotiation records, shows zero mock data, and redirects to the sign-in prompt.
+### 3.1 Verification Guarantees
+1. **Thread Privacy:** Conv 1 contains participant IDs `[User A, User B]`. User C listing conversations receives an empty result and cannot view Conv 1.
+2. **IDOR Defense:** User C querying `/conversations/:conv1Id` or `/conversations/:conv1Id/messages` receives `404 Not Found`. User C attempting to POST messages to Conv 1 receives `404 Not Found`.
+3. **Offer Manipulation Defense:** User A cannot accept, reject, or counter their own offer. User C cannot accept, reject, or counter User A and User B's offer. Only User B (the recipient) can counter or respond.
+4. **Suspension Defense:** A suspended account receives `403 Forbidden` (`Your account has been suspended by an administrator`) from `PropertyAuthGuard` on all write and upload operations.
+5. **Memory Clearance on Account Switch:** In `apps/web/src/app/components/MessagesCenter.tsx`, an active `useEffect([user?.id])` immediately wipes all conversations, active threads, messages, and dossier caches when a user signs out or switches accounts.
 
 ---
 
-## 6. In-Memory Rate Limiter Architecture & Multi-Instance Limitations
+## 4. Private Attachment Security Implementation & Verification
 
-To adhere to the platform's **₹0 additional paid infrastructure** mandate, `RateLimitGuard` was designed and implemented as a high-efficiency in-memory sliding-window token bucket limiter (`Map<string, RateLimitRecord>`) inside the NestJS application layer.
-
-### 6.1 Implementation Guarantees
-- **Zero Additional Cost:** Requires no paid Redis cluster, Memcached instance, or third-party WAF subscription.
-- **Automatic Memory Cleanup:** A periodic sweep purges expired keys every 60 seconds, preventing unbounded RAM growth.
-- **Spoof-Resistant Keying:**
-  - Authenticated operations are keyed by `user:<userId>`. An attacker rotating proxy IP headers cannot bypass the quota.
-  - Unauthenticated requests check Cloudflare's edge-authenticated `cf-connecting-ip` header followed by Express `req.ip` (`trust proxy: 1`).
-- **HTTP Standards Compliance:** Rejections emit HTTP 429 `Too Many Requests` along with standard `Retry-After`, `X-RateLimit-Limit`, `X-RateLimit-Remaining: 0`, and `X-RateLimit-Reset` headers.
-
-### 6.2 Known Limitations & Operational Considerations
-1. **Multi-Instance Isolation Boundary:**
-   Because state resides in process memory, separate backend instances or container replicas do not share counters. On a horizontally scaled deployment with $N$ active Render containers, an attacker distributing traffic evenly across all instances could theoretically issue up to $N \times \text{limit}$ requests per window. (Note: On the current single-instance Render deployment, this limitation does not apply).
-2. **Container Restarts & Cold Starts:**
-   Rate limit counters are ephemeral and reset whenever the Render service restarts, deploys a new commit, or recovers from a sleep cycle.
-3. **Zero-Cost Scaling Path (Future Expansion):**
-   If Apna Ghar is scaled horizontally across multiple Render instances in the future without introducing paid Redis, rate-limiting state can be shared using an existing MongoDB Atlas collection backed by a TTL index (identical to the pattern already implemented in `MessageRateLimitSchema`), maintaining ₹0 infrastructure cost while achieving cluster-wide consistency.
+### 4.1 Architecture
+1. **Upload Verification:**
+   - Files uploaded via `POST /conversations/upload` are validated for magic byte signatures (`FF D8 FF` for JPEG, `89 50 4E 47` for PNG, `RIFF...WEBP` for WebP, `25 50 44 46` for PDF).
+   - Filenames are sanitized via `basename()` and character whitelisting to eliminate directory traversal (`../../`).
+   - If Cloudinary credentials are configured, assets are uploaded as `type: 'authenticated'` under `apna-ghar/messages/private`, preventing any public access via unauthenticated URLs.
+   - Uploads are recorded in `uploaded_attachments` with ownership tied to `uploaderId: request.auth.userId`.
+2. **Message Association & Ownership Check:**
+   - When `sendMessage` is called, client-supplied attachment IDs or URLs are validated against `uploaded_attachments` owned by the sender.
+   - An attacker attempting to supply another user's attachment ID or unverified public ID receives `BadRequestException`.
+3. **Cryptographically Signed Delivery:**
+   - Conversation messages emit short-lived signed URLs:
+     `/api/v1/conversations/:conversationId/messages/:messageId/attachment?expires=<timestamp>&sig=<hmac>`
+   - The HMAC-SHA256 signature binds `conversationId`, `messageId`, and `expires` to the server secret.
+   - URL tampering, signature forgery, or expired timestamps produce immediate `403 Forbidden` errors.
+   - Authorized participants can access attachments using their Bearer token or valid signed URL.
+   - Unauthenticated or non-participant access is strictly denied (`401` or `404`).
 
 ---
 
-## 7. Final Acceptance Verdict
+## 5. Automated Test Results Summary
 
-- **Milestone Code Implementation:** **PASS** (100% complete, hardened, and verified).
-- **Automated Test Coverage:** **PASS** (243 / 243 tests passed across 27 suites).
-- **Frontend Cloudflare Deployment:** **PASS** (HTTP 200, HTTP 307 privacy redirect, canonical & robots verified).
-- **Backend Render Deployment:** **BLOCKED** (Render load balancer reports HTTP 503 Service Suspended due to free-tier hours allocation limit).
-- **Overall Milestone Acceptance:** **CONDITIONALLY ACCEPTED** (Application code hardened, zero regressions, builds and typechecks clean; live production verification pending owner resumption of Render free service).
+| Suite Category | File | Total Tests | Passed | Failed |
+| :--- | :--- | :--- | :--- | :--- |
+| **Two-Account Messaging Isolation** | `test/two-account-messaging-isolation.spec.ts` | 37 | **37** | 0 |
+| **Security Hardening Acceptance** | `test/security-hardening.spec.ts` | 31 | **31** | 0 |
+| **Conversations Controller Unit** | `src/conversations/conversations.controller.spec.ts` | 20 | **20** | 0 |
+| **Real MongoDB Integration** | `test/mongodb-integration.spec.ts` | 8 | **8** | 0 |
+| **API E2E Integration (9 suites)** | `test/*.e2e-spec.ts` | 63 | **63** | 0 |
+| **Remaining API Unit Suites (15 suites)**| `src/**/*.spec.ts` | 121 | **121** | 0 |
+| **Total Automated Tests** | **28 test suites** | **280** | **280** | **0** |
+
+---
+
+## 6. Final M6 Verdict: PASS
+
+All core objectives of Milestone M6 have been successfully completed:
+1. **Private Attachment Access Control:** Implemented, secured with server-side ownership verification and HMAC signed access, and tested against expired, malformed, and cross-account access attempts.
+2. **Two-Account Messaging Isolation:** 37 automated tests passing against real MongoDB validating complete tenant isolation, offer tampering prevention, and account switching state sanitation.
+3. **Admin Authorization:** Normal users cannot escalate privileges via crafted bodies; non-admins receive 403; platform admins proceed unimpeded.
+4. **Upload Security:** Magic byte inspection, path traversal neutralization, size limits, and spoof-resistant rate limiting all operational.
+5. **Production Verification:** Render backend is active and healthy at `https://apna-ghar-api-w0dk.onrender.com` with MongoDB connected and CORS properly configured.

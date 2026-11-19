@@ -8,6 +8,7 @@ import { Conversation, ConversationSchema } from './schemas/conversation.schema'
 import { MessageRateLimit, MessageRateLimitSchema } from './schemas/message-rate-limit.schema';
 import { Message, MessageSchema } from './schemas/message.schema';
 import { PropertyOffer, PropertyOfferSchema } from './schemas/property-offer.schema';
+import { UploadedAttachment, UploadedAttachmentSchema } from './schemas/uploaded-attachment.schema';
 import { ConversationsController } from './conversations.controller';
 
 @Module({
@@ -20,6 +21,7 @@ import { ConversationsController } from './conversations.controller';
       { name: Message.name, schema: MessageSchema },
       { name: PropertyOffer.name, schema: PropertyOfferSchema },
       { name: Property.name, schema: PropertySchema },
+      { name: UploadedAttachment.name, schema: UploadedAttachmentSchema },
     ]),
   ],
   controllers: [ConversationsController],

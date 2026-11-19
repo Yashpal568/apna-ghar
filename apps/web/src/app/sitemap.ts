@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch dynamic published properties
   try {
     const apiBase = (
-      process.env.NEXT_PUBLIC_API_BASE_URL || 'https://apna-ghar-api-j4fo.onrender.com/api/v1'
+      process.env.NEXT_PUBLIC_API_BASE_URL || 'https://apna-ghar-api-w0dk.onrender.com/api/v1'
     ).replace(/\/$/, '');
 
     const res = await fetch(`${apiBase}/properties?limit=500`, {

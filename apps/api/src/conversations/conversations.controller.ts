@@ -1,18 +1,21 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, HttpException, HttpStatus, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, NotFoundException, Param, Patch, Post, Query, Req, Res, HttpException, HttpStatus, UseGuards, UseInterceptors, UploadedFile, UnauthorizedException } from '@nestjs/common';
+import type { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { IsIn, IsNumber, IsOptional, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { createHash } from 'node:crypto';
+import { createHash, createHmac } from 'node:crypto';
 import { basename } from 'node:path';
 import { Model, Types } from 'mongoose';
 import { PropertyAuthGuard } from '../properties/property-auth.guard';
 import { RateLimit } from '../common/decorators/rate-limit.decorator';
+import { AllowSignedQuery } from '../common/decorators/allow-signed-query.decorator';
 import { Property } from '../properties/schemas/property.schema';
 import { Conversation } from './schemas/conversation.schema';
 import { MessageRateLimit } from './schemas/message-rate-limit.schema';
 import { Message } from './schemas/message.schema';
 import { PropertyOffer } from './schemas/property-offer.schema';
+import { UploadedAttachment } from './schemas/uploaded-attachment.schema';
 
 function hasValidAttachmentSignature(buffer: Buffer, mimetype: string): boolean {
   if (!buffer || buffer.length < 4) return false;
@@ -41,11 +44,12 @@ function sanitizeAttachmentFilename(raw?: string, mimetype?: string): string {
 type RequestWithAuth = { auth: { userId: string } };
 
 export class MessageAttachmentDto {
-  @IsString() url!: string;
+  @IsOptional() @IsString() url?: string;
   @IsString() filename!: string;
   @IsString() contentType!: string;
   @IsOptional() @IsNumber() sizeBytes?: number;
   @IsOptional() @IsString() publicId?: string;
+  @IsOptional() @IsString() attachmentId?: string;
 }
 
 class SendMessageDto {
@@ -72,6 +76,7 @@ export class ConversationsController {
     @InjectModel(MessageRateLimit.name) private readonly messageRateLimits: Model<MessageRateLimit>,
     @InjectModel(Message.name) private readonly messages: Model<Message>,
     @InjectModel(PropertyOffer.name) private readonly offers: Model<PropertyOffer>,
+    @InjectModel(UploadedAttachment.name) private readonly uploadedAttachments: Model<UploadedAttachment>,
   ) {}
 
   @Get()
@@ -140,6 +145,39 @@ export class ConversationsController {
     return { conversationId: String(conversation._id), propertyId: conversation.propertyId, propertyTitle: conversation.propertyTitle };
   }
 
+  private getAttachmentSecret(): string {
+    return process.env.ATTACHMENT_SECRET || process.env.CLERK_SECRET_KEY || process.env.CLOUDINARY_API_SECRET || 'apna-ghar-attachment-fallback-secret-key-384912';
+  }
+
+  private generateSignedAttachmentUrl(conversationId: string, messageId: string, expiresInSeconds = 3600): { url: string; expiresAt: string } {
+    const expires = Math.floor(Date.now() / 1000) + expiresInSeconds;
+    const secret = this.getAttachmentSecret();
+    const signature = createHmac('sha256', secret)
+      .update(`${conversationId}:${messageId}:${expires}`)
+      .digest('hex');
+    const url = `/api/v1/conversations/${conversationId}/messages/${messageId}/attachment?expires=${expires}&sig=${signature}`;
+    return { url, expiresAt: new Date(expires * 1000).toISOString() };
+  }
+
+  private signMessageAttachments(messages: any[], conversationId: string) {
+    return messages.map((m) => {
+      const raw = typeof m?.toObject === 'function' ? m.toObject() : { ...m };
+      if (raw.attachment) {
+        const messageId = String(raw._id);
+        const signed = this.generateSignedAttachmentUrl(conversationId, messageId);
+        raw.attachment = {
+          attachmentId: raw.attachment.attachmentId || messageId,
+          filename: raw.attachment.filename,
+          contentType: raw.attachment.contentType,
+          sizeBytes: raw.attachment.sizeBytes,
+          url: signed.url,
+          expiresAt: signed.expiresAt,
+        };
+      }
+      return raw;
+    });
+  }
+
   @Get(':conversationId')
   async getOne(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string) {
     if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
@@ -150,6 +188,7 @@ export class ConversationsController {
     if (!conversation) throw new NotFoundException('Conversation not found.');
     return {
       ...conversation,
+      messages: this.signMessageAttachments(conversation.messages || [], conversationId),
       unreadCountByUser: conversation.unreadCountByUser instanceof Map
         ? Object.fromEntries(conversation.unreadCountByUser)
         : conversation.unreadCountByUser || {},
@@ -219,11 +258,12 @@ export class ConversationsController {
 
     const hasMore = combinedMessages.length > limit;
     const page = hasMore ? combinedMessages.slice(-limit) : combinedMessages;
+    const formattedMessages = this.signMessageAttachments(page, conversationId);
     return {
       conversationId,
       propertyId: conversation.propertyId,
       propertyTitle: conversation.propertyTitle,
-      messages: page,
+      messages: formattedMessages,
       hasMore,
       nextBefore: hasMore && page.length ? page[0].sentAt : null,
     };
@@ -261,14 +301,17 @@ export class ConversationsController {
     const apiKey = process.env.CLOUDINARY_API_KEY;
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
     const filename = sanitizeAttachmentFilename(file.originalname, file.mimetype);
+    const attachmentId = new Types.ObjectId();
+    let publicId: string | undefined = undefined;
+    let storageUrl: string | undefined = undefined;
 
     if (cloudName && apiKey && apiSecret) {
       try {
         const timestamp = Math.floor(Date.now() / 1000);
-        const folder = 'apna-ghar/messages';
+        const folder = 'apna-ghar/messages/private';
         const resourceType = file.mimetype.startsWith('image/') ? 'image' : 'raw';
         const signature = createHash('sha1')
-          .update(`folder=${folder}&timestamp=${timestamp}${apiSecret}`)
+          .update(`access_mode=authenticated&folder=${folder}&timestamp=${timestamp}${apiSecret}`)
           .digest('hex');
 
         const form = new FormData();
@@ -276,6 +319,7 @@ export class ConversationsController {
         form.append('api_key', apiKey);
         form.append('timestamp', String(timestamp));
         form.append('folder', folder);
+        form.append('access_mode', 'authenticated');
         form.append('signature', signature);
 
         const cloudinaryResponse = await fetch(
@@ -289,26 +333,233 @@ export class ConversationsController {
         } | null;
 
         if (cloudinaryResponse.ok && result?.secure_url) {
-          return {
-            url: result.secure_url,
-            filename,
-            contentType: file.mimetype,
-            sizeBytes: file.size,
-            publicId: result.public_id,
-          };
+          publicId = result.public_id;
+          storageUrl = result.secure_url;
         }
       } catch {
-        // Fall back to data URI if Cloudinary is unreachable
+        // Fall back to database buffer storage
       }
     }
 
-    // Data URI fallback
     const base64Data = file.buffer.toString('base64');
-    return {
-      url: `data:${file.mimetype};base64,${base64Data}`,
+    await this.uploadedAttachments.create({
+      _id: attachmentId,
+      uploaderId: request.auth.userId,
       filename,
       contentType: file.mimetype,
       sizeBytes: file.size,
+      publicId,
+      storageUrl,
+      dataBuffer: base64Data,
+      claimed: false,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    return {
+      attachmentId: attachmentId.toString(),
+      filename,
+      contentType: file.mimetype,
+      sizeBytes: file.size,
+      url: `/api/v1/conversations/attachments/${attachmentId.toString()}`,
+    };
+  }
+
+  @Get('attachments/:attachmentId')
+  @RateLimit({ limit: 60, ttlSeconds: 60 })
+  async getUploadedAttachmentPreview(
+    @Req() request: RequestWithAuth,
+    @Res() response: Response,
+    @Param('attachmentId') attachmentId: string,
+  ) {
+    if (!this.isObjectId(attachmentId)) throw new NotFoundException('Attachment not found.');
+    const record = await this.uploadedAttachments.findOne({
+      _id: new Types.ObjectId(attachmentId),
+      uploaderId: request.auth.userId,
+    }).lean().exec();
+    if (!record) throw new NotFoundException('Attachment not found or access denied.');
+
+    const contentType = record.contentType || 'application/octet-stream';
+    const filename = sanitizeAttachmentFilename(record.filename, contentType);
+
+    response.setHeader('Content-Type', contentType);
+    response.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    response.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    response.setHeader('Pragma', 'no-cache');
+    response.setHeader('Expires', '0');
+    response.setHeader('X-Content-Type-Options', 'nosniff');
+
+    if (record.dataBuffer) {
+      const buffer = Buffer.from(record.dataBuffer, 'base64');
+      return response.end(buffer);
+    }
+    throw new NotFoundException('Attachment content unavailable.');
+  }
+
+  @Get(':conversationId/messages/:messageId/attachment')
+  @AllowSignedQuery()
+  @RateLimit({ limit: 60, ttlSeconds: 60 })
+  async getMessageAttachment(
+    @Req() request: any,
+    @Res() response: Response,
+    @Param('conversationId') conversationId: string,
+    @Param('messageId') messageId: string,
+    @Query('expires') expiresQuery?: string,
+    @Query('sig') sigQuery?: string,
+  ) {
+    if (!this.isObjectId(conversationId) || !this.isObjectId(messageId)) {
+      throw new NotFoundException('Conversation or message not found.');
+    }
+
+    const authUserId = request.authUserId || request.auth?.userId;
+    const hasSignedQuery = !!(expiresQuery && sigQuery);
+    let isAuthorized = false;
+
+    if (hasSignedQuery) {
+      const exp = Number(expiresQuery);
+      if (!Number.isFinite(exp) || exp < Math.floor(Date.now() / 1000)) {
+        throw new ForbiddenException('Attachment access URL has expired.');
+      }
+      const secret = this.getAttachmentSecret();
+      const expectedSig = createHmac('sha256', secret)
+        .update(`${conversationId}:${messageId}:${exp}`)
+        .digest('hex');
+      if (sigQuery !== expectedSig) {
+        throw new ForbiddenException('Invalid or malformed attachment signature.');
+      }
+      const conversation = await this.conversations.findById(conversationId).select({ _id: 1 }).lean().exec();
+      if (!conversation) throw new NotFoundException('Conversation not found.');
+      isAuthorized = true;
+    } else if (authUserId) {
+      const conversation = await this.conversations.findOne({
+        _id: new Types.ObjectId(conversationId),
+        participantIds: authUserId,
+      }).select({ _id: 1, participantIds: 1 }).lean().exec();
+      if (!conversation) throw new NotFoundException('Conversation not found or participant access denied.');
+      isAuthorized = true;
+    }
+
+    if (!isAuthorized) {
+      throw new UnauthorizedException('Authentication or valid signed URL signature required.');
+    }
+
+    // Retrieve message and attachment
+    let message = await this.messages.findOne({
+      _id: new Types.ObjectId(messageId),
+      conversationId: new Types.ObjectId(conversationId),
+    }).lean().exec();
+
+    let attachment = message?.attachment;
+    if (!attachment) {
+      // Check legacy embedded messages in conversation document
+      const conv = await this.conversations.findOne(
+        { _id: new Types.ObjectId(conversationId), 'messages._id': new Types.ObjectId(messageId) },
+        { 'messages.$': 1 },
+      ).lean().exec();
+      attachment = conv?.messages?.[0]?.attachment;
+    }
+
+    if (!attachment) {
+      throw new NotFoundException('Attachment not found for this message.');
+    }
+
+    const contentType = attachment.contentType || 'application/octet-stream';
+    const filename = sanitizeAttachmentFilename(attachment.filename, contentType);
+
+    response.setHeader('Content-Type', contentType);
+    response.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    response.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    response.setHeader('Pragma', 'no-cache');
+    response.setHeader('Expires', '0');
+    response.setHeader('X-Content-Type-Options', 'nosniff');
+
+    const attachmentRecord = attachment as any;
+
+    if (attachmentRecord.dataBuffer) {
+      const buffer = Buffer.from(attachmentRecord.dataBuffer, 'base64');
+      return response.end(buffer);
+    }
+
+    if (attachmentRecord.storageUrl && attachmentRecord.storageUrl.startsWith('data:')) {
+      const base64Index = attachmentRecord.storageUrl.indexOf('base64,');
+      if (base64Index !== -1) {
+        const buffer = Buffer.from(attachmentRecord.storageUrl.slice(base64Index + 7), 'base64');
+        return response.end(buffer);
+      }
+    }
+
+    if (attachmentRecord.url && attachmentRecord.url.startsWith('data:')) {
+      const base64Index = attachmentRecord.url.indexOf('base64,');
+      if (base64Index !== -1) {
+        const buffer = Buffer.from(attachmentRecord.url.slice(base64Index + 7), 'base64');
+        return response.end(buffer);
+      }
+    }
+
+    if (attachmentRecord.publicId) {
+      const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+      const apiKey = process.env.CLOUDINARY_API_KEY;
+      const apiSecret = process.env.CLOUDINARY_API_SECRET;
+      if (cloudName && apiKey && apiSecret) {
+        try {
+          const timestamp = Math.floor(Date.now() / 1000);
+          const resourceType = contentType.startsWith('image/') ? 'image' : 'raw';
+          const toSign = `public_id=${attachmentRecord.publicId}&timestamp=${timestamp}${apiSecret}`;
+          const signature = createHash('sha1').update(toSign).digest('hex');
+          const downloadUrl = `https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/${resourceType}/download?public_id=${encodeURIComponent(attachmentRecord.publicId)}&timestamp=${timestamp}&signature=${signature}&api_key=${encodeURIComponent(apiKey)}`;
+          const cRes = await fetch(downloadUrl);
+          if (cRes.ok) {
+            const arrayBuf = await cRes.arrayBuffer();
+            return response.end(Buffer.from(arrayBuf));
+          }
+        } catch {
+          // Cloudinary download failed
+        }
+      }
+    }
+
+    if (attachmentRecord.storageUrl && attachmentRecord.storageUrl.startsWith('http')) {
+      try {
+        const extRes = await fetch(attachmentRecord.storageUrl);
+        if (extRes.ok) {
+          const arrayBuf = await extRes.arrayBuffer();
+          return response.end(Buffer.from(arrayBuf));
+        }
+      } catch {
+        // External fetch failed
+      }
+    }
+
+    throw new NotFoundException('Attachment content could not be retrieved.');
+  }
+
+  @Get(':conversationId/messages/:messageId/attachment-url')
+  @RateLimit({ limit: 60, ttlSeconds: 60 })
+  async getAttachmentSignedUrl(
+    @Req() request: RequestWithAuth,
+    @Param('conversationId') conversationId: string,
+    @Param('messageId') messageId: string,
+  ) {
+    if (!this.isObjectId(conversationId) || !this.isObjectId(messageId)) {
+      throw new NotFoundException('Conversation or message not found.');
+    }
+    const conversation = await this.conversations.findOne({
+      _id: new Types.ObjectId(conversationId),
+      participantIds: request.auth.userId,
+    }).select({ _id: 1, participantIds: 1 }).lean().exec();
+    if (!conversation) throw new NotFoundException('Conversation not found or participant access denied.');
+
+    const message = await this.messages.findOne({
+      _id: new Types.ObjectId(messageId),
+      conversationId: new Types.ObjectId(conversationId),
+    }).lean().exec();
+    if (!message || !message.attachment) {
+      throw new NotFoundException('Attachment not found for this message.');
+    }
+
+    const signed = this.generateSignedAttachmentUrl(conversationId, messageId);
+    return {
+      url: signed.url,
+      expiresAt: signed.expiresAt,
     };
   }
 
@@ -325,19 +576,75 @@ export class ConversationsController {
     }).exec();
     if (!conversation) throw new NotFoundException('Conversation not found.');
     await this.consumeMessageQuota(request.auth.userId);
+
+    let verifiedAttachment: any = undefined;
+    if (attachment) {
+      if (attachment.attachmentId && this.isObjectId(attachment.attachmentId)) {
+        const record = await this.uploadedAttachments.findOne({
+          _id: new Types.ObjectId(attachment.attachmentId),
+          uploaderId: request.auth.userId,
+        }).exec();
+        if (!record) {
+          throw new BadRequestException('Attachment was not found or does not belong to your account.');
+        }
+        await this.uploadedAttachments.updateOne(
+          { _id: record._id },
+          { $set: { claimed: true, conversationId: conversation._id } },
+        ).exec();
+        verifiedAttachment = {
+          attachmentId: record._id.toString(),
+          filename: record.filename,
+          contentType: record.contentType,
+          sizeBytes: record.sizeBytes,
+          publicId: record.publicId,
+          storageUrl: record.storageUrl,
+          dataBuffer: record.dataBuffer,
+        };
+      } else if (attachment.url && (attachment.url.startsWith('data:') || attachment.url.includes('/attachments/'))) {
+        const match = attachment.url.match(/attachments\/([a-f0-9]{24})/i);
+        if (match && match[1]) {
+          const record = await this.uploadedAttachments.findOne({
+            _id: new Types.ObjectId(match[1]),
+            uploaderId: request.auth.userId,
+          }).exec();
+          if (!record) {
+            throw new BadRequestException('Attachment was not found or does not belong to your account.');
+          }
+          await this.uploadedAttachments.updateOne(
+            { _id: record._id },
+            { $set: { claimed: true, conversationId: conversation._id } },
+          ).exec();
+          verifiedAttachment = {
+            attachmentId: record._id.toString(),
+            filename: record.filename,
+            contentType: record.contentType,
+            sizeBytes: record.sizeBytes,
+            publicId: record.publicId,
+            storageUrl: record.storageUrl,
+            dataBuffer: record.dataBuffer,
+          };
+        } else if (attachment.url.startsWith('data:')) {
+          verifiedAttachment = {
+            filename: sanitizeAttachmentFilename(attachment.filename, attachment.contentType),
+            contentType: attachment.contentType,
+            sizeBytes: attachment.sizeBytes || 0,
+            storageUrl: attachment.url,
+          };
+        } else {
+          throw new BadRequestException('Invalid or unverified attachment.');
+        }
+      } else {
+        throw new BadRequestException('Attachment must be uploaded through the secure upload endpoint.');
+      }
+    }
+
     const recipientId = conversation.ownerId === request.auth.userId ? conversation.buyerId : conversation.ownerId;
     const sentAt = new Date();
     const message = {
       _id: new Types.ObjectId(),
       senderId: request.auth.userId,
       text,
-      attachment: attachment ? {
-        url: attachment.url,
-        filename: attachment.filename,
-        contentType: attachment.contentType,
-        sizeBytes: attachment.sizeBytes,
-        publicId: attachment.publicId,
-      } : undefined,
+      attachment: verifiedAttachment,
       sentAt,
     };
     const result = await this.conversations.updateOne(
@@ -362,7 +669,8 @@ export class ConversationsController {
       { upsert: true },
     ).exec();
     if (result.matchedCount !== 1) throw new NotFoundException('Conversation not found.');
-    return { success: true, message };
+    const formattedMessage = this.signMessageAttachments([message], conversationId)[0];
+    return { success: true, message: formattedMessage };
   }
 
 

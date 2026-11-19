@@ -97,7 +97,7 @@ const INDIA_CITIES: Record<string, string[]> = {
 };
 const INDIA_STATES = Object.keys(INDIA_CITIES);
 const LOCALITY_SUGGESTIONS = ["Civil Lines","Model Town","Shastri Nagar","Gandhi Nagar","Subhash Nagar","Sector 1","Sector 2","Main Market","Indira Nagar","Rajendra Nagar","Old Town","New Town","Industrial Area","Airport Road","Station Road","Green Park","Vasant Vihar","Ashok Nagar"];
-const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-j4fo.onrender.com/api/v1").replace(/\/$/, "");
+const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || "https://apna-ghar-api-w0dk.onrender.com/api/v1").replace(/\/$/, "");
 
 function ListingForm() {
   const { getToken, isLoaded, isSignedIn } = useAuth();

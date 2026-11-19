@@ -35,9 +35,22 @@ describe('ConversationsController', () => {
     messageRateLimits = { findOneAndUpdate: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ count: 1 }) }) };
     messageDocuments = {
       find: jest.fn().mockReturnValue(chain([])),
+      findOne: jest.fn().mockReturnValue(chain(null)),
       updateOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ upsertedCount: 1 }) }),
     };
-    controller = new ConversationsController(conversations as never, properties as never, messageRateLimits as never, messageDocuments as never, offers as never);
+    const uploadedAttachments = {
+      create: jest.fn().mockImplementation((doc) => Promise.resolve({ ...doc })),
+      findOne: jest.fn().mockReturnValue(chain(null)),
+      updateOne: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue({ matchedCount: 1 }) }),
+    };
+    controller = new ConversationsController(
+      conversations as never,
+      properties as never,
+      messageRateLimits as never,
+      messageDocuments as never,
+      offers as never,
+      uploadedAttachments as never,
+    );
   });
 
   it('lists only conversations that include the signed-in participant', async () => {
@@ -160,7 +173,7 @@ describe('ConversationsController', () => {
     };
     conversations.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(conversation) });
     const attachment = {
-      url: 'https://res.cloudinary.com/example/image/upload/sample.jpg',
+      url: 'data:image/jpeg;base64,/9j/4AAQSkZJRg==',
       filename: 'property_doc.jpg',
       contentType: 'image/jpeg',
       sizeBytes: 102400,
@@ -171,11 +184,16 @@ describe('ConversationsController', () => {
       { text: 'Here are the docs', attachment },
     );
     expect(response.success).toBe(true);
-    expect(response.message.attachment).toEqual(expect.objectContaining(attachment));
+    expect(response.message.attachment).toEqual(expect.objectContaining({
+      filename: 'property_doc.jpg',
+      contentType: 'image/jpeg',
+      sizeBytes: 102400,
+      url: expect.stringContaining('/messages/'),
+    }));
     expect(conversations.updateOne).toHaveBeenCalledWith(
       { _id: expect.anything(), participantIds: buyer },
       expect.objectContaining({
-        $push: { messages: expect.objectContaining({ attachment: expect.objectContaining(attachment) }) },
+        $push: { messages: expect.objectContaining({ attachment: expect.objectContaining({ filename: 'property_doc.jpg' }) }) },
       }),
     );
   });
