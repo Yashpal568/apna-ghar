@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import BrandLogo from "./BrandLogo";
 import ThemePicker from "./ThemePicker";
+import ShadcnMobileProfile from "./ShadcnMobileProfile";
 
 export type HeaderUser = {
   id: string;
@@ -416,72 +417,39 @@ export default function MarketplaceHeader({
             />
             <nav className="agh-mobile-drawer" id="agh-mobile-drawer" aria-label="Mobile navigation">
               <div className="agh-drawer-head">
-                <strong>Explore Apna Ghar</strong>
+                <div className="agh-drawer-brand-row">
+                  <span className="agh-drawer-brand-badge">APNA GHAR</span>
+                  <strong>Menu &amp; Profile</strong>
+                </div>
                 <button type="button" onClick={() => setMenuOpen(false)} aria-label="Close menu">
                   ×
                 </button>
               </div>
 
-              {/* User Identity Card in Drawer when Logged In */}
-              {isLoaded && isSignedIn && (
-                <div className="agh-drawer-user-card">
-                  {user?.imageUrl ? (
-                    <img src={user.imageUrl} alt="" className="agh-user-avatar-img" />
-                  ) : (
-                    <span className="agh-user-avatar-initials">{initials}</span>
-                  )}
-                  <div className="agh-drawer-user-info">
-                    <strong>{displayName}</strong>
-                    {user?.primaryEmail && <small>{user.primaryEmail}</small>}
-                  </div>
-                </div>
-              )}
+              {/* Redesigned Shadcn Studio Mobile Profile Section */}
+              <ShadcnMobileProfile
+                isLoaded={isLoaded}
+                isSignedIn={isSignedIn}
+                user={user}
+                onClose={() => setMenuOpen(false)}
+                signOut={signOut}
+                variant="embedded"
+                signInHref={signInHref}
+                signUpHref={signUpHref}
+              />
 
-              <div className="agh-drawer-theme">
-                <span>Appearance</span>
-                <ThemePicker />
+              {/* General Property Discovery Navigation */}
+              <div className="shadcn-profile-section-heading" style={{ marginTop: 10 }}>
+                <span>Explore Properties</span>
               </div>
-
-              <a className={active === "home" ? "active" : ""} href="/" onClick={() => setMenuOpen(false)}>Home</a>
-              <a className={active === "search" ? "active" : ""} href="/search" onClick={() => setMenuOpen(false)}>Browse all properties</a>
-              <a className={active === "buy" ? "active" : ""} href="/buy" onClick={() => setMenuOpen(false)}>Buy a property</a>
-              <a className={active === "rent" ? "active" : ""} href="/rent" onClick={() => setMenuOpen(false)}>Rent a property</a>
-              <a className={active === "commercial" ? "active" : ""} href="/commercial" onClick={() => setMenuOpen(false)}>Commercial spaces</a>
-              <a className={active === "plots" || active === "plot" ? "active" : ""} href="/plots" onClick={() => setMenuOpen(false)}>Plots &amp; land</a>
-
-              {/* Mobile Drawer Auth Actions */}
-              {!isLoaded ? (
-                <div className="agh-drawer-skeleton" aria-hidden="true" />
-              ) : isSignedIn ? (
-                <>
-                  <div className="agh-drawer-divider" />
-                  <a href="/saved" onClick={() => setMenuOpen(false)}>Saved homes</a>
-                  <a href="/my-listings" onClick={() => setMenuOpen(false)}>My listings</a>
-                  <a href="/messages" onClick={() => setMenuOpen(false)}>Messages</a>
-                  <a href="/profile" onClick={() => setMenuOpen(false)}>My profile</a>
-                  <a className="agh-drawer-sell" href="/list-property" onClick={() => setMenuOpen(false)}>
-                    Post a property
-                  </a>
-                  <button
-                    type="button"
-                    className="agh-drawer-signout"
-                    onClick={handleSignOut}
-                    disabled={signingOut}
-                  >
-                    {signingOut ? "Signing out…" : "Sign out"}
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="agh-drawer-divider" />
-                  <a href={signInHref} className="agh-drawer-signin" onClick={() => setMenuOpen(false)}>
-                    Sign in
-                  </a>
-                  <a href={signUpHref} className="agh-drawer-signup" onClick={() => setMenuOpen(false)}>
-                    Create free account
-                  </a>
-                </>
-              )}
+              <div className="agh-drawer-links-grid">
+                <a className={active === "home" ? "active" : ""} href="/" onClick={() => setMenuOpen(false)}>Home</a>
+                <a className={active === "search" ? "active" : ""} href="/search" onClick={() => setMenuOpen(false)}>Browse all properties</a>
+                <a className={active === "buy" ? "active" : ""} href="/buy" onClick={() => setMenuOpen(false)}>Buy a property</a>
+                <a className={active === "rent" ? "active" : ""} href="/rent" onClick={() => setMenuOpen(false)}>Rent a property</a>
+                <a className={active === "commercial" ? "active" : ""} href="/commercial" onClick={() => setMenuOpen(false)}>Commercial spaces</a>
+                <a className={active === "plots" || active === "plot" ? "active" : ""} href="/plots" onClick={() => setMenuOpen(false)}>Plots &amp; land</a>
+              </div>
             </nav>
           </>
         )}

@@ -148,11 +148,14 @@ export default function RootLayout({
             }}
           >
             {children}
+            <MobileBottomNav />
           </ClerkProvider>
         ) : (
-          children
+          <>
+            {children}
+            <MobileBottomNav />
+          </>
         )}
-        <MobileBottomNav />
       </body>
     </html>
   );

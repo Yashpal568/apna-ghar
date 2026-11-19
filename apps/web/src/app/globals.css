@@ -8341,3 +8341,615 @@ body:has(.auth-page) .ag-bottom-nav,
     width: 100%;
   }
 }
+
+/* ==========================================================================
+   SHADCN STUDIO MOBILE PROFILE UI
+   ========================================================================== */
+
+.shadcn-mobile-profile-root {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.shadcn-profile-auth-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+/* 1. Identity Card (Glassmorphic Shadcn Studio Card) */
+.shadcn-profile-identity-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-surface) 92%, var(--color-primary) 8%);
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.shadcn-profile-avatar-outer {
+  position: relative;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+}
+
+.shadcn-profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 1.5px solid var(--color-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.shadcn-profile-avatar-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--color-primary, #0045b7), #4338ca);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.shadcn-profile-online-badge {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: #10b981;
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.shadcn-profile-identity-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.shadcn-profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.shadcn-profile-display-name {
+  font-size: 14px;
+  font-weight: 750;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: -0.2px;
+}
+
+.shadcn-profile-role-pill {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.shadcn-profile-user-email {
+  font-size: 11px;
+  color: var(--color-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+/* 2. Section Heading */
+.shadcn-profile-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 4px 2px;
+}
+
+.shadcn-profile-section-heading > span {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--color-muted);
+}
+
+/* 3. Card Group (Shadcn Studio Interactive Menu Items) */
+.shadcn-profile-card-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.shadcn-profile-menu-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-border) 75%, transparent);
+  text-decoration: none !important;
+  color: var(--color-text) !important;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.shadcn-profile-menu-card:hover {
+  background: color-mix(in srgb, var(--color-surface) 90%, var(--color-primary) 10%);
+  border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+  transform: translateY(-1px);
+}
+
+.shadcn-profile-menu-card:active {
+  transform: scale(0.985);
+  background: color-mix(in srgb, var(--color-surface) 85%, var(--color-primary) 15%);
+}
+
+.shadcn-profile-menu-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.shadcn-profile-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+
+.shadcn-profile-menu-card:hover .shadcn-profile-icon-box {
+  transform: scale(1.06);
+}
+
+.shadcn-profile-icon-box.is-blue {
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+}
+
+.shadcn-profile-icon-box.is-emerald {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+.shadcn-profile-icon-box.is-rose {
+  background: rgba(244, 63, 94, 0.1);
+  color: #e11d48;
+}
+
+.shadcn-profile-icon-box.is-violet {
+  background: rgba(139, 92, 246, 0.1);
+  color: #7c3aed;
+}
+
+.shadcn-profile-icon-box.is-amber {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+}
+
+.shadcn-profile-card-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.shadcn-profile-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.25;
+}
+
+.shadcn-profile-card-sub {
+  font-size: 10.5px;
+  color: var(--color-muted);
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.shadcn-profile-chevron {
+  flex: 0 0 auto;
+  color: var(--color-muted);
+  opacity: 0.6;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.shadcn-profile-menu-card:hover .shadcn-profile-chevron {
+  opacity: 1;
+  color: var(--color-primary);
+  transform: translateX(2px);
+}
+
+/* 4. Theme Card */
+.shadcn-profile-theme-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-border) 75%, transparent);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.shadcn-profile-theme-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.shadcn-profile-theme-picker {
+  flex: 0 0 auto;
+}
+
+/* 5. Post Property Button (Shadcn Primary Button with Glow) */
+.shadcn-profile-post-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  padding: 0 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-size: 13px;
+  font-weight: 750;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  margin-top: 4px;
+}
+
+.shadcn-profile-post-btn:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.38);
+  transform: translateY(-1px);
+}
+
+.shadcn-profile-post-btn:active {
+  transform: scale(0.98);
+}
+
+.shadcn-profile-post-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shadcn-profile-post-label {
+  letter-spacing: -0.1px;
+}
+
+.shadcn-profile-zero-pill {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* 6. Sign Out Button (Shadcn Destructive Soft Button) */
+.shadcn-profile-signout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 13px;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.06);
+  color: #dc2626;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-sizing: border-box;
+}
+
+.shadcn-profile-signout-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+}
+
+.shadcn-profile-signout-btn:active {
+  transform: scale(0.98);
+}
+
+.shadcn-profile-signout-btn:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* 7. Guest Card */
+.shadcn-profile-guest-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 16px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--color-surface) 92%, var(--color-primary) 8%);
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.shadcn-profile-guest-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+}
+
+.shadcn-profile-guest-title {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.shadcn-profile-guest-desc {
+  font-size: 12px;
+  color: var(--color-muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.shadcn-profile-guest-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.shadcn-profile-btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: #ffffff !important;
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none !important;
+  box-shadow: 0 4px 12px rgba(0, 69, 183, 0.25);
+}
+
+.shadcn-profile-btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  border-radius: 12px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text) !important;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+
+/* 8. Bottom Sheet Wrapper & Modal (for MobileBottomNav) */
+.shadcn-profile-sheet-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: auto;
+}
+
+.shadcn-profile-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20001;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 0;
+  animation: shadcnBackdropFadeIn 0.25s ease forwards;
+}
+
+.shadcn-profile-sheet-container {
+  position: relative;
+  z-index: 20002;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  max-height: 88dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-surface);
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  border-bottom: 0;
+  padding: 12px 18px calc(24px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.24);
+  animation: shadcnSheetSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-sizing: border-box;
+}
+
+.shadcn-profile-sheet-handle {
+  width: 38px;
+  height: 4.5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-border) 80%, var(--color-muted) 20%);
+  margin: 0 auto 12px;
+  opacity: 0.8;
+}
+
+.shadcn-profile-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+}
+
+.shadcn-profile-sheet-eyebrow {
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--color-primary);
+  display: block;
+}
+
+.shadcn-profile-sheet-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 2px 0 0;
+  letter-spacing: -0.3px;
+}
+
+.shadcn-profile-sheet-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 90%, var(--color-muted) 10%);
+  color: var(--color-text);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.shadcn-profile-sheet-close-btn:hover {
+  background: color-mix(in srgb, var(--color-surface) 80%, var(--color-muted) 20%);
+}
+
+.shadcn-profile-sheet-body {
+  width: 100%;
+}
+
+@keyframes shadcnBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shadcnSheetSlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Skeleton loader */
+.shadcn-profile-skeleton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--color-surface-subtle);
+  animation: shadcnPulse 1.5s infinite ease-in-out;
+}
+
+.shadcn-skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-border) 60%, transparent);
+}
+
+.shadcn-skeleton-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.shadcn-skeleton-line {
+  height: 10px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-border) 60%, transparent);
+}
+
+.shadcn-skeleton-line.is-title { width: 60%; }
+.shadcn-skeleton-line.is-sub { width: 40%; }
+
+@keyframes shadcnPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+/* Mobile Drawer Links Grid */
+.agh-drawer-links-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 8px;
+}
+
+.agh-drawer-brand-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.agh-drawer-brand-badge {
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.8px;
+  color: var(--color-primary);
+  text-transform: uppercase;
+}
+
