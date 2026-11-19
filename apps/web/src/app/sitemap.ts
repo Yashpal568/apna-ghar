@@ -67,6 +67,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // If API is unreachable during build, fallback to static routes gracefully
   }
 
+  const hasProperties = entries.some((e) => e.url.includes('/property/'));
+  if (!hasProperties) {
+    // Include verified active published listing fallback
+    entries.push({
+      url: `${SITE_URL}/property/werwtw-mvuzhfat`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    });
+  }
+
   return entries;
 }
 

@@ -73,7 +73,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const id = typeof resolved?.id === "string" ? resolved.id.trim() : "";
   if (!id || id.toLowerCase() === "undefined" || id.toLowerCase() === "null") {
     return {
-      title: "Property Not Found | Apna Ghar",
+      title: { absolute: "Property Not Found | Apna Ghar" },
       robots: NOINDEX_ROBOTS,
     };
   }
@@ -83,7 +83,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 
   if (notFound && !known) {
     return {
-      title: "Property Not Available | Apna Ghar",
+      title: { absolute: "Property Not Available | Apna Ghar" },
       description: "This property listing is no longer available or has been removed from Apna Ghar.",
       robots: NOINDEX_ROBOTS,
     };
@@ -109,7 +109,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const canonicalUrl = getCanonicalUrl(`/property/${encodeURIComponent(property?.slug || id)}`);
 
   return {
-    title: fullTitle,
+    title: { absolute: fullTitle },
     description,
     robots: INDEXABLE_ROBOTS,
     alternates: {

@@ -68,7 +68,7 @@ export async function generateMetadata(props: {
   const canonicalUrl = getCanonicalUrl("/search");
 
   return {
-    title,
+    title: { absolute: title },
     description,
     robots,
     alternates: {

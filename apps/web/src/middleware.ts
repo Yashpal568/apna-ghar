@@ -16,7 +16,9 @@ const clerkHandler = clerkMiddleware(async (auth, request) => {
       const signInUrl = new URL("/sign-in", request.url);
       const target = request.nextUrl.pathname + request.nextUrl.search;
       signInUrl.searchParams.set("redirect_url", target || "/messages");
-      return NextResponse.redirect(signInUrl);
+      const redirectResponse = NextResponse.redirect(signInUrl);
+      redirectResponse.headers.set("X-Robots-Tag", "noindex, nofollow");
+      return redirectResponse;
     }
 
     if (isAdminRoute(request)) {
@@ -32,10 +34,12 @@ const clerkHandler = clerkMiddleware(async (auth, request) => {
       ];
       const adminIds = Array.from(new Set([...configuredAdmins, ...defaultAdmins]));
       if (!adminIds.includes(userId)) {
-        return NextResponse.json(
+        const forbiddenResponse = NextResponse.json(
           { error: "You do not have permission to access the Apna Ghar admin workspace." },
           { status: 403 },
         );
+        forbiddenResponse.headers.set("X-Robots-Tag", "noindex, nofollow");
+        return forbiddenResponse;
       }
     }
   }

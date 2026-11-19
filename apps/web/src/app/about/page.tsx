@@ -4,7 +4,7 @@ import SiteFooter from "../components/SiteFooter";
 import { getCanonicalUrl, INDEXABLE_ROBOTS } from "../utils/seo";
 
 export const metadata: Metadata = {
-  title: "About Apna Ghar | Direct Owner Real Estate Platform",
+  title: { absolute: "About Apna Ghar | Direct Owner Real Estate Platform" },
   description: "Learn about Apna Ghar, India's direct owner property marketplace offering 0% brokerage and verified property listings.",
   alternates: {
     canonical: getCanonicalUrl("/about"),

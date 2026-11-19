@@ -323,13 +323,14 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
   if (INFO_PAGES[slug]) {
     const page = INFO_PAGES[slug];
     const canonical = getCanonicalUrl(page.canonicalPath);
+    const fullTitle = `${page.eyebrow} | ${SITE_NAME}`;
     return {
-      title: `${page.eyebrow} | ${SITE_NAME}`,
+      title: { absolute: fullTitle },
       description: page.intro,
       robots: INDEXABLE_ROBOTS,
       alternates: { canonical },
       openGraph: {
-        title: `${page.eyebrow} | ${SITE_NAME}`,
+        title: fullTitle,
         description: page.intro,
         url: canonical,
         siteName: SITE_NAME,
@@ -338,7 +339,7 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
       },
       twitter: {
         card: "summary_large_image",
-        title: `${page.eyebrow} | ${SITE_NAME}`,
+        title: fullTitle,
         description: page.intro,
       },
     };
@@ -347,13 +348,14 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
   if (CITY_LANDINGS[slug]) {
     const city = CITY_LANDINGS[slug];
     const canonical = getCanonicalUrl(city.canonicalPath);
+    const fullTitle = `${city.title} | ${SITE_NAME}`;
     return {
-      title: `${city.title} | ${SITE_NAME}`,
+      title: { absolute: fullTitle },
       description: city.intro,
       robots: INDEXABLE_ROBOTS,
       alternates: { canonical },
       openGraph: {
-        title: `${city.title} | ${SITE_NAME}`,
+        title: fullTitle,
         description: city.intro,
         url: canonical,
         siteName: SITE_NAME,
@@ -362,7 +364,7 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
       },
       twitter: {
         card: "summary_large_image",
-        title: `${city.title} | ${SITE_NAME}`,
+        title: fullTitle,
         description: city.intro,
       },
     };
@@ -371,13 +373,14 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
   if (CATEGORY_LANDINGS[slug]) {
     const category = CATEGORY_LANDINGS[slug];
     const canonical = getCanonicalUrl(category.canonicalPath);
+    const fullTitle = `${category.title} | ${SITE_NAME}`;
     return {
-      title: `${category.title} | ${SITE_NAME}`,
+      title: { absolute: fullTitle },
       description: category.intro,
       robots: INDEXABLE_ROBOTS,
       alternates: { canonical },
       openGraph: {
-        title: `${category.title} | ${SITE_NAME}`,
+        title: fullTitle,
         description: category.intro,
         url: canonical,
         siteName: SITE_NAME,
@@ -386,7 +389,7 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
       },
       twitter: {
         card: "summary_large_image",
-        title: `${category.title} | ${SITE_NAME}`,
+        title: fullTitle,
         description: category.intro,
       },
     };
@@ -395,13 +398,14 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
   if (TRANSACTION_LANDINGS[slug]) {
     const tx = TRANSACTION_LANDINGS[slug];
     const canonical = getCanonicalUrl(tx.canonicalPath);
+    const fullTitle = `${tx.title} | ${SITE_NAME}`;
     return {
-      title: `${tx.title} | ${SITE_NAME}`,
+      title: { absolute: fullTitle },
       description: tx.intro,
       robots: INDEXABLE_ROBOTS,
       alternates: { canonical },
       openGraph: {
-        title: `${tx.title} | ${SITE_NAME}`,
+        title: fullTitle,
         description: tx.intro,
         url: canonical,
         siteName: SITE_NAME,
@@ -410,14 +414,14 @@ export async function generateMetadata(props: DynamicPageProps): Promise<Metadat
       },
       twitter: {
         card: "summary_large_image",
-        title: `${tx.title} | ${SITE_NAME}`,
+        title: fullTitle,
         description: tx.intro,
       },
     };
   }
 
   return {
-    title: "Page Not Found | Apna Ghar",
+    title: { absolute: `Page Not Found | ${SITE_NAME}` },
     robots: { index: false, follow: false },
   };
 }

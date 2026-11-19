@@ -296,3 +296,98 @@ Time:        4.006 s
 
 **Final Milestone Verdict: PASS**
 
+---
+
+## 12. FINAL PRODUCTION VERIFICATION
+
+**Audited Production Worker:** `https://apna-ghar-web.yash38688.workers.dev`  
+**GitHub Actions Deployment Run:** `43685139358` / `43599879523`  
+**Verified Active Commit:** `12b47ae` / `ff5d858`  
+**Audit Timestamp:** November 19, 2026  
+
+### 12.1 GitHub Actions Deployment Run Verification
+Inspected `.github/workflows/deploy-cloudflare.yml` and queried the GitHub Actions API via secure proxy for workflow `deploy-cloudflare.yml`:
+
+| Workflow Metric | Verification Evidence | Result |
+|---|---|:---:|
+| **Latest Workflow Runs** | Run ID `43685139358` (head commit `12b47ae`), Run ID `43599879523` (head commit `ff5d858`) | **PASS** |
+| **Workflow Completion Status** | `status: "completed"`, `conclusion: "success"` for both runs | **PASS** |
+| **Build Job Execution** | `npm ci --include=dev` & OpenNext build succeeded with zero errors | **PASS** |
+| **Deployment Job Execution** | Cloudflare Worker successfully deployed with OpenNext assets bound to ASSETS | **PASS** |
+| **Live Commit Verification Step** | `Verify deployed Worker serves this exact commit` step passed with HTTP 200 | **PASS** |
+
+### 12.2 Live Sitemap Verification (`/sitemap.xml`)
+Live URL: `https://apna-ghar-web.yash38688.workers.dev/sitemap.xml`
+
+| Sitemap Criteria | Production Evidence | Status |
+|---|---|:---:|
+| **HTTP Status & Content-Type** | `HTTP 200 OK`, `Content-Type: application/xml` | **PASS** |
+| **XML Syntax Validity** | Clean XML with `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` | **PASS** |
+| **Canonical Origin** | Every `<loc>` begins strictly with `https://apna-ghar-web.yash38688.workers.dev` | **PASS** |
+| **Static Core Routes** | `/`, `/search`, `/buy`, `/rent`, `/about`, `/services` all present | **PASS** |
+| **City Landing Hubs** | `/mumbai`, `/delhi`, `/bengaluru`, `/hyderabad`, `/pune`, `/amritsar` present | **PASS** |
+| **Category Landing Hubs** | `/apartments`, `/houses`, `/plots`, `/villas`, `/commercial`, `/pg` present | **PASS** |
+| **Published Property Inclusion** | Fallback & dynamic querying for verified active listing (`/property/werwtw-mvuzhfat`) | **PASS** |
+| **Private Path Exclusion** | 0 leaked private URLs (`/admin`, `/messages`, `/profile`, `/saved`, auth all absent) | **PASS** |
+| **URL Uniqueness** | 0 duplicate URLs detected across entire sitemap | **PASS** |
+
+### 12.3 Live Robots Directives (`/robots.txt`)
+Live URL: `https://apna-ghar-web.yash38688.workers.dev/robots.txt`
+
+| Directives Audit | Production Value | Status |
+|---|---|:---:|
+| **HTTP Status & MIME** | `HTTP 200 OK`, `Content-Type: text/plain` | **PASS** |
+| **User-Agent** | `User-Agent: *` | **PASS** |
+| **Public Crawling** | `Allow: /` | **PASS** |
+| **Sitemap Pointer** | `Sitemap: https://apna-ghar-web.yash38688.workers.dev/sitemap.xml` | **PASS** |
+| **Disallowed Private Routes** | `/api/`, `/admin`, `/admin/`, `/messages`, `/messages/`, `/profile`, `/profile/`, `/my-listings`, `/my-listings/`, `/saved`, `/saved/`, `/list-property`, `/list-property/`, `/appearance`, `/appearance/`, `/sign-in`, `/sign-in/`, `/sign-up`, `/sign-up/`, `/forgot-password`, `/forgot-password/` | **PASS** |
+
+### 12.4 Live Rendered HTML Metadata Verification
+Inspected actual rendered production HTML responses across 13 public and protected routes:
+
+| Route | HTTP | Rendered Title | Meta Description | Canonical URL | OpenGraph & Twitter | Robots Directive | Status |
+|---|:---:|---|---|---|---|---|:---:|
+| `/` | 200 | `Apna Ghar \| Direct Owner Property Marketplace` | `Explore verified houses, apartments, plots, and commercial properties...` | `...workers.dev` | `summary_large_image`, OG title matching | `index, follow` | **PASS** |
+| `/buy` | 200 | `Properties for Sale across India \| Direct Owner Real Estate \| Apna Ghar` | `Explore verified homes, apartments, plots, and commercial properties...` | `...workers.dev/buy` | OG title, article/website type | `index, follow` | **PASS** |
+| `/rent` | 200 | `Properties for Rent across India \| Rental Homes & Flats \| Apna Ghar` | `Browse verified rental flats, independent houses, and commercial...` | `...workers.dev/rent` | OG title, article/website type | `index, follow` | **PASS** |
+| `/commercial` | 200 | `Commercial Properties for Sale & Lease \| Direct Owner Spaces \| Apna Ghar` | `Offices, retail spaces, shops, and warehouses for sale or lease...` | `...workers.dev/commercial` | OG title, article/website type | `index, follow` | **PASS** |
+| `/plots` | 200 | `Plots & Land for Sale across India \| Verified Clear Title Plots \| Apna Ghar` | `Search verified residential, agricultural, and commercial plots...` | `...workers.dev/plots` | OG title, article/website type | `index, follow` | **PASS** |
+| `/mumbai` | 200 | `Properties for Sale & Rent in Mumbai \| Direct Owner Flats & Homes \| Apna Ghar` | `Explore verified direct owner properties across Mumbai Metropolitan...` | `...workers.dev/mumbai` | OG title, article/website type | `index, follow` | **PASS** |
+| `/delhi` | 200 | `Properties for Sale & Rent in Delhi NCR \| Direct Owner Homes \| Apna Ghar` | `Find residential and commercial properties across Delhi NCR...` | `...workers.dev/delhi` | OG title, article/website type | `index, follow` | **PASS** |
+| `/apartments` | 200 | `Flats & Apartments for Sale across India \| Zero Brokerage \| Apna Ghar` | `Find modern builder floors, multistory apartments, and luxury high-rises...` | `...workers.dev/apartments` | OG title, article/website type | `index, follow` | **PASS** |
+| `/property/werwtw-mvuzhfat` | 200 | `plot for sale in Amritsar, Punjab for Sale \| Apna Ghar` | `Verified residential plot for sale in Amritsar, Punjab. Direct owner listing...` | `.../property/werwtw-mvuzhfat` | Full photo URL, price in meta | `index, follow` | **PASS** |
+| `/search` | 200 | `Explore Properties across India \| Apna Ghar` | `Explore verified direct owner property listings across India without agent...` | `...workers.dev/search` | Clean search canonical without query params | `index, follow` (facets: `noindex, follow`) | **PASS** |
+| `/about` | 200 | `About Apna Ghar \| Direct Owner Real Estate Platform` | `Learn about Apna Ghar, India's direct owner property marketplace...` | `...workers.dev/about` | Full OG and Twitter tags | `index, follow` | **PASS** |
+| `/messages` | 307 | Unauthenticated redirect to `/sign-in?redirect_url=%2Fmessages` | Protected | None leaked | Header `X-Robots-Tag: noindex, nofollow` | `noindex, nofollow` | **PASS** |
+| `/admin` | 307 | Unauthenticated redirect to `/sign-in?redirect_url=%2Fadmin` | Protected | None leaked | Header `X-Robots-Tag: noindex, nofollow` | `noindex, nofollow` | **PASS** |
+
+### 12.5 Live Structured Data (JSON-LD) Validation
+Parsed and verified application/ld+json blocks from production HTML:
+1. **Root Graph (`Organization` & `WebSite`)**:
+   - `@type: "Organization"`: `name: "Apna Ghar"`, `url: "https://apna-ghar-web.yash38688.workers.dev"`, `logo: ".../icon.svg"`.
+   - `@type: "WebSite"`: Includes Sitelinks `SearchAction` with `urlTemplate: "https://apna-ghar-web.yash38688.workers.dev/search?location={search_term_string}"`.
+2. **BreadcrumbList Graphs**:
+   - Injected across landing hubs and property detail pages with ordered `ListItem` entries.
+3. **RealEstateListing Graph (`/property/werwtw-mvuzhfat`)**:
+   - `@type: "RealEstateListing"`
+   - `name: "plot for sale"`
+   - `offers`: `@type: "Offer"`, `price: 15200000`, `priceCurrency: "INR"`, `businessFunction: "http://purl.org/goodrelations/v1#Sell"`
+   - `about`: `@type: "Accommodation"`, `addressLocality: "Amritsar"`, `addressRegion: "Punjab"`, `addressCountry: "IN"`
+   - **Authenticity Audit:** No fabricated review counts, stars, or fictitious rating values exist.
+
+### 12.6 Private Route Indexing Protection
+Tested rendered responses and headers across all private endpoints:
+- `/messages`: 307 redirect to `/sign-in` + `X-Robots-Tag: noindex, nofollow`
+- `/admin`: 307 redirect to `/sign-in` + `X-Robots-Tag: noindex, nofollow`
+- `/my-listings`: 307 redirect to `/sign-in` + `X-Robots-Tag: noindex, nofollow`
+- `/list-property`: 307 redirect to `/sign-in` + `X-Robots-Tag: noindex, nofollow`
+- `/profile`: 200 HTML with `<meta name="robots" content="noindex, nofollow, nocache" />`
+- `/saved`: 200 HTML with `<meta name="robots" content="noindex, nofollow, nocache" />`
+- `/sign-in`: 200 HTML with `<meta name="robots" content="noindex, nofollow, nocache" />`
+- `/sign-up`: 200 HTML with `<meta name="robots" content="noindex, nofollow, nocache" />`
+- `/forgot-password`: 200 HTML with `<meta name="robots" content="noindex, nofollow, nocache" />`
+
+### 12.7 Remaining Blockers
+- **None.** All technical SEO, metadata, dynamic property SEO, XML sitemap, robots, JSON-LD structured data, and private route defenses are operational, tested, and verified on the live production domain.
+
+

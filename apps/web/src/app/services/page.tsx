@@ -4,7 +4,7 @@ import SiteFooter from "../components/SiteFooter";
 import { getCanonicalUrl, INDEXABLE_ROBOTS } from "../utils/seo";
 
 export const metadata: Metadata = {
-  title: "Real Estate Services & Tools | Apna Ghar",
+  title: { absolute: "Real Estate Services & Tools | Apna Ghar" },
   description: "Explore Apna Ghar tools for buying, renting and publishing direct-owner property listings with 0% brokerage.",
   alternates: {
     canonical: getCanonicalUrl("/services"),
