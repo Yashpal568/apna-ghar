@@ -3,6 +3,7 @@ import { IsDateString, IsOptional, IsString, Matches, MaxLength } from 'class-va
 import { Transform } from 'class-transformer';
 import { PropertyAuthGuard } from './property-auth.guard';
 import { VisitRequestsService } from './visit-requests.service';
+import { RateLimit } from '../common/decorators/rate-limit.decorator';
 
 type AuthenticatedRequest = { authUserId?: string };
 
@@ -30,6 +31,7 @@ export class VisitRequestsController {
   }
 
   @Post(':propertyId')
+  @RateLimit({ limit: 30, ttlSeconds: 60 })
   async create(@Req() request: AuthenticatedRequest, @Param('propertyId') propertyId: string, @Body() body: CreateVisitRequestDto) {
     if (!request.authUserId) throw new BadRequestException('Authenticated user identity is missing');
     const result = await this.service.create(request.authUserId, propertyId, body);

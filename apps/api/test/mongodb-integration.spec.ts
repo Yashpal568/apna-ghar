@@ -1,3 +1,14 @@
+// Polyfill URL for whatwg-url in Node 22 environment so mongodb-connection-string-url resolves searchParams correctly
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const whatwgUrl = require('whatwg-url');
+  if (whatwgUrl && !whatwgUrl.URL?.prototype?.searchParams) {
+    whatwgUrl.URL = globalThis.URL;
+  }
+} catch {
+  // Ignore if not present
+}
+
 import mongoose, { Connection, Model } from 'mongoose';
 import { UserProfile, UserProfileSchema } from '../src/users/schemas/user-profile.schema';
 import { Property, PropertySchema } from '../src/properties/schemas/property.schema';

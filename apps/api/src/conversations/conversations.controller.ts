@@ -4,13 +4,39 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { IsIn, IsNumber, IsOptional, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { createHash } from 'node:crypto';
+import { basename } from 'node:path';
 import { Model, Types } from 'mongoose';
-import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
+import { PropertyAuthGuard } from '../properties/property-auth.guard';
+import { RateLimit } from '../common/decorators/rate-limit.decorator';
 import { Property } from '../properties/schemas/property.schema';
 import { Conversation } from './schemas/conversation.schema';
 import { MessageRateLimit } from './schemas/message-rate-limit.schema';
 import { Message } from './schemas/message.schema';
 import { PropertyOffer } from './schemas/property-offer.schema';
+
+function hasValidAttachmentSignature(buffer: Buffer, mimetype: string): boolean {
+  if (!buffer || buffer.length < 4) return false;
+  switch (mimetype) {
+    case 'image/jpeg':
+      return buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+    case 'image/png':
+      return buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+    case 'image/webp':
+      return buffer.length >= 12 && buffer.toString('ascii', 0, 4) === 'RIFF' && buffer.toString('ascii', 8, 12) === 'WEBP';
+    case 'application/pdf':
+      return buffer.length >= 4 && buffer.subarray(0, 4).equals(Buffer.from([0x25, 0x50, 0x44, 0x46])); // %PDF
+    default:
+      return false;
+  }
+}
+
+function sanitizeAttachmentFilename(raw?: string, mimetype?: string): string {
+  const fallback = mimetype === 'application/pdf' ? 'document.pdf' : 'attachment.jpg';
+  if (!raw || typeof raw !== 'string') return fallback;
+  const base = basename(raw.trim());
+  const clean = base.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 100);
+  return clean || fallback;
+}
 
 type RequestWithAuth = { auth: { userId: string } };
 
@@ -38,7 +64,7 @@ class RespondOfferDto {
 }
 
 @Controller('conversations')
-@UseGuards(ClerkAuthGuard)
+@UseGuards(PropertyAuthGuard)
 export class ConversationsController {
   constructor(
     @InjectModel(Conversation.name) private readonly conversations: Model<Conversation>,
@@ -61,6 +87,7 @@ export class ConversationsController {
   }
 
   @Post('property/:propertyId')
+  @RateLimit({ limit: 30, ttlSeconds: 60 })
   async startForProperty(@Req() request: RequestWithAuth, @Param('propertyId') propertyId: string, @Body() body: StartConversationDto) {
     const property = await this.properties.findOne({
       $or: [{ _id: this.isObjectId(propertyId) ? propertyId : null }, { slug: propertyId }],
@@ -214,6 +241,7 @@ export class ConversationsController {
   }
 
   @Post('upload')
+  @RateLimit({ limit: 30, ttlSeconds: 60 })
   @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 10 * 1024 * 1024 } }))
   async uploadAttachment(
     @Req() request: RequestWithAuth,
@@ -225,11 +253,14 @@ export class ConversationsController {
     if (!allowedMimes.includes(file.mimetype)) {
       throw new BadRequestException('Only JPG, PNG, WebP images and PDF documents are allowed (up to 10MB)');
     }
+    if (!hasValidAttachmentSignature(file.buffer, file.mimetype)) {
+      throw new BadRequestException('File content does not match allowed MIME type signature');
+    }
 
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
     const apiKey = process.env.CLOUDINARY_API_KEY;
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
-    const filename = file.originalname || (file.mimetype === 'application/pdf' ? 'document.pdf' : 'attachment.jpg');
+    const filename = sanitizeAttachmentFilename(file.originalname, file.mimetype);
 
     if (cloudName && apiKey && apiSecret) {
       try {
@@ -282,6 +313,7 @@ export class ConversationsController {
   }
 
   @Post(':conversationId/messages')
+  @RateLimit({ limit: 30, ttlSeconds: 60 })
   async sendMessage(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string, @Body() body: SendMessageDto) {
     if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
     const text = body.text?.trim() || '';
@@ -348,6 +380,7 @@ export class ConversationsController {
   }
 
   @Post(':conversationId/offers')
+  @RateLimit({ limit: 30, ttlSeconds: 60 })
   async createOffer(@Req() request: RequestWithAuth, @Param('conversationId') conversationId: string, @Body() body: CreateOfferDto) {
     if (!this.isObjectId(conversationId)) throw new NotFoundException('Conversation not found.');
     const conversation = await this.conversations.findOne({
@@ -388,6 +421,7 @@ export class ConversationsController {
   }
 
   @Post(':conversationId/offers/:offerId/counter')
+  @RateLimit({ limit: 30, ttlSeconds: 60 })
   async counterOffer(
     @Req() request: RequestWithAuth,
     @Param('conversationId') conversationId: string,
@@ -437,6 +471,7 @@ export class ConversationsController {
   }
 
   @Patch(':conversationId/offers/:offerId/respond')
+  @RateLimit({ limit: 30, ttlSeconds: 60 })
   async respondToOffer(
     @Req() request: RequestWithAuth,
     @Param('conversationId') conversationId: string,

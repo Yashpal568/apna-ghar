@@ -7,6 +7,7 @@ import { PropertyAuthGuard } from './property-auth.guard';
 import { ListPropertiesQueryDto } from './dto/list-properties-query.dto';
 import { PropertiesService } from './properties.service';
 import { IsBoolean } from 'class-validator';
+import { RateLimit } from '../common/decorators/rate-limit.decorator';
 
 class SetPropertyVisibilityDto {
   @IsBoolean() visible!: boolean;
@@ -36,6 +37,7 @@ export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
 
   @Post('images')
+  @RateLimit({ limit: 30, ttlSeconds: 60 })
   @UseGuards(PropertyAuthGuard)
   @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 8 * 1024 * 1024 } }))
   async uploadImage(@Req() request: AuthenticatedRequest, @UploadedFile() file?: UploadedImage) {
@@ -86,6 +88,7 @@ export class PropertiesController {
   }
 
   @Post('videos')
+  @RateLimit({ limit: 30, ttlSeconds: 60 })
   @UseGuards(PropertyAuthGuard)
   @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 100 * 1024 * 1024 } }))
   async uploadVideo(@Req() request: AuthenticatedRequest, @UploadedFile() file?: UploadedImage) {
@@ -106,6 +109,7 @@ export class PropertiesController {
   }
 
   @Post()
+  @RateLimit({ limit: 30, ttlSeconds: 60 })
   @UseGuards(PropertyAuthGuard)
   create(@Req() request: AuthenticatedRequest, @Body() body: CreatePropertyDto) {
     if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
@@ -129,6 +133,7 @@ export class PropertiesController {
   }
 
   @Patch(':id')
+  @RateLimit({ limit: 30, ttlSeconds: 60 })
   @UseGuards(PropertyAuthGuard)
   async updateMine(@Req() request: AuthenticatedRequest, @Param('id') id: string, @Body() body: UpdatePropertyDto) {
     if (!request.authUserId) throw new BadRequestException('Authenticated owner identity is missing');
@@ -156,6 +161,7 @@ export class PropertiesController {
   }
 
   @Get()
+  @RateLimit({ limit: 120, ttlSeconds: 60 })
   list(@Query() query: ListPropertiesQueryDto) {
     if (query.minPrice !== undefined && query.maxPrice !== undefined && query.minPrice > query.maxPrice) {
       throw new BadRequestException('minPrice must not exceed maxPrice');

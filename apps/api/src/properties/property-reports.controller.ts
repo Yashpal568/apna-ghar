@@ -4,6 +4,7 @@ import { Transform } from 'class-transformer';
 import { PropertyAuthGuard } from './property-auth.guard';
 import { PropertyReportsService } from './property-reports.service';
 import { AdminAuthGuard } from './admin-auth.guard';
+import { RateLimit } from '../common/decorators/rate-limit.decorator';
 
 type AuthenticatedRequest = { authUserId?: string };
 class CreatePropertyReportDto {
@@ -48,6 +49,7 @@ export class PropertyReportsController {
   }
 
   @Post(':propertyId')
+  @RateLimit({ limit: 20, ttlSeconds: 60 })
   async create(@Req() request: AuthenticatedRequest, @Param('propertyId') propertyId: string, @Body() body: CreatePropertyReportDto) {
     if (!request.authUserId) throw new BadRequestException('Authenticated user identity is missing');
     const report = await this.service.create(request.authUserId, propertyId, body.reason, body.details);

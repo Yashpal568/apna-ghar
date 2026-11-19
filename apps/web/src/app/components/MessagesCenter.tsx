@@ -320,6 +320,14 @@ function MessagesCenterAuthenticated() {
     return () => window.removeEventListener("resize", handleResize);
   }, [selected, items]);
 
+  // Immediately clear private state on account switch or logout
+  useEffect(() => {
+    setItems([]);
+    setMessages([]);
+    setSelected("");
+    setPropertyInfo(null);
+  }, [user?.id]);
+
   // Active conversation object
   const activeConversation = useMemo(
     () => items.find((c) => c._id === selected) || null,

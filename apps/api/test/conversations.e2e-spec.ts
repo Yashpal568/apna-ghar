@@ -1,10 +1,12 @@
 import { BadRequestException, ForbiddenException, NotFoundException, UnauthorizedException, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import type { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { ConversationsController } from '../src/conversations/conversations.controller';
 import { ClerkAuthGuard } from '../src/auth/clerk-auth.guard';
+import { PropertyAuthGuard } from '../src/properties/property-auth.guard';
 import { Conversation } from '../src/conversations/schemas/conversation.schema';
 import { Property } from '../src/properties/schemas/property.schema';
 import { MessageRateLimit } from '../src/conversations/schemas/message-rate-limit.schema';
@@ -182,13 +184,26 @@ describe('Conversations & Messaging Module Endpoints (e2e)', () => {
         { provide: getModelToken(MessageRateLimit.name), useValue: mockRateLimitModel },
         { provide: getModelToken(Message.name), useValue: mockMessageModel },
         { provide: getModelToken(PropertyOffer.name), useValue: mockOfferModel },
+        { provide: ConfigService, useValue: { get: () => 'sk_test_mock' } },
       ],
     })
+      .overrideGuard(PropertyAuthGuard)
+      .useValue({
+        canActivate: (context: { switchToHttp: () => { getRequest: () => { auth?: { userId: string; claims?: any }; authUserId?: string } } }) => {
+          if (!isAuthenticated) throw new UnauthorizedException('Bearer token required');
+          const req = context.switchToHttp().getRequest();
+          req.auth = { userId: currentUserId, claims: { sub: currentUserId } };
+          req.authUserId = currentUserId;
+          return true;
+        },
+      })
       .overrideGuard(ClerkAuthGuard)
       .useValue({
-        canActivate: (context: { switchToHttp: () => { getRequest: () => { auth?: { userId: string } } } }) => {
+        canActivate: (context: { switchToHttp: () => { getRequest: () => { auth?: { userId: string; claims?: any }; authUserId?: string } } }) => {
           if (!isAuthenticated) throw new UnauthorizedException('Bearer token required');
-          context.switchToHttp().getRequest().auth = { userId: currentUserId };
+          const req = context.switchToHttp().getRequest();
+          req.auth = { userId: currentUserId, claims: { sub: currentUserId } };
+          req.authUserId = currentUserId;
           return true;
         },
       })

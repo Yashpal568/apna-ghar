@@ -1,8 +1,10 @@
 import 'reflect-metadata';
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { RateLimitGuard } from './common/guards/rate-limit.guard';
+import { PrivateCacheInterceptor } from './common/interceptors/private-cache.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +13,7 @@ async function bootstrap() {
   // Do not advertise the underlying Express runtime and apply baseline browser protections.
   const express = app.getHttpAdapter().getInstance();
   express.disable('x-powered-by');
+  express.set('trust proxy', 1);
   app.use((_request: unknown, response: { setHeader: (name: string, value: string) => void }, next: () => void) => {
     response.setHeader('X-Content-Type-Options', 'nosniff');
     response.setHeader('X-Frame-Options', 'DENY');
@@ -45,9 +48,7 @@ async function bootstrap() {
           (parsed.hostname === 'localhost' ||
             parsed.hostname === '127.0.0.1' ||
             /^web-[a-z0-9-]+-yashs-projects-cd385495\.vercel\.app$/.test(parsed.hostname) ||
-            /^apna-ghar-web(?:-[a-z0-9-]+)?\.yash38688\.workers\.dev$/.test(parsed.hostname) ||
-            parsed.hostname.endsWith('.workers.dev') ||
-            parsed.hostname.endsWith('.vercel.app'))
+            /^apna-ghar-web(?:-[a-z0-9-]+)?\.yash38688\.workers\.dev$/.test(parsed.hostname))
         ) {
           return callback(null, true);
         }
@@ -60,6 +61,9 @@ async function bootstrap() {
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
   });
+
+  app.useGlobalGuards(new RateLimitGuard(app.get(Reflector)));
+  app.useGlobalInterceptors(new PrivateCacheInterceptor());
 
   app.useGlobalPipes(
     new ValidationPipe({
